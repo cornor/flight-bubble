@@ -421,3 +421,21 @@ def projectile(hexs, s=64):
     d.ellipse([S * .1, S * .1, S * .9, S * .9], fill=c + (70,), outline=c + (255,), width=SS * 5)
     d.ellipse([S * .25, S * .22, S * .45, S * .38], fill=(255, 255, 255, 230))
     return _down(im, s, s)
+
+
+def round_creature(hexs, state, w=224, h=256):
+    """Plain round stand-in, two eyes, navy outline; baseline at y=212."""
+    im = _ss(w, h); d = ImageDraw.Draw(im)
+    rgb = _rgb(hexs)
+    if state == 'spent': rgb = _shade(rgb, .82)
+    body_w, body_h = (158, 132) if state == 'attack' else (150, 112) if state == 'spent' else (144, 144)
+    box = tuple(int(v * SS) for v in (112-body_w/2, 212-body_h, 112+body_w/2, 212))
+    ink = (35, 64, 107)
+    d.ellipse(box, fill=rgb, outline=ink, width=6*SS)
+    for x in (90, 134):
+        y = 212-body_h*.55
+        if state == 'spent':
+            d.line([(int((x-6)*SS),int(y*SS)),(int((x+6)*SS),int(y*SS))],fill=ink,width=4*SS)
+        else:
+            d.ellipse(tuple(int(v*SS) for v in (x-6,y-8,x+6,y+8)),fill=ink)
+    return _down(im, w, h)

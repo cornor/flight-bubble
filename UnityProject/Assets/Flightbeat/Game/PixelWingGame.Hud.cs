@@ -12,7 +12,7 @@ namespace Flightbeat.Game
         private void DrawHUD(PixelSurface s)
         {
 #if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
-            if (!InHome && levelIndex < 4) { DrawGardenHUD(s); return; }
+            if (!InHome) { DrawGardenHUD(s); return; }
 #endif
             BeginHitsCore();
             s.MapLayout = true;

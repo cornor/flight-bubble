@@ -98,7 +98,7 @@ namespace Flightbeat.Game
                     for (int pass = 0; pass < 2; pass++) Swirl(s, Battle.FleetPositionX(bay), 645, plotW * .95f, swirlAngle, swirlAlpha);
             // Queue: one glass tube per lane (UI spec v3 3); front-row corner marks take the front creature's color.
             for (int lane = 0; lane < Battle.LaneCount; lane++) {
-                float w = 108f, x = Battle.QueuePositionX(lane) - w / 2;
+                float w = Mathf.Min(108f, 500f / Battle.LaneCount - 8f), x = Battle.QueuePositionX(lane) - w / 2;
                 var reserve = Battle.Reserve[lane];
                 if (!Asset9(s, "scene/queue-panel", x, 688, w, 180, 24f, 16f, Color.white)) {
                     s.Rect(x, 688, w, 180, new Color(.85f, .93f, 1f, .35f));
@@ -147,6 +147,7 @@ namespace Flightbeat.Game
                     Mathf.Clamp01(1 - (Battle.Time - ship.LastFired) / .18f), bayNumber, true, true, .035f, ship.Id * 1.7f);
                 if (ship.Arrival <= 0 && !Battle.Exposed(ship.Color)) TextOutline(s, "等待", at.x, 666, 11f, Cream, Outline, 1.3f);
             }
+            float queueScale = Mathf.Min(108f, 500f / Battle.LaneCount - 8f) / 108f;
             GardenHintLane(out int hintLane);
             for (int lane = 0; lane < Battle.LaneCount; lane++) {
                 var reserve = Battle.Reserve[lane];
@@ -160,19 +161,19 @@ namespace Flightbeat.Game
                         at.y += offset * .35f;
                     }
                     if (row == 0 && lane == hintLane) at.y -= 3f * Mathf.Abs(Mathf.Sin(ui * 4f));
-                    Creature(s, GardenColor(ship.Color), at.x, QueueDisplayY(at.y) + 12, row == 0 ? 82f : 76f, ship.Tier,
-                        row != 0 && ship.Kind == 2 ? "?" : ship.Ammo.ToString(), 0f, 12f, false, true, row == 0 ? .03f : .02f, lane * 2.3f + row * 1.1f);
+                    Creature(s, row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color), at.x, QueueDisplayY(at.y) + 12, (row == 0 ? 82f : 76f) * queueScale, ship.Tier,
+                        row != 0 && ship.Kind == 2 ? "?" : ship.Ammo.ToString(), 0f, 12f * queueScale, false, true, row == 0 ? .03f : .02f, lane * 2.3f + row * 1.1f);
                     // 2026-10-15 20:52: queue numbers sit on the same navy pill as the pads (mockup); no tier coin in the queue.
                 }
                 // Priority planting (option B): pulsing gold corner marks on every selectable plant, drawn after the plants.
                 if (selection == 1)
                     for (int row = 0; row < Mathf.Min(3, reserve.Count); row++) {
                         Vector2 at = feedback.ReservePosition(reserve[row], lane, row);
-                        GardenCorners(s, at.x - 32, QueueDisplayY(at.y) - 28, 64, 56, new Color(1f, .86f, .3f, .75f + .25f * Mathf.Sin(ui * 5f)));
+                        GardenCorners(s, at.x - 32 * queueScale, QueueDisplayY(at.y) - 28 * queueScale, 64 * queueScale, 56 * queueScale, new Color(1f, .86f, .3f, .75f + .25f * Mathf.Sin(ui * 5f)));
                     }
                 if (reserve.Count > 0 && Battle.ActiveFinale == null && Battle.WouldMerge(lane)) {
                     Vector2 at = feedback.ReservePosition(reserve[0], lane, 0);
-                    TextOutline(s, "可合成", at.x + 30, QueueDisplayY(at.y) - 30, 12f, Gold, Outline, 1.3f);
+                    TextOutline(s, "可合成", at.x + 30 * queueScale, QueueDisplayY(at.y) - 30, 12f * queueScale, Gold, Outline, 1.3f);
                 }
                 if (reserve.Count == 0 && !FinaleButtonVisible) TextOutline(s, "已出战", Battle.QueuePositionX(lane), 768, 16f, Cream, Outline, 1.5f);
             }

@@ -14,7 +14,7 @@ namespace Flightbeat.Garden
         public static readonly Color Ink = Hex(0x2A3B55), Paper = Hex(0xF6FAFF), Soil = Hex(0x9FD4FF), Wood = Hex(0x5A80B8), Leaf = Hex(0x86A67E), Field = Hex(0x8C919C);
         public static bool HideOriginalParticles;
         // v2: trimmed slots keep their full frame (fw, fh) and the trimmed offset (ox, oy) in stored pixels.
-        [Serializable] public sealed class Slot { public string id; public float x, y, w, h, ox, oy, fw, fh; }
+        [Serializable] public sealed class Slot { public string id; public int atlas; public float x, y, w, h, ox, oy, fw, fh; }
         [Serializable] public sealed class Glyph { public int code; public float x, y, w, h, advance, bearingX, bearingY; }
         [Serializable] public sealed class Atlas { public string characters; public int size, cell, fontSize; public Slot[] slots; public Glyph[] glyphs; }
         static Atlas atlas;
@@ -36,28 +36,10 @@ namespace Flightbeat.Garden
         }
         public static Color Hex(int rgb) => new Color32((byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb, 255);
         public static string Key(Color color) {
-            Color32 c = color; int rgb = (c.r << 16) | (c.g << 8) | c.b;
-            switch (rgb) {
-                case 0x42A9FF: case 0x2982F4: return "morning-glory";
-                case 0xFF9D30: case 0xFF7E27: return "carrot";
-                case 0x62E18E: case 0x30D183: return "broccoli";
-                case 0xBD80FF: return "eggplant";
-                case 0xFFDF48: return "sunflower";
-                case 0xFFFFFF: return "cabbage";
-                case 0xFF525B: return "strawberry";
-                case 0x2D2D2D: return "truffle";
-                default: return "unknown";
-            }
+            Color32 c = color; return GardenColorCatalog.Key((c.r << 16) | (c.g << 8) | c.b);
         }
-        // v3 creature names; internal slot ids keep the v2 keys (UI spec v3 section 5).
-        public static string Name(Color c) {
-            switch (Key(c)) {
-                case "morning-glory": return "小蓝"; case "carrot": return "小橙";
-                case "broccoli": return "小绿"; case "eggplant": return "小紫";
-                case "sunflower": return "小黄"; case "cabbage": return "小白";
-                case "strawberry": return "小红"; case "truffle": return "小黑";
-                default: return "队员";
-            }
+        public static string Name(Color color) {
+            Color32 c = color; return GardenColorCatalog.Name((c.r << 16) | (c.g << 8) | c.b);
         }
         public static bool Has(string id) => Data != null && slots.ContainsKey(id);
         static Rect Uv(Slot slot, int size) => new Rect(slot.x / size, 1f - (slot.y + slot.h) / size, slot.w / size, slot.h / size);
@@ -73,7 +55,7 @@ namespace Flightbeat.Garden
             Rect uv = Uv(slot, data.size);
             if (flipX) uv = new Rect(uv.x + uv.width, uv.y, -uv.width, uv.height);
             if (flipY) uv = new Rect(uv.x, uv.y + uv.height, uv.width, -uv.height);
-            s.GardenQuad(x, y, w, h, uv, tint, pixel, rigid);
+            s.GardenQuad(x, y, w, h, uv, tint, pixel, rigid, slot.atlas);
             return true;
         }
         // Horizontal fill bar: draws the left `fraction` of the full frame.

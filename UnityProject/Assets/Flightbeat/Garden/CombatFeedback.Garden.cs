@@ -35,6 +35,9 @@ namespace Flightbeat.Feedback
                 }
                 GardenSkin.Shot(s, tint, p, 12f, 1f);
             }
+            // Retain source effects that the initial four-level skin did not render.
+            // These draw existing feedback records; no model or effect clock is changed.
+            DrawPierceSparks(s); DrawRocketBlasts(s); DrawWeaponFx(s); DrawPurge(s);
             // User decision 2026-10-14: ordinary hits have no visual FX, including the old rings.
             // f53855 fusion record; f53871 starts the burst at age .22.
             foreach (var f in fusions)

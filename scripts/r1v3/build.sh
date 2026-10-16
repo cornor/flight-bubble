@@ -17,6 +17,7 @@ python3 scripts/r1v3/build_atlas_v3.py | tee "$output.atlas.json"
     echo "界面 Prefab 重建失败，日志：$output.prefabs.log"; grep -E "error CS|Error|Exception" "$output.prefabs.log" | head -40; exit 1; }
 grep -q GARDEN_UI_PREFABS_CREATED "$output.prefabs.log" || { echo '界面 Prefab 未生成'; exit 1; }
 python3 scripts/r1v3/build_atlas_v3.py > /dev/null      # prefab copy changed: make sure every glyph is in the atlas
+python3 scripts/r1v3/coverage.py > "$output.coverage.json"
 python3 scripts/r1/check_source.py > "$output.source.json"
 "$unity" -batchmode -nographics -quit -projectPath "$repo/UnityProject" -buildTarget WebGL \
   -executeMethod Flightbeat.Editor.WebGlCliBuild.Run --flightbeat-garden-r1 \

@@ -19,6 +19,7 @@ Shader "Garden/R1 Surface"
         _SpaceTex ("Pixel Space", 2D) = "black" {}
         _CodexTex ("Codex Thumbnails", 2D) = "black" {}
         _GardenTex ("Garden Atlas", 2D) = "white" {}
+        _GardenTex2 ("Creature Atlas", 2D) = "white" {}
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
         _StencilOp ("Stencil Operation", Float) = 0
@@ -58,6 +59,9 @@ Shader "Garden/R1 Surface"
             #pragma multi_compile_local __ UNITY_UI_CLIP_RECT
             #include "HLSLSupport.cginc"
             #include "UnityShaderVariables.cginc"
+            // The retired codex branch is unreachable. Reuse its sampler declaration
+            // for creatures to stay within WebGL's 16 fragment-sampler limit.
+            #define _CodexTex _GardenTex2
             #define FbFrag OriginalFrag
             #if defined(UNITY_UI_ALPHACLIP) && defined(UNITY_UI_CLIP_RECT)
             #include "../../Rendering/Shaders/Shader22Program5.hlsl"
@@ -69,9 +73,16 @@ Shader "Garden/R1 Surface"
             #include "../../Rendering/Shaders/Shader22Program2.hlsl"
             #endif
             #undef FbFrag
+            #undef _CodexTex
             sampler2D _GardenTex;
             float4 _GardenTex_TexelSize;
+            float4 _GardenTex2_TexelSize;
             float4 GardenFrag(FbVaryings input) : SV_Target {
+                if (input.vs_TEXCOORD1.x > 21.5) {
+                    float2 uv = input.vs_TEXCOORD0;
+                    if (input.vs_TEXCOORD1.x > 22.5) uv = (floor(uv * _GardenTex2_TexelSize.zw) + .5) * _GardenTex2_TexelSize.xy;
+                    return tex2D(_GardenTex2, uv) * input.vs_COLOR0;
+                }
                 if (input.vs_TEXCOORD1.x > 19.5) {
                     float2 uv = input.vs_TEXCOORD0;
                     if (input.vs_TEXCOORD1.x > 20.5) uv = (floor(uv * _GardenTex_TexelSize.zw) + .5) * _GardenTex_TexelSize.xy;

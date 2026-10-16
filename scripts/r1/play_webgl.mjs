@@ -5,8 +5,9 @@ import { connect } from '../../tools/browser/cdp.mjs';
 const out=process.argv[2]||'Builds/R1-evidence/play-v1';
 if(fs.existsSync(out)) throw Error('Fresh output directory required');
 fs.mkdirSync(out,{recursive:true});
+const events=[];
 const c=await connect({port:Number(process.env.R1_CDP_PORT||9342),onEvent:e=>{
-  if(['Runtime.exceptionThrown','Log.entryAdded'].includes(e.method))fs.appendFileSync(out+'/browser-events.jsonl',JSON.stringify(e)+'\n');
+  if(['Runtime.exceptionThrown','Log.entryAdded'].includes(e.method)){events.push(e);fs.appendFileSync(out+'/browser-events.jsonl',JSON.stringify(e)+'\n');}
 }});
 await c.call('Page.enable'); await c.call('Runtime.enable'); await c.call('Log.clear'); await c.call('Log.enable');
 await c.call('Emulation.setDeviceMetricsOverride',{width:540,height:Number(process.env.R1_HEIGHT||960),deviceScaleFactor:Number(process.env.R1_DPR||1),mobile:false});
@@ -40,12 +41,13 @@ async function tap(x,y,modal=false){
   await pause(65);
   await c.call('Input.dispatchMouseEvent',{type:'mouseReleased',x,y,button:'left',buttons:0,clickCount:1});
 }
-const wins=new Set(), snaps=new Set(), uiChecks=[], colorShots={}; let last='',attempts=0, pauseChecked=false, homeChecked=false, homeRequested=false;
+const wins=new Set(), snaps=new Set(), uiChecks=[], colorShots={}; let last='',attempts=0, pauseChecked=false, homeChecked=false, homeRequested=false, freshHomeStarted=false;
 try{
   for(let i=0;i<1000;i++){
     const m=await c.evaluate('window.gardenR1');
     if(!m){await pause(1000);continue;}
     if(m.home && !m.transition){
+      if(!freshHomeStarted)fs.writeFileSync(out+'/home-first-launch.png',Buffer.from((await c.call('Page.captureScreenshot')).data,'base64'));
       fs.writeFileSync(out+'/home.png',Buffer.from((await c.call('Page.captureScreenshot')).data,'base64'));
       if(!homeChecked){
         await tap(270,662);await pause(1200);
@@ -66,6 +68,7 @@ try{
       await tap(270,568);await pause(1200);
       const started=await c.evaluate('window.gardenR1');
       if(started.home || (homeRequested && started.level!==3))throw Error('Home start did not enter first uncleared level');
+      if(!freshHomeStarted){if(started.level!==0)throw Error('Fresh home start skipped teaching');freshHomeStarted=true;uiChecks.push('fresh save starts teaching from home');}
       uiChecks.push('home start enters first uncleared level');continue;
     }
     if(!pauseChecked&&m.level===0&&m.phase===1&&!m.transition){
@@ -76,7 +79,10 @@ try{
       await tap(270,543,true);await pause(1200);
       const resumed=await c.evaluate('window.gardenR1');
       if(resumed.paused||resumed.settings)throw Error('Continue UI did not resume');
-      uiChecks.push('pause/resume via UI passed');pauseChecked=true;continue;
+      uiChecks.push('pause/resume via UI passed');pauseChecked=true;
+      await tap(36,30);await pause(1200);await tap(366,603,true);await pause(2200);
+      if(!(await c.evaluate('window.gardenR1')).home)throw Error('Fresh tutorial did not return home');
+      continue;
     }
     fs.appendFileSync(out+'/samples.jsonl',JSON.stringify(m)+'\n');
     if(process.env.R1_COLOR_SHOTS==='1' && m.phase===2 && !m.paused && !m.transition && !m.finaleReady && m.remaining>m.total*.2){
@@ -101,7 +107,7 @@ try{
     if(m.phase===4){
       wins.add(m.level);
       if(m.level===3){console.log('FOUR_LEVELS_WON');break;}
-      if(m.level===2 && !homeChecked){
+      if(m.level===2){
         if(!homeRequested){await pause(1600);await tap(270,760,true);homeRequested=true;}
         await pause(1100);continue;
       }
@@ -119,10 +125,12 @@ try{
   }
   const history=await c.evaluate('window.gardenR1History');
   const environment=await c.evaluate(`(()=>{const cv=document.querySelector('canvas'),gl=cv.getContext('webgl2')||cv.getContext('webgl'),ext=gl.getExtension('WEBGL_debug_renderer_info');return {userAgent:navigator.userAgent,renderer:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'',viewport:[innerWidth,innerHeight],canvasRect:[cv.clientWidth,cv.clientHeight],backing:[cv.width,cv.height],dpr:devicePixelRatio,cores:navigator.hardwareConcurrency}})()`);
-  const result={environment,uiChecks,colorShots,prefabUi,touch:process.env.R1_TOUCH==='1',cpuThrottle:Number(process.env.R1_CPU_RATE||1),wins:[...wins],attempts,final:await c.evaluate('window.gardenR1'),history};
+  const errors=events.filter(e=>e.method==='Runtime.exceptionThrown'||e.params?.entry?.level==='error');
+  const result={errors,environment,uiChecks,colorShots,prefabUi,touch:process.env.R1_TOUCH==='1',cpuThrottle:Number(process.env.R1_CPU_RATE||1),wins:[...wins],attempts,final:await c.evaluate('window.gardenR1'),history};
   fs.writeFileSync(out+'/result.json',JSON.stringify(result,null,2));
   console.log(JSON.stringify({wins:result.wins,attempts,final:result.final}));
+  if(errors.length)throw Error('Browser errors: '+errors.length);
   if(result.wins.length!==4||result.final.level!==3||result.final.phase!==4)throw Error('Did not win all four levels');
   if(!pauseChecked)throw Error('Pause/resume was not exercised');
-  if(!homeChecked)throw Error('Home/settings/progression were not exercised');
+  if(!homeChecked||!homeRequested||!freshHomeStarted)throw Error('Fresh home/settings/progression were not exercised');
 }finally{c.close();}

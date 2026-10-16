@@ -22,7 +22,7 @@ namespace Flightbeat.Editor
         [Serializable] class Specs { public List<Spec> sprites = new List<Spec>(); }
         static Specs specs;
         static GardenSkin.Atlas atlas;
-        static Texture2D texture, backgroundTexture;
+        static Texture2D texture, backgroundTexture, creatureTexture;
         const string BackgroundSlot = "scene/background";   // own texture (background.png) since 2026-10-15
         static readonly Color Cream = GardenSkin.Cream, Ink = GardenSkin.Ink;
 
@@ -116,6 +116,7 @@ namespace Flightbeat.Editor
             atlas = JsonUtility.FromJson<GardenSkin.Atlas>(File.ReadAllText("Assets/Flightbeat/Resources/GardenR1/atlas.json"));
             texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Flightbeat/Resources/GardenR1/atlas.png");
             if (!texture) throw new FileNotFoundException("Garden atlas texture");
+            creatureTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Flightbeat/Resources/GardenR1/creatures.png");
             backgroundTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Flightbeat/Resources/GardenR1/background.png");
             if (!backgroundTexture) throw new FileNotFoundException("Garden background texture");
         }
@@ -150,6 +151,7 @@ namespace Flightbeat.Editor
             else
             {
                 var slot = atlas.slots.Single(s => s.id == spec.slot);
+                if (slot.atlas == 1) source = creatureTexture;
                 rect = new Rect(slot.x + slot.w * spec.crop.x, atlas.size - slot.y - slot.h * (spec.crop.y + spec.crop.height), slot.w * spec.crop.width, slot.h * spec.crop.height);
             }
             string path = SpriteRoot + "/" + spec.name + ".asset";
@@ -255,7 +257,7 @@ namespace Flightbeat.Editor
             Label("Coins", rewards, "收获金币 +{0}", 70, 420, 400, 20, Ink);
             Label("Seeds", rewards, "收获碎片 +{0}", 70, 456, 400, 20, Ink);
             Label("Statistics", rewards, "最高连击 {0}  用时 {1} 秒", 70, 510, 400, 16, Ink);
-            Label("Campaign complete", content, "前四关全部通过", 70, 566, 400, 20, Ink);
+            Label("Campaign complete", content, "全部关卡通过", 70, 566, 400, 20, Ink);
             var next = Button("Continue", content, 40, 80, 650, 380, 62, "下一关", "Continue text");
             Find<GardenUiText>(next.gameObject, "Continue text").alternateText = "再试一次";
             Button("Home", content, 41, 180, 740, 180, 40, "返回主页");

@@ -7,6 +7,9 @@ fs.mkdirSync(out,{recursive:true});
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const levels=(process.env.R1_LEVELS||'5,10,30,100,200,262').split(',').map(Number);
 const seconds=Number(process.env.R1_SECONDS||60);
+const inputInterval=Number(process.env.R1_INPUT_INTERVAL||600);
+// Optional first real click for targeted rear-row mystery reveal screenshots.
+const openingLane=Number(process.env.R1_OPENING_LANE??-1);
 const events=[];
 const c=await connect({port:Number(process.env.R1_CDP_PORT||9342),onEvent:e=>{
  if(['Runtime.exceptionThrown','Log.entryAdded'].includes(e.method)){events.push(e);fs.appendFileSync(out+'/browser-events.jsonl',JSON.stringify(e)+'\n');}
@@ -53,12 +56,12 @@ try{
    else if(m.finaleReady)await tap(270,759);
    else if(!m.paused&&!m.transition&&[1,2].includes(m.phase)){
     const candidates=m.lanes.map((l,i)=>({...l,i})).filter(l=>l.color>=0);
-    let chosen=candidates.find(l=>l.merge&&l.exposed)||candidates.find(l=>l.merge)||candidates.find(l=>l.exposed&&!m.fleetColors.includes(l.color))||candidates.find(l=>l.exposed);
+    let chosen=(actions===0?candidates.find(l=>l.i===openingLane):null)||candidates.find(l=>l.merge&&l.exposed)||candidates.find(l=>l.merge)||candidates.find(l=>l.exposed&&!m.fleetColors.includes(l.color))||candidates.find(l=>l.exposed);
     if(!chosen&&m.fleet<5)chosen=candidates[0];
     if(chosen){await tap(20+(chosen.i+.5)*500/m.lanes.length,725);actions++;}
    }
    if(seconds===0)break;
-   await pause(600);
+   await pause(inputInterval);
   }
   await screenshot('level-'+level+'-final');
   const final=await c.evaluate('window.gardenR1');
@@ -68,7 +71,7 @@ try{
   console.log(JSON.stringify({level,actions,observedSeconds:result.observedSeconds,remaining:final.remaining,phase:final.phase}));
  }
  const errors=events.filter(e=>e.method==='Runtime.exceptionThrown'||e.params?.entry?.level==='error');
- const environment=await c.evaluate(`(()=>{const cv=document.querySelector('canvas'),gl=cv.getContext('webgl2');return {viewport:[innerWidth,innerHeight],dpr:devicePixelRatio,maxFragmentSamplers:gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),userAgent:navigator.userAgent}})()`);
- fs.writeFileSync(out+'/result.json',JSON.stringify({complete:errors.length===0,results,errors,environment,cpuThrottle:Number(process.env.R1_CPU_RATE||1)},null,2));
+ const environment=await c.evaluate(`(()=>{const cv=document.querySelector('canvas'),gl=cv.getContext('webgl2'),debug=gl.getExtension('WEBGL_debug_renderer_info');return {viewport:[innerWidth,innerHeight],backing:[cv.width,cv.height],dpr:devicePixelRatio,maxFragmentSamplers:gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),renderer:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),cores:navigator.hardwareConcurrency,userAgent:navigator.userAgent}})()`);
+ fs.writeFileSync(out+'/result.json',JSON.stringify({complete:errors.length===0,results,errors,environment,cpuThrottle:Number(process.env.R1_CPU_RATE||1),inputIntervalMs:inputInterval,touch:process.env.R1_TOUCH==='1'},null,2));
  if(errors.length)throw Error('Browser errors: '+errors.length);
 }finally{c.close();}

@@ -5,8 +5,8 @@ program-drawn beads / mosaic panel, v2 battle FX frames, and the glyph block.
 usage: python3 scripts/r1v3/build_atlas_v3.py [--delivery DIR] [--font PATH]
 - Reads finished PNGs from Art/R1/art-v3/delivery (2x logical size); any file not yet delivered
   is replaced by a placeholder from placeholders.py (listed as "placeholder" in the output).
-- Stores UI at 1.5x logical (x0.75) in one 2048x2048 texture, as in v2. The full background has its own
-  texture (background.png, 810x1440 = x0.75) since 2026-10-15, so blink/cheer poses fit the atlas.
+- Stores UI and characters in separate 2048x2048 atlases. The full background has its own
+  texture (background.png, 810x1440 = x0.75). Character scale retries down to 0.62 if needed.
 - Creatures are full-color per level color under the existing slot names plants/<internal>/<HEX>/<state>
   (docs/r1/界面规范-v3.md section 5 maps creature ids to internal ids).
 - Battle FX: each strip comes from art-v3/delivery/fx when delivered, otherwise from the v2 delivery
@@ -73,18 +73,32 @@ SLOTS = [
     ('ui/banner-warning', 'ui2/banner-warning.png', UI, lambda: P.banner('warning')),
     ('ui/banner-hint', 'ui2/banner-hint.png', UI, lambda: P.banner('hint')),
 ]
-CREATURES = {  # creature id -> (internal slot id, colors)
-    'blue': ('morning-glory', ['2982F4', '42A9FF']), 'orange': ('carrot', ['FF7E27', 'FF9D30']),
-    'green': ('broccoli', ['62E18E']), 'purple': ('eggplant', ['BD80FF']), 'yellow': ('sunflower', ['FFDF48']),
-    'white': ('cabbage', ['FFFFFF']), 'red': ('strawberry', ['FF525B']), 'charcoal': ('truffle', ['2D2D2D'])}
-for cid, (internal, hexes) in CREATURES.items():
-    for h in hexes:
-        for st in ['idle', 'attack', 'spent']:
-            SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE,
-                          (lambda c=cid, x=h, s=st: P.creature(c, x, s))))
-        SLOTS.append((f'plants/{internal}/{h}/projectile', f'creatures/{cid}/{h}/projectile.png', UI, (lambda x=h: P.projectile(x))))
-        for st in ['blink', 'cheer']:   # optional (items 58/59): no placeholder, the game falls back to idle
-            SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE, None))
+# Color identity is shared by the atlas builder, runtime lookup, and coverage report.
+color_file = ROOT / 'Art/skin-colors.json'
+color_data = json.loads(color_file.read_text())
+for entry in color_data['colors']:
+    h, cid, internal = entry['hex'].lstrip('#').upper(), entry['creatureId'], entry['slotId']
+    entry['status'] = 'art' if all((DEL / f'creatures/{cid}/{h}/{st}.png').is_file() for st in ['idle','attack','spent']) else 'placeholder'
+    for st in ['idle', 'attack', 'spent']:
+        SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE,
+                      lambda x=h, state=st: P.round_creature(x, state)))
+    for st in ['blink', 'cheer']:
+        SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE, None))
+# Mystery reserves reveal neither their palette nor their optional animation.
+for st in ['idle', 'attack', 'spent']:
+    SLOTS.append((f'plants/color-8c919c/8C919C/{st}', f'creatures/mystery/8C919C/{st}.png', CREATURE,
+                  lambda state=st: P.round_creature('8C919C', state)))
+color_file.write_text(json.dumps(color_data, ensure_ascii=False, indent=2) + '\n')
+lookup = ['#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR', 'namespace Flightbeat.Garden {',
+          '    public static class GardenColorCatalog {']
+for method, field in [('Key', 'slotId'), ('Name', 'displayName')]:
+    lookup += [f'        public static string {method}(int rgb) {{', '            switch (rgb) {']
+    for e in color_data['colors']:
+        lookup.append('                case 0x%s: return %s;' % (e['hex'][1:], json.dumps(e[field], ensure_ascii=False)))
+    fallback = '"color-" + rgb.ToString("x6")' if method == 'Key' else '"队员"'
+    lookup += ['                default: return ' + fallback + ';', '            }', '        }']
+lookup += ['    }', '}', '#endif']
+(CODE / 'Garden/GardenColorCatalog.Generated.cs').write_text('\n'.join(lookup) + '\n')
 # Guide "Xiao Lan" portraits: second batch; until then the blue creature's idle / attack / spent art.
 GUIDE = {'explain': 'idle', 'happy': 'attack', 'worried': 'spent', 'proud': 'idle'}
 for face, st in GUIDE.items():
@@ -170,12 +184,6 @@ def tray(px=112, radius=28):
 # (the game draws scene/stage if present, else scene/tray if present, else nothing).
 _bg, _bg1 = DEL / 'scene/background.png', DEL / '_originals/background-v1.png'
 BACKGROUND_HAS_STAGE = _bg.exists() and _bg1.exists() and _bg.read_bytes() != _bg1.read_bytes()
-# 2026-10-15 19:58: item 57 lost the floating islands and waterfalls of the mockup. Until a redrawn background
-# that keeps them (item 60) is delivered, compose_background.py flattens item 1 + item 56 into one image, used instead.
-ITEM57_SHA = '8deba1cd1a478ec104774227e4422d711f28878dec537e6b2bccc713e2c8bde6'
-_composite = GEN / 'background-composite.png'
-if _composite.exists() and _bg.exists() and hashlib.sha256(_bg.read_bytes()).hexdigest() == ITEM57_SHA:   # item 60 wins once delivered
-    _bg, BACKGROUND_HAS_STAGE = _composite, True
 if not BACKGROUND_HAS_STAGE:
     GENERATED['scene/tray'] = tray()
 else:   # the painted stage is part of the background: neither scene/stage nor the program tray is drawn
@@ -189,31 +197,31 @@ text = ''.join(p.read_text(encoding='utf-8') for p in CODE.rglob('*.cs'))
 for p in CODE.rglob('*.prefab'):
     text += re.sub(r'\\u([0-9a-fA-F]{4})', lambda m: chr(int(m[1], 16)), p.read_text(encoding='utf-8'))
 chars = ''.join(chr(i) for i in range(32, 127)) + ''.join(sorted(set(c for c in text if ord(c) >= 128)))
-old = json.loads((OUT / 'atlas.json').read_text())
+# Preserve imported glyph pixels and metrics. The source atlas predates the current
+# font rasterizer; re-rasterizing all characters changes existing UI line widths.
+old = json.loads((ROOT / 'Art/fonts/source-glyphs.json').read_text())
 cols = SIZE // CELL
 image = Image.new('RGBA', (SIZE, SIZE))
-if set(chars) <= set(old['characters']) and old['size'] == SIZE and old['cell'] == CELL:
-    chars = old['characters']; glyphs = old['glyphs']; font_size = old['fontSize']
-    cursor_y = ((len(chars) + cols - 1) // cols) * CELL
-    image.alpha_composite(Image.open(OUT / 'atlas.png').convert('RGBA').crop((0, 0, SIZE, cursor_y)), (0, 0))
-    glyph_mode = 'reused'
-else:
+image.alpha_composite(Image.open(ROOT / 'Art/fonts/source-glyphs.png').convert('RGBA'), (0, 0))
+missing = ''.join(sorted(set(chars) - set(old['characters'])))
+chars = old['characters'] + missing
+glyphs = list(old['glyphs']); font_size = old['fontSize']
+if missing:
     if hashlib.sha256(FONT.read_bytes()).hexdigest() != FONT_SHA:
         raise SystemExit(f'{FONT}: not the recorded Noto Sans SC file (font-source.json)')
     font = ImageFont.truetype(str(FONT), FONT_SIZE); font.set_variation_by_axes([600])
-    draw = ImageDraw.Draw(image); glyphs = []; font_size = FONT_SIZE
-    for i, c in enumerate(chars):
+    draw = ImageDraw.Draw(image)
+    for i, c in enumerate(missing, len(old['characters'])):
         x, y = (i % cols) * CELL, (i // cols) * CELL
         left, top, right, bottom = font.getbbox(c, anchor='ls')
         draw.text((x + 2 - left, y + 2 - top), c, font=font, fill='white', anchor='ls')
         glyphs.append(dict(code=ord(c), x=x + 2, y=y + 2, w=right - left, h=bottom - top, advance=font.getlength(c) / FONT_SIZE,
                            bearingX=left / FONT_SIZE, bearingY=top / FONT_SIZE))
-    cursor_y = ((len(chars) + cols - 1) // cols) * CELL
-    glyph_mode = 'rebuilt'
+cursor_y = ((len(chars) + cols - 1) // cols) * CELL
+glyph_mode = 'source-preserved+' + str(len(missing))
 
 # ---- tiles
 tiles, placeholder, delivered = [], [], []
-(GEN / 'placeholders').mkdir(parents=True, exist_ok=True)
 for entry in SLOTS:
     sid, rel, sc, make = entry[:4]
     p = DEL / rel
@@ -229,7 +237,7 @@ for entry in SLOTS:
         else:
             im = make()
         src = 'placeholder'; placeholder.append(rel)
-        out = GEN / 'placeholders' / rel; out.parent.mkdir(parents=True, exist_ok=True); im.save(out)
+        out = ROOT / 'Art/generated/placeholders' / rel; out.parent.mkdir(parents=True, exist_ok=True); im.save(out)
     if sid == 'scene/pad-swirl':               # room to rotate the UVs without leaving the slot (UI spec v3 4.3)
         k = math.ceil(im.width * 1.42); pad = Image.new('RGBA', (k, k), (0, 0, 0, 0))
         pad.alpha_composite(im, ((k - im.width) // 2, (k - im.height) // 2)); im = pad
@@ -280,27 +288,34 @@ def place(w, h):
     remaining = list(dict.fromkeys(remaining))
     free[:] = [r for i,r in enumerate(remaining) if not any(i!=j and q[0]<=r[0] and q[1]<=r[1] and q[0]+q[2]>=r[0]+r[2] and q[1]+q[3]>=r[1]+r[3] for j,q in enumerate(remaining))]
     return x,y
-slots, top = [], cursor_y
-for sid, im, src, ox, oy, fw, fh in tiles:
-    w, h = im.size
-    at = place(w + 4, h + 4)
-    if at is None:
-        if CREATURE > 0.62 + 1e-6:
-            os.environ['R1_CREATURE_SCALE'] = f'{max(0.62, CREATURE - 0.04):.2f}'
-            print(f'Atlas full at {sid} with creature scale {CREATURE:.2f}; retrying at {os.environ["R1_CREATURE_SCALE"]}', file=sys.stderr)
-            os.execv(sys.executable, [sys.executable, str(Path(__file__).resolve()), *sys.argv[1:]])
-        raise SystemExit(f'Atlas full at {sid}')
-    image.alpha_composite(im, (at[0] + 2, at[1] + 2)); top = max(top, at[1] + h + 4)
-    if sid.startswith('fx/') or sid in ('scene/field', 'scene/tray'):
-        px, py = at[0] + 2, at[1] + 2   # extrude edges into the 2px guard for bilinear sampling
-        image.paste(im.crop((0,0,w,1)).resize((w,2)),(px,py-2)); image.paste(im.crop((0,h-1,w,h)).resize((w,2)),(px,py+h))
-        image.paste(im.crop((0,0,1,h)).resize((2,h)),(px-2,py)); image.paste(im.crop((w-1,0,w,h)).resize((2,h)),(px+w,py))
-    slots.append(dict(id=sid, x=at[0] + 2, y=at[1] + 2, w=w, h=h, ox=ox, oy=oy, fw=fw, fh=fh))
-image.save(OUT / 'atlas.png')
+slots, heights = [], []
+for atlas_id in [0, 1]:
+    atlas_image = image if atlas_id == 0 else Image.new('RGBA', (SIZE, SIZE))
+    start_y = cursor_y if atlas_id == 0 else 0
+    free[:] = [(0, start_y, SIZE, SIZE - start_y)]
+    top = start_y
+    for sid, im, src, ox, oy, fw, fh in tiles:
+        if int(sid.startswith('plants/')) != atlas_id: continue
+        w, h = im.size
+        at = place(w + 4, h + 4)
+        if at is None:
+            if atlas_id == 1 and CREATURE > 0.62 + 1e-6:
+                os.environ['R1_CREATURE_SCALE'] = f'{max(0.62, CREATURE - 0.04):.2f}'
+                print(f'Creature atlas full at {sid}; retrying at {os.environ["R1_CREATURE_SCALE"]}', file=sys.stderr)
+                os.execv(sys.executable, [sys.executable, str(Path(__file__).resolve()), *sys.argv[1:]])
+            raise SystemExit(f'Atlas {atlas_id} full at {sid}')
+        atlas_image.alpha_composite(im, (at[0] + 2, at[1] + 2)); top = max(top, at[1] + h + 4)
+        if sid.startswith('fx/') or sid in ('scene/field', 'scene/tray'):
+            px, py = at[0] + 2, at[1] + 2
+            atlas_image.paste(im.crop((0,0,w,1)).resize((w,2)),(px,py-2)); atlas_image.paste(im.crop((0,h-1,w,h)).resize((w,2)),(px,py+h))
+            atlas_image.paste(im.crop((0,0,1,h)).resize((2,h)),(px-2,py)); atlas_image.paste(im.crop((w-1,0,w,h)).resize((2,h)),(px+w,py))
+        slots.append(dict(id=sid, atlas=atlas_id, x=at[0]+2, y=at[1]+2, w=w, h=h, ox=ox, oy=oy, fw=fw, fh=fh))
+    heights.append(top)
+    atlas_image.save(OUT / ('atlas.png' if atlas_id == 0 else 'creatures.png'))
 write_index(slots, SIZE, OUT, GEN)
 (OUT / 'atlas.json').write_text(json.dumps(dict(size=SIZE, cell=CELL, fontSize=font_size, characters=chars,
                                                  glyphs=glyphs, slots=slots), ensure_ascii=False))
 (GEN / 'atlas-sources.json').write_text(json.dumps({'scene/background (background.png)': bg_src, **{t[0]: t[2] for t in tiles}}, indent=1, ensure_ascii=False))
-print(json.dumps(dict(slots=len(slots), creatureScale=CREATURE, glyphs=glyph_mode, characters=len(chars), usedHeight=top, size=SIZE,
+print(json.dumps(dict(slots=len(slots), creatureScale=CREATURE, glyphs=glyph_mode, characters=len(chars), usedHeight=heights, size=SIZE,
                       delivered=len(delivered), placeholders=len(placeholder),
                       fxFromV3=sorted(k for k, v in fx_sources.items() if 'art-v3' in v), backgroundHasStage=BACKGROUND_HAS_STAGE), ensure_ascii=False))

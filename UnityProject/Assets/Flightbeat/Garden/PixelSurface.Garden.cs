@@ -12,12 +12,13 @@ namespace Flightbeat.Rendering
             if (!gardenMaterialReady) {
                 ownedMaterial.shader = Resources.Load<Shader>("GardenR1/GardenSurface");
                 ownedMaterial.SetTexture("_GardenTex", Resources.Load<Texture2D>("GardenR1/atlas"));
+                ownedMaterial.SetTexture("_GardenTex2", Resources.Load<Texture2D>("GardenR1/creatures"));
                 gardenMaterialReady = true;
             }
         }
-        public void GardenQuad(float x, float y, float w, float h, Rect uv, Color tint, bool pixel = false, bool rigid = true) {
+        public void GardenQuad(float x, float y, float w, float h, Rect uv, Color tint, bool pixel = false, bool rigid = true, int atlas = 0) {
             PrepareGardenMaterial();
-            GardenAxisQuad(x, y, w, h, uv, tint, pixel ? 21f : 20f, rigid);
+            GardenAxisQuad(x, y, w, h, uv, tint, (atlas == 1 ? 22f : 20f) + (pixel ? 1f : 0f), rigid);
         }
         // v3 empty-pad swirl: axis-aligned quad with four explicit UV corners (bl, br, tr, tl), so the texture can rotate
         // while the quad stays flat. Rigid like other sprites: keeps its height and follows the mapped center.

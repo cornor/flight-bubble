@@ -14,7 +14,7 @@ namespace Flightbeat.Game
         internal GardenBattlePage gardenPage;
         PixelSurface gardenOverlay;
         readonly List<UiHit> gardenOverlayHits = new List<UiHit>();
-        bool GardenUiActive => !InHome && levelIndex < 4 && Battle != null;
+        bool GardenUiActive => !InHome && Battle != null;
         void InitializeGardenUi()
         {
             var prefab = Resources.Load<GardenBattlePage>("GardenR1/UI/GardenBattlePage");
@@ -88,7 +88,7 @@ namespace Flightbeat.Game
                 view.coins.Present(false, LastReward.coins); view.seeds.Present(false, LastReward.fragments);
                 view.statistics.Present(false, Battle.BestCombo, ResultRound(Battle.Time));
             }
-            view.campaignComplete.SetActive(won && levelIndex == 3);
+            view.campaignComplete.SetActive(won && levelIndex == Levels.Length - 1);
         }
         void RefreshGardenSettings(GardenBattlePage view)
         {

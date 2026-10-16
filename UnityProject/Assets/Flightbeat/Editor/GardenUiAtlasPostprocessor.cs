@@ -7,7 +7,7 @@ namespace Flightbeat.Editor
     {
         static void OnPostprocessAllAssets(string[] imported, string[] deleted, string[] moved, string[] from)
         {
-            if (Array.Exists(imported, p => p == "Assets/Flightbeat/Resources/GardenR1/atlas.json" || p == "Assets/Flightbeat/Resources/GardenR1/atlas.png"))
+            if (Array.Exists(imported, p => p == "Assets/Flightbeat/Resources/GardenR1/atlas.json" || p == "Assets/Flightbeat/Resources/GardenR1/atlas.png" || p == "Assets/Flightbeat/Resources/GardenR1/creatures.png"))
                 EditorApplication.delayCall += GardenBattleUiAssets.RefreshSprites;
         }
     }

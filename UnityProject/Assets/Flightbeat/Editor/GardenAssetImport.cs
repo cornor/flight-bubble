@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Flightbeat.Editor {
     public sealed class GardenAssetImport : AssetPostprocessor {
         void OnPreprocessTexture() {
-            if (!assetPath.EndsWith("/GardenR1/atlas.png")) return;
+            if (!assetPath.EndsWith("/GardenR1/atlas.png") && !assetPath.EndsWith("/GardenR1/creatures.png")) return;
             var t = (TextureImporter)assetImporter;
             t.textureType = TextureImporterType.Default;
             t.sRGBTexture = true; t.mipmapEnabled = false;

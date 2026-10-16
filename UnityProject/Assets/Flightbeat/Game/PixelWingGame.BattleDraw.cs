@@ -11,8 +11,8 @@ namespace Flightbeat.Game
         private void Draw(PixelSurface s)
         {
 #if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
-            Flightbeat.Garden.GardenSkin.HideOriginalParticles = !InHome && levelIndex < 4 && Battle.ActiveFinale == null;
-            if (!InHome && levelIndex < 4) { DrawGarden(s); return; }
+            Flightbeat.Garden.GardenSkin.HideOriginalParticles = !InHome && Battle.ActiveFinale == null;
+            if (!InHome) { DrawGarden(s); return; }
 #endif
             if (InHome) { DrawDeckBackground(s); return; }
             s.MapLayout = false;

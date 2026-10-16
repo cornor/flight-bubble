@@ -17,4 +17,4 @@ p.write_text(s)
 (build/'r1-perf.js').write_text((root/'scripts/r1/perf.js').read_text())
 
 (build/'LICENSE-NotoSansSC.txt').write_text((root/'UnityProject/Assets/Flightbeat/Resources/GardenR1/OFL.txt').read_text())
-(build/'打开说明.txt').write_text(f'{name} {label}。不要直接双击 index.html。\n在本目录运行 python3 -m http.server {port} --bind 0.0.0.0，然后访问 http://127.0.0.1:{port}/ 。\n同一局域网的设备用电脑的局域网 IP 替换 127.0.0.1。网址加 ?perf=1 可导出只读性能记录。\n前四关使用新包装，主页和终结技保留原版。第 5 关后仍是原版外观。\n')
+(build/'打开说明.txt').write_text(f'{name} {label}。不要直接双击 index.html。\n在本目录运行 python3 -m http.server {port} --bind 0.0.0.0，然后访问 http://127.0.0.1:{port}/ 。\n同一局域网的设备用电脑的局域网 IP 替换 127.0.0.1。网址加 ?perf=1 可导出只读性能记录。\n全部 262 关使用泡泡包装，缺图颜色使用占位队员；全歼终结演出保留原版。主页只有开始和设置，体力不限制进关。\n')

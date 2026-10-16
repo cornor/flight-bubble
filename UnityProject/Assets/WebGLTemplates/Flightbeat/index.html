@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Flightbeat</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#000;color:#c1d7e8;font:13px system-ui,sans-serif;overflow:hidden}
+    main{height:100%;display:flex;align-items:center;justify-content:center}
+    #stage{height:100%;max-height:100dvh;aspect-ratio:9/16;position:relative;max-width:100vw}
+    canvas{display:block;width:100%;height:100%;background:#000;outline:none}
+    #loading{position:absolute;inset:0;display:grid;place-content:center;gap:16px;text-align:center;background:#030b13;z-index:3}
+    progress{width:220px;accent-color:#61dff6}
+    #broadcast-status{display:none}
+  </style>
+</head>
+<body>
+  <main><div id="stage"><canvas id="unity-canvas" tabindex="-1" aria-label="Flightbeat 游戏画面"></canvas><div id="loading"><strong>Flightbeat</strong><span>加载中</span><progress max="1" value="0"></progress></div></div></main>
+  <span id="broadcast-status" hidden aria-hidden="true"></span>
+  <script>
+    const canvas=document.getElementById('unity-canvas');
+    const config={dataUrl:'Build/{{{ DATA_FILENAME }}}',frameworkUrl:'Build/{{{ FRAMEWORK_FILENAME }}}',codeUrl:'Build/{{{ CODE_FILENAME }}}',streamingAssetsUrl:'StreamingAssets',companyName:"PixelWing",productName:"PixelWing",productVersion:"0.11.0",devicePixelRatio:Math.min(window.devicePixelRatio||1,1.5)};
+    const loader=document.createElement('script');loader.src='Build/{{{ LOADER_FILENAME }}}';
+    loader.onload=()=>createUnityInstance(canvas,config,p=>document.querySelector('progress').value=p).then(instance=>{
+      document.getElementById('loading').remove();
+      canvas.focus();
+    }).catch(error=>{console.error(error);document.getElementById('loading').textContent='加载失败，请刷新重试';});
+    loader.onerror=()=>document.getElementById('loading').textContent='加载失败，请刷新重试';document.body.appendChild(loader);
+  </script>
+</body>
+</html>

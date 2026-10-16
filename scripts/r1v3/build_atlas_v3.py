@@ -1,0 +1,306 @@
+#!/usr/bin/env python3
+"""R1 v3 (bubble squad) atlas: art-AI deliveries, program placeholders for anything missing,
+program-drawn beads / mosaic panel, v2 battle FX frames, and the glyph block.
+
+usage: python3 scripts/r1v3/build_atlas_v3.py [--delivery DIR] [--font PATH]
+- Reads finished PNGs from Art/R1/art-v3/delivery (2x logical size); any file not yet delivered
+  is replaced by a placeholder from placeholders.py (listed as "placeholder" in the output).
+- Stores UI at 1.5x logical (x0.75) in one 2048x2048 texture, as in v2. The full background has its own
+  texture (background.png, 810x1440 = x0.75) since 2026-10-15, so blink/cheer poses fit the atlas.
+- Creatures are full-color per level color under the existing slot names plants/<internal>/<HEX>/<state>
+  (docs/r1/界面规范-v3.md section 5 maps creature ids to internal ids).
+- Battle FX: each strip comes from art-v3/delivery/fx when delivered, otherwise from the v2 delivery
+  (same file names, sizes and frame counts as v2, so the game code is unchanged).
+- Glyphs: rebuilt from Noto Sans SC when the character set in code/prefabs changed.
+"""
+import argparse, hashlib, json, math, os, re, sys
+from pathlib import Path
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / 'scripts/r1v2')); sys.path.insert(0, str(Path(__file__).parent))
+from build_fx_atlas import SPECS as FX_SPECS, write_index
+import placeholders as P
+
+ap = argparse.ArgumentParser()
+ap.add_argument('--delivery', default=str(ROOT / 'Art/R1/art-v3/delivery'))
+ap.add_argument('--fx-delivery', default=str(ROOT / 'Art/R1/art-v2/delivery'))
+ap.add_argument('--out', default=str(ROOT / 'UnityProject/Assets/Flightbeat/Resources/GardenR1'))
+ap.add_argument('--generated', default=str(ROOT / 'Art/R1/art-v3/generated'))
+ap.add_argument('--code', default=str(ROOT / 'UnityProject/Assets/Flightbeat'))
+ap.add_argument('--font', default=str(ROOT / 'Builds/fonts/NotoSansSC.ttf'))
+args = ap.parse_args()
+DEL, FXDEL, OUT, GEN, CODE, FONT = map(Path, (args.delivery, args.fx_delivery, args.out, args.generated, args.code, args.font))
+SIZE, CELL, FONT_SIZE = 2048, 40, 32
+FONT_SHA = 'a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da'
+UI = 0.75
+# Creature canvases are stored at the UI scale (224x256 -> 168x192 px, display canvas at most 118 logical px).
+# If blink/cheer poses (items 58/59) make the 2048 atlas overflow, the script re-runs itself with a smaller
+# creature scale, down to 0.62 (139x159 px); the scale used is printed as creatureScale.
+CREATURE = float(os.environ.get('R1_CREATURE_SCALE', UI))
+
+# ---- (slot id, delivery file, scale, placeholder factory)
+SLOTS = [
+    ('scene/ceiling', 'scene/ceiling.png', UI, P.ceiling),
+    ('scene/fence', 'scene/rail.png', UI, P.rail),
+    ('scene/stage', 'scene/stage.png', 0.5, None),   # optional painted lower-half stage; program tray when absent
+    ('scene/pause', 'ui/pause.png', UI, P.pause),
+    ('scene/level', 'ui/level.png', UI, P.level),
+    ('scene/progress-frame', 'ui/progress-frame.png', UI, P.progress_frame),
+    ('scene/progress-fill', 'ui/progress-fill.png', UI, P.progress_fill),
+    ('scene/plot', 'ui/pad.png', UI, P.pad),
+    ('scene/plot-locked', 'ui/pad-locked.png', UI, P.pad_locked),
+    ('scene/pad-swirl', 'ui/pad-swirl.png', UI, P.pad_swirl),
+    ('scene/badge-ammo', 'ui/badge-ammo.png', UI, P.badge_ammo),
+    ('scene/tier-coin', 'ui/tier-coin.png', UI, P.tier_coin),
+    ('scene/crown', 'ui/crown.png', UI, P.crown),
+    ('scene/queue-panel', 'ui/queue-panel.png', UI, P.queue_panel),
+    ('scene/queue-corner', 'ui/queue-corner.png', UI, P.queue_corner),
+    ('scene/button-shuffle', 'ui/button-shuffle.png', UI, lambda: P.button('shuffle', '重排', FONT)),
+    ('scene/button-designate', 'ui/button-designate.png', UI, lambda: P.button('designate', '优先出战', FONT)),
+    ('scene/button-water', 'ui/button-bomb.png', UI, lambda: P.button('bomb', '泡泡炸弹', FONT)),
+    ('scene/badge', 'ui/badge-count.png', UI, P.badge_count),
+    # second batch (v3 file names; placeholders until delivered)
+    ('ui/popup-panel', 'ui2/popup-panel.png', UI, P.popup_panel),
+    ('ui/popup-ribbon', 'ui2/popup-ribbon.png', UI, P.popup_ribbon),
+    ('ui/button-primary', 'ui2/button-primary.png', UI, P.button_primary),
+    ('ui/button-secondary', 'ui2/button-secondary.png', UI, P.button_secondary),
+    ('ui/toggle-on', 'ui2/toggle-on.png', UI, lambda: P.toggle(True)),
+    ('ui/toggle-off', 'ui2/toggle-off.png', UI, lambda: P.toggle(False)),
+    ('ui/card-frame', 'ui2/card-frame.png', 0.5, P.card_frame),
+    ('ui/card-rays', 'ui2/card-rays.png', 0.5, P.card_rays),
+    ('ui/speech-bubble', 'ui2/speech-bubble.png', UI, P.speech_bubble),
+    ('ui/banner-warning', 'ui2/banner-warning.png', UI, lambda: P.banner('warning')),
+    ('ui/banner-hint', 'ui2/banner-hint.png', UI, lambda: P.banner('hint')),
+]
+CREATURES = {  # creature id -> (internal slot id, colors)
+    'blue': ('morning-glory', ['2982F4', '42A9FF']), 'orange': ('carrot', ['FF7E27', 'FF9D30']),
+    'green': ('broccoli', ['62E18E']), 'purple': ('eggplant', ['BD80FF']), 'yellow': ('sunflower', ['FFDF48']),
+    'white': ('cabbage', ['FFFFFF']), 'red': ('strawberry', ['FF525B']), 'charcoal': ('truffle', ['2D2D2D'])}
+for cid, (internal, hexes) in CREATURES.items():
+    for h in hexes:
+        for st in ['idle', 'attack', 'spent']:
+            SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE,
+                          (lambda c=cid, x=h, s=st: P.creature(c, x, s))))
+        SLOTS.append((f'plants/{internal}/{h}/projectile', f'creatures/{cid}/{h}/projectile.png', UI, (lambda x=h: P.projectile(x))))
+        for st in ['blink', 'cheer']:   # optional (items 58/59): no placeholder, the game falls back to idle
+            SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE, None))
+# Guide "Xiao Lan" portraits: second batch; until then the blue creature's idle / attack / spent art.
+GUIDE = {'explain': 'idle', 'happy': 'attack', 'worried': 'spent', 'proud': 'idle'}
+for face, st in GUIDE.items():
+    SLOTS.append((f'ui/guide-{face}', f'ui2/guide-{face}.png', UI, None, ('creatures/blue/2982F4/' + st + '.png', (lambda s=st: P.creature('blue', '2982F4', s)))))
+
+# ---- program-drawn: beads, mosaic panel, glow, arrow
+def bead(px, teaching_mark=None, rim=None):
+    s = 16; n = px * s
+    main = Image.new('RGBA', (n, n), (0, 0, 0, 0)); fixed = Image.new('RGBA', (n, n), (0, 0, 0, 0))
+    dm, df = ImageDraw.Draw(main), ImageDraw.Draw(fixed)
+    r = n * .47; cx = cy = n / 2
+    for i in range(int(r), 0, -1):          # light top-left, slightly darker lower right (tinted)
+        t = i / r
+        g = int(255 * (0.78 + 0.22 * (1 - t) ** .6))
+        ox, oy = -(1 - t) * r * .25, -(1 - t) * r * .28
+        dm.ellipse([cx - i + ox, cy - i + oy, cx + i + ox, cy + i + oy], fill=(g, g, g, 255))
+    ring = Image.new('L', (n, n), 0); ImageDraw.Draw(ring).ellipse([cx - r, cy - r, cx + r, cy + r], fill=255)
+    inner = ring.filter(ImageFilter.MinFilter(int(s * 1.4) | 1))
+    main.putalpha(ring)
+    edge = Image.composite(Image.new('L', (n, n), 0), ring, inner)
+    main.paste(Image.new('RGBA', (n, n), (158, 158, 158, 255)), (0, 0), edge)   # same-hue rim = main x 0.62
+    df.ellipse([cx - r * .58, cy - r * .62, cx - r * .08, cy - r * .2], fill=(255, 255, 255, 220))
+    if rim: fixed.paste(Image.new('RGBA', (n, n), rim), (0, 0), edge)
+    if teaching_mark:                       # UI spec v3 4.1: blue dot, orange triangle, green square, purple cross
+        mk = Image.new('RGBA', (n, n), (0, 0, 0, 0)); dk = ImageDraw.Draw(mk); w = r * .3
+        mx, my = cx + r * .06, cy + r * .14
+        if teaching_mark == 'dot': dk.ellipse([mx - w, my - w, mx + w, my + w], fill=(255, 255, 255, 255))
+        elif teaching_mark == 'tri': dk.polygon([(mx, my - w * 1.1), (mx + w * 1.05, my + w * .8), (mx - w * 1.05, my + w * .8)], fill=(255, 255, 255, 255))
+        elif teaching_mark == 'square': dk.rectangle([mx - w * .85, my - w * .85, mx + w * .85, my + w * .85], fill=(255, 255, 255, 255))
+        elif teaching_mark == 'cross':
+            dk.line([(mx - w, my - w), (mx + w, my + w)], fill=(255, 255, 255, 255), width=int(r * .2))
+            dk.line([(mx - w, my + w), (mx + w, my - w)], fill=(255, 255, 255, 255), width=int(r * .2))
+        sh = mk.split()[3].filter(ImageFilter.MaxFilter(int(s * 1.2) | 1))
+        fixed.paste(Image.new('RGBA', (n, n), (35, 64, 107, 255)), (0, 0), sh); fixed.alpha_composite(mk)
+    return main.resize((px, px), Image.LANCZOS), fixed.resize((px, px), Image.LANCZOS)
+
+def field(px=96, radius=24, edge=9):
+    """Mosaic panel: exact #8C919C in the middle (UI spec v3 2), soft darker inner edge; drawn 9-sliced."""
+    n = px * 4; base = (0x8C, 0x91, 0x9C)
+    im = Image.new('RGBA', (n, n), (0, 0, 0, 0))
+    ImageDraw.Draw(im).rounded_rectangle([0, 0, n - 1, n - 1], radius * 4, fill=base + (255,))
+    shade = Image.new('L', (n, n), 0); ImageDraw.Draw(shade).rounded_rectangle([0, 0, n - 1, n - 1], radius * 4, fill=255)
+    core = Image.new('L', (n, n), 0); ImageDraw.Draw(core).rounded_rectangle([edge * 4, edge * 4, n - 1 - edge * 4, n - 1 - edge * 4], max(4, (radius - edge) * 4), fill=255)
+    rim = Image.composite(Image.new('L', (n, n), 0), shade, core).filter(ImageFilter.GaussianBlur(10))
+    dark = Image.new('RGBA', (n, n), tuple(int(v * .8) for v in base) + (255,))
+    im.paste(dark, (0, 0), Image.eval(rim, lambda v: min(255, int(v * .55))))
+    im.putalpha(shade)
+    out = im.resize((px, px), Image.LANCZOS)
+    c = px // 2
+    out.paste(base + (255,), (radius, radius, px - radius, px - radius))   # guarantee exact center color
+    return out
+
+def glow(px):
+    n = px * 4; im = Image.new('L', (n, n), 0); d = ImageDraw.Draw(im)
+    for i in range(n // 2, 0, -1):
+        t = i / (n / 2); d.ellipse([n / 2 - i, n / 2 - i, n / 2 + i, n / 2 + i], fill=int(255 * min(1, 1.25 * (1 - t) ** 0.9)))
+    im = im.filter(ImageFilter.GaussianBlur(n / 40)).resize((px, px), Image.LANCZOS)
+    out = Image.new('RGBA', (px, px), (255, 255, 255, 0)); out.putalpha(im); return out
+
+GENERATED = {}
+m, f = bead(11); GENERATED['bugs/bead-main'], GENERATED['bugs/bead-fixed'] = m, f
+GENERATED['bugs/bead-white-fixed'] = bead(11, rim=(140, 150, 162, 255))[1]
+GENERATED['bugs/bead-dark-fixed'] = bead(11, rim=(150, 154, 160, 255))[1]
+GENERATED['bugs/bead-teaching-main'] = bead(21)[0]
+for key, mark in {'morning-glory': 'dot', 'carrot': 'tri', 'broccoli': 'square', 'eggplant': 'cross'}.items():
+    GENERATED[f'bugs/bead-teaching-{key}-fixed'] = bead(21, teaching_mark=mark)[1]
+GENERATED['bugs/bead-teaching-fixed'] = bead(21)[1]
+# scene/field (the #8C919C mosaic panel) was dropped on 2026-10-15: beads sit on the background sky.
+def tray(px=112, radius=28):
+    """Lower-half stage behind pads and queues (2026-10-15, matches the mockup's muted blue-gray tray).
+    Nine-sliced: vertical gradient in the middle, rounded top corners, soft white rim along the top edge."""
+    n = px * 4; top, bottom = (0xB9, 0xCB, 0xE2), (0x9A, 0xB2, 0xD1)
+    grad = Image.new('RGBA', (n, n))
+    for y in range(n):
+        t = y / (n - 1); grad.paste(tuple(int(top[i] + (bottom[i] - top[i]) * t) for i in range(3)) + (235,), (0, y, n, y + 1))
+    mask = Image.new('L', (n, n), 0); ImageDraw.Draw(mask).rounded_rectangle([0, 0, n - 1, n + radius * 8], radius * 4, fill=255)
+    rim = Image.new('RGBA', (n, n), (0, 0, 0, 0)); ImageDraw.Draw(rim).rounded_rectangle([2, 2, n - 3, n + radius * 8], radius * 4 - 2, outline=(255, 255, 255, 170), width=10)
+    grad.alpha_composite(rim.filter(ImageFilter.GaussianBlur(3)))
+    grad.putalpha(Image.composite(grad.getchannel('A'), Image.new('L', (n, n), 0), mask))
+    return grad.resize((px, px), Image.LANCZOS)
+# Item 57 (2026-10-15): the redrawn full background has the stage painted in. The art AI keeps the old file as
+# _originals/background-v1.png; when the current background differs from it, no program tray is generated
+# (the game draws scene/stage if present, else scene/tray if present, else nothing).
+_bg, _bg1 = DEL / 'scene/background.png', DEL / '_originals/background-v1.png'
+BACKGROUND_HAS_STAGE = _bg.exists() and _bg1.exists() and _bg.read_bytes() != _bg1.read_bytes()
+# 2026-10-15 19:58: item 57 lost the floating islands and waterfalls of the mockup. Until a redrawn background
+# that keeps them (item 60) is delivered, compose_background.py flattens item 1 + item 56 into one image, used instead.
+ITEM57_SHA = '8deba1cd1a478ec104774227e4422d711f28878dec537e6b2bccc713e2c8bde6'
+_composite = GEN / 'background-composite.png'
+if _composite.exists() and _bg.exists() and hashlib.sha256(_bg.read_bytes()).hexdigest() == ITEM57_SHA:   # item 60 wins once delivered
+    _bg, BACKGROUND_HAS_STAGE = _composite, True
+if not BACKGROUND_HAS_STAGE:
+    GENERATED['scene/tray'] = tray()
+else:   # the painted stage is part of the background: neither scene/stage nor the program tray is drawn
+    SLOTS[:] = [e for e in SLOTS if e[0] != 'scene/stage']
+GENERATED['fx/glow'] = glow(96)
+_ptr = DEL / 'ui2/pointer.png'   # tutorial arrow: delivered art when present (stored at 48 px like v2)
+GENERATED['fx/arrow'] = Image.open(_ptr).convert('RGBA').resize((48, 48), Image.LANCZOS) if _ptr.exists() else P.pointer(48)
+
+# ---- glyph block
+text = ''.join(p.read_text(encoding='utf-8') for p in CODE.rglob('*.cs'))
+for p in CODE.rglob('*.prefab'):
+    text += re.sub(r'\\u([0-9a-fA-F]{4})', lambda m: chr(int(m[1], 16)), p.read_text(encoding='utf-8'))
+chars = ''.join(chr(i) for i in range(32, 127)) + ''.join(sorted(set(c for c in text if ord(c) >= 128)))
+old = json.loads((OUT / 'atlas.json').read_text())
+cols = SIZE // CELL
+image = Image.new('RGBA', (SIZE, SIZE))
+if set(chars) <= set(old['characters']) and old['size'] == SIZE and old['cell'] == CELL:
+    chars = old['characters']; glyphs = old['glyphs']; font_size = old['fontSize']
+    cursor_y = ((len(chars) + cols - 1) // cols) * CELL
+    image.alpha_composite(Image.open(OUT / 'atlas.png').convert('RGBA').crop((0, 0, SIZE, cursor_y)), (0, 0))
+    glyph_mode = 'reused'
+else:
+    if hashlib.sha256(FONT.read_bytes()).hexdigest() != FONT_SHA:
+        raise SystemExit(f'{FONT}: not the recorded Noto Sans SC file (font-source.json)')
+    font = ImageFont.truetype(str(FONT), FONT_SIZE); font.set_variation_by_axes([600])
+    draw = ImageDraw.Draw(image); glyphs = []; font_size = FONT_SIZE
+    for i, c in enumerate(chars):
+        x, y = (i % cols) * CELL, (i // cols) * CELL
+        left, top, right, bottom = font.getbbox(c, anchor='ls')
+        draw.text((x + 2 - left, y + 2 - top), c, font=font, fill='white', anchor='ls')
+        glyphs.append(dict(code=ord(c), x=x + 2, y=y + 2, w=right - left, h=bottom - top, advance=font.getlength(c) / FONT_SIZE,
+                           bearingX=left / FONT_SIZE, bearingY=top / FONT_SIZE))
+    cursor_y = ((len(chars) + cols - 1) // cols) * CELL
+    glyph_mode = 'rebuilt'
+
+# ---- tiles
+tiles, placeholder, delivered = [], [], []
+(GEN / 'placeholders').mkdir(parents=True, exist_ok=True)
+for entry in SLOTS:
+    sid, rel, sc, make = entry[:4]
+    p = DEL / rel
+    if p.exists():
+        im = Image.open(p).convert('RGBA'); src = hashlib.sha256(p.read_bytes()).hexdigest(); delivered.append(rel)
+    else:
+        if make is None and len(entry) < 5:    # optional art with no placeholder (scene/stage)
+            continue
+        if make is None:                       # guide portraits fall back to the blue creature
+            alt_rel, alt_make = entry[4]
+            q = DEL / alt_rel
+            im = Image.open(q).convert('RGBA') if q.exists() else alt_make()
+        else:
+            im = make()
+        src = 'placeholder'; placeholder.append(rel)
+        out = GEN / 'placeholders' / rel; out.parent.mkdir(parents=True, exist_ok=True); im.save(out)
+    if sid == 'scene/pad-swirl':               # room to rotate the UVs without leaving the slot (UI spec v3 4.3)
+        k = math.ceil(im.width * 1.42); pad = Image.new('RGBA', (k, k), (0, 0, 0, 0))
+        pad.alpha_composite(im, ((k - im.width) // 2, (k - im.height) // 2)); im = pad
+    im = im.resize((max(1, round(im.width * sc)), max(1, round(im.height * sc))), Image.LANCZOS)
+    tiles.append((sid, im, src))
+for sid, im in GENERATED.items(): tiles.append((sid, im, 'generated'))
+BG_SIZE = (810, 1440)
+if _bg.exists():
+    background = Image.open(_bg).convert('RGB'); bg_src = _bg.name + ':' + hashlib.sha256(_bg.read_bytes()).hexdigest(); delivered.append('scene/background.png')
+else:
+    background = P.background().convert('RGB'); bg_src = 'placeholder'; placeholder.append('scene/background.png')
+background.resize(BG_SIZE, Image.LANCZOS).save(OUT / 'background.png')
+fx_sources = {}
+for name, count in FX_SPECS.items():
+    path = DEL / 'fx' / (name + '.png')
+    if not path.exists(): path = FXDEL / 'fx' / (name + '.png')
+    fx_sources[name] = str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path)
+    im = Image.open(path).convert('RGBA'); assert im.width % count == 0, path
+    cw = im.width // count; sha = hashlib.sha256(path.read_bytes()).hexdigest()
+    for i in range(count):
+        cell = im.crop((i * cw, 0, (i + 1) * cw, im.height)).convert('RGBa').resize((cw // 2, im.height // 2), Image.Resampling.LANCZOS).convert('RGBA')
+        tiles.append((f'fx/{name}/{i}', cell, sha))
+(GEN / 'program').mkdir(parents=True, exist_ok=True)
+for sid, im in GENERATED.items(): im.save(GEN / 'program' / (sid.replace('/', '__') + '.png'))
+
+trimmed = []
+for sid, im, src in tiles:
+    fw, fh = im.size
+    bb = im.getchannel('A').point(lambda v: 255 if v > 0 else 0).getbbox() or (0, 0, 1, 1)
+    if sid.startswith(('bugs/', 'fx/')) or sid in ('scene/background', 'scene/field', 'scene/pad-swirl', 'scene/tray'): bb = (0, 0, fw, fh)
+    trimmed.append((sid, im.crop(bb), src, bb[0], bb[1], fw, fh))
+tiles = trimmed
+tiles.sort(key=lambda t: (-max(t[1].size), -t[1].width * t[1].height, t[0]))
+free = [(0, cursor_y, SIZE, SIZE - cursor_y)]
+def place(w, h):
+    choices = [(min(rw-w,rh-h), max(rw-w,rh-h), y, x) for x,y,rw,rh in free if w<=rw and h<=rh]
+    if not choices: return None
+    _, _, y, x = min(choices); right, bottom = x+w, y+h
+    remaining = []
+    for fx,fy,fw,fh in free:
+        fr, fb = fx+fw, fy+fh
+        if right<=fx or x>=fr or bottom<=fy or y>=fb:
+            remaining.append((fx,fy,fw,fh)); continue
+        if x>fx: remaining.append((fx,fy,x-fx,fh))
+        if right<fr: remaining.append((right,fy,fr-right,fh))
+        if y>fy: remaining.append((fx,fy,fw,y-fy))
+        if bottom<fb: remaining.append((fx,bottom,fw,fb-bottom))
+    remaining = list(dict.fromkeys(remaining))
+    free[:] = [r for i,r in enumerate(remaining) if not any(i!=j and q[0]<=r[0] and q[1]<=r[1] and q[0]+q[2]>=r[0]+r[2] and q[1]+q[3]>=r[1]+r[3] for j,q in enumerate(remaining))]
+    return x,y
+slots, top = [], cursor_y
+for sid, im, src, ox, oy, fw, fh in tiles:
+    w, h = im.size
+    at = place(w + 4, h + 4)
+    if at is None:
+        if CREATURE > 0.62 + 1e-6:
+            os.environ['R1_CREATURE_SCALE'] = f'{max(0.62, CREATURE - 0.04):.2f}'
+            print(f'Atlas full at {sid} with creature scale {CREATURE:.2f}; retrying at {os.environ["R1_CREATURE_SCALE"]}', file=sys.stderr)
+            os.execv(sys.executable, [sys.executable, str(Path(__file__).resolve()), *sys.argv[1:]])
+        raise SystemExit(f'Atlas full at {sid}')
+    image.alpha_composite(im, (at[0] + 2, at[1] + 2)); top = max(top, at[1] + h + 4)
+    if sid.startswith('fx/') or sid in ('scene/field', 'scene/tray'):
+        px, py = at[0] + 2, at[1] + 2   # extrude edges into the 2px guard for bilinear sampling
+        image.paste(im.crop((0,0,w,1)).resize((w,2)),(px,py-2)); image.paste(im.crop((0,h-1,w,h)).resize((w,2)),(px,py+h))
+        image.paste(im.crop((0,0,1,h)).resize((2,h)),(px-2,py)); image.paste(im.crop((w-1,0,w,h)).resize((2,h)),(px+w,py))
+    slots.append(dict(id=sid, x=at[0] + 2, y=at[1] + 2, w=w, h=h, ox=ox, oy=oy, fw=fw, fh=fh))
+image.save(OUT / 'atlas.png')
+write_index(slots, SIZE, OUT, GEN)
+(OUT / 'atlas.json').write_text(json.dumps(dict(size=SIZE, cell=CELL, fontSize=font_size, characters=chars,
+                                                 glyphs=glyphs, slots=slots), ensure_ascii=False))
+(GEN / 'atlas-sources.json').write_text(json.dumps({'scene/background (background.png)': bg_src, **{t[0]: t[2] for t in tiles}}, indent=1, ensure_ascii=False))
+print(json.dumps(dict(slots=len(slots), creatureScale=CREATURE, glyphs=glyph_mode, characters=len(chars), usedHeight=top, size=SIZE,
+                      delivered=len(delivered), placeholders=len(placeholder),
+                      fxFromV3=sorted(k for k, v in fx_sources.items() if 'art-v3' in v), backgroundHasStage=BACKGROUND_HAS_STAGE), ensure_ascii=False))

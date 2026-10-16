@@ -1,0 +1,331 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Flightbeat.Garden;
+using Flightbeat.Garden.UI;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
+using Object = UnityEngine.Object;
+
+namespace Flightbeat.Editor
+{
+    // One-time authoring tool. Existing prefabs are never regenerated on build.
+    // Only atlas-derived Sprite assets are refreshed when the atlas is repacked.
+    public static class GardenBattleUiAssets
+    {
+        public const string Root = "Assets/Flightbeat/Resources/GardenR1/UI";
+        const string SpriteRoot = "Assets/Flightbeat/Garden/UI/Sprites";
+        const string Catalog = "Assets/Flightbeat/Garden/UI/sprite-catalog.json";
+        [Serializable] class Spec { public string name, slot; public Rect crop = new Rect(0, 0, 1, 1); public Vector4 border; }
+        [Serializable] class Specs { public List<Spec> sprites = new List<Spec>(); }
+        static Specs specs;
+        static GardenSkin.Atlas atlas;
+        static Texture2D texture, backgroundTexture;
+        const string BackgroundSlot = "scene/background";   // own texture (background.png) since 2026-10-15
+        static readonly Color Cream = GardenSkin.Cream, Ink = GardenSkin.Ink;
+
+        // R1 v3 (bubble squad, docs/r1/界面规范-v3.md): regenerate the five sections and the page from this
+        // authoring code. Deletes only the generated prefabs, their sprite assets and the sprite catalog.
+        [MenuItem("Flightbeat/Garden/Recreate battle UI prefabs for v3")]
+        public static void RecreateForV3()
+        {
+            foreach (string name in new[] { "GardenBattlePage", "GardenBattleBackground", "GardenBattleHeader", "GardenBattleControls", "GardenPauseDialog", "GardenResultDialog" })
+                AssetDatabase.DeleteAsset(Root + "/" + name + ".prefab");
+            foreach (string guid in AssetDatabase.FindAssets("t:Sprite", new[] { SpriteRoot }))
+                AssetDatabase.DeleteAsset(AssetDatabase.GUIDToAssetPath(guid));
+            AssetDatabase.DeleteAsset(Catalog);
+            AssetDatabase.Refresh();
+            Create();
+        }
+        [MenuItem("Flightbeat/Garden/Create battle UI prefabs (once)")]
+        public static void Create()
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(Root + "/GardenBattlePage.prefab"))
+                throw new InvalidOperationException("Battle UI already exists. Edit its prefabs; this tool does not overwrite authored layouts.");
+            Directory.CreateDirectory(Root); Directory.CreateDirectory(SpriteRoot);
+            AssetDatabase.Refresh(); LoadAtlas(); specs = new Specs();
+            SaveSection(Background(), "GardenBattleBackground");
+            SaveSection(Header(), "GardenBattleHeader");
+            SaveSection(Controls(), "GardenBattleControls");
+            SaveSection(Pause(), "GardenPauseDialog");
+            SaveSection(Result(), "GardenResultDialog");
+            var root = Node("GardenBattlePage", null, 0, 0, 540, 960);
+            Stretch(root);
+            // A real parent Canvas is required before Unity retains the nested
+            // canvases' overrideSorting flag in the prefab.
+            root.gameObject.AddComponent<Canvas>();
+            var view = root.gameObject.AddComponent<GardenBattlePage>();
+            view.background = Instance("GardenBattleBackground", root, -1);
+            view.header = Instance("GardenBattleHeader", root, 21);
+            view.controls = Instance("GardenBattleControls", root, 21);
+            view.pauseDialog = Instance("GardenPauseDialog", root, 30);
+            view.resultDialog = Instance("GardenResultDialog", root, 31);
+            view.backgroundTop = Find<RectTransform>(view.background, "Top band");
+            view.backgroundField = Find<RectTransform>(view.background, "Field band");
+            view.backgroundBottom = Find<RectTransform>(view.background, "Bottom band");
+            view.headerBand = Find<RectTransform>(view.header, "Top safe band");
+            view.controlsBand = Find<RectTransform>(view.controls, "Bottom safe band");
+            view.lessonTitle = Find<GardenUiText>(view.header, "Lesson title");
+            view.levelTitle = Find<GardenUiText>(view.header, "Level title");
+            view.progressText = Find<GardenUiText>(view.header, "Progress percent");
+            view.progressFill = Find<Image>(view.header, "Progress fill");
+            view.tutorialHint = Find<RectTransform>(view.controls, "Tutorial hint").gameObject;
+            view.propButtons = Find<RectTransform>(view.controls, "Prop buttons").gameObject;
+            view.props = new GardenUiAction[3]; view.propAmounts = new GardenUiText[3]; view.propCancelLabels = new GameObject[3];
+            for (int i = 0; i < 3; i++)
+            {
+                var prop = Find<RectTransform>(view.controls, "Prop " + i).gameObject;
+                view.props[i] = prop.GetComponent<GardenUiAction>();
+                view.propAmounts[i] = Find<GardenUiText>(prop, "Amount");
+                view.propCancelLabels[i] = Find<RectTransform>(prop, "Cancel hint").gameObject;
+            }
+            view.settingsPanel = Find<RectTransform>(view.pauseDialog, "Settings").gameObject;
+            view.pausedPanel = Find<RectTransform>(view.pauseDialog, "Paused").gameObject;
+            view.musicText = Find<GardenUiText>(view.pauseDialog, "Music text");
+            view.soundText = Find<GardenUiText>(view.pauseDialog, "Sound text");
+            view.lightText = Find<GardenUiText>(view.pauseDialog, "Light text");
+            view.toggleIcons = new[] { Find<Image>(view.pauseDialog, "Music toggle"), Find<Image>(view.pauseDialog, "Sound toggle"), Find<Image>(view.pauseDialog, "Light toggle") };
+            view.toggleOn = Sprite("ui/toggle-on"); view.toggleOff = Sprite("ui/toggle-off");
+            view.missionResult = Find<RectTransform>(view.resultDialog, "Mission result").gameObject;
+            view.lessonComplete = Find<RectTransform>(view.resultDialog, "Lesson complete").gameObject;
+            view.rewardGroup = Find<RectTransform>(view.resultDialog, "Rewards").gameObject;
+            view.campaignComplete = Find<RectTransform>(view.resultDialog, "Campaign complete").gameObject;
+            view.resultTitle = Find<GardenUiText>(view.resultDialog, "Result title");
+            view.resultLesson = Find<GardenUiText>(view.resultDialog, "Result lesson");
+            view.resultLevel = Find<GardenUiText>(view.resultDialog, "Result level");
+            view.resultProgress = Find<GardenUiText>(view.resultDialog, "Result progress");
+            view.coins = Find<GardenUiText>(view.resultDialog, "Coins");
+            view.seeds = Find<GardenUiText>(view.resultDialog, "Seeds");
+            view.statistics = Find<GardenUiText>(view.resultDialog, "Statistics");
+            view.resultContinue = Find<GardenUiText>(view.resultDialog, "Continue text");
+            view.resultPortrait = Find<Image>(view.resultDialog, "Portrait");
+            view.happyPortrait = Sprite("ui/guide-happy"); view.worriedPortrait = Sprite("ui/guide-worried");
+            // Child previews are visible when opened separately; the composite opens
+            // in the normal battle view. Runtime visibility uses these same objects.
+            view.pauseDialog.SetActive(false); view.resultDialog.SetActive(false);
+            PrefabUtility.SaveAsPrefabAsset(root.gameObject, Root + "/GardenBattlePage.prefab");
+            Object.DestroyImmediate(root.gameObject);
+            File.WriteAllText(Catalog, JsonUtility.ToJson(specs, true) + "\n");
+            AssetDatabase.Refresh(); AssetDatabase.SaveAssets();
+            Debug.Log("GARDEN_UI_PREFABS_CREATED: five nested sections and battle page");
+        }
+        static void LoadAtlas()
+        {
+            atlas = JsonUtility.FromJson<GardenSkin.Atlas>(File.ReadAllText("Assets/Flightbeat/Resources/GardenR1/atlas.json"));
+            texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Flightbeat/Resources/GardenR1/atlas.png");
+            if (!texture) throw new FileNotFoundException("Garden atlas texture");
+            backgroundTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Flightbeat/Resources/GardenR1/background.png");
+            if (!backgroundTexture) throw new FileNotFoundException("Garden background texture");
+        }
+        public static void RefreshSprites()
+        {
+            if (!File.Exists(Catalog)) return;
+            LoadAtlas(); specs = JsonUtility.FromJson<Specs>(File.ReadAllText(Catalog));
+            foreach (Spec spec in specs.sprites) WriteSprite(spec);
+            AssetDatabase.SaveAssets();
+            var page = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "/GardenBattlePage.prefab");
+            if (page)
+                foreach (var label in page.GetComponentsInChildren<GardenUiText>(true))
+                    foreach (char c in label.text + label.alternateText)
+                        if (!char.IsWhiteSpace(c) && atlas.characters.IndexOf(c) < 0)
+                            throw new InvalidOperationException($"Missing garden font glyph '{c}' in {label.name}. Rebuild the font atlas before building the game.");
+        }
+        static Sprite Sprite(string id, Vector4 border = default, string suffix = "", Rect? crop = null)
+        {
+            string name = id.Replace('/', '-') + suffix;
+            Spec spec = specs.sprites.Find(s => s.name == name);
+            if (spec == null) { spec = new Spec { name = name, slot = id, border = border, crop = crop ?? new Rect(0, 0, 1, 1) }; specs.sprites.Add(spec); }
+            return WriteSprite(spec);
+        }
+        static Sprite WriteSprite(Spec spec)
+        {
+            Texture2D source = texture; Rect rect;
+            if (spec.slot == BackgroundSlot)
+            {
+                source = backgroundTexture; float w = source.width, h = source.height;
+                rect = new Rect(w * spec.crop.x, h - h * (spec.crop.y + spec.crop.height), w * spec.crop.width, h * spec.crop.height);
+            }
+            else
+            {
+                var slot = atlas.slots.Single(s => s.id == spec.slot);
+                rect = new Rect(slot.x + slot.w * spec.crop.x, atlas.size - slot.y - slot.h * (spec.crop.y + spec.crop.height), slot.w * spec.crop.width, slot.h * spec.crop.height);
+            }
+            string path = SpriteRoot + "/" + spec.name + ".asset";
+            Sprite existing = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (existing && existing.rect == rect && existing.border == spec.border && existing.texture == source) return existing;
+            Sprite created = UnityEngine.Sprite.Create(source, rect, new Vector2(.5f, .5f), 100, 0, SpriteMeshType.FullRect, spec.border);
+            created.name = spec.name;
+            if (existing)
+            {
+                EditorUtility.CopySerialized(created, existing); EditorUtility.SetDirty(existing); Object.DestroyImmediate(created);
+                return existing;
+            }
+            AssetDatabase.CreateAsset(created, path); return created;
+        }
+        static RectTransform Background()
+        {
+            var root = Section("GardenBattleBackground");
+            Solid("Sky base", root, GardenSkin.Hex(0x9FD4FF), true);
+            float[] ends = { 0, 114, 574, 960 };
+            string[] names = { "Top band", "Field band", "Bottom band" };
+            for (int i = 0; i < 3; i++)
+            {
+                var band = Node(names[i], root, 0, ends[i], 540, ends[i + 1] - ends[i]);
+                var art = Node("Background image", band, 0, 0, 540, ends[i + 1] - ends[i]); Stretch(art);
+                var image = art.gameObject.AddComponent<Image>(); image.raycastTarget = false;
+                image.sprite = Sprite(BackgroundSlot, suffix: "-band" + i, crop: new Rect(0, ends[i] / 960f, 1, (ends[i + 1] - ends[i]) / 960f));
+            }
+            return root;
+        }
+        static RectTransform Header()
+        {
+            var root = Section("GardenBattleHeader"); var band = Node("Top safe band", root, 0, 0, 540, 114);
+            // UI spec v3 3: pause, level capsule and progress bar on one row (as in the bubble mockup).
+            var pause = Action("Pause button", band, 1, 6, 4, 56, 56);
+            Art("Icon", pause, "scene/pause", 6, 4, 44, 44);
+            Art("Level plaque", band, "scene/level", 66, 12, 98, 36);
+            Label("Lesson title", band, "泡泡课堂 {0}/2", 66, 18.8f, 98, 15, Cream, 1.6f);
+            Label("Level title", band, "第 {0} 关", 66, 18.1f, 98, 17, Cream, 1.8f).gameObject.SetActive(false);
+            Art("Progress frame", band, "scene/progress-frame", 172, 16, 276, 28);
+            Image fill = Art("Progress fill", band, "scene/progress-fill", 178, 21, 264, 18);
+            fill.type = Image.Type.Filled; fill.fillMethod = Image.FillMethod.Horizontal; fill.fillOrigin = 0; fill.fillAmount = .35f;
+            Label("Progress percent", band, "{0}%", 394, 21.6f, 50, 12, Color.white, 1.4f);
+            return root;
+        }
+        static RectTransform Controls()
+        {
+            var root = Section("GardenBattleControls"); var band = Node("Bottom safe band", root, 0, 574, 540, 386);
+            band.anchorMin = band.anchorMax = Vector2.zero; band.anchoredPosition = new Vector2(0, 386);
+            var tutorial = Node("Tutorial hint", band, 18, 298, 504, 84);
+            Art("Hint banner", tutorial, "ui/banner-hint", 0, 0, 504, 84, true, 45, 0, 84 * 45 / 78f);
+            Label("Hint first line", tutorial, "看颜色 · 派队员 · 三合一", 0, 30, 504, 17, Cream, 1.7f);
+            Label("Hint second line", tutorial, "守住护栏，别让泡泡压下来", 0, 53, 504, 13, Cream, 1.3f);
+            var buttons = Node("Prop buttons", band, 0, 0, 540, 386);
+            string[] keys = { "scene/button-shuffle", "scene/button-designate", "scene/button-water" };
+            for (int i = 0; i < 3; i++)
+            {
+                var button = Action("Prop " + i, buttons, i + 10, 27 + i * 164, 306, 156, 72);
+                Image art = Art("Button image", button, keys[i], 0, 0, 156, 72);
+                button.GetComponent<GardenUiAction>().selectedVisual = art;
+                Art("Count badge", button, "scene/badge", 134, -7, 24, 24);
+                Label("Amount", button, "{0}", 134, -2.5f, 24, 14, Color.white);
+                Label("Cancel hint", button, "取消选择", 0, -18, 156, 12, Cream, 1.3f).gameObject.SetActive(false);
+            }
+            tutorial.gameObject.SetActive(false);
+            return root;
+        }
+        static RectTransform Pause()
+        {
+            var root = Section("GardenPauseDialog");
+            var settings = Node("Settings", root, 0, 0, 540, 960); Stretch(settings);
+            var content = Modal(settings, "暂停一下", 250, 402);
+            string[] names = { "Music", "Sound", "Light" }, labels = { "音乐", "音效", "光效" };
+            // v3 (2026-10-15): plain setting rows (label left, switch right, thin dividers) instead of button-styled rows.
+            // The whole row stays the hit area for the same action ids; the switch art shows the state.
+            for (int i = 0; i < 3; i++)
+            {
+                var row = Action(names[i], content, 20 + i, 84, 336 + 58 * i, 372, 48);
+                var label = Label(names[i] + " text", row, labels[i], 20, 12, 200, 21, Ink);
+                label.centered = false; label.alternateText = labels[i];
+                Art(names[i] + " toggle", row, "ui/toggle-on", 296, 8, 60, 32);
+                if (i < 2) { var line = Solid("Divider", row, new Color(.62f, .74f, .88f, .7f), false); var lr = line.rectTransform; lr.anchoredPosition = new Vector2(12, -52.5f); lr.sizeDelta = new Vector2(348, 1.5f); }
+            }
+            Button("Resume", content, 24, 84, 516, 372, 54, "继续战斗");
+            Button("Retry", content, 23, 84, 580, 180, 46, "重新开始");
+            Button("Home", content, 25, 276, 580, 180, 46, "返回主页");
+            var paused = Node("Paused", root, 0, 0, 540, 960); Stretch(paused);
+            var simple = Modal(paused, "休息一下", 250, 370);
+            Button("Resume simple", simple, 1, 170, 490, 200, 52, "继续");
+            paused.gameObject.SetActive(false);
+            return root;
+        }
+        static RectTransform Result()
+        {
+            var root = Section("GardenResultDialog");
+            var mission = Node("Mission result", root, 0, 0, 540, 960); Stretch(mission);
+            var content = Modal(mission, "泡泡全打光啦！", 180, 630, "Result title");
+            Find<GardenUiText>(content.gameObject, "Result title").alternateText = "这次被泡泡压住了";
+            Art("Portrait", content, "ui/guide-happy", 226, 210, 88, 88);
+            Label("Result lesson", content, "泡泡课堂 {0}/2", 70, 300, 400, 22, Ink).gameObject.SetActive(false);
+            Label("Result level", content, "第 {0} 关", 70, 300, 400, 22, Ink);
+            Label("Result progress", content, "打掉泡泡 {0}%", 70, 345, 400, 24, Ink);
+            var rewards = Node("Rewards", content, 0, 0, 540, 960);
+            Label("Coins", rewards, "收获金币 +{0}", 70, 420, 400, 20, Ink);
+            Label("Seeds", rewards, "收获碎片 +{0}", 70, 456, 400, 20, Ink);
+            Label("Statistics", rewards, "最高连击 {0}  用时 {1} 秒", 70, 510, 400, 16, Ink);
+            Label("Campaign complete", content, "前四关全部通过", 70, 566, 400, 20, Ink);
+            var next = Button("Continue", content, 40, 80, 650, 380, 62, "下一关", "Continue text");
+            Find<GardenUiText>(next.gameObject, "Continue text").alternateText = "再试一次";
+            Button("Home", content, 41, 180, 740, 180, 40, "返回主页");
+            var lesson = Node("Lesson complete", root, 0, 0, 540, 960); Center(lesson);
+            Art("Panel", lesson, "ui/popup-panel", 70, 380, 400, 98, true);
+            Art("Portrait", lesson, "ui/guide-happy", 20, 352, 96, 96);
+            Label("Title", lesson, "泡泡课堂完成！", 90, 396, 400, 26, Cream, 2);
+            Label("Message", lesson, "下一关见", 90, 440, 400, 18, Ink);
+            lesson.gameObject.SetActive(false);
+            return root;
+        }
+        static RectTransform Modal(RectTransform parent, string title, float y, float height, string titleName = "Title")
+        {
+            Image shade = Solid("Modal input shield", parent, new Color(0, 0, 0, .65f), true);
+            shade.gameObject.AddComponent<GardenUiAction>().actionId = 0;
+            var content = Node("Content", parent, 0, 0, 540, 960); Center(content);
+            Art("Panel", content, "ui/popup-panel", 50, y, 440, height, true);
+            Art("Ribbon", content, "ui/popup-ribbon", 80, y - 26, 380, 60);
+            Label(titleName, content, title, 80, y - 13, 380, 24, Cream, 2);
+            return content;
+        }
+        static RectTransform Button(string name, RectTransform parent, int id, float x, float y, float w, float h, string text, string labelName = "Label")
+        {
+            var root = Action(name, parent, id, x, y, w, h);
+            bool primary = w >= 300 || id == 1 || id == 9;
+            Art("Button image", root, primary ? "ui/button-primary" : "ui/button-secondary", 0, 0, w, h, true, primary ? 45 : 30, 0, h * (primary ? 45 : 30) / (primary ? 78 : 72));
+            float size = Mathf.Min(20, h * .42f);
+            Label(labelName, root, text, 0, (h - size) / 2 - 1, w, size, Cream, 1.8f);
+            return root;
+        }
+        static RectTransform Action(string name, RectTransform parent, int id, float x, float y, float w, float h)
+        { var r = Node(name, parent, x, y, w, h); r.gameObject.AddComponent<GardenUiAction>().actionId = id; return r; }
+        static GardenUiText Label(string name, RectTransform parent, string text, float x, float y, float w, float size, Color color, float outline = 0)
+        {
+            var r = Node(name, parent, x, y, w, size * 1.4f);
+            var t = r.gameObject.AddComponent<GardenUiText>(); t.text = text; t.fontSize = size;
+            t.color = color; t.outlineWidth = outline; t.SetFontAtlas(texture); return t;
+        }
+        static Image Art(string name, RectTransform parent, string id, float x, float y, float w, float h, bool sliced = false, float bx = 30, float by = 30, float edge = 18)
+        {
+            var slot = atlas.slots.Single(s => s.id == id);
+            // Images have real RectTransforms, including the original transparent-frame trim.
+            if (!sliced && slot.fw > 0 && slot.fh > 0)
+            { x += slot.ox * w / slot.fw; y += slot.oy * h / slot.fh; w *= slot.w / slot.fw; h *= slot.h / slot.fh; }
+            var r = Node(name, parent, x, y, w, h);
+            var image = r.gameObject.AddComponent<Image>(); image.raycastTarget = false;
+            image.sprite = Sprite(id, sliced ? new Vector4(bx, by, bx, by) : Vector4.zero, sliced ? "-sliced" : "");
+            if (sliced) { image.type = Image.Type.Sliced; image.pixelsPerUnitMultiplier = bx / edge; }
+            return image;
+        }
+        static Image Solid(string name, RectTransform parent, Color color, bool stretch)
+        { var r = Node(name, parent, 0, 0, 540, 960); if (stretch) Stretch(r); var image = r.gameObject.AddComponent<Image>(); image.color = color; image.raycastTarget = false; return image; }
+        static RectTransform Section(string name) { var root = Node(name, null, 0, 0, 540, 960); Stretch(root); return root; }
+        static RectTransform Node(string name, Transform parent, float x, float y, float w, float h)
+        {
+            var r = (RectTransform)new GameObject(name, typeof(RectTransform)).transform;
+            r.SetParent(parent, false); r.anchorMin = r.anchorMax = r.pivot = new Vector2(0, 1);
+            r.anchoredPosition = new Vector2(x, -y); r.sizeDelta = new Vector2(w, h); return r;
+        }
+        static void Stretch(RectTransform r) { r.anchorMin = Vector2.zero; r.anchorMax = Vector2.one; r.offsetMin = r.offsetMax = Vector2.zero; }
+        static void Center(RectTransform r) { r.anchorMin = r.anchorMax = r.pivot = new Vector2(.5f, .5f); r.anchoredPosition = Vector2.zero; r.sizeDelta = new Vector2(540, 960); }
+        static void SaveSection(RectTransform root, string name)
+        { PrefabUtility.SaveAsPrefabAsset(root.gameObject, Root + "/" + name + ".prefab"); Object.DestroyImmediate(root.gameObject); }
+        static GameObject Instance(string name, RectTransform parent, int order)
+        {
+            var go = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(Root + "/" + name + ".prefab"), parent);
+            var canvas = go.AddComponent<Canvas>(); canvas.overrideSorting = true; canvas.sortingOrder = order;
+            return go;
+        }
+        static T Find<T>(GameObject root, string name) where T : Component
+            => root.GetComponentsInChildren<T>(true).First(c => c.name == name);
+    }
+}

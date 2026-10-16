@@ -1,0 +1,380 @@
+{
+  "id": 56,
+  "path": "scene/stage.png",
+  "requested_size": [
+    1080,
+    772
+  ],
+  "method": "built-in image_gen with three references; user-authorized finishing",
+  "max_generations": 4,
+  "style": "Match EXACTLY the art style of the attached battle screenshot (the mockup): a bright cheerful cloud-top bubble world for an all-ages mobile casual game, clean colored dark outlines, soft controlled cel shading, bright glossy highlights, juicy saturated colors, rounded capsule-and-glass user interface. Strictly original: no plants, flowers, vegetables, flowerpots, fences, dragons or dinosaurs, nothing resembling any existing game's characters, interface or logos.",
+  "base_prompt": "Match EXACTLY the art style of the attached battle screenshot (the mockup): a bright cheerful cloud-top bubble world for an all-ages mobile casual game, clean colored dark outlines, soft controlled cel shading, bright glossy highlights, juicy saturated colors, rounded capsule-and-glass user interface. Strictly original: no plants, flowers, vegetables, flowerpots, fences, dragons or dinosaurs, nothing resembling any existing game's characters, interface or logos.\n\nA single wide game layer, transparent background: the soft \"stage\" that sits in the lower part of the battle screen, behind the deployment pads and the four queue tubes, exactly like the area below the foam rail in the attached mockup (first image). 1080x772, landscape.\nContent: a large calm muted blue-gray frosted panel (soft gray-blue, about #B4C8E0 at the top fading to about #9DB4D2 at the bottom), slightly translucent, filling almost the whole width; its top edge is a soft gently rounded line with a faint white rim; its LEFT, RIGHT and BOTTOM edges are framed by puffy white-and-pale-blue clouds that overlap the panel edges, with a few small glossy colored bubbles (pink, blue, yellow, purple) and one small rainbow arc tucked into the bottom corners, like the mockup.\nThe middle of the panel must stay PLAIN and evenly lit: no clouds, objects, patterns or text in the central 80% of the width between 5% and 88% of the height, because pads, creatures, glass tubes, numbers and three buttons are drawn on top of it.\nThe top 3% of the image is transparent (the foam rail sits there). No characters, no pads, no tubes, no buttons, no text, no letters, no numbers, no watermark.",
+  "production_notes": "Production layout notes: The first reference is the exact cloud-and-bubble art direction, especially below its foam rail. The second reference is only placement and what the existing flat slab must replace, not its schematic rendering. The third is the existing background behind this new separate layer: do not recreate that sky or castle inside the panel. Render ONLY this stage asset with real alpha transparency, not a game screenshot. At final 1080x772: rows 0–23 must be fully transparent; the faint rounded top rim fits in rows 24–38. The entire rectangle x=108–971, y=39–679 is a completely calm, uninterrupted frosted blue-gray surface with only a very subtle smooth vertical color transition. No clouds, bubbles, rim highlights, rainbow, decorative marks, texture or framing inside this protected rectangle. Keep all side clouds and colored bubbles within the outermost 9% left/right strips; bottom cloud puffs and one SMALL rainbow arc stay below y=690. Make the frosted panel itself broad and nearly full-width, flat front-on with no perspective tilt. No inner ledge, no dividing line, no center glare, no big vignette. Few glossy pink/blue/yellow/purple bubbles only at outer/bottom corners. Outside the silhouette is alpha-transparent. No shadow. Preserve the two specified panel colors #B4C8E0 and #9DB4D2. Output target 1080x772 landscape.",
+  "reference_images": [
+    "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+    "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+    "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png"
+  ],
+  "reference_metadata": [
+    {
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+      "size": [
+        941,
+        1672
+      ],
+      "sha256": "be50b535658005bc7fe6668a23f0714f64cc88b23fd1cbc293a5f0b5c73ed6c9"
+    },
+    {
+      "path": "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+      "size": [
+        540,
+        960
+      ],
+      "sha256": "0fd9ec966d512e176988ce996217d5169fc3b15983f3ef21346aa8da49225651"
+    },
+    {
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png",
+      "size": [
+        1080,
+        1920
+      ],
+      "sha256": "ef0716729983bb68c79f1c67df8221fb0ed1be93f2f7796e9ad9555ea189eb51"
+    }
+  ],
+  "source_prompt_sha256": "d534ff28d2f7bbd6739c8b9746b5fcfb153688bf714dcffabbf6152a45c37fa7",
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt": "Match EXACTLY the art style of the attached battle screenshot (the mockup): a bright cheerful cloud-top bubble world for an all-ages mobile casual game, clean colored dark outlines, soft controlled cel shading, bright glossy highlights, juicy saturated colors, rounded capsule-and-glass user interface. Strictly original: no plants, flowers, vegetables, flowerpots, fences, dragons or dinosaurs, nothing resembling any existing game's characters, interface or logos.\n\nA single wide game layer, transparent background: the soft \"stage\" that sits in the lower part of the battle screen, behind the deployment pads and the four queue tubes, exactly like the area below the foam rail in the attached mockup (first image). 1080x772, landscape.\nContent: a large calm muted blue-gray frosted panel (soft gray-blue, about #B4C8E0 at the top fading to about #9DB4D2 at the bottom), slightly translucent, filling almost the whole width; its top edge is a soft gently rounded line with a faint white rim; its LEFT, RIGHT and BOTTOM edges are framed by puffy white-and-pale-blue clouds that overlap the panel edges, with a few small glossy colored bubbles (pink, blue, yellow, purple) and one small rainbow arc tucked into the bottom corners, like the mockup.\nThe middle of the panel must stay PLAIN and evenly lit: no clouds, objects, patterns or text in the central 80% of the width between 5% and 88% of the height, because pads, creatures, glass tubes, numbers and three buttons are drawn on top of it.\nThe top 3% of the image is transparent (the foam rail sits there). No characters, no pads, no tubes, no buttons, no text, no letters, no numbers, no watermark.\n\nProduction layout notes: The first reference is the exact cloud-and-bubble art direction, especially below its foam rail. The second reference is only placement and what the existing flat slab must replace, not its schematic rendering. The third is the existing background behind this new separate layer: do not recreate that sky or castle inside the panel. Render ONLY this stage asset with real alpha transparency, not a game screenshot. At final 1080x772: rows 0–23 must be fully transparent; the faint rounded top rim fits in rows 24–38. The entire rectangle x=108–971, y=39–679 is a completely calm, uninterrupted frosted blue-gray surface with only a very subtle smooth vertical color transition. No clouds, bubbles, rim highlights, rainbow, decorative marks, texture or framing inside this protected rectangle. Keep all side clouds and colored bubbles within the outermost 9% left/right strips; bottom cloud puffs and one SMALL rainbow arc stay below y=690. Make the frosted panel itself broad and nearly full-width, flat front-on with no perspective tilt. No inner ledge, no dividing line, no center glare, no big vignette. Few glossy pink/blue/yellow/purple bubbles only at outer/bottom corners. Outside the silhouette is alpha-transparent. No shadow. Preserve the two specified panel colors #B4C8E0 and #9DB4D2. Output target 1080x772 landscape.",
+      "reference_images": [
+        "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+        "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png"
+      ],
+      "source": "/Users/yangdage/.codex/generated_images/01a12f40-187b-7be0-ae74-0c740aed91d1/exec-99f0a6f7-e521-4589-99c7-571f839a35c0.png",
+      "verdict": "未选：两侧出现额外星形装饰和绿色泡泡；左下彩虹及底云向中央保护区侵入，需缩窄边饰并降低底云。",
+      "archive_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-stage-attempt-01.png",
+      "size": [
+        1484,
+        1060
+      ],
+      "mode": "RGBA",
+      "sha256": "3c70e77327d20f566a728be3fa70b8fe0b5d7c0a8fea7656462473c31b8f39ef",
+      "reference_metadata": [
+        {
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+          "size": [
+            941,
+            1672
+          ],
+          "sha256": "be50b535658005bc7fe6668a23f0714f64cc88b23fd1cbc293a5f0b5c73ed6c9"
+        },
+        {
+          "path": "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+          "size": [
+            540,
+            960
+          ],
+          "sha256": "0fd9ec966d512e176988ce996217d5169fc3b15983f3ef21346aa8da49225651"
+        },
+        {
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png",
+          "size": [
+            1080,
+            1920
+          ],
+          "sha256": "ef0716729983bb68c79f1c67df8221fb0ed1be93f2f7796e9ad9555ea189eb51"
+        }
+      ]
+    },
+    {
+      "attempt": 2,
+      "prompt": "Match EXACTLY the art style of the attached battle screenshot (the mockup): a bright cheerful cloud-top bubble world for an all-ages mobile casual game, clean colored dark outlines, soft controlled cel shading, bright glossy highlights, juicy saturated colors, rounded capsule-and-glass user interface. Strictly original: no plants, flowers, vegetables, flowerpots, fences, dragons or dinosaurs, nothing resembling any existing game's characters, interface or logos.\n\nA single wide game layer, transparent background: the soft \"stage\" that sits in the lower part of the battle screen, behind the deployment pads and the four queue tubes, exactly like the area below the foam rail in the attached mockup (first image). 1080x772, landscape.\nContent: a large calm muted blue-gray frosted panel (soft gray-blue, about #B4C8E0 at the top fading to about #9DB4D2 at the bottom), slightly translucent, filling almost the whole width; its top edge is a soft gently rounded line with a faint white rim; its LEFT, RIGHT and BOTTOM edges are framed by puffy white-and-pale-blue clouds that overlap the panel edges, with a few small glossy colored bubbles (pink, blue, yellow, purple) and one small rainbow arc tucked into the bottom corners, like the mockup.\nThe middle of the panel must stay PLAIN and evenly lit: no clouds, objects, patterns or text in the central 80% of the width between 5% and 88% of the height, because pads, creatures, glass tubes, numbers and three buttons are drawn on top of it.\nThe top 3% of the image is transparent (the foam rail sits there). No characters, no pads, no tubes, no buttons, no text, no letters, no numbers, no watermark.\n\nProduction layout notes: The first reference is the exact cloud-and-bubble art direction, especially below its foam rail. The second reference is only placement and what the existing flat slab must replace, not its schematic rendering. The third is the existing background behind this new separate layer: do not recreate that sky or castle inside the panel. Render ONLY this stage asset with real alpha transparency, not a game screenshot. At final 1080x772: rows 0–23 must be fully transparent; the faint rounded top rim fits in rows 24–38. The entire rectangle x=108–971, y=39–679 is a completely calm, uninterrupted frosted blue-gray surface with only a very subtle smooth vertical color transition. No clouds, bubbles, rim highlights, rainbow, decorative marks, texture or framing inside this protected rectangle. Keep all side clouds and colored bubbles within the outermost 9% left/right strips; bottom cloud puffs and one SMALL rainbow arc stay below y=690. Make the frosted panel itself broad and nearly full-width, flat front-on with no perspective tilt. No inner ledge, no dividing line, no center glare, no big vignette. Few glossy pink/blue/yellow/purple bubbles only at outer/bottom corners. Outside the silhouette is alpha-transparent. No shadow. Preserve the two specified panel colors #B4C8E0 and #9DB4D2. Output target 1080x772 landscape.\n\nCorrection for this generation: Protect the EMPTY panel above everything else. This is a UI underlay, not a decorative full illustration. ONLY narrow cloud trim along the outermost LEFT 7% and RIGHT 7%, and a VERY LOW cloud strip in the BOTTOM 8%. Cloud puffs must not extend inward beyond those limits. The single tiny rainbow belongs at the very bottom-left corner, entirely within the bottom 8%, not halfway up the left edge. Use just a few SMALL glossy ROUND bubbles in pink, blue, yellow and purple, each smaller than 5% of image width, attached only to those edge strips. No stars, no star shapes, no green bubbles, no gemstones, no leaves. The clean panel rectangle must occupy at least the middle 86% width down to 90% height; keep this surface absolutely smooth with no mottling, cloud shapes, texture or reflected scenery. Thin faint top rim near 3% height, no tall transparent margin. Very restrained cloud trim, minimal corners. Fill the canvas width. Transparent background, slightly translucent panel.",
+      "reference_images": [
+        "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+        "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png"
+      ],
+      "status": "tool_error_no_image",
+      "error": "unable to read Builds/R1-evidence/play-v3/3-2.png: No such file or directory",
+      "verdict": "未产图：参考截图在并行重建期间短暂消失，随后恢复；改用允许目录内的稳定参考快照。",
+      "reference_metadata": []
+    },
+    {
+      "attempt": 3,
+      "prompt": "Match EXACTLY the art style of the attached battle screenshot (the mockup): a bright cheerful cloud-top bubble world for an all-ages mobile casual game, clean colored dark outlines, soft controlled cel shading, bright glossy highlights, juicy saturated colors, rounded capsule-and-glass user interface. Strictly original: no plants, flowers, vegetables, flowerpots, fences, dragons or dinosaurs, nothing resembling any existing game's characters, interface or logos.\n\nA single wide game layer, transparent background: the soft \"stage\" that sits in the lower part of the battle screen, behind the deployment pads and the four queue tubes, exactly like the area below the foam rail in the attached mockup (first image). 1080x772, landscape.\nContent: a large calm muted blue-gray frosted panel (soft gray-blue, about #B4C8E0 at the top fading to about #9DB4D2 at the bottom), slightly translucent, filling almost the whole width; its top edge is a soft gently rounded line with a faint white rim; its LEFT, RIGHT and BOTTOM edges are framed by puffy white-and-pale-blue clouds that overlap the panel edges, with a few small glossy colored bubbles (pink, blue, yellow, purple) and one small rainbow arc tucked into the bottom corners, like the mockup.\nThe middle of the panel must stay PLAIN and evenly lit: no clouds, objects, patterns or text in the central 80% of the width between 5% and 88% of the height, because pads, creatures, glass tubes, numbers and three buttons are drawn on top of it.\nThe top 3% of the image is transparent (the foam rail sits there). No characters, no pads, no tubes, no buttons, no text, no letters, no numbers, no watermark.\n\nProduction layout notes: The first reference is the exact cloud-and-bubble art direction, especially below its foam rail. The second reference is only placement and what the existing flat slab must replace, not its schematic rendering. The third is the existing background behind this new separate layer: do not recreate that sky or castle inside the panel. Render ONLY this stage asset with real alpha transparency, not a game screenshot. At final 1080x772: rows 0–23 must be fully transparent; the faint rounded top rim fits in rows 24–38. The entire rectangle x=108–971, y=39–679 is a completely calm, uninterrupted frosted blue-gray surface with only a very subtle smooth vertical color transition. No clouds, bubbles, rim highlights, rainbow, decorative marks, texture or framing inside this protected rectangle. Keep all side clouds and colored bubbles within the outermost 9% left/right strips; bottom cloud puffs and one SMALL rainbow arc stay below y=690. Make the frosted panel itself broad and nearly full-width, flat front-on with no perspective tilt. No inner ledge, no dividing line, no center glare, no big vignette. Few glossy pink/blue/yellow/purple bubbles only at outer/bottom corners. Outside the silhouette is alpha-transparent. No shadow. Preserve the two specified panel colors #B4C8E0 and #9DB4D2. Output target 1080x772 landscape.\n\nCorrection for this generation: Protect the EMPTY panel above everything else. This is a UI underlay, not a decorative full illustration. ONLY narrow cloud trim along the outermost LEFT 7% and RIGHT 7%, and a VERY LOW cloud strip in the BOTTOM 8%. Cloud puffs must not extend inward beyond those limits. The single tiny rainbow belongs at the very bottom-left corner, entirely within the bottom 8%, not halfway up the left edge. Use just a few SMALL glossy ROUND bubbles in pink, blue, yellow and purple, each smaller than 5% of image width, attached only to those edge strips. No stars, no star shapes, no green bubbles, no gemstones, no leaves. The clean panel rectangle must occupy at least the middle 86% width down to 90% height; keep this surface absolutely smooth with no mottling, cloud shapes, texture or reflected scenery. Thin faint top rim near 3% height, no tall transparent margin. Very restrained cloud trim, minimal corners. Fill the canvas width. Transparent background, slightly translucent panel.",
+      "reference_images": [
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-reference-01.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-reference-02.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-reference-03.png"
+      ],
+      "source": "/Users/yangdage/.codex/generated_images/01a12f40-187b-7be0-ae74-0c740aed91d1/exec-e04e4fd9-57eb-4125-911d-b732545e1ef4.png",
+      "verdict": "选中并完成后期：云朵、泡泡和彩虹保留；边饰压入外侧，中央磨砂面统一明暗与色值，顶部24px清空；指定留白区及尺寸检查通过。",
+      "archive_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-stage-attempt-03.png",
+      "size": [
+        1484,
+        1060
+      ],
+      "mode": "RGBA",
+      "sha256": "7878bf5eefe75c3f93f300670630d519855112749d046e739faaecf73bd0bd99",
+      "reference_metadata": [
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-reference-01.png",
+          "sha256": "be50b535658005bc7fe6668a23f0714f64cc88b23fd1cbc293a5f0b5c73ed6c9",
+          "size": [
+            941,
+            1672
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-reference-02.png",
+          "sha256": "1767d73e6cc57cef13b83381d8b266a053c39dd426be3cd9b4ae3d5f1e5d8a92",
+          "size": [
+            540,
+            960
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-reference-03.png",
+          "sha256": "ef0716729983bb68c79f1c67df8221fb0ed1be93f2f7796e9ad9555ea189eb51",
+          "size": [
+            1080,
+            1920
+          ],
+          "is_generation": false
+        }
+      ]
+    }
+  ],
+  "reference_snapshots": [
+    {
+      "source_path": "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-reference-01.png",
+      "sha256": "be50b535658005bc7fe6668a23f0714f64cc88b23fd1cbc293a5f0b5c73ed6c9",
+      "size": [
+        941,
+        1672
+      ],
+      "is_generation": false
+    },
+    {
+      "source_path": "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-reference-02.png",
+      "sha256": "1767d73e6cc57cef13b83381d8b266a053c39dd426be3cd9b4ae3d5f1e5d8a92",
+      "size": [
+        540,
+        960
+      ],
+      "is_generation": false
+    },
+    {
+      "source_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png",
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/56-reference-03.png",
+      "sha256": "ef0716729983bb68c79f1c67df8221fb0ed1be93f2f7796e9ad9555ea189eb51",
+      "size": [
+        1080,
+        1920
+      ],
+      "is_generation": false
+    }
+  ],
+  "selected_attempt": 3,
+  "file_metadata": {
+    "width": 1080,
+    "height": 772,
+    "mode": "RGBA",
+    "bytes": 291676,
+    "sha256": "06e970511a1ca002539642e9eda4526423004bc666b18311cbdfe84565d48671",
+    "transparent_pixels": 30300,
+    "partial_alpha_pixels": 801097,
+    "alpha_min": 0,
+    "alpha_max": 255
+  },
+  "postprocess": [
+    {
+      "method": "native-alpha silhouette cleanup and empty-margin trim",
+      "bbox": [
+        12,
+        61,
+        1472,
+        1041
+      ]
+    },
+    {
+      "method": "premultiplied-alpha resize to1080x748, place at y24 on1080x772 transparent canvas",
+      "top_transparent_rows": 24
+    },
+    {
+      "method": "three-column border remap; retain generated border artwork",
+      "source_columns": [
+        0,
+        140,
+        940,
+        1080
+      ],
+      "destination_columns": [
+        0,
+        104,
+        976,
+        1080
+      ]
+    },
+    {
+      "method": "frosted-panel color calibration and texture/alpha denoise; preserve rim, clouds and colored bubbles",
+      "top_color": "#B4C8E0",
+      "bottom_color": "#9DB4D2",
+      "panel_alpha": 230,
+      "source_residual_weight": 0.04
+    }
+  ],
+  "status": "delivered_offline_checks_passed",
+  "generation_count": 2,
+  "generation_call_count": 3,
+  "self_check": [
+    {
+      "item": 1,
+      "name": "尺寸、文件名和透明边缘",
+      "result": "通过",
+      "reason": "scene/stage.png，1080×772，RGBA。原生Alpha清理后以预乘Alpha缩放；无不透明底板、黑白残边、杂散碎点或外部投影。"
+    },
+    {
+      "item": 2,
+      "name": "画风与参考",
+      "result": "通过",
+      "reason": "使用所列三张参考；云朵、圆泡泡、轻微玻璃高光沿用示意图，灰蓝底面与交付背景叠加已目检。实机截图仅作为布局参考。"
+    },
+    {
+      "item": 3,
+      "name": "角色脚底、三态和颜色版本",
+      "result": "不适用",
+      "reason": "此文件是场景托板，不含角色；不套用y=212脚底和三态规则。"
+    },
+    {
+      "item": 4,
+      "name": "角色身体主色ΔE76",
+      "result": "不适用",
+      "reason": "无角色身体。托板颜色另按第56项检验：上部(540,39)为#B4C8E0，下部(540,679)为#9DB4D2。"
+    },
+    {
+      "item": 5,
+      "name": "空心半透明弹体",
+      "result": "不适用",
+      "reason": "此文件不是弹体；磨砂面统一Alpha=230/255，属于轻微半透明面板。"
+    },
+    {
+      "item": 6,
+      "name": "文字和数字",
+      "result": "通过",
+      "reason": "不含文字、数字、水印，也未预画出战位、角色、玻璃管或按钮。"
+    },
+    {
+      "item": 7,
+      "name": "禁止元素",
+      "result": "通过",
+      "reason": "未见植物、蔬菜、花盆、篱笆、恐龙、既有游戏标志；没有旧版本的星形装饰和绿色泡泡。"
+    },
+    {
+      "item": 8,
+      "name": "九宫格",
+      "result": "不适用",
+      "reason": "本文件按1080×772整图铺放；不是九宫格部件，未改变使用方式。"
+    },
+    {
+      "item": 9,
+      "name": "多帧特效和可染色灰度",
+      "result": "不适用",
+      "reason": "本文件为单张彩色场景层，没有帧切分或程序染色要求。"
+    },
+    {
+      "item": 10,
+      "name": "小蓝头像身份",
+      "result": "不适用",
+      "reason": "此文件无向导或角色。"
+    },
+    {
+      "item": 11,
+      "name": "中央80%宽、5%–88%高留白",
+      "result": "通过",
+      "reason": "保护区为x=108–971、y=39–679（右下边界采用排他区间[108,39,972,680)）。目检无云、泡泡、彩虹、图案和文字；同一行RGB任一通道的最大差值仅1/255，只有平缓纵向渐变；保护区Alpha恒为230。"
+    },
+    {
+      "item": 12,
+      "name": "顶部3%透明",
+      "result": "通过",
+      "reason": "顶部24行（y=0–23）全部RGBA=0，覆盖3%×772=23.16px；微白顶沿位于保护区上方。"
+    },
+    {
+      "item": 13,
+      "name": "边饰分布和底色",
+      "result": "通过",
+      "reason": "白/浅蓝云仅沿左右及底部，粉、蓝、黄、紫圆泡泡位于边缘，一个小彩虹收在左下角；颜色与中央留白已按最终图检查。"
+    }
+  ],
+  "technical_check": {
+    "file": {
+      "width": 1080,
+      "height": 772,
+      "mode": "RGBA",
+      "bytes": 291676,
+      "sha256": "06e970511a1ca002539642e9eda4526423004bc666b18311cbdfe84565d48671",
+      "transparent_pixels": 30300,
+      "partial_alpha_pixels": 801097,
+      "alpha_min": 0,
+      "alpha_max": 255
+    },
+    "prompt_number": 56,
+    "generation_call_count": 3,
+    "generated_image_count": 2,
+    "failed_calls_without_image": 1,
+    "selected_call": 3,
+    "protected_rect_xyxy_exclusive": [
+      108,
+      39,
+      972,
+      680
+    ],
+    "protected_alpha_min": 230,
+    "protected_alpha_max": 230,
+    "protected_max_row_channel_range": 1,
+    "protected_max_row_channel_std": 0.5,
+    "protected_bright_cloud_pixel_count": 0,
+    "top_transparent_rows": 24,
+    "top_band_nonzero_alpha_pixels": 0,
+    "panel_color_samples": [
+      {
+        "xy": [
+          540,
+          39
+        ],
+        "rgba": [
+          180,
+          200,
+          224,
+          230
+        ],
+        "target": "#B4C8E0"
+      },
+      {
+        "xy": [
+          540,
+          679
+        ],
+        "rgba": [
+          157,
+          180,
+          210,
+          230
+        ],
+        "target": "#9DB4D2"
+      }
+    ],
+    "previous_file_count": 312,
+    "previous_changed_files_before_append": [],
+    "game_integration_tested": false
+  }
+}

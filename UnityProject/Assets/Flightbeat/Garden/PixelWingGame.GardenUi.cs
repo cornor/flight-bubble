@@ -1,0 +1,103 @@
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+using System;
+using System.Collections.Generic;
+using Flightbeat.Garden.UI;
+using Flightbeat.Model;
+using Flightbeat.Rendering;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Flightbeat.Game
+{
+    public partial class PixelWingGame
+    {
+        internal GardenBattlePage gardenPage;
+        PixelSurface gardenOverlay;
+        readonly List<UiHit> gardenOverlayHits = new List<UiHit>();
+        bool GardenUiActive => !InHome && levelIndex < 4 && Battle != null;
+        void InitializeGardenUi()
+        {
+            var prefab = Resources.Load<GardenBattlePage>("GardenR1/UI/GardenBattlePage");
+            if (!prefab) throw new InvalidOperationException("Missing GardenR1/UI/GardenBattlePage prefab");
+            gardenPage = Instantiate(prefab, hudRect, false);
+            gardenPage.name = "Garden Battle UI";
+            var overlayObject = new GameObject("Garden legacy overlays", typeof(RectTransform), typeof(Canvas), typeof(CanvasRenderer), typeof(PixelSurface));
+            var rect = (RectTransform)overlayObject.transform;
+            rect.SetParent(hudRect, false);
+            rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.zero; rect.pivot = Vector2.zero;
+            var canvas = overlayObject.GetComponent<Canvas>();
+            canvas.overrideSorting = true; canvas.sortingOrder = 40;
+            canvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord1;
+            gardenOverlay = overlayObject.GetComponent<PixelSurface>();
+            gardenOverlay.Paint = s => { gardenOverlayHits.Clear(); if (GardenUiActive) DrawGardenOverlay(s); };
+            gardenPage.Bind(this);
+            RefreshGardenUi(gardenPage);
+        }
+        internal void RefreshGardenUi(GardenBattlePage view)
+        {
+            view.Show(GardenUiActive);
+            if (gardenOverlay) { gardenOverlay.Lighting = hud.Lighting; gardenOverlay.Redraw(); }
+            if (!GardenUiActive) return;
+            bool teaching = Battle.Level.lesson > 0;
+            view.lessonTitle.gameObject.SetActive(teaching);
+            view.levelTitle.gameObject.SetActive(!teaching);
+            view.lessonTitle.Present(false, levelIndex + 1);
+            view.levelTitle.Present(false, levelIndex - 1);
+            view.progressFill.fillAmount = Battle.Progress;
+            view.progressText.Present(false, Mathf.FloorToInt(Battle.Progress * 100));
+            view.tutorialHint.SetActive(teaching && !evidenceControlled);
+            view.propButtons.SetActive(!teaching || evidenceControlled);
+            for (int i = 0; i < 3; i++)
+            {
+                bool cancel = (i == 1 && selection == 1) || (i == 2 && selection == 2);
+                // Count goes through the int overload so an unchanged badge allocates nothing.
+                int count = i == 2 && Battle.RescueMissiles > 0 ? 1 : Economy.Data.items[i];
+                if (cancel) view.propAmounts[i].Present(false, "×");
+                else if (count > 0) view.propAmounts[i].Present(false, count);
+                else view.propAmounts[i].Present(false, "+");
+                view.propCancelLabels[i].SetActive(cancel);
+                view.props[i].SetSelected(cancel);
+            }
+            bool showSettings = Battle.State != Phase.ReviveOffer && settings;
+            bool simplePause = Battle.State != Phase.ReviveOffer && !settings && !finaleGuide && paused && selection == 0 && !transitionActive;
+            view.pauseDialog.SetActive(showSettings || simplePause);
+            view.settingsPanel.SetActive(showSettings); view.pausedPanel.SetActive(simplePause);
+            view.musicText.Present(audioChip.MusicMuted); view.soundText.Present(audioChip.EffectsMuted); view.lightText.Present(!effects.Enabled);
+            view.toggleIcons[0].sprite = audioChip.MusicMuted ? view.toggleOff : view.toggleOn;
+            view.toggleIcons[1].sprite = audioChip.EffectsMuted ? view.toggleOff : view.toggleOn;
+            view.toggleIcons[2].sprite = effects.Enabled ? view.toggleOn : view.toggleOff;
+            bool won = Battle.State == Phase.Won;
+            bool result = (Battle.State == Phase.Lost || (won && !teaching)) && feedback.EndAge > .48f;
+            bool completedLesson = won && teaching;
+            view.resultDialog.SetActive(result || completedLesson);
+            view.missionResult.SetActive(result); view.lessonComplete.SetActive(completedLesson);
+            view.resultTitle.Present(!won); view.resultContinue.Present(!won);
+            view.resultPortrait.sprite = won ? view.happyPortrait : view.worriedPortrait;
+            view.resultLesson.gameObject.SetActive(teaching); view.resultLevel.gameObject.SetActive(!teaching);
+            view.resultLesson.Present(false, levelIndex + 1); view.resultLevel.Present(false, levelIndex - 1);
+            view.resultProgress.Present(false, Mathf.FloorToInt(Battle.Progress * 100));
+            view.rewardGroup.SetActive(won && LastReward != null);
+            if (won && LastReward != null)
+            {
+                view.coins.Present(false, LastReward.coins); view.seeds.Present(false, LastReward.fragments);
+                view.statistics.Present(false, Battle.BestCombo, ResultRound(Battle.Time));
+            }
+            view.campaignComplete.SetActive(won && levelIndex == 3);
+        }
+        bool TryGardenUiHit(Vector2 logical, out int id)
+        {
+            id = -1;
+            if (!GardenUiActive || !gardenPage) return false;
+            float y = ScreenLayout.Y(logical.y);
+            for (int i = gardenOverlayHits.Count - 1; i >= 0; i--)
+            {
+                UiHit h = gardenOverlayHits[i];
+                if (logical.x >= h.x && logical.x <= h.x + h.w && y >= h.y && y <= h.y + h.h) { id = h.id; return true; }
+            }
+            Vector3 world = hudRect.TransformPoint(new Vector3(logical.x, ScreenLayout.Height - y));
+            return gardenPage.TryHit(world, out id);
+        }
+    }
+}
+#endif

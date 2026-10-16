@@ -1,0 +1,739 @@
+{
+  "id": 57,
+  "path": "scene/background.png",
+  "requested_size": [
+    1080,
+    1920
+  ],
+  "method": "built-in image_gen; full background redraw with four references; user-authorized finishing",
+  "max_generations": 4,
+  "base_prompt": "Match EXACTLY the art style of the attached battle screenshot (the mockup): a bright cheerful cloud-top bubble world for an all-ages mobile casual game, clean colored dark outlines, soft controlled cel shading, bright glossy highlights, juicy saturated colors, rounded capsule-and-glass user interface. Strictly original: no plants, flowers, vegetables, flowerpots, fences, dragons or dinosaurs, nothing resembling any existing game's characters, interface or logos.\n\nONE complete battle background, portrait 9:16, 1080x1920, opaque, edge to edge. It REPLACES the current background (second attached image): keep the same bright cloud-top bubble world, the same castle and rainbow in the top-right corner, and the SAME calm blue sky colors in the upper part, but now the lower 40% is a soft stage panel painted into the same image, exactly like the area below the foam rail in the mockup (first attached image).\nONLY the background: no user interface, no buttons, no bars, no characters, no bubbles grid, no pads, no tubes, no text.\n\nLayout from top to bottom (percent of image height):\n- 0% to 9%: bright sky with small fluffy clouds; a tiny distant fairy-tale castle and a short rainbow arc in the top-right corner; the top-left and middle stay calm.\n- 9.6% to 57%: a CALM, PLAIN sky: a smooth vertical blue gradient matching the current background (about #5CAEFD near the top of this band, #72BEFE at 30%, #88CCFD at 50%, #95D3FE at 57%). Only very faint thin clouds hugging the far left and far right edges. Absolutely NO clouds, islands, waterfalls, birds or shapes in the middle 85% of the width: a dense picture made of small bubbles is drawn on top of this sky by the game.\n- 57% to 60%: the sky softly meets the top of the stage panel (the game draws a thin glowing foam rail at 58.5%).\n- 60% to 100%: a large calm muted blue-gray frosted stage panel (about #B4C8E0 at its top fading to about #9DB4D2 at the bottom), its top edge a soft gentle curve with a faint white rim. Its LEFT, RIGHT and BOTTOM edges are wrapped in puffy white and pale-blue clouds that overlap the panel; a few small glossy colored bubbles (pink, blue, yellow, purple) and one small rainbow arc tucked into the bottom corners, like the mockup. The center of the panel (middle 80% of the width, from 62% to 97% of the height) stays PLAIN and evenly lit, because pads, creatures, glass tubes, numbers and three buttons are drawn on top.\nThe upper sky and the lower stage must feel like ONE painting with consistent light, not two pasted layers.\nNo text, no letters, no numbers, no watermark.",
+  "reference_images": [
+    "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-01.png",
+    "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/background-v1.png",
+    "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-03.png",
+    "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-04.png"
+  ],
+  "reference_metadata": [
+    {
+      "source_path": "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-01.png",
+      "sha256": "be50b535658005bc7fe6668a23f0714f64cc88b23fd1cbc293a5f0b5c73ed6c9",
+      "size": [
+        941,
+        1672
+      ],
+      "is_generation": false
+    },
+    {
+      "source_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png",
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/background-v1.png",
+      "sha256": "ef0716729983bb68c79f1c67df8221fb0ed1be93f2f7796e9ad9555ea189eb51",
+      "size": [
+        1080,
+        1920
+      ],
+      "is_generation": false
+    },
+    {
+      "source_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/stage.png",
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-03.png",
+      "sha256": "06e970511a1ca002539642e9eda4526423004bc666b18311cbdfe84565d48671",
+      "size": [
+        1080,
+        772
+      ],
+      "is_generation": false
+    },
+    {
+      "source_path": "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-04.png",
+      "sha256": "71040d1120a1dee30c48ea995d417b98926d719d96916a64dea4435b8ad2e55d",
+      "size": [
+        540,
+        960
+      ],
+      "is_generation": false
+    }
+  ],
+  "backup_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/background-v1.png",
+  "backup_sha256": "ef0716729983bb68c79f1c67df8221fb0ed1be93f2f7796e9ad9555ea189eb51",
+  "stage_source_sha256": "06e970511a1ca002539642e9eda4526423004bc666b18311cbdfe84565d48671",
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt": "Match EXACTLY the art style of the attached battle screenshot (the mockup): a bright cheerful cloud-top bubble world for an all-ages mobile casual game, clean colored dark outlines, soft controlled cel shading, bright glossy highlights, juicy saturated colors, rounded capsule-and-glass user interface. Strictly original: no plants, flowers, vegetables, flowerpots, fences, dragons or dinosaurs, nothing resembling any existing game's characters, interface or logos.\n\nONE complete battle background, portrait 9:16, 1080x1920, opaque, edge to edge. It REPLACES the current background (second attached image): keep the same bright cloud-top bubble world, the same castle and rainbow in the top-right corner, and the SAME calm blue sky colors in the upper part, but now the lower 40% is a soft stage panel painted into the same image, exactly like the area below the foam rail in the mockup (first attached image).\nONLY the background: no user interface, no buttons, no bars, no characters, no bubbles grid, no pads, no tubes, no text.\n\nLayout from top to bottom (percent of image height):\n- 0% to 9%: bright sky with small fluffy clouds; a tiny distant fairy-tale castle and a short rainbow arc in the top-right corner; the top-left and middle stay calm.\n- 9.6% to 57%: a CALM, PLAIN sky: a smooth vertical blue gradient matching the current background (about #5CAEFD near the top of this band, #72BEFE at 30%, #88CCFD at 50%, #95D3FE at 57%). Only very faint thin clouds hugging the far left and far right edges. Absolutely NO clouds, islands, waterfalls, birds or shapes in the middle 85% of the width: a dense picture made of small bubbles is drawn on top of this sky by the game.\n- 57% to 60%: the sky softly meets the top of the stage panel (the game draws a thin glowing foam rail at 58.5%).\n- 60% to 100%: a large calm muted blue-gray frosted stage panel (about #B4C8E0 at its top fading to about #9DB4D2 at the bottom), its top edge a soft gentle curve with a faint white rim. Its LEFT, RIGHT and BOTTOM edges are wrapped in puffy white and pale-blue clouds that overlap the panel; a few small glossy colored bubbles (pink, blue, yellow, purple) and one small rainbow arc tucked into the bottom corners, like the mockup. The center of the panel (middle 80% of the width, from 62% to 97% of the height) stays PLAIN and evenly lit, because pads, creatures, glass tubes, numbers and three buttons are drawn on top.\nThe upper sky and the lower stage must feel like ONE painting with consistent light, not two pasted layers.\nNo text, no letters, no numbers, no watermark.\n\nProduction alignment notes (supplementary, without replacing any instructions above): All percentages refer to the entire final portrait canvas. Keep ALL top clouds, castle and rainbow above y=9%, with the castle very small. Keep clouds and colored bubbles at the lower stage edges extremely narrow: within x<9% or x>91%, and bottom cloud trim below y=97.5%. The entire rectangle x=10%..90%, y=62%..97% must be an uninterrupted smooth blue-gray field. In the sky, x=7.5%..92.5%, y=9.6%..57% must contain only the requested blue gradient. Do not place any floating island, cloud bank, horizon decoration or waterfall anywhere across this central sky. No stars, sparkles, footprints, grain, mottled texture, printed pattern, labels, object placeholders, rail, separate floating platform or thick 3D front wall. The stage is a broad quiet backing plane with a very thin soft rim at y=59%..60%, painted seamlessly into the illustration. No horizontal division at mid-height; the stage occupies only the bottom 40%. Copy the upper-sky hue and brightness from reference 2 and the decorative illustration language from reference 1. Reference 4 is position guidance only; do not draw its interface.",
+      "reference_images": [
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-01.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/background-v1.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-03.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-04.png"
+      ],
+      "transparent_background": false,
+      "status": "generated_rejected",
+      "native_path": "/Users/yangdage/.codex/generated_images/01a12f40-187b-7be0-ae74-0c740aed91d1/exec-85714a37-5fee-4ba8-a289-6ca7149ed20f.png",
+      "archive_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-background-attempt-01.png",
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-background-attempt-01.png",
+      "width": 941,
+      "height": 1672,
+      "mode": "RGB",
+      "sha256": "335d7ed2c2bc2142bf4c2335e7f52029e7a7afabeeb128f9f3a8b8419993f752",
+      "sample_rgb": [
+        [
+          92,
+          172,
+          254
+        ],
+        [
+          118,
+          191,
+          253
+        ],
+        [
+          148,
+          210,
+          253
+        ],
+        [
+          177,
+          205,
+          242
+        ],
+        [
+          168,
+          198,
+          237
+        ],
+        [
+          216,
+          230,
+          252
+        ]
+      ],
+      "verdict": "未选：托板上沿约在55.5%处，提前进入天空保护区；上方及过渡云团侵入中央85%宽，底部云团进入97%高以上的托板留白区；天空和托板颜色偏亮/偏蓝。",
+      "reference_metadata": [
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-01.png",
+          "sha256": "be50b535658005bc7fe6668a23f0714f64cc88b23fd1cbc293a5f0b5c73ed6c9",
+          "size": [
+            941,
+            1672
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/background-v1.png",
+          "sha256": "ef0716729983bb68c79f1c67df8221fb0ed1be93f2f7796e9ad9555ea189eb51",
+          "size": [
+            1080,
+            1920
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/stage.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-03.png",
+          "sha256": "06e970511a1ca002539642e9eda4526423004bc666b18311cbdfe84565d48671",
+          "size": [
+            1080,
+            772
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-04.png",
+          "sha256": "71040d1120a1dee30c48ea995d417b98926d719d96916a64dea4435b8ad2e55d",
+          "size": [
+            540,
+            960
+          ],
+          "is_generation": false
+        }
+      ]
+    },
+    {
+      "attempt": 2,
+      "prompt": "Match EXACTLY the art style of the attached battle screenshot (the mockup): a bright cheerful cloud-top bubble world for an all-ages mobile casual game, clean colored dark outlines, soft controlled cel shading, bright glossy highlights, juicy saturated colors, rounded capsule-and-glass user interface. Strictly original: no plants, flowers, vegetables, flowerpots, fences, dragons or dinosaurs, nothing resembling any existing game's characters, interface or logos.\n\nONE complete battle background, portrait 9:16, 1080x1920, opaque, edge to edge. It REPLACES the current background (second attached image): keep the same bright cloud-top bubble world, the same castle and rainbow in the top-right corner, and the SAME calm blue sky colors in the upper part, but now the lower 40% is a soft stage panel painted into the same image, exactly like the area below the foam rail in the mockup (first attached image).\nONLY the background: no user interface, no buttons, no bars, no characters, no bubbles grid, no pads, no tubes, no text.\n\nLayout from top to bottom (percent of image height):\n- 0% to 9%: bright sky with small fluffy clouds; a tiny distant fairy-tale castle and a short rainbow arc in the top-right corner; the top-left and middle stay calm.\n- 9.6% to 57%: a CALM, PLAIN sky: a smooth vertical blue gradient matching the current background (about #5CAEFD near the top of this band, #72BEFE at 30%, #88CCFD at 50%, #95D3FE at 57%). Only very faint thin clouds hugging the far left and far right edges. Absolutely NO clouds, islands, waterfalls, birds or shapes in the middle 85% of the width: a dense picture made of small bubbles is drawn on top of this sky by the game.\n- 57% to 60%: the sky softly meets the top of the stage panel (the game draws a thin glowing foam rail at 58.5%).\n- 60% to 100%: a large calm muted blue-gray frosted stage panel (about #B4C8E0 at its top fading to about #9DB4D2 at the bottom), its top edge a soft gentle curve with a faint white rim. Its LEFT, RIGHT and BOTTOM edges are wrapped in puffy white and pale-blue clouds that overlap the panel; a few small glossy colored bubbles (pink, blue, yellow, purple) and one small rainbow arc tucked into the bottom corners, like the mockup. The center of the panel (middle 80% of the width, from 62% to 97% of the height) stays PLAIN and evenly lit, because pads, creatures, glass tubes, numbers and three buttons are drawn on top.\nThe upper sky and the lower stage must feel like ONE painting with consistent light, not two pasted layers.\nNo text, no letters, no numbers, no watermark.\n\nStrict production corrections for this generation: The full portrait image is logically 1080 pixels wide and 1920 pixels high. The upper SKY is exactly the upper THREE FIFTHS of the image, and the STAGE is exactly the lower TWO FIFTHS. Place the stage's thin white curved upper rim at center y=1140 pixels (59.4%), nowhere higher than y=1125 pixels (58.6%). At y=1094 pixels the center MUST STILL be plain #95D3FE blue sky, not a white rim or a gray panel. Never copy the mockup's higher division line. Match the original background's blue colors: no washed-out cyan and no milky center glow. Above the stage, there is NO cloud horizon at all, no bottom-sky cloud bank: keep the sky completely clear in the rectangle x=81..999, y=184..1094. All top cloud clusters, castle and rainbow must fit within the top 165 pixels, above the bubble-grid zone. On the lower stage, side clouds and colored bubbles must fit into the extreme outside strips x=0..95 and x=985..1080. Bottom clouds must fit entirely below y=1880; from y=1190 through y=1863 the full central x=108..972 is a perfectly smooth uninterrupted dull blue-gray field. The stage is muted neutral #B4C8E0 to #9DB4D2, NOT vivid blue, with NO spotlight, vignette, texture, fog or speckle in its center. Bottom-corner rainbow and bubbles remain strictly in the side border strips. Make the edge decorations small enough to respect these exact empty areas. Do not draw the game foam rail. No visual guides, no coordinate labels. These layout requirements override positions in references 1, 3 and 4; preserve reference 2's sky colors.",
+      "reference_images": [
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-01.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/background-v1.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-03.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-04.png"
+      ],
+      "transparent_background": false,
+      "status": "generated_rejected",
+      "native_path": "/Users/yangdage/.codex/generated_images/01a12f40-187b-7be0-ae74-0c740aed91d1/exec-302f68d3-0344-4dfe-ad3c-3ebcd848dc4f.png",
+      "archive_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-background-attempt-02.png",
+      "width": 941,
+      "height": 1672,
+      "mode": "RGB",
+      "sha256": "deac1274bb341ae4eb0d5f0fa57d132efcbd8eeab00279c359fc4f17166f4c6d",
+      "sample_rgb": [
+        [
+          83,
+          167,
+          253
+        ],
+        [
+          111,
+          187,
+          253
+        ],
+        [
+          136,
+          202,
+          253
+        ],
+        [
+          146,
+          208,
+          253
+        ],
+        [
+          174,
+          196,
+          228
+        ],
+        [
+          250,
+          250,
+          253
+        ]
+      ],
+      "verdict": "未选：版式接近要求，但原图底云和角部装饰侵入保护区；试做收紧后云朵与泡泡被压扁，形体质量不足，保留原图和试稿记录，继续重出更小的原生边饰。",
+      "reference_metadata": [
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-01.png",
+          "sha256": "be50b535658005bc7fe6668a23f0714f64cc88b23fd1cbc293a5f0b5c73ed6c9",
+          "size": [
+            941,
+            1672
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/background-v1.png",
+          "sha256": "ef0716729983bb68c79f1c67df8221fb0ed1be93f2f7796e9ad9555ea189eb51",
+          "size": [
+            1080,
+            1920
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/stage.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-03.png",
+          "sha256": "06e970511a1ca002539642e9eda4526423004bc666b18311cbdfe84565d48671",
+          "size": [
+            1080,
+            772
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-04.png",
+          "sha256": "71040d1120a1dee30c48ea995d417b98926d719d96916a64dea4435b8ad2e55d",
+          "size": [
+            540,
+            960
+          ],
+          "is_generation": false
+        }
+      ]
+    },
+    {
+      "attempt": 3,
+      "prompt": "Match EXACTLY the art style of the attached battle screenshot (the mockup): a bright cheerful cloud-top bubble world for an all-ages mobile casual game, clean colored dark outlines, soft controlled cel shading, bright glossy highlights, juicy saturated colors, rounded capsule-and-glass user interface. Strictly original: no plants, flowers, vegetables, flowerpots, fences, dragons or dinosaurs, nothing resembling any existing game's characters, interface or logos.\n\nONE complete battle background, portrait 9:16, 1080x1920, opaque, edge to edge. It REPLACES the current background (second attached image): keep the same bright cloud-top bubble world, the same castle and rainbow in the top-right corner, and the SAME calm blue sky colors in the upper part, but now the lower 40% is a soft stage panel painted into the same image, exactly like the area below the foam rail in the mockup (first attached image).\nONLY the background: no user interface, no buttons, no bars, no characters, no bubbles grid, no pads, no tubes, no text.\n\nLayout from top to bottom (percent of image height):\n- 0% to 9%: bright sky with small fluffy clouds; a tiny distant fairy-tale castle and a short rainbow arc in the top-right corner; the top-left and middle stay calm.\n- 9.6% to 57%: a CALM, PLAIN sky: a smooth vertical blue gradient matching the current background (about #5CAEFD near the top of this band, #72BEFE at 30%, #88CCFD at 50%, #95D3FE at 57%). Only very faint thin clouds hugging the far left and far right edges. Absolutely NO clouds, islands, waterfalls, birds or shapes in the middle 85% of the width: a dense picture made of small bubbles is drawn on top of this sky by the game.\n- 57% to 60%: the sky softly meets the top of the stage panel (the game draws a thin glowing foam rail at 58.5%).\n- 60% to 100%: a large calm muted blue-gray frosted stage panel (about #B4C8E0 at its top fading to about #9DB4D2 at the bottom), its top edge a soft gentle curve with a faint white rim. Its LEFT, RIGHT and BOTTOM edges are wrapped in puffy white and pale-blue clouds that overlap the panel; a few small glossy colored bubbles (pink, blue, yellow, purple) and one small rainbow arc tucked into the bottom corners, like the mockup. The center of the panel (middle 80% of the width, from 62% to 97% of the height) stays PLAIN and evenly lit, because pads, creatures, glass tubes, numbers and three buttons are drawn on top.\nThe upper sky and the lower stage must feel like ONE painting with consistent light, not two pasted layers.\nNo text, no letters, no numbers, no watermark.\n\nCritical art-direction correction: design SMALL ROUND edge decorations natively; do not copy the oversized cloud borders of the references. Draw the image with 60% sky and only 40% stage. The stage upper rim is y=1140 on a 1080x1920 canvas (59.4%). The sky protected rectangle is x=81..999 and y=184..1094; the panel protected rectangle is x=108..972 and y=1190..1863. These rectangles must be completely untouched by decoration. Top clouds/castle/rainbow end before y=165. Above the stage there is NO cloud horizon, NO islands or waterfalls, only a plain blue gradient and very sparse tiny clouds at the outermost x<50 or x>1030 edges. Match the exact blue sky of reference 2. At the panel sides, use only tiny small ROUND cloud puffs with diameters 25 to 45 pixels, grouped loosely but never more than 60 pixels wide. Colored side bubbles are tiny perfect spheres, each 22 to 35 pixels in diameter, contained entirely within the outermost 65-pixel side strips. Lower-corner rainbow is a tiny 65-pixel-wide arc, NOT a giant rainbow. For the bottom border use a SINGLE LOW ROW of tiny ROUND cloud puffs, each only 25 to 40 pixels tall and wide, touching the bottom edge and starting NO HIGHER than y=1880. Bottom cloud border is at most 40 pixels tall (2% image height), NOT a thick cloud bank. Do not draw a big bottom bubble or big corner puff. Shrink both width AND height of every decorative puff and sphere together, keep every form round and volumetric, never flattened. The stage's empty middle is a smooth muted blue-gray vertical gradient #B4C8E0 to #9DB4D2, without lighting hotspots, vignettes or texture. NO stars, shine streaks, particles, speckles, buttons, text or interface. This is an exact production background with a very large uncluttered play area, so decorations are miniature border accents only. Beautiful soft bubble-world painted shading and gloss remain on tiny border details. Do not include guide lines or labels.",
+      "reference_images": [
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-01.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/background-v1.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-03.png",
+        "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-04.png"
+      ],
+      "transparent_background": false,
+      "status": "selected_finished_and_passed",
+      "native_path": "/Users/yangdage/.codex/generated_images/01a12f40-187b-7be0-ae74-0c740aed91d1/exec-edbcf96e-51ac-4fa5-bb37-d89adb45a93e.png",
+      "archive_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-background-attempt-03.png",
+      "width": 941,
+      "height": 1672,
+      "mode": "RGB",
+      "sha256": "ca625fdb5c4cd2776f87071b215c920bfbd5d994aba25fa62c3d2e342753a7ad",
+      "verdict": "选中并完成后期：原生边饰已缩小且保持圆润；微调顶部与托板上沿位置，校准天空和灰蓝面板，淡化边云并清理保护区；最终尺寸、取色和留白检查通过。底云和泡泡没有横向压缩。",
+      "reference_metadata": [
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/Concepts/bubble-squad-v02/01-smiley-intro.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-01.png",
+          "sha256": "be50b535658005bc7fe6668a23f0714f64cc88b23fd1cbc293a5f0b5c73ed6c9",
+          "size": [
+            941,
+            1672
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/background-v1.png",
+          "sha256": "ef0716729983bb68c79f1c67df8221fb0ed1be93f2f7796e9ad9555ea189eb51",
+          "size": [
+            1080,
+            1920
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/stage.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-03.png",
+          "sha256": "06e970511a1ca002539642e9eda4526423004bc666b18311cbdfe84565d48671",
+          "size": [
+            1080,
+            772
+          ],
+          "is_generation": false
+        },
+        {
+          "source_path": "/Users/yangdage/aitools/Flightbeat/Builds/R1-evidence/play-v3/3-2.png",
+          "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/57-reference-04.png",
+          "sha256": "71040d1120a1dee30c48ea995d417b98926d719d96916a64dea4435b8ad2e55d",
+          "size": [
+            540,
+            960
+          ],
+          "is_generation": false
+        }
+      ]
+    }
+  ],
+  "original_sky_samples": [
+    {
+      "percent_y": 0.096,
+      "xy": [
+        540,
+        184
+      ],
+      "rgb": [
+        86,
+        170,
+        254
+      ]
+    },
+    {
+      "percent_y": 0.3,
+      "xy": [
+        540,
+        576
+      ],
+      "rgb": [
+        114,
+        190,
+        254
+      ]
+    },
+    {
+      "percent_y": 0.5,
+      "xy": [
+        540,
+        960
+      ],
+      "rgb": [
+        136,
+        204,
+        253
+      ]
+    },
+    {
+      "percent_y": 0.57,
+      "xy": [
+        540,
+        1094
+      ],
+      "rgb": [
+        149,
+        211,
+        254
+      ]
+    }
+  ],
+  "status": "delivered_offline_checks_passed",
+  "selected_version": 3,
+  "generation_count": 3,
+  "generation_call_count": 3,
+  "output_path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png",
+  "output_size": [
+    1080,
+    1920
+  ],
+  "output_mode": "RGB",
+  "sha256": "8deba1cd1a478ec104774227e4422d711f28878dec537e6b2bccc713e2c8bde6",
+  "postprocessing": {
+    "source_attempt": 3,
+    "source_size": [
+      941,
+      1672
+    ],
+    "output_size": [
+      1080,
+      1920
+    ],
+    "output_mode": "RGB",
+    "vertical_source_anchors": [
+      0,
+      208,
+      1110,
+      1750,
+      1919
+    ],
+    "vertical_target_anchors": [
+      0,
+      174,
+      1140,
+      1750,
+      1919
+    ],
+    "horizontal_warp": false,
+    "bottom_cloud_warp": false,
+    "sky_color_anchors_y": [
+      0,
+      184,
+      576,
+      960,
+      1094,
+      1130
+    ],
+    "sky_color_anchors_rgb": [
+      [
+        59,
+        142,
+        253
+      ],
+      [
+        86,
+        170,
+        254
+      ],
+      [
+        114,
+        190,
+        254
+      ],
+      [
+        136,
+        204,
+        253
+      ],
+      [
+        149,
+        211,
+        254
+      ],
+      [
+        151,
+        212,
+        254
+      ]
+    ],
+    "panel_core_top_rgb": [
+      180,
+      200,
+      224
+    ],
+    "panel_core_bottom_rgb": [
+      157,
+      180,
+      210
+    ],
+    "method": "native generated art, proportional local edge fitting, old-sky color calibration, plain-area texture cleanup; no old artwork pasted"
+  },
+  "technical_check": {
+    "file": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/scene/background.png",
+    "width": 1080,
+    "height": 1920,
+    "mode": "RGB",
+    "sha256": "8deba1cd1a478ec104774227e4422d711f28878dec537e6b2bccc713e2c8bde6",
+    "alpha_min": 255,
+    "alpha_max": 255,
+    "sky_samples": [
+      {
+        "xy": [
+          540,
+          184
+        ],
+        "actual_rgb": [
+          86,
+          170,
+          254
+        ],
+        "actual_hex": "#56AAFE",
+        "original_rgb": [
+          86,
+          170,
+          254
+        ],
+        "original_hex": "#56AAFE",
+        "table_hex": "#5CAEFD",
+        "delta_e76_to_original": 0.0,
+        "delta_e76_to_table": 3.2888
+      },
+      {
+        "xy": [
+          540,
+          576
+        ],
+        "actual_rgb": [
+          114,
+          190,
+          254
+        ],
+        "actual_hex": "#72BEFE",
+        "original_rgb": [
+          114,
+          190,
+          254
+        ],
+        "original_hex": "#72BEFE",
+        "table_hex": "#72BEFE",
+        "delta_e76_to_original": 0.0,
+        "delta_e76_to_table": 0.0
+      },
+      {
+        "xy": [
+          540,
+          960
+        ],
+        "actual_rgb": [
+          136,
+          204,
+          253
+        ],
+        "actual_hex": "#88CCFD",
+        "original_rgb": [
+          136,
+          204,
+          253
+        ],
+        "original_hex": "#88CCFD",
+        "table_hex": "#88CCFD",
+        "delta_e76_to_original": 0.0,
+        "delta_e76_to_table": 0.0
+      },
+      {
+        "xy": [
+          540,
+          1094
+        ],
+        "actual_rgb": [
+          149,
+          211,
+          254
+        ],
+        "actual_hex": "#95D3FE",
+        "original_rgb": [
+          149,
+          211,
+          254
+        ],
+        "original_hex": "#95D3FE",
+        "table_hex": "#95D3FE",
+        "delta_e76_to_original": 0.0,
+        "delta_e76_to_table": 0.0
+      }
+    ],
+    "sky_protected_region": {
+      "rect_xyxy_exclusive": [
+        81,
+        184,
+        999,
+        1095
+      ],
+      "max_row_channel_range": 0,
+      "max_row_channel_std": 0.0,
+      "max_adjacent_vertical_channel_step": 1,
+      "max_adjacent_horizontal_channel_step": 0,
+      "center_top_rgb": [
+        86,
+        170,
+        254
+      ],
+      "center_bottom_rgb": [
+        149,
+        211,
+        254
+      ]
+    },
+    "stage_protected_region": {
+      "rect_xyxy_exclusive": [
+        108,
+        1190,
+        972,
+        1863
+      ],
+      "max_row_channel_range": 0,
+      "max_row_channel_std": 0.0,
+      "max_adjacent_vertical_channel_step": 1,
+      "max_adjacent_horizontal_channel_step": 0,
+      "center_top_rgb": [
+        180,
+        200,
+        224
+      ],
+      "center_bottom_rgb": [
+        157,
+        180,
+        210
+      ]
+    },
+    "checks": {
+      "size_1080x1920": true,
+      "fully_opaque": true,
+      "sky_sample_delta_e76_to_original_at_most_3": true,
+      "sky_plain_smooth_gradient": true,
+      "stage_plain_smooth_gradient": true
+    },
+    "visual_checks_required": [
+      "style",
+      "top_right_castle_and_rainbow",
+      "no_UI_or_text",
+      "no_prohibited_elements",
+      "natural_transition",
+      "edge_artwork_integrity"
+    ],
+    "game_integration_tested": false,
+    "selected_attempt": 3,
+    "generation_call_count": 3,
+    "generated_image_count": 3,
+    "visual_checks_passed": true,
+    "visual_review": "Reviewed final full image and protected-area overlay.",
+    "background_backup": {
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/background-v1.png",
+      "sha256": "ef0716729983bb68c79f1c67df8221fb0ed1be93f2f7796e9ad9555ea189eb51",
+      "byte_identical": true
+    },
+    "retired_stage": {
+      "path": "/Users/yangdage/aitools/Flightbeat/Art/R1/art-v3/delivery/_originals/stage-56.png",
+      "sha256": "06e970511a1ca002539642e9eda4526423004bc666b18311cbdfe84565d48671",
+      "byte_identical": true,
+      "source_absent": true
+    },
+    "previous_file_count": 327,
+    "external_changes_observed_before_delivery": [
+      "美术AI提示词.md",
+      "一次性出图指令.md",
+      "generated/atlas-sources.json"
+    ]
+  },
+  "self_check": [
+    {
+      "item": 1,
+      "name": "尺寸、文件名、不透明度",
+      "result": "通过",
+      "reason": "scene/background.png，1080×1920，RGB PNG，整张不透明；背景是任务书透明底要求的例外。"
+    },
+    {
+      "item": 2,
+      "name": "画风与示意图一致",
+      "result": "通过",
+      "reason": "采用云端泡泡世界的柔和明暗和明亮高光；天空、城堡、彩虹、边云和托板来自同一次完整背景生成，无角色。"
+    },
+    {
+      "item": 3,
+      "name": "角色脚底、三态、颜色版本",
+      "result": "不适用",
+      "reason": "本项是背景，不含角色；无脚底行、动作帧或角色颜色版本。"
+    },
+    {
+      "item": 4,
+      "name": "角色身体主色ΔE76",
+      "result": "不适用",
+      "reason": "无角色身体。背景另取中线四点和旧图逐点比较，ΔE76均为0；结果见下表。"
+    },
+    {
+      "item": 5,
+      "name": "空心半透明弹体",
+      "result": "不适用",
+      "reason": "不是弹体；侧边彩色小泡泡是背景装饰，不交付为战斗弹体。"
+    },
+    {
+      "item": 6,
+      "name": "文字和数字",
+      "result": "通过",
+      "reason": "没有文字、数字、水印；没有预画角色、出战位、玻璃管、按钮、泡泡阵或护栏。"
+    },
+    {
+      "item": 7,
+      "name": "禁止元素",
+      "result": "通过",
+      "reason": "未见植物、蔬菜、花盆、篱笆、恐龙、既有游戏角色或标志。"
+    },
+    {
+      "item": 8,
+      "name": "九宫格边框与拉伸",
+      "result": "不适用",
+      "reason": "固定1080×1920全屏背景，不是九宫格界面部件。"
+    },
+    {
+      "item": 9,
+      "name": "多帧、灰度染色特效",
+      "result": "不适用",
+      "reason": "单张彩色背景，没有帧切分、帧数或白灰染色要求。"
+    },
+    {
+      "item": 10,
+      "name": "小蓝头像身份",
+      "result": "不适用",
+      "reason": "本图不含小蓝头像或其他角色。"
+    },
+    {
+      "item": 11,
+      "name": "泡泡阵留白区",
+      "result": "通过",
+      "reason": "检查矩形[81,184,999,1095)，覆盖中间85%宽、9.6%–57%高；目检无云、图案、小岛、瀑布。逐行RGB完全一致，纵向相邻像素各通道最大变化1/255，只有平缓纵向蓝色渐变。"
+    },
+    {
+      "item": 12,
+      "name": "天空颜色与明暗",
+      "result": "通过",
+      "reason": "四个指定高度的中线像素与background-v1.png完全一致；9.6%处采用旧图实际#56AAFE，与表中约值#5CAEFD的ΔE76为3.2888，其余三点也与表中值一致。"
+    },
+    {
+      "item": 13,
+      "name": "托板留白区",
+      "result": "通过",
+      "reason": "检查矩形[108,1190,972,1863)，覆盖中间80%宽、62%–97%高；无云、泡泡、彩虹、图案、文字或界面。逐行RGB完全一致，纵向相邻通道最大变化1/255。上部#B4C8E0，下部#9DB4D2。"
+    },
+    {
+      "item": 14,
+      "name": "上下分区与过渡",
+      "result": "通过",
+      "reason": "小城堡、彩虹和顶部云团收在顶部约9%；托板微白上沿位于57%–60%过渡带，60%以下为完整托板；天空和托板是一张不透明画面，无另贴旧托板。"
+    },
+    {
+      "item": 15,
+      "name": "边缘装饰与形体",
+      "result": "通过",
+      "reason": "白、浅蓝云沿左右及底边；粉、蓝、黄、紫小泡泡和角部小彩虹保留。第三版原生缩小边饰，最终未作横向压缩，泡泡和底云保持圆润，保护区内没有装饰。"
+    },
+    {
+      "item": 16,
+      "name": "提示词、四张参考、次数",
+      "result": "通过",
+      "reason": "第57项完整原文和[STYLE]整段均保留；每次都附四张指定参考的稳定副本，共调用3次、生成3张，未超4次。原图和完整提示词均留档。"
+    },
+    {
+      "item": 17,
+      "name": "原背景备份",
+      "result": "通过",
+      "reason": "动手前已备份到_originals/background-v1.png；SHA256与覆盖前背景一致，校色始终以该副本为准。"
+    },
+    {
+      "item": 18,
+      "name": "托板归档",
+      "result": "通过",
+      "reason": "覆盖新背景后，把scene/stage.png移动到_originals/stage-56.png，文件内容哈希不变，原交付路径已不存在。前节第56项记录为历史记录，以本节归档路径为准。"
+    }
+  ]
+}

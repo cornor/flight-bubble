@@ -32,12 +32,7 @@ namespace Flightbeat.Game
                 StartSortie(0);
         }
 
-        private void NoteSortieOutcome() // f54661
-        {
-            lastOutcome = Battle != null && Battle.State == Phase.Won ? 1 : Battle != null && Battle.State == Phase.Lost ? -1 : 0;
-            liaisonCheck = 1f;
-            homeEnteredAt = ui;
-        }
+
 
         private void NoteBroadcastHumanInput() // f54705: two separate key reads.
         {

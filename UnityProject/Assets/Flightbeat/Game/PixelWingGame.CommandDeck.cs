@@ -9,9 +9,10 @@ namespace Flightbeat.Game
 
     public partial class PixelWingGame
     {
+        private int assemblyFighter = -1, assemblySoundStep;
+        private float assemblyAt = 0f; // Retained source assembly renderer dependencies; no UI entry.
         internal DeckOverlay deckOverlay; // +128
-        private int assemblyFighter = -1; // +64; f54860
-        internal bool devPanel, energyOpen, recycleOpen, transitionActive; // +96/+97/+216/+700
+        internal bool devPanel, energyOpen, transitionActive; // +96/+97/+216/+700
 
         // f54590. Original page, overlay and floating modal order.
         private void DrawCommandDeck(PixelSurface s)

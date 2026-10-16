@@ -8,18 +8,10 @@ namespace Flightbeat.Game
         // Original standalone interfaces. Existing inlined call sites retain
         // their own instruction order; these restore the original API surface.
         private bool LessonPropsLocked => !evidenceControlled && Battle.Level.lesson > 0; // f54485
-        private float AssemblyDone => 2.41f; // f54527
-        public bool AssemblyPlaying => assemblyFighter >= 0; // f54528: (~value) >>u 31
         public bool EnergyOpen => energyOpen; // f54572
         public bool StreakPromptOpen => streakPrompt; // f54573
         private bool NeedsEnergy(int index) => index >= 2 && !evidenceControlled && !Economy.CanSortie; // f54574
         public DeckOverlay Overlay => deckOverlay; // compiler-shared f24197, Game +128
-        public string LiaisonText => liaisonText; // f37351, Game +176
-        public int UpgradeTab => hangarTab; // f54677, original upgradeTab +280
-        public int ViewFighter => hangarFighter; // f23808, original viewFighter +284
-        public int PickSlot => moduleInspect; // f54679, original pickSlot +292
-        public int ZoomSlot => -1; // compiler-shared f24328
-        private bool GrowthLesson => !Economy.Data.growthTutorial && Economy.Data.unlocked > 2; // f54680
         public int BroadcastWins => broadcastWins; // compiler-shared f54699, Game +336
         public int BroadcastLoops => broadcastLoops; // compiler-shared f54700, Game +340
         public bool BroadcastAutomatic => broadcastAutomatic; // f54567

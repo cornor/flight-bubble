@@ -28,36 +28,6 @@ namespace Flightbeat.Game
         private void DrawDevPanel(PixelSurface s) => DevTools?.DrawDevPanel(s);
         // src: DrawDeckSettings f54596. Original Test build hides tuning through
         // the static field above; music/effects/light switches remain separate.
-        private void DrawDeckSettings(PixelSurface s)
-        {
-            Backdrop(s, .8f);
-            float eased = OutBack(OriginalMath.Binary32(Since(250) / .3f));
-            float y = OriginalMath.Binary32(OriginalMath.Binary32((OriginalMath.Binary32(1f - eased)) * 40f) + (OriginalMath.Binary32(OriginalMath.Binary32(ScreenLayout.Height * .5f) + -210f)));
-            Card(s, 60f, y, 420f, ShowTuning ? 490f : 420f, uiEdge, Clamp01(OriginalMath.Binary32(eased * 1.2f)));
-            Title(s, "设置", 270f, OriginalMath.Binary32(y + 22f), 2.2f, uiText, uiInk);
-            string[] labels = { "音乐", "音效", "光效" };
-            bool[] enabled = { !audioChip.MusicMuted, !audioChip.EffectsMuted, effects.Enabled };
-            float rowsTop = OriginalMath.Binary32(y + 86f);
-            for (int i = 0; i != 3; i++)
-            {
-                float rowY = OriginalMath.Binary32(rowsTop + OriginalMath.Binary32((float)(i * 58)));
-                HitBox(s, i + 250, 84f, rowY, 372f, 48f);
-                Plate(s, 84f, rowY, 372f, 48f, new Color(.07f, .17f, .25f, 1f),
-                    new Color(.03f, .09f, .14f, 1f), A(uiEdge, .7f), 6f, 1f);
-                Label(s, labels[i], 108f, OriginalMath.Binary32(rowY + 12f), 1.6f, uiText, -1);
-                // WAT packs the original two switch colors before these masks.
-                uint packed = enabled[i] ? unchecked((uint)-6898136) : unchecked((uint)-11516356);
-                var tint = new Color(OriginalMath.Binary32(OriginalMath.Binary32((float)(packed & 60u)) / 255f), OriginalMath.Binary32(OriginalMath.Binary32((float)((packed >> 8) & 254u)) / 255f),
-                    OriginalMath.Binary32(OriginalMath.Binary32((float)((packed >> 16) & 214u)) / 255f), 1f);
-                float toggleY = OriginalMath.Binary32(rowY + 11f);
-                s.Rect(372f, OriginalMath.Binary32(toggleY + 2f), 64f, 22f, tint);
-                s.Rect(374f, toggleY, 60f, 26f, tint);
-                s.Rect(enabled[i] ? 410f : 376f, OriginalMath.Binary32(toggleY + 3f), 26f, 20f, Color.white);
-            }
-            Button(s, 253, 84f, OriginalMath.Binary32(y + 266f), 372f, 54f, "完成", Btn.Primary, 2f);
-            Button(s, 299, 84f, OriginalMath.Binary32(y + 330f), 372f, 40f, "重温飞行训练", Btn.Ghost, 1.25f);
-            if (ShowTuning) Button(s, 254, 84f, OriginalMath.Binary32(y + 390f), 372f, 40f, "数值调参面板", Btn.Ghost, 1.2f);
-            DrawVersion(s, 270f, OriginalMath.Binary32(y + (ShowTuning ? 446f : 382f)), true);
-        }
+
     }
 }

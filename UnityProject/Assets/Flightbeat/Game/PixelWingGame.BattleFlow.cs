@@ -103,11 +103,6 @@ namespace Flightbeat.Game
         }
         private void EnterDeck()
         {
-            launchSent = false;
-            launchAt = -1f;
-            lastOutcome = Battle != null && Battle.State == Phase.Won ? 1 : Battle != null && Battle.State == Phase.Lost ? -1 : 0;
-            liaisonCheck = 1f;
-            homeEnteredAt = ui;
             if (Battle != null && Battle.State == Phase.Won && LastReward == null && sortieId.Length > 0)
                 LastReward = Economy.Win(sortieId, sortieLoadout, Battle.Revived, Battle.Time);
             SettleOutcome();

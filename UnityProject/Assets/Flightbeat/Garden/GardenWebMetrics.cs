@@ -17,7 +17,7 @@ namespace Flightbeat.Garden {
             public int level, remaining, total, visibleBugs, fleet, maxTier, step, phase, frames;
             public float battleTime, wallSeconds, fps, p50ms, p95ms, p99ms, maxMs;
             public int denseFrames; public float denseSeconds, denseFps, denseP95ms, denseP99ms;
-            public bool home, settings, paused, finaleReady, finaleGuide, transition;
+            public bool home, settings, paused, finaleReady, finaleGuide, transition, musicMuted, soundMuted, lightEnabled;
             public int[] fleetColors; public Lane[] lanes;
         }
         readonly List<float> frameTimes = new List<float>(18000);
@@ -49,6 +49,7 @@ namespace Flightbeat.Garden {
             var sample = new Sample { level = game.LevelIndex, remaining = b.Remaining, total = b.Total, visibleBugs = visible,
                 fleet = b.Fleet.Count, fleetColors = new int[b.Fleet.Count], step = game.TutorialStep, phase = (int)b.State,
                 battleTime = b.Time, home = game.InHome, settings = game.settings, paused = game.paused,
+                musicMuted = game.Audio.MusicMuted, soundMuted = game.Audio.EffectsMuted, lightEnabled = game.Effects.Enabled,
                 finaleReady = b.FinaleReady, finaleGuide = game.FinaleGuideActive, transition = game.TransitionActive,
                 lanes = new Lane[b.LaneCount], frames = times.Length, wallSeconds = (float)(sum / 1000),
                 denseFrames = dense.Length, denseSeconds = (float)(denseSum / 1000),

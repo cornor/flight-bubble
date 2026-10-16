@@ -36,6 +36,14 @@ namespace Flightbeat.Game
         }
         internal void RefreshGardenUi(GardenBattlePage view)
         {
+            view.SetHomeMode(InHome);
+            if (InHome)
+            {
+                view.ShowHome(settings);
+                RefreshGardenSettings(view);
+                if (gardenOverlay) gardenOverlay.Redraw();
+                return;
+            }
             view.Show(GardenUiActive);
             if (gardenOverlay) { gardenOverlay.Lighting = hud.Lighting; gardenOverlay.Redraw(); }
             if (!GardenUiActive) return;
@@ -63,10 +71,7 @@ namespace Flightbeat.Game
             bool simplePause = Battle.State != Phase.ReviveOffer && !settings && !finaleGuide && paused && selection == 0 && !transitionActive;
             view.pauseDialog.SetActive(showSettings || simplePause);
             view.settingsPanel.SetActive(showSettings); view.pausedPanel.SetActive(simplePause);
-            view.musicText.Present(audioChip.MusicMuted); view.soundText.Present(audioChip.EffectsMuted); view.lightText.Present(!effects.Enabled);
-            view.toggleIcons[0].sprite = audioChip.MusicMuted ? view.toggleOff : view.toggleOn;
-            view.toggleIcons[1].sprite = audioChip.EffectsMuted ? view.toggleOff : view.toggleOn;
-            view.toggleIcons[2].sprite = effects.Enabled ? view.toggleOn : view.toggleOff;
+            RefreshGardenSettings(view);
             bool won = Battle.State == Phase.Won;
             bool result = (Battle.State == Phase.Lost || (won && !teaching)) && feedback.EndAge > .48f;
             bool completedLesson = won && teaching;
@@ -85,10 +90,17 @@ namespace Flightbeat.Game
             }
             view.campaignComplete.SetActive(won && levelIndex == 3);
         }
+        void RefreshGardenSettings(GardenBattlePage view)
+        {
+            view.musicText.Present(audioChip.MusicMuted); view.soundText.Present(audioChip.EffectsMuted); view.lightText.Present(!effects.Enabled);
+            view.toggleIcons[0].sprite = audioChip.MusicMuted ? view.toggleOff : view.toggleOn;
+            view.toggleIcons[1].sprite = audioChip.EffectsMuted ? view.toggleOff : view.toggleOn;
+            view.toggleIcons[2].sprite = effects.Enabled ? view.toggleOn : view.toggleOff;
+        }
         bool TryGardenUiHit(Vector2 logical, out int id)
         {
             id = -1;
-            if (!GardenUiActive || !gardenPage) return false;
+            if (!(GardenUiActive || (InHome && settings)) || !gardenPage) return false;
             float y = ScreenLayout.Y(logical.y);
             for (int i = gardenOverlayHits.Count - 1; i >= 0; i--)
             {

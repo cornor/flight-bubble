@@ -40,11 +40,34 @@ async function tap(x,y,modal=false){
   await pause(65);
   await c.call('Input.dispatchMouseEvent',{type:'mouseReleased',x,y,button:'left',buttons:0,clickCount:1});
 }
-const wins=new Set(), snaps=new Set(), uiChecks=[], colorShots={}; let last='',attempts=0, pauseChecked=false;
+const wins=new Set(), snaps=new Set(), uiChecks=[], colorShots={}; let last='',attempts=0, pauseChecked=false, homeChecked=false, homeRequested=false;
 try{
   for(let i=0;i<1000;i++){
     const m=await c.evaluate('window.gardenR1');
     if(!m){await pause(1000);continue;}
+    if(m.home && !m.transition){
+      fs.writeFileSync(out+'/home.png',Buffer.from((await c.call('Page.captureScreenshot')).data,'base64'));
+      if(!homeChecked){
+        await tap(270,662);await pause(1200);
+        const before=await c.evaluate('window.gardenR1');
+        if(!before.settings)throw Error('Home settings did not open');
+        fs.writeFileSync(out+'/home-settings.png',Buffer.from((await c.call('Page.captureScreenshot')).data,'base64'));
+        for(const [y,key] of [[360,'musicMuted'],[418,'soundMuted'],[476,'lightEnabled']]){
+          const old=(await c.evaluate('window.gardenR1'))[key];
+          await tap(270,y,true);await pause(1200);
+          if((await c.evaluate('window.gardenR1'))[key]===old)throw Error('Home toggle did not change: '+key);
+          await tap(270,y,true);await pause(1200);
+          if((await c.evaluate('window.gardenR1'))[key]!==old)throw Error('Home toggle did not restore: '+key);
+        }
+        await tap(270,543,true);await pause(1200);
+        if((await c.evaluate('window.gardenR1')).settings)throw Error('Home settings did not close');
+        homeChecked=true;uiChecks.push('home/settings/all three toggles/close passed');
+      }
+      await tap(270,568);await pause(1200);
+      const started=await c.evaluate('window.gardenR1');
+      if(started.home || (homeRequested && started.level!==3))throw Error('Home start did not enter first uncleared level');
+      uiChecks.push('home start enters first uncleared level');continue;
+    }
     if(!pauseChecked&&m.level===0&&m.phase===1&&!m.transition){
       await tap(36,30);await pause(1200);
       const paused=await c.evaluate('window.gardenR1');
@@ -78,9 +101,13 @@ try{
     if(m.phase===4){
       wins.add(m.level);
       if(m.level===3){console.log('FOUR_LEVELS_WON');break;}
+      if(m.level===2 && !homeChecked){
+        if(!homeRequested){await pause(1600);await tap(270,760,true);homeRequested=true;}
+        await pause(1100);continue;
+      }
       if(m.level>=2){await pause(1600);await tap(270,680,true);}
     } else if(m.phase===3){await tap(270,645);}
-    else if(m.home){ console.log('HOME_REQUIRES_INSPECTION');break; }
+    else if(m.home){ await pause(1000);continue; }
     else if(m.finaleReady){await tap(270,759);}
     else if(!m.paused&&!m.transition&&[1,2].includes(m.phase)){
       const candidates=m.lanes.map((l,i)=>({...l,i})).filter(l=>l.color>=0);
@@ -97,4 +124,5 @@ try{
   console.log(JSON.stringify({wins:result.wins,attempts,final:result.final}));
   if(result.wins.length!==4||result.final.level!==3||result.final.phase!==4)throw Error('Did not win all four levels');
   if(!pauseChecked)throw Error('Pause/resume was not exercised');
+  if(!homeChecked)throw Error('Home/settings/progression were not exercised');
 }finally{c.close();}

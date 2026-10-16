@@ -34,6 +34,7 @@ namespace Flightbeat.Garden.UI
         PixelWingGame owner;
         GardenUiAction[] headerActions, controlActions, pauseActions, resultActions;
         bool visible;
+        GardenUiText pauseTitle, resumeLabel;
         float layoutHeight = -1, layoutWidth = -1, layoutTop = -1, layoutBottom = -1;
         public void Bind(PixelWingGame game)
         {
@@ -42,6 +43,11 @@ namespace Flightbeat.Garden.UI
             controlActions = controls.GetComponentsInChildren<GardenUiAction>(true);
             pauseActions = pauseDialog.GetComponentsInChildren<GardenUiAction>(true);
             resultActions = resultDialog.GetComponentsInChildren<GardenUiAction>(true);
+            foreach (var text in settingsPanel.GetComponentsInChildren<GardenUiText>(true))
+                if (text.text == "暂停一下") { pauseTitle = text; pauseTitle.alternateText = "设置"; }
+            foreach (var action in pauseActions)
+                if (action.actionId == 24)
+                { resumeLabel = action.GetComponentInChildren<GardenUiText>(true); resumeLabel.alternateText = "关闭"; }
             ApplyLayout();
         }
         void LateUpdate()
@@ -55,6 +61,20 @@ namespace Flightbeat.Garden.UI
             visible = value;
             background.SetActive(value); header.SetActive(value); controls.SetActive(value);
             if (!value) { pauseDialog.SetActive(false); resultDialog.SetActive(false); }
+        }
+        public void SetHomeMode(bool home)
+        {
+            if (pauseTitle) pauseTitle.Present(home);
+            if (resumeLabel) resumeLabel.Present(home);
+            foreach (var action in pauseActions)
+                if (action.actionId == 23 || action.actionId == 25) action.gameObject.SetActive(!home);
+        }
+        public void ShowHome(bool settings)
+        {
+            visible = true;
+            background.SetActive(true); header.SetActive(false); controls.SetActive(false);
+            pauseDialog.SetActive(settings); settingsPanel.SetActive(settings); pausedPanel.SetActive(false);
+            resultDialog.SetActive(false);
         }
         public void ApplyLayout()
         {

@@ -17,23 +17,8 @@ namespace Flightbeat.Game
         // f54589. Original bridge background and animated grid for other deck pages.
         private void DrawDeckBackground(PixelSurface s)
         {
+            // The shared GardenBattleBackground prefab supplies the home background.
             s.MapLayout = false;
-            s.Environment(0, ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height);
-            float alpha = Page == DeckPage.Bridge ? .18f : .9f;
-            s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, new Color(.01f, .03f, .06f, alpha));
-            if (Page != DeckPage.Bridge)
-            {
-                for (float y = OriginalMath.Binary32(OriginalMath.Binary32((OriginalMath.Binary32(clock * 14f)) % 40f) + -40f); y < ScreenLayout.Height; y  = OriginalMath.Binary32(y+(40f)))
-                    s.Rect(ScreenLayout.Left, y, ScreenLayout.Width, 1f, new Color(.2f, .6f, .8f, .06f));
-                for (int x = 0; ; x = unchecked(x + 40))
-                {
-                    s.Rect(OriginalMath.Binary32((float)x), 0f, 1f, ScreenLayout.Height, new Color(.2f, .6f, .8f, .05f));
-                    if (x > 499) break;
-                }
-            }
-            s.Glow(270f, OriginalMath.Binary32(ScreenLayout.Height * .5f), OriginalMath.Binary32(ScreenLayout.Width * 1.6f),
-                OriginalMath.Binary32(ScreenLayout.Height * 1.2f), new Color(0f, 0f, 0f, 0f), 0f);
-            s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, OriginalMath.Binary32(ScreenLayout.Top + 60f), new Color(.01f, .02f, .05f, .55f));
         }
         // f54594.
         private void DrawTopBar(PixelSurface s)

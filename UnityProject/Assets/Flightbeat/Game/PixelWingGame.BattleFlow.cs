@@ -17,6 +17,7 @@ namespace Flightbeat.Game
         {
             if (evidenceControlled) { ResetRuntime(); return; }
             if (transitionActive) return;
+            if (!Economy.CanSortie) Economy.AddEnergy(1);
             if (levelIndex >= 2 && !Economy.CanSortie) { OpenEnergy(Restart); return; }
             BeginTransition(TransitionKind.Retry, () => StartSortie(levelIndex), levelIndex);
         }
@@ -26,6 +27,7 @@ namespace Flightbeat.Game
         {
             if (evidenceControlled) { levelIndex = unchecked(levelIndex + 1) % Levels.Length; ResetRuntime(); return; }
             if (Levels.Length <= unchecked(levelIndex + 1)) { ReturnToDeck(); return; }
+            if (!Economy.CanSortie) Economy.AddEnergy(1);
             if (unchecked(levelIndex + 1) >= 2 && !evidenceControlled && !Economy.CanSortie)
                 OpenEnergy(NextLevel);
             else StartSortie(unchecked(levelIndex + 1));

@@ -19,7 +19,7 @@
   <span id="broadcast-status" hidden aria-hidden="true"></span>
   <script>
     const canvas=document.getElementById('unity-canvas');
-    const config={dataUrl:'Build/{{{ DATA_FILENAME }}}',frameworkUrl:'Build/{{{ FRAMEWORK_FILENAME }}}',codeUrl:'Build/{{{ CODE_FILENAME }}}',streamingAssetsUrl:'StreamingAssets',companyName:"PixelWing",productName:"PixelWing",productVersion:"0.11.0",devicePixelRatio:Math.min(window.devicePixelRatio||1,1.5)};
+    const config={dataUrl:'Build/{{{ DATA_FILENAME }}}',frameworkUrl:'Build/{{{ FRAMEWORK_FILENAME }}}',codeUrl:'Build/{{{ CODE_FILENAME }}}',streamingAssetsUrl:'StreamingAssets',companyName:"BubbleSquad",productName:"FlightBubble",productVersion:"0.11.0",devicePixelRatio:Math.min(window.devicePixelRatio||1,1.5)};
     const loader=document.createElement('script');loader.src='Build/{{{ LOADER_FILENAME }}}';
     loader.onload=()=>createUnityInstance(canvas,config,p=>document.querySelector('progress').value=p).then(instance=>{
       document.getElementById('loading').remove();

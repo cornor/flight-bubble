@@ -157,7 +157,7 @@ namespace Flightbeat.Game
             ApplyDisplay(evidenceViewport.x > 0 ? evidenceViewport.x : Screen.width,
                 evidenceViewport.y > 0 ? evidenceViewport.y : Screen.height);
             ResetRuntime();
-            if (!evidenceControlled && Economy.Data.unlocked == 1 && Economy.Data.cleared.Count == 0) StartSortie(0);
+            if (!TryBubbleLevelFromUrl() && !evidenceControlled && Economy.Data.unlocked == 1 && Economy.Data.cleared.Count == 0) StartSortie(0);
             if (InHome)
             {
                 audioChip.Begin();

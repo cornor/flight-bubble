@@ -24,12 +24,9 @@ namespace Flightbeat.Game
         // src: UpdateDeck f54796; f54783 inlines this with dt + clock order.
         private void UpdateDeck(float dt)
         {
-            clock  =             OriginalMath.Binary32(clock+(dt));
-            profileCheck  =             OriginalMath.Binary32(profileCheck+(dt));
-            TickLaunch();
-            UpdateLiaison(dt);
+            clock = OriginalMath.Binary32(clock + dt);
+            profileCheck = OriginalMath.Binary32(profileCheck + dt);
             if (profileCheck > 1f) { profileCheck = 0f; Economy.Refresh(); }
-            TickGacha(dt);
         }
         // src: TickLaunch f54632.
         private void TickLaunch()
@@ -133,17 +130,18 @@ namespace Flightbeat.Game
         // src: DeckTap f54638.
         private void DeckTap(Vector2 point)
         {
-            if (AdService.Busy || applicationSuspended || launchAt >= 0f) return;
+            if (AdService.Busy || applicationSuspended || transitionActive) return;
             int id = HitTest(point);
-            if (id == 0) { if (deckOverlay == DeckOverlay.Gacha) GachaTapAnywhere(); return; }
-            if (id < 0)
+            if (id <= 0) return;
+            Pressed(id);
+            if (settings)
             {
-                if (deckOverlay == DeckOverlay.Gacha) { GachaTapAnywhere(); return; }
-                if (moduleInspect >= 0 && Page == DeckPage.Upgrade && deckOverlay == DeckOverlay.None) moduleInspect = -1;
+                if (id >= 20 && id <= 22) OnBattleUi(id);
+                else if (id == 24) { settings = false; SetPaused(false); audioChip.Play("ui"); }
                 return;
             }
-            Pressed(id);
-            OnDeckUi(id);
+            if (id == 800) StartBubbleLevel();
+            else if (id == 801) { settings = true; audioChip.Play("page"); }
         }
         // src: GoPage f54643.
         private void GoPage(DeckPage page)

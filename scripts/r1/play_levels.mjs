@@ -20,6 +20,7 @@ async function tap(x,y){
  if(process.env.R1_TOUCH==='1'){
   await c.call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...p,id:0}]});await pause(80);await c.call('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
  }else{
+  await c.call('Input.dispatchMouseEvent',{type:'mouseMoved',...p});
   await c.call('Input.dispatchMouseEvent',{type:'mousePressed',...p,button:'left',buttons:1,clickCount:1});await pause(65);
   await c.call('Input.dispatchMouseEvent',{type:'mouseReleased',...p,button:'left',buttons:0,clickCount:1});
  }

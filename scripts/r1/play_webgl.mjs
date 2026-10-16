@@ -1,11 +1,11 @@
 // R1 end-to-end smoke: real browser mouse/touch events only. No model state writes.
-// Run with an isolated Chrome on --remote-debugging-port=9336 and local server 8781.
+// Run with an isolated Chrome on --remote-debugging-port=9342 and local server 8802.
 import fs from 'node:fs';
-import { connect } from '../../Tools/browser/cdp.mjs';
+import { connect } from '../../tools/browser/cdp.mjs';
 const out=process.argv[2]||'Builds/R1-evidence/play-v1';
 if(fs.existsSync(out)) throw Error('Fresh output directory required');
 fs.mkdirSync(out,{recursive:true});
-const c=await connect({port:Number(process.env.R1_CDP_PORT||9336),onEvent:e=>{
+const c=await connect({port:Number(process.env.R1_CDP_PORT||9342),onEvent:e=>{
   if(['Runtime.exceptionThrown','Log.entryAdded'].includes(e.method))fs.appendFileSync(out+'/browser-events.jsonl',JSON.stringify(e)+'\n');
 }});
 await c.call('Page.enable'); await c.call('Runtime.enable'); await c.call('Log.clear'); await c.call('Log.enable');

@@ -5,9 +5,9 @@
 set -euo pipefail
 repo="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$repo"
-if [ "$(git branch --show-current)" != "reskin/r1-v3-bubble" ]; then echo 'v3 构建要求 reskin/r1-v3-bubble 分支'; exit 1; fi
 # Fixed output directory (user request 2026-10-15): every build replaces Builds/WebGL/GardenR1-bubble.
-output="${1:-$repo/Builds/WebGL/GardenR1-bubble}"
+output="$repo/Builds/WebGL/GardenR1-bubble"
+if [ "$#" -gt 0 ] && [ "$1" != "$output" ]; then echo "输出固定为 $output"; exit 2; fi
 case "$output" in "$repo"/Builds/WebGL/*) rm -rf "$output" "$output".*.log "$output".*.json ;; *) [ -e "$output" ] && { echo "输出目录已存在：$output"; exit 1; } ;; esac
 mkdir -p "$(dirname "$output")"
 unity='/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/MacOS/Unity'
@@ -38,4 +38,4 @@ if p.exists():
     p.write_text(re.sub(r"(Build/[^'\"?]+\.(?:unityweb|js))(\?v=\d+)?", lambda m: m[1] + '?v=' + stamp, p.read_text()))
 PY
 echo "构建完成：$output"
-echo "试玩：python3 -m http.server 8785 --bind 127.0.0.1 --directory \"$output\"  然后打开 http://127.0.0.1:8785/（服务可以一直开着，重新构建后刷新即可）"
+echo "试玩：python3 -m http.server 8792 --bind 127.0.0.1 --directory \"$output\"  然后打开 http://127.0.0.1:8792/（服务可以一直开着，重新构建后刷新即可）"

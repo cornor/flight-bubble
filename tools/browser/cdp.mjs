@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
-export async function connect({ port = Number(process.env.FLIGHTBEAT_CDP_PORT ?? 9335), path = '/', onEvent } = {}) {
+export async function connect({ port = Number(process.env.R1_CDP_PORT ?? 9342), path = '/', onEvent } = {}) {
   const tabs = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
   const page = tabs.find(t => t.type === 'page' && new URL(t.url).pathname + new URL(t.url).search === path
     && new URL(t.url).hostname === '127.0.0.1');

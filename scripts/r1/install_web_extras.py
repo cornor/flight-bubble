@@ -6,9 +6,9 @@ root=Path(__file__).resolve().parents[2]
 build=Path(sys.argv[1])
 art='-art-' in build.name
 bubble='bubble' in build.name   # R1 v3 reskin (scripts/r1v3/build.sh)
-name='泡泡小队' if bubble else '植物守卫菜园'
+name='泡泡小队'
 label='R1 试玩版' if bubble else 'R1 第一版美术' if art else 'R1 灰盒'
-port=8785 if bubble else 8784 if art else 8782
+port=8792
 p=build/'index.html'
 s=p.read_text().replace('<title>Flightbeat</title>',f'<title>{name} · {label}</title>').replace('aria-label="Flightbeat 游戏画面"',f'aria-label="{name}游戏画面"').replace('<strong>Flightbeat</strong>',f'<strong>{name} · {label}</strong>')
 if 'r1-perf.js' not in s:s=s.replace('</body>','<script src="r1-perf.js"></script>\n</body>')

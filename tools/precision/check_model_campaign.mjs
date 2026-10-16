@@ -4,6 +4,14 @@ import crypto from 'node:crypto';
 import readline from 'node:readline';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+function localFile(file) {
+  const relative = file.replace(/^.*?\/(Tools|Evidence)\//, '$1/');
+  if (relative.startsWith('Tools/')) return path.join(root, 'tools', relative.slice(6));
+  if (relative.startsWith('Evidence/')) return path.join(root, 'tools', relative);
+  throw Error('Unrecognized frozen dependency path: ' + file);
+}
 import {spawn} from 'node:child_process';
 const [input, output, waitFlag] = process.argv.slice(2), sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const campaign = JSON.parse(fs.readFileSync(`${input}/campaign.json`));
@@ -38,9 +46,9 @@ for (const c of campaign.cases) {
     }
   }
   const source = JSON.parse(fs.readFileSync(`${input}/${c.name}/source.json`));
-  for (const file of [...source.files,...source.prepared])assert.equal(await fileHash(file.path),file.sha256,file.path);
+  for (const file of [...source.files,...source.prepared])assert.equal(await fileHash(localFile(file.path)),file.sha256,file.path);
   const state=JSON.parse(fs.readFileSync(`${output}/${c.name}/report.json`));
-  const trace=source.files.find(f=>/trace\.jsonl\.(gz|zst)$/.test(f.path)).path, traceHash=crypto.createHash('sha256');
+  const trace=localFile(source.files.find(f=>/trace\.jsonl\.(gz|zst)$/.test(f.path)).path), traceHash=crypto.createHash('sha256');
   const arrayFiles=['gz','zst'].map(ext=>`${output}/${c.name}/arrays.jsonl.${ext}`).filter(file=>fs.existsSync(file));
   assert.equal(arrayFiles.length,1,`${c.name}: expected exactly one candidate array stream`);
   const arrayFile=arrayFiles[0], original=rows(trace,traceHash), candidate=rows(arrayFile);

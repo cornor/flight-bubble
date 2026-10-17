@@ -39,6 +39,15 @@
 | 58 | `creatures/<id>/<主色>/blink.png` | 10 个颜色版本的眨眼帧（待战图只闭上眼睛） | 224×256 ×10 |
 | 59 | `creatures/<id>/<主色>/cheer.png` | 10 个颜色版本的欢呼姿势（过关时用） | 224×256 ×10 |
 | 60 | `scene/background.png` | **完整背景第二次重画**：补回示意图护栏上方的浮岛、瀑布、小房子；下半部托板改成和示意图一样四周被云包住，不要硬边方框 | 1080×1920 |
+| 61 | `Art/R1/art-v3/lineup/02-lineup-new.png` | 第三批阵容确认图：12 个新角色（先做，给用户确认，不进游戏） | 横图 |
+| 62–73 | `creatures/<id>/<主色>/` | 12 个新角色：待战、出手、打完（不交弹体） | 224×256 ×3 |
+| 74 | `creatures/<id>/<主色>/blink.png` | 12 个新角色的眨眼帧 | 224×256 ×12 |
+| 75 | `creatures/<id>/<主色>/cheer.png` | 12 个新角色的欢呼姿势 | 224×256 ×12 |
+| 76 | `creatures/mystery/8C919C/idle.png` | 神秘队员（灰色泡泡茧） | 224×256 |
+| 77 | `finale/king-ready.png`、`finale/king-blow.png` | 决战：泡泡大王两种姿势 | 512×512 ×2 |
+| 78 | `finale/button.png` | 决战按钮（空白） | 680×172 |
+| 79 | `fx/rocket-pop.png` | 大泡泡弹炸开（MAX 队员、决战消除） | 1152×192（6 帧） |
+| 80 | `fx/rescue-bubble.png` | 援军泡泡（复活清场） | 128×192 |
 
 ## 通用画风段（下文写作 [STYLE]，使用时替换成这一整段）
 
@@ -840,3 +849,178 @@ The whole image is ONE painting with consistent soft light and haze, not pasted 
 No text, no letters, no numbers, no watermark.
 ```
 
+
+---
+
+## 10. 第三批：12 个新角色（2026-10-16）
+
+交付规则见 [任务书](美术AI任务书.md) 第 5 节。新角色和第一批 8 个是**同一家族**：同样圆胖、同样的描边、明暗和高光、同样的小短脚和大眼睛。每一项都附示意图 `Art/Concepts/bubble-squad-v02/01-smiley-intro.png` 和第一批阵容图 `Art/R1/art-v3/lineup/01-lineup.png`；第 62–75 项在第 61 项确认后再附 `Art/R1/art-v3/lineup/02-lineup-new.png`。参考图每次最多 5 张。
+
+### 新角色段（下文写作 [CAST2]）
+
+```text
+The NEW cast are 12 more plump original bubble creatures from the same family as the approved first eight in the attached lineup (same chubby proportions, same clean colored outlines, soft cel shading, one bright highlight, big expressive eyes, little stubby feet unless stated otherwise). One creature per color. Each body is almost entirely its main color with ONE distinctive silhouette feature; no clothes, no armor, no weapons, no held objects, no leaves, no flowers, no plants.
+They must NOT reuse the first eight's features: cheek fins or tail fin, two short horns, back bumps, two long loop ears, ball-tipped antennae, pill shape, heart shape or quiff, spikes.
+- slate-blue, main color #696CAF: a round puff with ONE long soft cone horn in the middle of its forehead, bent slightly forward, rounded tip; sleepy, half-lidded dreamy eyes.
+- cyan, main color #46D9FF: jellyfish-like: a rounded dome top, slightly wider than tall, standing on three or four short wavy tendrils instead of feet; curious, wide-eyed.
+- lavender, main color #C8C5FF: a fluffy cloud-shaped body whose whole outline is made of six or seven round puffy lobes; dreamy, gentle smile.
+- berry, main color #9C225E (deep magenta-wine, NOT red, NOT purple): a tall egg-shaped body with one round bubble bun sitting directly on top of its head (no stalk); sassy and proud, one eyebrow raised.
+- brown, main color #65392D (warm cocoa brown, NOT charcoal): a wide round body with two small half-round ears on top of its head, perfectly smooth outline (no spikes); calm and sturdy, gentle grin.
+- violet, main color #B672FD: a rounded gem: a soft faceted diamond silhouette with a pointed top, visible facet planes in lighter and darker violet; cool and elegant, confident half-smile.
+- lime, main color #92EF4D: a soft rounded five-pointed star shape, the two lower points are its feet; hyperactive, huge grin.
+- mint, main color #30D183: a very wide, flat, squishy dumpling-shaped body, clearly wider than tall, with two tiny stubby arms; easygoing, content closed-mouth smile.
+- forest, main color #0C7E1C (deep forest green): two stacked round bubbles, a smaller head bubble on a bigger body bubble, like a snowman; a LIGHT green outline and light rim highlights so it reads on dark backgrounds; stoic and brave, determined eyes.
+- pink, main color #FFC5E0: a round body with two round puff balls on the upper left and upper right of its head like pigtails; sweet and affectionate, rosy cheeks.
+- peach, main color #FFCAA9: a gumdrop shape (flat bottom, rounded top, wide base) with two tiny round wings on its upper back; gentle and cheerful.
+- pale-mint, main color #C5FFE4 (very pale cool mint, NOT white): a little wisp: a round head-body tapering into one curly wisp tail at the bottom instead of feet; a medium mint-teal outline so it never reads as white; timid and shy, small mouth.
+Color rule: the lit and mid areas of each body are exactly its main color hex; shadows only darken it without shifting the hue.
+```
+
+### 角色通用段（三格，下文写作 [SHEET3]）
+
+```text
+Layout: landscape image, three equal cells in one row, separated only by empty space.
+Cell 1, READY: the character standing at rest, alert, looking slightly upward.
+Cell 2, ATTACK: the character has just inhaled: cheeks puffed, mouth opened into a round "O" pointing upward, body slightly squashed and leaning back with elastic energy. Do NOT draw any projectile.
+Cell 3, SPENT (out of shots): deflated and tired, body sagging and leaning to one side, half-closed eyes, one small sweat drop; colors slightly dulled but the main color is still clearly recognizable.
+All three cells: the SAME character at the SAME scale, its lowest point (feet, tendrils or tail tip) on the same baseline and the same horizontal center; only the pose changes. No effects, trails, motion lines, pads, ground or shadows.
+Transparent background, clean edges, no glow around the character. No text, no letters, no numbers, no watermark.
+```
+
+### 61. 第三批阵容确认图（先做，给用户确认造型，不进游戏）
+
+- 交付：`Art/R1/art-v3/lineup/02-lineup-new.png`，横图，浅灰底，12 个角色三行。附示意图和第一批阵容图。
+- 行的顺序就是第二轮交付的三批，方便用户按批确认。
+
+```text
+[STYLE]
+
+Character lineup sheet. [CAST2]
+
+Layout: landscape image, three rows of four characters, all in their READY pose (standing, alert, looking slightly upward), same scale as each other AND as the creatures in the attached first lineup, feet on one baseline per row, generous empty space between characters, on a flat plain very light cool gray background (#EEF1F5).
+Row 1, left to right: berry, brown, violet, peach. Row 2, left to right: slate-blue, lavender, cyan, pink. Row 3, left to right: lime, mint, forest, pale-mint.
+Each character must read clearly by silhouette alone: forehead horn, jellyfish tendrils, cloud lobes, head bun, small round ears, gem facets, star points, wide flat dumpling, stacked bubbles, pigtail puffs, little wings, wisp tail.
+No pads, no ground, no shadows, no scenery, no text, no letters, no numbers, no watermark.
+```
+
+### 62–73. 新角色（每项一个颜色）
+
+每一项生成一张三格横图，切成 `idle.png`、`attack.png`、`spent.png`（224×256）：**最低点在 y = 212、水平居中，y 212 以下留空**；身体高 120–150、宽不超过 180。附示意图、两张阵容图。下面是通用提示词，`<id>` 和 `<主色>` 按表替换。
+
+| # | id | 主色 | 交付目录 | 额外一句（加在 The character 那一行后面） |
+| --- | --- | --- | --- | --- |
+| 62 | berry | #9C225E | `creatures/berry/9C225E/` | Deep magenta-wine, not red and not purple. |
+| 63 | brown | #65392D | `creatures/brown/65392D/` | Warm cocoa brown, clearly different from the charcoal creature; smooth outline, no spikes. |
+| 64 | violet | #B672FD | `creatures/violet/B672FD/` | Keep the facet planes visible but subtle; the lit facets are exactly #B672FD. |
+| 65 | peach | #FFCAA9 | `creatures/peach/FFCAA9/` | Light peach, never orange; outline a warm medium orange-brown. |
+| 66 | slate-blue | #696CAF | `creatures/slate-blue/696CAF/` | Muted slate blue, not purple and not bright blue. |
+| 67 | lavender | #C8C5FF | `creatures/lavender/C8C5FF/` | Pale lavender, never white; outline a medium violet-gray. |
+| 68 | cyan | #46D9FF | `creatures/cyan/46D9FF/` | Bright aqua-cyan, clearly lighter and greener than the blue creature. |
+| 69 | pink | #FFC5E0 | `creatures/pink/FFC5E0/` | Soft candy pink, never red; outline a medium rose. |
+| 70 | lime | #92EF4D | `creatures/lime/92EF4D/` | Yellow-green lime, clearly yellower than the other greens. |
+| 71 | mint | #30D183 | `creatures/mint/30D183/` | Fresh mint green, between the green creature and cyan. |
+| 72 | forest | #0C7E1C | `creatures/forest/0C7E1C/` | Deep forest green with a LIGHT green outline so the silhouette reads on a dark background. |
+| 73 | pale-mint | #C5FFE4 | `creatures/pale-mint/C5FFE4/` | Very pale mint, never white; medium mint-teal outline. |
+
+```text
+[STYLE]
+
+Game sprite sheet of ONE character from this NEW cast: [CAST2]
+
+The character: <id>, main color <主色>. <额外一句> Use the approved new lineup as the character reference, the first lineup for the family style and scale, and the mockup for the art style.
+
+[SHEET3]
+```
+
+### 74. 新角色眨眼帧
+
+- 交付：12 个 `blink.png`，放在各自颜色目录。做法、提示词、自查和第 58 项完全一样：在 `idle.png` 上只闭眼，后期把眼睛小矩形（外扩 4 px）贴回原 `idle.png`，逐像素比较的结果写进交付清单。
+- 每个附它自己的 `idle.png`。小荧（lime）如果眼睛压在星角上，外扩范围照实记录即可。
+
+### 75. 新角色欢呼姿势
+
+- 交付：12 个 `cheer.png`。做法和自查同第 59 项（脚底 y = 212、缩放和 idle 一致、最高点 y ≥ 30、宽不超过 210）。
+- 提示词用第 59 项原文，把 `[CAST]` 换成 `[CAST2]`。没有手的角色（小冰、小清、小荧）用触须、尾巴、星角往上扬来表现欢呼。
+
+---
+
+## 11. 第三批：神秘队员（2026-10-16）
+
+### 76. 神秘队员
+
+- 交付：`creatures/mystery/8C919C/idle.png`，224×256，画布规则同第 3 部分。只交这一张。
+- 附示意图和第一批阵容图（只参考缩放和画风）。
+- 自查：没有五官、没有问号（问号由程序画在脚下数字牌的位置）；主色取样 ΔE76 ≤ 8。
+
+```text
+[STYLE]
+
+Game sprite of a MYSTERY squad member whose identity is still hidden: a plump rounded bubble cocoon the same size and proportions as the creatures in the attached lineup, made of frosted gray glass, main color #8C919C, NO face, NO eyes, NO mouth, NO limbs. Inside it, faint soft swirls of lighter gray mist; one bright highlight on the upper left; a clean slightly darker gray outline; two tiny round stubby feet at the bottom.
+Single sprite, centered, standing on the bottom. Transparent background, clean edges, no glow, no shadow. No question mark, no text, no letters, no numbers, no watermark.
+```
+
+---
+
+## 12. 第三批：决战演出（2026-10-16）
+
+全员飞到中间合体成泡泡大王，鼓腮往上吹出扇形彩虹泡泡流。规则见任务书 5.4。
+
+### 77. 泡泡大王
+
+- 交付：`finale/king-ready.png`、`finale/king-blow.png`，各 512×512，透明底。生成一张两格横图再切开，保证两张是同一个角色、同一缩放。
+- 附示意图、第一批阵容图、`delivery/ui/crown.png`（皇冠照它画）。
+- 画布：身体水平居中 x = 256，脚底 y = 470；身高 360–400（含皇冠），宽不超过 440，皇冠顶 y ≥ 16。吹的那张嘴的中心在 x = 256、y 110–150，实测值写进交付清单。
+- **先交 ready 那张给用户确认**，确认后再做 blow。
+
+```text
+[STYLE]
+
+A giant special character for the finale of this bubble-world game: the BUBBLE KING, formed when the whole squad merges into one. Same family style as the creatures in the attached lineup, but much bigger and grander: a huge plump round bubble creature with a pearly white body and a soft iridescent rainbow sheen (pink, yellow, mint, sky blue and lavender flowing gently across the surface), a clean cool-blue outline, one big glossy highlight, two short stubby arms, little stubby feet, big sparkling determined eyes, and a small round golden crown on top of its head drawn exactly like the attached crown icon.
+
+Layout: landscape image, two equal cells in one row, the SAME character at the SAME scale, feet on the same baseline and the same horizontal center in both cells.
+Cell 1, READY: standing tall and proud, chest out, eyes looking straight up, cheeks just starting to puff, tiny arms pulled in with effort, gathering power.
+Cell 2, BLOW: head tilted back, cheeks fully puffed, the mouth opened into one big round "O" at the TOP CENTER of the head pointing straight up, body slightly squashed with effort. Do NOT draw the bubble stream or any effect.
+No effects, sparkles, trails, pads, ground or shadows. Transparent background, clean edges, no glow around the character. No text, no letters, no numbers, no watermark.
+```
+
+### 78. 决战按钮（空白）
+
+- 交付：`finale/button.png`，680×172，透明底。附示意图和 `delivery/ui/button-shuffle.png`（按钮画风照它）。
+
+```text
+[STYLE]
+
+A single wide capsule game button, BLANK, in exactly the same glossy bubble-button style as the attached button but larger and more special: a rich golden-to-warm-orange glossy capsule, a thin rainbow band running along the inner edge of the top and bottom rims, a soft white highlight across the upper part, a darker warm-brown outline, and a few small sparkling glossy bubbles hugging the left and right ends. The whole center of the capsule is plain, smooth and evenly lit (the game writes the title and a subtitle there). Wide and short (about 4 times wider than tall).
+Transparent background, clean edges, no shadow. No text, no letters, no numbers, no icons in the middle, no watermark.
+```
+
+---
+
+## 13. 第三批特效（2026-10-16）
+
+### 79. 大泡泡弹炸开
+
+- 交付：`fx/rocket-pop.png`，1152×192，6 帧等宽横排，每帧 192×192。附示意图和 `delivery/fx/merge-burst.png`（只参考帧的版式和透明度）。
+
+```text
+[STYLE]
+
+Game visual effect sprite strip: SIX equal square frames in one row, each frame centered in its own cell and never crossing into the next cell. A big glossy bubble bursting:
+frame 1: a full round glossy bubble, slightly wobbling;
+frame 2: it pops with a bright white flash in the center;
+frames 3 and 4: a ring of white foam and many small bubbles bursts outward;
+frames 5 and 6: the foam droplets and small bubbles drift further out and fade, frame 6 almost fully transparent.
+Colors: white and light sky blue with a small touch of warm gold in the flash. Soft glossy bubbles and foam, clean bright highlights, gentle glow, no hard black outlines. No fire, no smoke, no dust, no debris.
+Transparent background; everything fades softly into full transparency. No text, no letters, no numbers, no watermark.
+```
+
+### 80. 援军泡泡
+
+- 交付：`fx/rescue-bubble.png`，128×192，1 帧。附示意图和 `delivery/fx/dash-trail.png`（只参考竖直尾迹的版式）。
+
+```text
+[STYLE]
+
+A single game sprite: one large glossy rescue bubble rocketing straight UP, seen from the front. The bubble is in the upper part of the canvas (its center at about 30% of the height), clear and glossy with a white highlight and a pale cyan rim; below it a short trail of small foam bubbles and soft light that thins out and fades to nothing toward the bottom. White and pale cyan only, gentle glow, no hard black outlines. No rocket, no missile, no fire, no smoke.
+Transparent background; everything fades softly into full transparency. No text, no letters, no numbers, no watermark.
+```

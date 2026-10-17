@@ -1,0 +1,99 @@
+{
+  "passed": true,
+  "reason": "用户指出旧欢呼图有浅绿双描边，单独重做该文件",
+  "tool": "built-in image_gen",
+  "selected_attempt": 3,
+  "generated_this_revision": 2,
+  "single_outline_visual_check": "通过：深色底2倍全图检查，无两条平行浅绿线或中间深色分隔槽；直接采用AI生成单描边，未后期描边改色",
+  "unchanged_other_deliverables": 167,
+  "changed_deliverables": [
+    "creatures/forest/0C7E1C/cheer.png"
+  ],
+  "comparison": "_qa/forest-cheer-single-outline-before-after.png",
+  "output": {
+    "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/creatures/forest/0C7E1C/cheer.png",
+    "size": [
+      224,
+      256
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      40,
+      49,
+      184,
+      213
+    ],
+    "baseline_y": 212,
+    "center_x": 112.0,
+    "sha256": "c1d25b49a2e195fbe2bdcc0243836c68a7cbe8e558b574ab1f55159234422c88",
+    "transparent_pixels": 39056,
+    "partial_alpha_pixels": 17885,
+    "samples": [
+      {
+        "label": "身体中间调",
+        "xy": [
+          100,
+          182
+        ],
+        "rgb": [
+          7,
+          124,
+          26
+        ],
+        "hex": "#077C1A",
+        "delta_e76": 0.974,
+        "passed": true
+      },
+      {
+        "label": "身体较亮部",
+        "xy": [
+          85,
+          167
+        ],
+        "rgb": [
+          10,
+          125,
+          28
+        ],
+        "hex": "#0A7D1C",
+        "delta_e76": 0.836,
+        "passed": true
+      }
+    ],
+    "postprocess": {
+      "source_bbox": [
+        248,
+        286,
+        927,
+        1060
+      ],
+      "uniform_scale": 0.2115702479338843,
+      "idle_body_width": 128,
+      "cheer_body_width": 129,
+      "body_width_ratio": 1.0078125,
+      "idle_y_band": [
+        154,
+        194
+      ],
+      "cheer_y_band": [
+        147,
+        192
+      ],
+      "fraction_band": [
+        0.6,
+        0.87
+      ],
+      "color": {
+        "anchor_lab": [
+          48.980712890625,
+          -49.921875,
+          41.828125
+        ],
+        "changed_pixels": 13814,
+        "outer_outline_preserved": true
+      }
+    }
+  },
+  "prompt_log": "third-batch-round2-prompts.json",
+  "source": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_originals/r2-75-forest-cheer-attempt-03.png"
+}

@@ -20,6 +20,9 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'scripts/r1v2')); sys.path.insert(0, str(Path(__file__).parent))
 from build_fx_atlas import SPECS as FX_SPECS, write_index
+# Third batch (art item 79/80): rocket-pop (MAX bubble shot burst, finale pops) and rescue-bubble (revive purge).
+# Updated in place so build_fx_atlas.write_index also lists them in fx-atlas.json. Delivered only in art-v3.
+FX_SPECS.update({'rocket-pop': 6, 'rescue-bubble': 1})
 import placeholders as P
 
 ap = argparse.ArgumentParser()
@@ -67,8 +70,8 @@ SLOTS = [
     ('ui/button-secondary', 'ui2/button-secondary.png', UI, P.button_secondary),
     ('ui/toggle-on', 'ui2/toggle-on.png', UI, lambda: P.toggle(True)),
     ('ui/toggle-off', 'ui2/toggle-off.png', UI, lambda: P.toggle(False)),
-    ('ui/card-frame', 'ui2/card-frame.png', 0.5, P.card_frame),
-    ('ui/card-rays', 'ui2/card-rays.png', 0.5, P.card_rays),
+    # 2026-10-17: card-frame dropped (no longer drawn); the rays live on the creature atlas to keep room for glyphs.
+    ('plants/ui/card-rays', 'ui2/card-rays.png', 0.5, P.card_rays),
     ('ui/speech-bubble', 'ui2/speech-bubble.png', UI, P.speech_bubble),
     ('ui/banner-warning', 'ui2/banner-warning.png', UI, lambda: P.banner('warning')),
     ('ui/banner-hint', 'ui2/banner-hint.png', UI, lambda: P.banner('hint')),
@@ -85,9 +88,48 @@ for entry in color_data['colors']:
     for st in ['blink', 'cheer']:
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE, None))
 # Mystery reserves reveal neither their palette nor their optional animation.
+# Art item 76 delivers only idle: a mystery member never attacks while hidden, so the other states reuse it.
 for st in ['idle', 'attack', 'spent']:
-    SLOTS.append((f'plants/color-8c919c/8C919C/{st}', f'creatures/mystery/8C919C/{st}.png', CREATURE,
-                  lambda state=st: P.round_creature('8C919C', state)))
+    rel = f'creatures/mystery/8C919C/{st}.png'
+    if not (DEL / rel).exists() and (DEL / 'creatures/mystery/8C919C/idle.png').exists(): rel = 'creatures/mystery/8C919C/idle.png'
+    SLOTS.append((f'plants/color-8c919c/8C919C/{st}', rel, CREATURE, lambda state=st: P.round_creature('8C919C', state)))
+# Third batch finale (art items 77/78), optional: the game falls back to the original drawing when absent.
+# The Bubble King goes to the creature atlas (plants/ prefix); king-blow falls back to king-ready in code.
+# Home key art (Art/R1/home-v1, items H3-H8, H10), optional: the home page keeps its old look until delivered.
+# Squad layers are full 1080x1920 frames (trimmed when packed) on the creature atlas; the logo on the main atlas.
+HOME_REL = '../../home-v1/delivery/'
+for _cid in ['blue', 'orange', 'yellow', 'green', 'purple']:
+    SLOTS.append((f'plants/home/squad-{_cid}', f'{HOME_REL}squad-{_cid}.png', 0.9, None))
+    SLOTS.append((f'plants/home/squad-{_cid}-blink', f'{HOME_REL}squad-{_cid}-blink.png', 0.9, None))
+# 2026-10-17 home soap bubbles: delivery/soap-bubble.png (H13) when delivered; until then the bubble the yellow
+# member is blowing in its own layer (already given a soft alpha by the art AI) is cropped out and used.
+_HOME = DEL / '../../home-v1'
+if (_HOME / 'delivery/soap-bubble.png').exists():
+    SLOTS.append(('plants/home/soap-bubble', f'{HOME_REL}soap-bubble.png', 0.5, None))
+elif (_HOME / 'delivery/squad-yellow.png').exists():
+    (_HOME / 'generated').mkdir(exist_ok=True)
+    # Bubble centre (884, 718), radius ~74 in the 1080x1920 frame; a soft circular mask drops the face and film.
+    from PIL import ImageDraw, ImageFilter, ImageChops
+    _y = Image.open(_HOME / 'delivery/squad-yellow.png').convert('RGBA').crop((884 - 84, 718 - 84, 884 + 84, 718 + 84))
+    _m = Image.new('L', _y.size, 0); ImageDraw.Draw(_m).ellipse((84 - 77, 84 - 77, 84 + 77, 84 + 77), fill=255)
+    _m = _m.filter(ImageFilter.GaussianBlur(1.5))
+    _y.putalpha(ImageChops.multiply(_y.getchannel('A'), _m))
+    _y.save(_HOME / 'generated/soap-bubble-from-yellow.png')
+    SLOTS.append(('plants/home/soap-bubble', '../../home-v1/generated/soap-bubble-from-yellow.png', 1.0, None))
+# H13 pop: a horizontal strip of 6 frames, 256 x 256 each.
+if (_HOME / 'delivery/soap-pop.png').exists():
+    (_HOME / 'generated').mkdir(exist_ok=True)
+    _strip = Image.open(_HOME / 'delivery/soap-pop.png').convert('RGBA')
+    _n = max(1, _strip.width // _strip.height)
+    for _i in range(_n):
+        _strip.crop((_i * _strip.height, 0, (_i + 1) * _strip.height, _strip.height)).save(_HOME / f'generated/soap-pop-{_i}.png')
+        SLOTS.append((f'plants/home/soap-pop/{_i}', f'../../home-v1/generated/soap-pop-{_i}.png', 0.5, None))
+SLOTS.append(('plants/home/btn-settings', f'{HOME_REL}btn-settings.png', 0.5, None))   # H11, optional until delivered
+SLOTS.append(('plants/home/btn-codex', f'{HOME_REL}btn-codex.png', 0.5, None))         # H12
+SLOTS.append(('plants/home/logo', f'{HOME_REL}logo.png', 0.8, None))
+SLOTS += [('plants/finale/king-ready', 'finale/king-ready.png', UI, None),
+          ('plants/finale/king-blow', 'finale/king-blow.png', UI, None),
+          ('finale/button', 'finale/button.png', UI, None)]
 color_file.write_text(json.dumps(color_data, ensure_ascii=False, indent=2) + '\n')
 lookup = ['#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR', 'namespace Flightbeat.Garden {',
           '    public static class GardenColorCatalog {']
@@ -97,6 +139,22 @@ for method, field in [('Key', 'slotId'), ('Name', 'displayName')]:
         lookup.append('                case 0x%s: return %s;' % (e['hex'][1:], json.dumps(e[field], ensure_ascii=False)))
     fallback = '"color-" + rgb.ToString("x6")' if method == 'Key' else '"队员"'
     lookup += ['                default: return ' + fallback + ';', '            }', '        }']
+# Debut table (2026-10-16): for each level (0-based, training01 first) the squad members appearing for the first
+# time, by character (creatureId), as the hex used in that level. Drives the intro's "新队员" chips and NEW tags.
+_order = ['training01', 'training02'] + [f'sector{i:02}' for i in range(1, 261)]
+_by_hex = {e['hex'].upper(): e['creatureId'] for e in color_data['colors']}
+_seen, _debut = set(), []
+for _name in _order:
+    _d = json.loads((CODE / 'Resources/levels' / (_name + '.json')).read_text())
+    _row = []
+    for _q in _d['queue']:
+        _h = ''.join(f'{c:02X}' for c in _d['palette'][_q['color'] * 3:_q['color'] * 3 + 3])
+        _cid = _by_hex['#' + _h]
+        if _cid not in _seen: _seen.add(_cid); _row.append(_h)
+    _debut.append(_row)
+lookup += ['        static readonly int[] noDebut = new int[0];', '        static readonly int[][] debut = {']
+lookup += ['            ' + ('new[] { ' + ', '.join('0x' + h for h in row) + ' },' if row else 'noDebut,') for row in _debut]
+lookup += ['        };', '        public static int[] Debut(int level) => level >= 0 && level < debut.Length ? debut[level] : noDebut;']
 lookup += ['    }', '}', '#endif']
 (CODE / 'Garden/GardenColorCatalog.Generated.cs').write_text('\n'.join(lookup) + '\n')
 # Guide "Xiao Lan" portraits: second batch; until then the blue creature's idle / attack / spent art.
@@ -250,6 +308,17 @@ if _bg.exists():
 else:
     background = P.background().convert('RGB'); bg_src = 'placeholder'; placeholder.append('scene/background.png')
 background.resize(BG_SIZE, Image.LANCZOS).save(OUT / 'background.png')
+# Home background (H2): its own texture, 1080x2340 stored at 0.75 (core 9:16 picture at y 210-2130 of the source).
+_home_bg = DEL / '../../home-v1/delivery/background.png'
+if _home_bg.exists():
+    Image.open(_home_bg).convert('RGB').resize((810, 1755), Image.LANCZOS).save(OUT / 'home-background.png')
+    delivered.append('home-v1/background.png')
+    _meta = OUT / 'home-background.png.meta'
+    if not _meta.exists():                   # same import settings as background.png, own stable guid
+        import hashlib, re
+        _src = (OUT / 'background.png.meta').read_text(encoding='utf-8')
+        _guid = hashlib.md5(b'GardenR1/home-background').hexdigest()
+        _meta.write_text(re.sub(r'guid: [0-9a-f]{32}', 'guid: ' + _guid, _src, count=1), encoding='utf-8')
 fx_sources = {}
 for name, count in FX_SPECS.items():
     path = DEL / 'fx' / (name + '.png')

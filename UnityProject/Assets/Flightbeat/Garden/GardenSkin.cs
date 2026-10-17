@@ -42,6 +42,13 @@ namespace Flightbeat.Garden
             Color32 c = color; return GardenColorCatalog.Name((c.r << 16) | (c.g << 8) | c.b);
         }
         public static bool Has(string id) => Data != null && slots.ContainsKey(id);
+        // Visible (trimmed) part of a slot as fractions of its full frame: x, y, width, height in 0..1.
+        public static bool Content(string id, out Rect content) {
+            content = new Rect(0, 0, 1, 1);
+            if (Data == null || !slots.TryGetValue(id, out var slot) || !(slot.fw > 0 && slot.fh > 0)) return false;
+            content = new Rect(slot.ox / slot.fw, slot.oy / slot.fh, slot.w / slot.fw, slot.h / slot.fh);
+            return true;
+        }
         static Rect Uv(Slot slot, int size) => new Rect(slot.x / size, 1f - (slot.y + slot.h) / size, slot.w / size, slot.h / size);
         // (x, y, w, h) is the full frame; a trimmed slot is drawn at its offset inside it.
         public static bool Asset(PixelSurface s, string id, float x, float y, float w, float h, Color tint, bool pixel = false, bool rigid = true, bool flipX = false, bool flipY = false) {
@@ -115,7 +122,7 @@ namespace Flightbeat.Garden
         // v2 plants are finished full-color art per level color.
         public static string PlantSlot(Color tint, string state) => "plants/" + Key(tint) + "/" + HexKey(tint) + "/" + state;
         // Cache the two atlas slots per palette color: no per-bug strings, objects or materials.
-        public static void Bug(PixelSurface s, Color tint, Vector2 at, float height, bool teaching) {
+        public static void Bug(PixelSurface s, Color tint, Vector2 at, float height, bool teaching, float width = 0f) {
             var data = Data; Color32 c = tint; int key = (c.r << 16) | (c.g << 8) | c.b;
             int cacheKey = key | (teaching ? 1 << 24 : 0);
             if (!bugs.TryGetValue(cacheKey, out var pair)) {
@@ -131,8 +138,8 @@ namespace Flightbeat.Garden
                 }
                 bugs[cacheKey] = pair;
             }
-            if (pair.main == null) { s.GardenSolid(at.x - height / 2, at.y - height / 2, height, height, tint); return; }
-            float width = height * pair.main.w / pair.main.h;
+            if (width <= 0f) width = pair.main == null ? height : height * pair.main.w / pair.main.h;
+            if (pair.main == null) { s.GardenSolid(at.x - width / 2, at.y - height / 2, width, height, tint); return; }
             DrawBugLayer(s, pair.main, at, width, height, tint, data.size, teaching);
             if (pair.fixedLayer != null) DrawBugLayer(s, pair.fixedLayer, at, width, height, Color.white, data.size, teaching);
         }
@@ -179,13 +186,15 @@ namespace Flightbeat.Garden
         // `breath` > 0 adds a gentle idle squash-and-stretch (amplitude) with its own `phase`; `attack` (0..1, decays over
         // .18 s after a real shot) squashes the body and lets it spring back. Feet stay on the same line.
         public static void Creature(PixelSurface s, Color tint, float centerX, float feet, float canvasHeight, int tier, string ammo,
-            float attack = 0f, float numberSize = 14f, bool showTier = true, bool badge = true, float breath = 0f, float phase = 0f) {
-            float scale = 1f + Mathf.Min(tier, 3) * .06f;
+            float attack = 0f, float numberSize = 14f, bool showTier = true, bool badge = true, float breath = 0f, float phase = 0f,
+            float sizeScale = 0f, float squash = 0f, float numberLift = 0f) {
+            float scale = sizeScale > 0f ? sizeScale : 1f + Mathf.Min(tier, 3) * .06f;
             if (Celebrate) breath *= 2.2f;                                                  // happy bounce on a win
             float wave = breath > 0f ? Mathf.Sin(Clock * (Celebrate ? 7f : 3.9f) + phase) : 0f;  // ~1.6 s cycle
             float spring = attack > 0f ? Mathf.Sin(attack * Mathf.PI) : 0f;                 // 0 -> 1 -> 0 over the shot
             float sy = 1f + breath * wave - .16f * attack + .06f * spring, sx = 1f - breath * .7f * wave + .12f * attack;
             if (ammo == "0") { sy = 1f + breath * .4f * wave; sx = 1f; }                    // spent: only a tired slow sway
+            sy *= 1f - squash; sx *= 1f + squash;                                           // landing/stretch (feet stay put)
             float ah = canvasHeight * scale * sy, aw = canvasHeight * scale * ArtAspect * sx;
             float ay = feet - ah * FeetLine, ax = centerX - aw / 2;
             string state = ammo == "0" ? "spent" : attack > .1f ? "attack" : "idle";
@@ -200,7 +209,7 @@ namespace Flightbeat.Garden
                 s.Rect(centerX - w / 2 - 1, feet - h - 1, w + 2, h + 2, Ink);
                 s.Rect(centerX - w / 2, feet - h, w, h, tint);
             }
-            float top = ay + ah * BodyTop, numberTop = feet + 2f;
+            float top = ay + ah * BodyTop, numberTop = feet + 2f - numberLift;
             if (ammo.Length > 0) {
                 if (badge) {
                     float bh = numberSize * 1.3f, bw = Mathf.Max(bh * 1.6f, TextWidth(ammo, numberSize) + bh * .9f);
@@ -246,6 +255,18 @@ namespace Flightbeat.Garden
             }
             // bottom-left, bottom-right, top-right, top-left in screen space; texture y grows downward.
             s.GardenQuadUv(centerX - width / 2, centerY - h / 2, width, h, Uv(-1, 1), Uv(1, 1), Uv(1, -1), Uv(-1, -1), new Color(1, 1, 1, alpha));
+        }
+        // 2026-10-17: any square UI slot spun in place (texture rotated, quad fixed); corners are cropped by sqrt 2.
+        public static void Spin(PixelSurface s, string id, float centerX, float centerY, float size, float angle, Color tint) {
+            var data = Data;
+            if (data == null || !slots.TryGetValue(id, out var slot)) return;
+            float half = slot.w / 2f / 1.42f, cu = slot.x + slot.w / 2f, cv = slot.y + slot.h / 2f;
+            float cs = Mathf.Cos(angle), sn = Mathf.Sin(angle);
+            Vector2 Uv(float px, float py) {
+                float rx = px * cs - py * sn, ry = px * sn + py * cs;
+                return new Vector2((cu + rx * half) / data.size, 1f - (cv + ry * half) / data.size);
+            }
+            s.GardenQuadUv(centerX - size / 2, centerY - size / 2, size, size, Uv(-1, 1), Uv(1, 1), Uv(1, -1), Uv(-1, -1), tint, slot.atlas);
         }
         public static string Goal(int step) {
             switch (step) {

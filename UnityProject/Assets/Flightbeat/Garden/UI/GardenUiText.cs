@@ -16,6 +16,8 @@ namespace Flightbeat.Garden.UI
         [TextArea] public string alternateText = "";
         [Min(1)] public float fontSize = 18;
         public bool centered = true;
+        // 2026-10-16: centre the ink of the string vertically in the rect (default: the em box hangs from the top).
+        [System.NonSerialized] public bool middle;
         [Min(0)] public float outlineWidth;
         public Color outlineColor = new Color32(35, 64, 107, 255);   // v3 navy outline (UI spec v3 4.5)
         [SerializeField] Texture2D fontAtlas;
@@ -83,13 +85,26 @@ namespace Flightbeat.Garden.UI
             foreach (char c in value) width += glyphs.TryGetValue(c, out var g) ? g.advance * fontSize : fontSize;
             Rect r = rectTransform.rect;
             float x = centered ? r.center.x - width * .5f : r.xMin;
+            float top = r.yMax;
+            if (middle)
+            {
+                // Ink extent with the top at 0 (same quad maths as Draw), then shift so its middle meets the rect's.
+                float inkTop = float.MinValue, inkBottom = float.MaxValue;
+                foreach (char c in value)
+                    if (glyphs.TryGetValue(c, out var g) && g.w > 0 && g.h > 0)
+                    {
+                        float y = -(.86f + g.bearingY) * fontSize;
+                        inkTop = Mathf.Max(inkTop, y); inkBottom = Mathf.Min(inkBottom, y - g.h / data.fontSize * fontSize);
+                    }
+                if (inkTop > inkBottom) top = r.center.y - (inkTop + inkBottom) * .5f;
+            }
             if (outlineWidth > 0)
                 for (int i = 0; i < 8; i++)
                 {
                     float a = i * Mathf.PI / 4;
-                    Draw(vh, value, x + Mathf.Cos(a) * outlineWidth, r.yMax - Mathf.Sin(a) * outlineWidth, outlineColor, data);
+                    Draw(vh, value, x + Mathf.Cos(a) * outlineWidth, top - Mathf.Sin(a) * outlineWidth, outlineColor, data);
                 }
-            Draw(vh, value, x, r.yMax, color, data);
+            Draw(vh, value, x, top, color, data);
         }
         void Draw(VertexHelper vh, string value, float x, float top, Color tint, GardenSkin.Atlas data)
         {

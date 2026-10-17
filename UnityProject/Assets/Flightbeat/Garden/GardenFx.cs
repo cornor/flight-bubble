@@ -34,6 +34,11 @@ namespace Flightbeat.Garden
             if (!clips.TryGetValue(id, out var result)) throw new InvalidOperationException("Missing garden effect: " + id);
             return result;
         }
+        // Optional clips (third batch): lets callers fall back to the original drawing without per-frame exceptions.
+        public static bool Has(string id) {
+            if (!loaded) try { Get(id); } catch (InvalidOperationException) { }
+            return clips.ContainsKey(id);
+        }
         public static void Draw(PixelSurface s, string id, Vector2 center, float width, float height, Color tint, int frame = 0, float angle = 0f)
         {
             var clip = Get(id);

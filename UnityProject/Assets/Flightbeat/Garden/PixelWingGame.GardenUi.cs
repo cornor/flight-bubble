@@ -40,18 +40,22 @@ namespace Flightbeat.Game
             if (InHome)
             {
                 view.ShowHome(settings);
+                if (view.resumeSub) view.resumeSub.gameObject.SetActive(false);   // at home the button reads 关 闭
+                view.ShowHomeBackground(HomeArtReady);
                 RefreshGardenSettings(view);
                 if (gardenOverlay) gardenOverlay.Redraw();
                 return;
             }
+            view.ShowHomeBackground(false);
             view.Show(GardenUiActive);
             if (gardenOverlay) { gardenOverlay.Lighting = hud.Lighting; gardenOverlay.Redraw(); }
             if (!GardenUiActive) return;
             bool teaching = Battle.Level.lesson > 0;
-            view.lessonTitle.gameObject.SetActive(teaching);
-            view.levelTitle.gameObject.SetActive(!teaching);
-            view.lessonTitle.Present(false, levelIndex + 1);
-            view.levelTitle.Present(false, levelIndex - 1);
+            // 2026-10-16: one continuous level number like the original header (f54833 "第 NN 关"): the two
+            // lessons are 第 1、2 关 and the first formal level is 第 3 关; transitions already used this number.
+            view.lessonTitle.gameObject.SetActive(false);
+            view.levelTitle.gameObject.SetActive(true);
+            view.levelTitle.Present(false, levelIndex + 1);
             view.progressFill.fillAmount = Battle.Progress;
             view.progressText.Present(false, Mathf.FloorToInt(Battle.Progress * 100));
             view.tutorialHint.SetActive(teaching && !evidenceControlled);
@@ -71,6 +75,8 @@ namespace Flightbeat.Game
             bool simplePause = Battle.State != Phase.ReviveOffer && !settings && !finaleGuide && paused && selection == 0 && !transitionActive;
             view.pauseDialog.SetActive(showSettings || simplePause);
             view.settingsPanel.SetActive(showSettings); view.pausedPanel.SetActive(simplePause);
+            if (view.resumeSub) { view.resumeSub.gameObject.SetActive(true); view.resumeSub.Present(false, levelIndex + 1); }
+            if (view.resumeSimpleSub) view.resumeSimpleSub.Present(false, levelIndex + 1);
             RefreshGardenSettings(view);
             bool won = Battle.State == Phase.Won;
             bool result = (Battle.State == Phase.Lost || (won && !teaching)) && feedback.EndAge > .48f;
@@ -78,9 +84,11 @@ namespace Flightbeat.Game
             view.resultDialog.SetActive(result || completedLesson);
             view.missionResult.SetActive(result); view.lessonComplete.SetActive(completedLesson);
             view.resultTitle.Present(!won); view.resultContinue.Present(!won);
+            // 下 一 关 shows the level it opens; 再 试 一 次 the level being retried.
+            if (view.resultContinueSub) view.resultContinueSub.Present(false, won ? Mathf.Min(levelIndex + 2, Levels.Length) : levelIndex + 1);
             view.resultPortrait.sprite = won ? view.happyPortrait : view.worriedPortrait;
-            view.resultLesson.gameObject.SetActive(teaching); view.resultLevel.gameObject.SetActive(!teaching);
-            view.resultLesson.Present(false, levelIndex + 1); view.resultLevel.Present(false, levelIndex - 1);
+            view.resultLesson.gameObject.SetActive(false); view.resultLevel.gameObject.SetActive(true);
+            view.resultLevel.Present(false, levelIndex + 1);
             view.resultProgress.Present(false, Mathf.FloorToInt(Battle.Progress * 100));
             view.rewardGroup.SetActive(won && LastReward != null);
             if (won && LastReward != null)
@@ -96,6 +104,7 @@ namespace Flightbeat.Game
             view.toggleIcons[0].sprite = audioChip.MusicMuted ? view.toggleOff : view.toggleOn;
             view.toggleIcons[1].sprite = audioChip.EffectsMuted ? view.toggleOff : view.toggleOn;
             view.toggleIcons[2].sprite = effects.Enabled ? view.toggleOn : view.toggleOff;
+            view.PresentResetProgress(ResetProgressLabel);
         }
         bool TryGardenUiHit(Vector2 logical, out int id)
         {

@@ -98,14 +98,25 @@ namespace Flightbeat.Game
             }
             if (paused || Battle.State == Phase.Intro) return;
             if (p.y >= 590f && p.y <= 674f)
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                // 2026-10-16 fix: the original started at UnlockedSlots (a count), so after unlocking a later bay
+                // first, the earlier locked bays fell below the start index and could never be tapped again.
+                for (int bay = Battle.BaseSlots; bay < Battle.MaximumSlots; bay++)
+#else
                 for (int bay = Battle.UnlockedSlots; bay < Battle.MaximumSlots; bay++)
+#endif
                     if (Math.Abs(OriginalMath.Binary32(p.x - Battle.FleetPositionX(bay))) <= 29f && !Battle.BayOpen(bay))
                     {
                         int selectedBay = bay;
                         ShowAd("bay", () => Battle.UnlockBay(selectedBay));
                         return;
                     }
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            // 2026-10-16: the bubble queue is a three-row glass tube (y 688-868); any tap on it deploys the front member.
+            if (p.y >= 688f && p.y < 868f && p.x >= 20f && p.x < 520f) Battle.Deploy(LaneAt(p.x));
+#else
             if (p.y >= 700f && p.y < 754f && p.x >= 20f && p.x < 520f) Battle.Deploy(LaneAt(p.x));
+#endif
         }
 
         // f54713 / closures f54871, f54872. Dispatch retains all original IDs.

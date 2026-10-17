@@ -69,14 +69,23 @@ namespace Flightbeat.Game
             int id = HitTest(point);
             if (id <= 0) return;
             Pressed(id);
+            if (codexOpen)   // bubble codex is modal
+            {
+                if (id == CodexCloseAction) CloseCodex();
+                else if (id >= CodexCardAction && id < CodexCardAction + 64) SelectCodex(id - CodexCardAction);
+                return;
+            }
             if (settings)
             {
                 if (id >= 20 && id <= 22) OnBattleUi(id);
-                else if (id == 24) { settings = false; SetPaused(false); audioChip.Play("ui"); }
+                else if (id == 24) { settings = false; SetPaused(false); DisarmResetProgress(); audioChip.Play("ui"); }
+                else if (id == 802) TapResetProgress();
                 return;
             }
             if (id == 800) StartBubbleLevel();
-            else if (id == 801) { settings = true; audioChip.Play("page"); }
+            else if (id == 801) { settings = true; DisarmResetProgress(); audioChip.Play("page"); }
+            else if (id == CodexOpenAction) OpenCodex();
+            else if (id >= HomeMemberAction && id < HomeMemberAction + 5) PokeHomeMember(id - HomeMemberAction);
         }
     }
 }

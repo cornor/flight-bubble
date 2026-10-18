@@ -1,0 +1,93 @@
+{
+  "source": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/home-v1/delivery/_originals/H16-attempt-02.png",
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "sourceCrop": [
+    67,
+    77,
+    1119,
+    1107
+  ],
+  "delivery": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/home-v1/delivery/codex-lock.png",
+  "size": [
+    256,
+    256
+  ],
+  "mode": "RGBA",
+  "alphaBounds": [
+    13,
+    13,
+    243,
+    243
+  ],
+  "bubbleOccupancy": 0.8984375,
+  "transparentMarginPixels": 13,
+  "alphaRange": [
+    0,
+    254
+  ],
+  "filmSampleBounds": [
+    [
+      55,
+      100,
+      70,
+      171
+    ],
+    [
+      186,
+      100,
+      201,
+      171
+    ]
+  ],
+  "filmAlphaMean": 103.21361502347418,
+  "filmAlphaMedian": 99.0,
+  "filmPercentBelow230": 100.0,
+  "whiteLockBodyAndShackleBounds": [
+    78,
+    68,
+    177,
+    187
+  ],
+  "whiteLockWidthFractionOfBubble": 0.43043478260869567,
+  "preview": {
+    "file": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/home-v1/delivery/_qa/codex-lock-on-dark.png",
+    "background": "#0B1A3A",
+    "size": [
+      480,
+      160
+    ],
+    "nativeIconSizes": [
+      46,
+      18
+    ]
+  },
+  "generations": 2,
+  "maxGenerations": 4,
+  "selectedAttempt": 2,
+  "references": [
+    {
+      "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/ui/pad-locked.png",
+      "sha256": "011ef311b874a3f29bee560e817d5a8f46d444bd064a2149444ae385108e33de",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/home-v1/delivery/soap-bubble.png",
+      "sha256": "8562e8ed9c607bc7b91a822f2f31bdaf3ab6760d82d83f6d0ff125b301dea032",
+      "unchanged": true
+    }
+  ],
+  "prompts": [
+    {
+      "file": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/home-v1/delivery/_qa/codex-lock/H16-attempt-01-prompt.txt",
+      "fullStylePrefix": true
+    },
+    {
+      "file": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/home-v1/delivery/_qa/codex-lock/H16-attempt-02-prompt.txt",
+      "fullStylePrefix": true
+    }
+  ],
+  "postprocess": "remove disconnected alpha flecks, crop full bubble, premultiplied-alpha resize to 230x230 and center in 256x256; retain generated film alpha and RGB; no base removal or recoloring in post"
+}

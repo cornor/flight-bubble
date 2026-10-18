@@ -69,6 +69,10 @@ namespace Flightbeat.Game
         {
             if (rangeAdvanced || Battle == null || Battle.Level.lesson <= 0 || Battle.State != Phase.Won
                 || evidenceControlled || broadcastAutomatic || transitionActive || feedback.EndAge < 1.9f || LastReward == null) return;
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            // 2026-10-17: the bubble build shows its victory screen for teaching levels too; the player taps 下 一 关.
+            if (GardenUiActive) return;
+#endif
             int next = unchecked(levelIndex + 1);
             if (next >= Levels.Length || next >= Economy.Data.unlocked) return;
             rangeAdvanced = true;

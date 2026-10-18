@@ -76,6 +76,18 @@ namespace Flightbeat.Garden
                 new Rect(slot.x / data.size, 1f - (slot.y + slot.h) / data.size, cut / data.size, slot.h / data.size), tint, false, true);
             return true;
         }
+        // 2026-10-18: the frame-x range [a, b] (fractions of the full frame width) of an untrimmed-in-x slot, drawn with
+        // the scale of a full-width draw `fullW` wide and its left end at `destX`. Used to scroll the tiled rail.
+        public static bool AssetSpan(PixelSurface s, string id, float destX, float y, float fullW, float h, float a, float b, Color tint) {
+            var data = Data;
+            if (!slots.TryGetValue(id, out var slot)) return false;
+            float fw = slot.fw > 0 ? slot.fw : slot.w, fh = slot.fh > 0 ? slot.fh : slot.h;
+            float sx = fullW / fw, sy = h / fh, u0 = Mathf.Clamp(a * fw - slot.ox, 0f, slot.w), u1 = Mathf.Clamp(b * fw - slot.ox, 0f, slot.w);
+            if (u1 - u0 <= .01f) return true;
+            s.GardenQuad(destX + (slot.ox + u0 - a * fw) * sx, y + slot.oy * sy, (u1 - u0) * sx, slot.h * sy,
+                new Rect((slot.x + u0) / data.size, 1f - (slot.y + slot.h) / data.size, (u1 - u0) / data.size, slot.h / data.size), tint, false, true);
+            return true;
+        }
         // Nine-slice: `border` is in stored atlas pixels, `edge` is the drawn border in logical pixels.
         public static bool Asset9(PixelSurface s, string id, float x, float y, float w, float h, float border, float edge, Color tint) =>
             Asset9(s, id, x, y, w, h, border, border, edge, edge, tint);
@@ -226,8 +238,8 @@ namespace Flightbeat.Garden
             }
             if (showTier && tier >= 3) {
                 Asset(s, "scene/crown", centerX - 12f, top - 20f, 24f, 18f, Color.white);
-                TextOutline(s, "MAX", centerX, top - 5f, 11f, Gold, Outline, 1.3f);
-            } else if (showTier && tier > 0 && !badge) TextOutline(s, tier == 1 ? "Ⅰ" : "Ⅱ", centerX + aw * .3f, top, 12f, Gold, Outline, 1.3f);
+                TextOutline(s, "MAX", centerX, top - 7f, 14f, Gold, Outline, 1.5f);
+            } else if (showTier && tier > 0 && !badge) TextOutline(s, tier == 1 ? "Ⅰ" : "Ⅱ", centerX + aw * .3f, top, 15f, Gold, Outline, 1.5f);
         }
         // Projectile core: the bead body tinted with the shooter's color plus its fixed highlight (UI spec v3 4.4).
         public static void Shot(PixelSurface s, Color tint, Vector2 at, float size, float alpha) {
@@ -240,14 +252,14 @@ namespace Flightbeat.Garden
         // Kamikaze and other single creatures (no badge): `at` is the body center.
         public static void Plant(PixelSurface s, Color tint, Vector2 at, int tier, string ammo, float attack = 0f, bool waiting = false, bool showName = true, float displayScale = 1f) {
             Creature(s, tint, at.x, at.y + 18f * displayScale, 76f * displayScale, tier, "", attack, 12f, false, false);
-            if (waiting) TextOutline(s, "等待", at.x, at.y + 22f, 11f, Cream, Outline, 1.2f);
+            if (waiting) TextOutline(s, "等待", at.x, at.y + 22f, 15f, Cream, Outline, 1.5f);
         }
         // UI spec v3 4.3: golden swirl on an empty open pad. Rotate the texture (not the quad) and lay it flat (x0.45).
         // The slot keeps a sqrt(2) transparent margin, so rotated UV corners never leave it.
-        public static void Swirl(PixelSurface s, float centerX, float centerY, float width, float angle, float alpha) {
+        public static void Swirl(PixelSurface s, float centerX, float centerY, float width, float angle, float alpha, float flat = .45f) {
             var data = Data;
             if (!slots.TryGetValue("scene/pad-swirl", out var slot)) return;
-            float h = width * .45f, half = slot.w / 2f / 1.42f, cu = slot.x + slot.w / 2f, cv = slot.y + slot.h / 2f;
+            float h = width * flat, half = slot.w / 2f / 1.42f, cu = slot.x + slot.w / 2f, cv = slot.y + slot.h / 2f;
             float cs = Mathf.Cos(angle), sn = Mathf.Sin(angle);
             Vector2 Uv(float px, float py) {
                 float rx = px * cs - py * sn, ry = px * sn + py * cs;
@@ -267,6 +279,19 @@ namespace Flightbeat.Garden
                 return new Vector2((cu + rx * half) / data.size, 1f - (cv + ry * half) / data.size);
             }
             s.GardenQuadUv(centerX - size / 2, centerY - size / 2, size, size, Uv(-1, 1), Uv(1, 1), Uv(1, -1), Uv(-1, -1), tint, slot.atlas);
+        }
+        // 2026-10-17: draw a (possibly trimmed) slot as a size x size frame rotated about its centre; the quad turns,
+        // not the texture, so art reaching its edges (the H14 halo) is never cropped or bleeds into neighbours.
+        public static bool Rotated(PixelSurface s, string id, float centerX, float centerY, float size, float angle, Color tint) {
+            var data = Data;
+            if (data == null || !slots.TryGetValue(id, out var slot)) return false;
+            float fw = slot.fw > 0 ? slot.fw : slot.w, fh = slot.fh > 0 ? slot.fh : slot.h;
+            float x0 = (slot.ox / fw - .5f) * size, x1 = ((slot.ox + slot.w) / fw - .5f) * size;
+            float y0 = (slot.oy / fh - .5f) * size, y1 = ((slot.oy + slot.h) / fh - .5f) * size;
+            float cs = Mathf.Cos(angle), sn = Mathf.Sin(angle);
+            Vector2 P(float x, float y) => new Vector2(centerX + x * cs - y * sn, centerY + x * sn + y * cs);
+            s.GardenQuadCorners(P(x0, y0), P(x1, y0), P(x1, y1), P(x0, y1), Uv(slot, data.size), tint, slot.atlas);
+            return true;
         }
         public static string Goal(int step) {
             switch (step) {

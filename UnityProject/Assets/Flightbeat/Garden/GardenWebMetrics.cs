@@ -58,7 +58,7 @@ namespace Flightbeat.Garden {
                 p50ms = Percentile(times,.5f), p95ms = Percentile(times,.95f), p99ms = Percentile(times,.99f), maxMs = Percentile(times,1) };
             for (int i = 0; i < b.Fleet.Count; i++) { sample.fleetColors[i] = b.Fleet[i].Color; sample.maxTier = Mathf.Max(sample.maxTier, b.Fleet[i].Tier); }
             for (int i = 0; i < b.LaneCount; i++) sample.lanes[i] = b.Reserve[i].Count == 0 ? new Lane { color = -1 } : new Lane {
-                color = b.Reserve[i][0].Color, ammo = b.Reserve[i][0].Ammo, exposed = b.Exposed(b.Reserve[i][0].Color), merge = b.WouldMerge(i) };
+                color = b.Reserve[i][0].Color, ammo = b.Reserve[i][0].Ammo, exposed = b.Exposed(b.Reserve[i][0].Color), merge = PixelWingGame.GardenMergeHintVisible(b, i) };
 #if UNITY_WEBGL && !UNITY_EDITOR
             GardenMetrics(JsonUtility.ToJson(sample));
 #endif

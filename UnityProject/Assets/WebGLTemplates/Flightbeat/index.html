@@ -3,29 +3,105 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Flightbeat</title>
+  <title>泡泡小队</title>
   <style>
-    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#000;color:#c1d7e8;font:13px system-ui,sans-serif;overflow:hidden}
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0b2238;color:#fff;font:13px system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
     main{height:100%;display:flex;align-items:center;justify-content:center}
-    #stage{height:100%;max-height:100dvh;aspect-ratio:9/16;position:relative;max-width:100vw}
+    #stage{height:100%;max-height:100dvh;aspect-ratio:9/16;position:relative;max-width:100vw;--u:1px}
     canvas{display:block;width:100%;height:100%;background:#000;outline:none}
-    #loading{position:absolute;inset:0;display:grid;place-content:center;gap:16px;text-align:center;background:#030b13;z-index:3}
-    progress{width:220px;accent-color:#61dff6}
     #broadcast-status{display:none}
+    /* loading page (2026-10-17 15:45): Xiao Lan blows bubbles from the mouth like on the home page; a progress bar
+       in the game's own HUD art shows the download. */
+    #loading{position:absolute;inset:0;z-index:3;overflow:hidden;background:#7cc6ef url(TemplateData/loading-bg.jpg) center/cover no-repeat;transition:opacity .45s ease}
+    #loading.out{opacity:0;pointer-events:none}
+    #loading::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(16,50,96,.16),rgba(16,50,96,.26) 55%,rgba(10,30,62,.6))}
+    .lg-hero{position:absolute;transform:translateX(-50%)}
+    #lg-hero{left:50%;top:30%;width:56%;aspect-ratio:600/651;z-index:3}
+    #lg-orange{left:18%;top:44%;width:34%;aspect-ratio:.9976;z-index:2}
+    #lg-purple{left:79%;top:43%;width:37%;aspect-ratio:1.162;z-index:2}
+    .lg-hero>img.body{position:absolute;inset:0;width:100%;height:100%;transform-origin:50% 92%;animation:lg-breathe 2.6s ease-in-out infinite}
+    .lg-hero>img.body.blow{animation:lg-puff .55s ease-in-out}
+    .lg-bub{position:absolute;pointer-events:none;will-change:transform,opacity}
+    .lg-bub img{display:block;width:100%;height:100%;animation:lg-wob 1.6s ease-in-out infinite}
+    #lg-bar-wrap{position:absolute;left:50%;top:77%;width:78%;transform:translateX(-50%)}
+    #lg-text{text-align:center;font-weight:800;font-size:calc(var(--u)*26);letter-spacing:.05em;margin-bottom:calc(var(--u)*10);text-shadow:0 calc(var(--u)*2) 0 #1f5c9e,0 0 calc(var(--u)*8) rgba(20,60,120,.6)}
+    #lg-bar{position:relative;width:100%;aspect-ratio:552/56;background:url(TemplateData/loading-bar-frame.png) center/100% 100% no-repeat}
+    #lg-fill{position:absolute;left:2.17%;top:17.9%;width:0;height:64.3%;overflow:hidden}
+    #lg-fill img{display:block;height:100%;width:calc(var(--bw)*1px)}
+    #lg-tipbub{position:absolute;top:50%;width:7%;aspect-ratio:1;transform:translate(-50%,-50%);transition:opacity .2s}
+    #lg-bar.done{animation:lg-flash .4s ease-out}
+    #lg-tip{position:absolute;left:8%;right:8%;bottom:5%;padding:calc(var(--u)*10) calc(var(--u)*18);border-radius:calc(var(--u)*24);background:rgba(8,32,64,.42);text-align:center;font-size:calc(var(--u)*19);line-height:1.45;color:#eaf6ff;transition:opacity .35s}
+    #lg-tip.fade{opacity:0}
+    .lg-mini{position:absolute;bottom:-12%;opacity:.7;animation:lg-rise linear infinite}
+    @keyframes lg-breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.012,.988)}}
+    @keyframes lg-puff{0%{transform:scale(1,1)}35%{transform:scale(1.05,.95)}100%{transform:scale(1,1)}}
+    @keyframes lg-wob{0%,100%{transform:scale(1,1)}25%{transform:scale(1.05,.95)}50%{transform:scale(.97,1.03)}75%{transform:scale(1.03,.97)}}
+    @keyframes lg-flash{0%{filter:brightness(1.6)}100%{filter:brightness(1)}}
+    @keyframes lg-rise{from{transform:translateY(0)}to{transform:translateY(-130vh)}}
   </style>
 </head>
 <body>
-  <main><div id="stage"><canvas id="unity-canvas" tabindex="-1" aria-label="Flightbeat 游戏画面"></canvas><div id="loading"><strong>Flightbeat</strong><span>加载中</span><progress max="1" value="0"></progress></div></div></main>
+  <main><div id="stage"><canvas id="unity-canvas" tabindex="-1" aria-label="泡泡小队游戏画面"></canvas><div id="loading" role="status" aria-label="加载中"><div class="lg-hero" id="lg-orange"><img class="body" src="TemplateData/loading-orange.webp" alt=""></div><div class="lg-hero" id="lg-purple"><img class="body" src="TemplateData/loading-purple.webp" alt=""></div><div class="lg-hero" id="lg-hero"><img class="body" src="TemplateData/loading-hero.webp" alt=""></div><div id="lg-bar-wrap"><div id="lg-text">加载中… 0%</div><div id="lg-bar"><div id="lg-fill"><img src="TemplateData/loading-bar-fill.png" alt=""></div><img id="lg-tipbub" src="TemplateData/loading-bubble.webp" alt=""></div></div><div id="lg-tip"></div></div></div></main>
   <span id="broadcast-status" hidden aria-hidden="true"></span>
+  <script src="TemplateData/loading-anchor.js"></script>
   <script>
     const canvas=document.getElementById('unity-canvas');
+    const stage=document.getElementById('stage'),loading=document.getElementById('loading');
+    const bar=document.getElementById('lg-bar'),fill=document.getElementById('lg-fill');
+    const tipBub=document.getElementById('lg-tipbub'),text=document.getElementById('lg-text'),tip=document.getElementById('lg-tip');
+    let target=0,shown=0,done=false,finished=false,failed=false;
+    function unit(){stage.style.setProperty('--u',stage.clientWidth/540+'px');fill.style.setProperty('--bw',bar.clientWidth*.9565);}
+    unit();addEventListener('resize',unit);
+    // Each member blows a bubble from its mouth now and then (blue more often): it swells at the lips (cheeks
+    // puff), drifts out to the side clear of the face, rises and fades.
+    const A=window.LOADING_ANCHOR||{x:.536,y:.493,dir:.3};
+    const crew=[{el:document.getElementById('lg-hero'),x:A.x,y:A.y,every:1500,first:0,side:1},
+      {el:document.getElementById('lg-orange'),x:.557,y:.527,every:2600,first:700,side:-1},
+      {el:document.getElementById('lg-purple'),x:.536,y:.49,every:2600,first:1900,side:1}];
+    function blow(m){
+      if(failed||finished)return;
+      const body=m.el.querySelector('img.body');body.classList.remove('blow');void body.offsetWidth;body.classList.add('blow');
+      const el=document.createElement('div');el.className='lg-bub';const im=document.createElement('img');im.src='TemplateData/loading-bubble.webp';el.appendChild(im);m.el.appendChild(el);
+      const side=m.side;m.side=m.el.id==='lg-hero'?-m.side:m.side;
+      const size=.17+Math.random()*.1,dx=.9*side,dy=-.44,drift=(A.dir+Math.random()*.25)*side;
+      const t0=performance.now();
+      (function step(now){
+        const t=(now-t0)/1000;let s,x=m.x,y=m.y,o=1;
+        if(t<.55){const g=t/.55;s=size*(1-(1-g)*(1-g));x+=dx*s*.6;y+=dy*s*.6;}
+        else{const u=t-.55;s=size*(1+u*.06);
+          x+=dx*size*.6+Math.sign(dx)*.42*(1-Math.exp(-1.8*u))+drift*u*.05+Math.sin(u*3)*.015;y+=dy*size*.6-u*.12-u*u*.07;if(u>2)o=Math.max(0,1-(u-2)/.35);}
+        el.style.width=el.style.height=s*100+'%';el.style.left=(x-s/2)*100+'%';el.style.top=(y-s/2)*100+'%';el.style.opacity=o;
+        if(o>0&&t<4)requestAnimationFrame(step);else el.remove();
+      })(t0);
+    }
+    const blowTimers=crew.map(m=>{setTimeout(()=>blow(m),m.first);return setInterval(()=>blow(m),m.every);});
+    function frame(){
+      if(failed)return;
+      shown+=(target-shown)*.12;if(target-shown<.003)shown=target;
+      const p=Math.min(shown,1);
+      fill.style.width=(p*95.65)+'%';tipBub.style.left=(2.17+p*95.65)+'%';tipBub.style.opacity=p>.02&&p<.995?1:0;
+      if(!finished)text.textContent='加载中… '+Math.round(p*100)+'%';
+      if(done&&shown>=.997&&!finished){
+        finished=true;blowTimers.forEach(clearInterval);text.textContent='加载完成，出发！';bar.classList.add('done');
+        setTimeout(()=>{loading.classList.add('out');canvas.focus();setTimeout(()=>loading.remove(),500);},450);
+        return;
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    for(let i=0;i<6;i++){const m=document.createElement('img');m.src='TemplateData/loading-bubble.webp';m.className='lg-mini';m.alt='';
+      m.style.width=(4+((i*37)%7))+'%';m.style.left=(6+i*15+((i*13)%9))+'%';m.style.animationDuration=(9+((i*7)%6))+'s';m.style.animationDelay=(-i*1.7)+'s';
+      loading.insertBefore(m,loading.firstChild);}
+    const tips=['三个同色同级的伙伴会自动合成升级','出战位满了？用泡泡炸弹清开最下排','每关都可能有「初次登场」的新伙伴','在主页点一点伙伴，它会吹个泡泡给你看','收集到的伙伴都会记在泡泡图鉴里'];
+    let ti=Math.floor(Math.random()*tips.length);tip.textContent=tips[ti];
+    const tipTimer=setInterval(()=>{tip.classList.add('fade');setTimeout(()=>{ti=(ti+1)%tips.length;tip.textContent=tips[ti];tip.classList.remove('fade');},350);},3200);
+    function fail(){failed=true;clearInterval(tipTimer);blowTimers.forEach(clearInterval);text.textContent='加载失败，请刷新重试';}
     const config={dataUrl:'Build/{{{ DATA_FILENAME }}}',frameworkUrl:'Build/{{{ FRAMEWORK_FILENAME }}}',codeUrl:'Build/{{{ CODE_FILENAME }}}',streamingAssetsUrl:'StreamingAssets',companyName:"BubbleSquad",productName:"FlightBubble",productVersion:"0.11.0",devicePixelRatio:Math.min(window.devicePixelRatio||1,1.5)};
     const loader=document.createElement('script');loader.src='Build/{{{ LOADER_FILENAME }}}';
-    loader.onload=()=>createUnityInstance(canvas,config,p=>document.querySelector('progress').value=p).then(instance=>{
-      document.getElementById('loading').remove();
-      canvas.focus();
-    }).catch(error=>{console.error(error);document.getElementById('loading').textContent='加载失败，请刷新重试';});
-    loader.onerror=()=>document.getElementById('loading').textContent='加载失败，请刷新重试';document.body.appendChild(loader);
+    loader.onload=()=>createUnityInstance(canvas,config,p=>{target=Math.max(target,Math.min(p,1)*.96);}).then(instance=>{
+      clearInterval(tipTimer);target=1;done=true;
+    }).catch(error=>{console.error(error);fail();});
+    loader.onerror=fail;document.body.appendChild(loader);
   </script>
 </body>
 </html>

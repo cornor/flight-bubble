@@ -61,13 +61,13 @@ namespace Flightbeat.Game
             return new Rect(left / 540f, 1f - (top + vh) / 1170f, vw / 540f, vh / 1170f);   // texture uvRect
         }
 
-        // 2026-10-17: the start button reads only 「第    N    关」 (four spaces either side), large.
+        // 2026-10-17: the start button reads only 「第  N  关」 (two spaces either side since 11:10), large.
         int homeLabelLevel = -1;
         string homeLabel = "";
         void HomeStartButton(PixelSurface s, float y)
         {
             int level = NextBubbleLevel() + 1;
-            if (level != homeLabelLevel) { homeLabelLevel = level; homeLabel = "第    " + level + "    关"; }
+            if (level != homeLabelLevel) { homeLabelLevel = level; homeLabel = "第  " + level + "  关"; }
             GardenButton(s, 800, 100, y, 340, 76, "");
             TextOutline(s, homeLabel, 270f, y + (76f - 32f) * .5f - 2f, 32f, Cream, Outline, 2.4f);
         }
@@ -79,11 +79,7 @@ namespace Flightbeat.Game
         const float HomeHopEvery = 2.6f, HomeHopTime = 1f;
         readonly float[] homePokeAt = { -9f, -9f, -9f, -9f, -9f };
         // Seconds into the hop of member i after a tap, or -1 when it is resting.
-        float HomeActionTime(int i)
-        {
-            float poke = ui - homePokeAt[i];
-            return poke >= 0f && poke < HomeHopTime ? poke : -1f;
-        }
+        float HomeActionTime(int i) => -1f;   // taps blow bubbles now (see PokeHomeMember)
 
         // 2026-10-17 (user decision 10:47): instead of hopping in turn, the member whose turn it is (every 2.6 s)
         // breathes in and blows a big soap bubble from its mouth; the bubble swells, lets go, sways upward and
@@ -97,6 +93,8 @@ namespace Flightbeat.Game
         // Breath-in puff of the member whose turn it is (positive = wider/shorter).
         float HomeBlowPuff(int i)
         {
+            float poke = ui - homePokeAt[i];
+            if (poke >= 0f && poke < BlowGrow) return .045f * Mathf.Sin(poke / BlowGrow * Mathf.PI);
             int slot = Mathf.FloorToInt(ui / HomeHopEvery);
             if (HomeHopOrder[((slot % 5) + 5) % 5] != i) return 0f;
             float t = ui - slot * HomeHopEvery;
@@ -106,12 +104,18 @@ namespace Flightbeat.Game
         {
             int now = Mathf.FloorToInt(ui / HomeHopEvery);
             float scale = fw / 1080f;   // frame px -> screen
-            for (int slot = now - 1; slot <= now; slot++)
+            // Scheduled blows (the last two turns) plus one blow per tapped member.
+            for (int n = 0; n < 2 + homePokeAt.Length; n++)
             {
-                float t = ui - slot * HomeHopEvery;
-                if (t < 0f || t >= BlowEnd) continue;
-                int i = HomeHopOrder[((slot % 5) + 5) % 5];
+                int slot = now - 1 + n, i;
+                float t;
+                if (n < 2) { t = ui - slot * HomeHopEvery; i = HomeHopOrder[((slot % 5) + 5) % 5]; }
+                else { i = n - 2; t = ui - homePokeAt[i]; slot = 1000 + i * 37 + Mathf.FloorToInt(homePokeAt[i] * 10f); }
                 float seed = ((slot * 7919) % 97 + 97) % 97 / 97f;
+                // 15:55 (user): each bubble pops at its own height: 1.0-3.6 s after it lets go (was always 2.3 s).
+                float seed2 = ((slot * 104729) % 89 + 89) % 89 / 89f;
+                float popAt = BlowGrow + 1f + 2.6f * seed2, endAt = popAt + (BlowEnd - BlowPop);
+                if (t < 0f || t >= endAt) continue;
                 Vector2 mouth = new Vector2(fx + HomeMouth[i].x * scale, fy + HomeMouth[i].y / 1920f * fh);
                 bool yellow = i == 1;
                 float full = yellow ? HomeYellowBubble * 1.2f * scale : (30f + 12f * seed) * k;   // radius: 30-42 (logical)
@@ -131,7 +135,7 @@ namespace Flightbeat.Game
                     Vector2 start = yellow ? mouth : mouth + dir * r * .9f;
                     c = start + new Vector2(Mathf.Sin(u * 2.2f + seed * 6f) * 10f * k + dir.x * 14f * u * k, -(u * 52f + u * u * 7f) * k);
                 }
-                if (t < BlowPop)
+                if (t < popAt)
                 {
                     float wob = t < BlowGrow ? 0f : Mathf.Sin((t - BlowGrow) * 6f + seed * 3f) * .045f;
                     float d = r * 2f;
@@ -140,7 +144,7 @@ namespace Flightbeat.Game
                 }
                 else
                 {
-                    float p = (t - BlowPop) / (BlowEnd - BlowPop);
+                    float p = (t - popAt) / (BlowEnd - BlowPop);
                     if (Has("plants/home/soap-pop/0"))
                     {
                         int frame = 0;
@@ -148,7 +152,7 @@ namespace Flightbeat.Game
                         int f = Mathf.Min(frame, (int)(p * (frame + 1)));
                         Asset(s, "plants/home/soap-pop/" + f, c.x - r * 1.3f, c.y - r * 1.3f, r * 2.6f, r * 2.6f, Color.white);
                     }
-                    else GardenFx.Burst(s, "rocket-pop", c, r * 2.6f, t - BlowPop, BlowEnd - BlowPop);
+                    else GardenFx.Burst(s, "rocket-pop", c, r * 2.6f, t - popAt, BlowEnd - BlowPop);
                 }
             }
         }
@@ -168,11 +172,12 @@ namespace Flightbeat.Game
             float r = t - .52f;
             squash = .15f * Mathf.Exp(-r * 9f) * Mathf.Cos(r * 26f);
         }
+        // 2026-10-17 11:10: tapping a member makes it blow a bubble (no hop, no burst).
         void PokeHomeMember(int i)
         {
-            if (i < 0 || i >= homePokeAt.Length || ui - homePokeAt[i] < .6f) return;
+            if (i < 0 || i >= homePokeAt.Length || ui - homePokeAt[i] < .7f) return;
             homePokeAt[i] = ui;
-            audioChip.Play("land");
+            audioChip.Play("ui");
         }
         void DrawBubbleHome(PixelSurface s)
         {
@@ -184,6 +189,7 @@ namespace Flightbeat.Game
                 if (!Asset(s, "plants/home/logo", 55f, 152f + bob, 430f, 172f, Color.white))
                     TextOutline(s, "泡泡小队", 270, 238, 48, Cream, Outline, 3f);
                 HomeStartButton(s, 530f);
+                DrawHomeNextMember(s, 624f);
                 DrawHomeCornerButtons(s);   // 2026-10-16 22:35: settings moved to the top-left, codex top-right
                 DrawBubbleCodex(s);
                 return;
@@ -225,14 +231,13 @@ namespace Flightbeat.Game
                 Asset(s, art, x, y, w, h, Color.white);
                 // Hit area: the member's visible body.
                 HitBox(s, HomeMemberAction + i, fx + c.x * fw, head - lift * k, c.width * fw, c.height * fh);
-                // A tap: sparkle above the head at the top of the hop.
-                if (act >= .2f && act < .7f) GardenFx.Burst(s, "merge-burst", new Vector2(cx, head - lift * k - 10f * k), 90f * k, act - .2f, .5f);
             }
             DrawHomeBlownBubbles(s, fx, fy, fw, fh, k);
             // Buttons on the cloud sea, about 20 px (10 logical) below the old plan to clear the platform's edge.
             // 2026-10-16 22:35: only 开始 stays on the cloud sea; settings and the codex sit in the top corners.
             s.MapLayout = true;
             HomeStartButton(s, 752f);
+            DrawHomeNextMember(s, 846f);
             DrawHomeCornerButtons(s);
             DrawBubbleCodex(s);
         }

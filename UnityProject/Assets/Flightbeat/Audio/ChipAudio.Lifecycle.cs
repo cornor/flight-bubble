@@ -102,6 +102,9 @@ namespace Flightbeat.Audio
         {
             if (started || terminal) return;
             started = true;
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            GardenPickMusic();   // 2026-10-18: home and level music differ (ChipAudio.Garden.cs)
+#endif
             double when = Engine.DspTime() + 0.04;
             Engine.PlayScheduled(lead, when);
             Engine.PlayScheduled(backing, when);

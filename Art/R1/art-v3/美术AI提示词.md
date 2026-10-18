@@ -1024,3 +1024,32 @@ Transparent background; everything fades softly into full transparency. No text,
 A single game sprite: one large glossy rescue bubble rocketing straight UP, seen from the front. The bubble is in the upper part of the canvas (its center at about 30% of the height), clear and glossy with a white highlight and a pale cyan rim; below it a short trail of small foam bubbles and soft light that thins out and fades to nothing toward the bottom. White and pale cyan only, gentle glow, no hard black outlines. No rocket, no missile, no fire, no smoke.
 Transparent background; everything fades softly into full transparency. No text, no letters, no numbers, no watermark.
 ```
+
+
+---
+
+## 14. 第四批：6 个角色重画方案图（任务书第 6 节，第 81–86 项）
+
+每项出 A、B 两张，各自单独生成。共用模板：
+
+```text
+[STYLE]
+Character design sheet of ONE original bubble creature, full body, joyful CHEER pose (both little arms up, big happy smile), facing the viewer, centered on a plain transparent background, no ground, no shadow, no text. Plump glossy bubble body that is almost entirely main color {HEX}; lit and mid areas are exactly {HEX}, shadows only darken it; a few lighter tints of the same hue only on the belly, cheeks and highlights. Clean outline in a LIGHTER tint of the main color so the silhouette reads on dark backgrounds. Big expressive eyes with large white areas and bright catchlights, readable face. No clothes, no held objects, no plants, flowers, fruit, vegetables, dinosaurs or dragons. Distinctive silhouette feature: {FEATURE}. Personality: {MOOD}.
+```
+
+| 项 | id / 主色 | 方案 | {FEATURE} | {MOOD} |
+| --- | --- | --- | --- | --- |
+| 81 | charcoal #2D2D2D | A | a round fluffy soot-sprite body with a soft fur fringe all around the edge (soft tufts, NOT spikes), a pale gray belly patch, light gray outline | cool but secretly sweet, sparkly eyes |
+| 81 | charcoal #2D2D2D | B | a round puff with one soft curled wisp of smoke on top of its head like a little curl, two stubby arms, pale gray cheeks and belly | sleepy-cool, half smile |
+| 82 | slate-blue #696CAF | A | a little seal pup: teardrop body, two small flippers as arms, a flat tail behind | dreamy, gentle |
+| 82 | slate-blue #696CAF | B | a little snail: round body carrying a big spiral bubble shell on its back | dreamy, slow and happy |
+| 83 | mint #30D183 | A | a little frog: wide round body with two big round bubble eye-domes on top of its head | easygoing, wide grin |
+| 83 | mint #30D183 | B | a round dumpling with a curling wave crest on top of its head like a hairdo | easygoing, cheeky smile |
+| 84 | forest #0C7E1C | A | two bubbles stacked: a smaller head bubble on a bigger body bubble, bright green highlights, pale green belly, a big clear face on the head bubble | brave and steady |
+| 84 | forest #0C7E1C | B | a round body wearing a ring of small bubbles around its waist like a swim ring | brave, cheerful |
+| 85 | berry #9C225E | A | a tall egg shape with two small round bubbles side by side on top of its head like a bow | proud, one eyebrow raised, smiling |
+| 85 | berry #9C225E | B | a round body with one long elegant curved tail ending in a small bubble | proud, graceful |
+| 86 | purple #BD80FF | A | (keep the existing purple creature) a bean-shaped body with two long floppy ear loops hanging down symmetrically in soft arcs; mouth closed in a happy smile; draw at the same detail and glossy lighting as the attached high-resolution blue creature | goofy and sweet |
+| 86 | purple #BD80FF | B | (keep the existing purple creature) two long floppy ear loops, one ear playfully bent in a soft curve (not sticking straight up); small open smile, one eye winking; same detail as the attached blue creature | goofy, playful |
+
+第 81–85 项附：这个角色现在的 `delivery/creatures/<id>/<主色>/cheer.png`（只看颜色和画风，造型按上表重画）、阵容图 `lineup/02-lineup-new.png`。第 86 项附 `Art/R1/home-v1/delivery/_originals/H3-attempt-01.png`（精细度参考）和 `delivery/creatures/purple/BD80FF/cheer.png`（造型参考）。

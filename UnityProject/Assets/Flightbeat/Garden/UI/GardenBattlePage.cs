@@ -56,10 +56,75 @@ namespace Flightbeat.Garden.UI
                 if (text.text == "暂停一下") { pauseTitle = text; pauseTitle.alternateText = "设置"; }
             foreach (var action in pauseActions)
                 if (action.actionId == 24)
-                { resumeLabel = action.GetComponentInChildren<GardenUiText>(true); resumeLabel.alternateText = "关闭"; }
+                { resumeLabel = action.GetComponentInChildren<GardenUiText>(true); resumeLabel.alternateText = "完  成"; }
             CreateResetProgress();
             CreateMainButtonLabels();
+            LightenDialogTitles();
+            FindWinParts();
+            // 2026-10-17 (user, readability): no prefab label under 15 logical px (~11 pt on a 390 pt wide phone).
+            foreach (var text in GetComponentsInChildren<GardenUiText>(true))
+                if (text.fontSize < 15f) { text.fontSize = 15f; text.SetVerticesDirty(); }
             ApplyLayout();
+        }
+
+        // 2026-10-17: dialog titles no longer sit on a big blue ribbon (it read like a heavy button): the ribbon
+        // is hidden and the title becomes larger white lettering with a navy outline just inside the panel top.
+        void LightenDialogTitles()
+        {
+            foreach (string path in new[] { "Paused/Content", "Settings/Content" })
+            {
+                var content = pauseDialog.transform.Find(path);
+                if (!content) continue;
+                var ribbon = content.Find("Ribbon");
+                if (ribbon) ribbon.gameObject.SetActive(false);
+                var title = content.Find("Title");
+                if (title) RestyleTitle(title.GetComponent<GardenUiText>(), -268f);
+            }
+            var mission = resultDialog.transform.Find("Mission result/Content");
+            if (mission)
+            {
+                var ribbon = mission.Find("Ribbon");
+                if (ribbon) ribbon.gameObject.SetActive(false);
+            }
+            RestyleTitle(resultTitle, -198f);
+            if (resultTitle) resultTitle.alternateText = "泡泡碰到护栏了";   // 16:09 (user): say what happened (was 这次被泡泡压住了)
+        }
+        static void RestyleTitle(GardenUiText t, float y)
+        {
+            if (!t) return;
+            var r = t.rectTransform;
+            r.anchoredPosition = new Vector2(r.anchoredPosition.x, y);
+            r.sizeDelta = new Vector2(r.sizeDelta.x, 40f);
+            t.fontSize = 30f; t.outlineWidth = 2.6f; t.color = Color.white; t.middle = true; t.SetVerticesDirty();
+        }
+
+        // 2026-10-17 victory screen (after the lightup reference): no panel on a win. The panel, portrait, title,
+        // level/progress lines and rewards are hidden and the overlay draws headline, hero, confetti and stats;
+        // the 下 一 关 / 返回主页 buttons stay where they are.
+        GameObject[] winHidden = new GameObject[0], loseHidden = new GameObject[0];
+        void FindWinParts()
+        {
+            var win = new System.Collections.Generic.List<GameObject>();
+            var both = new System.Collections.Generic.List<GameObject>();
+            var mission = resultDialog.transform.Find("Mission result/Content");
+            if (mission)
+                foreach (string name in new[] { "Panel", "Portrait", "Campaign complete" })
+                {
+                    var child = mission.Find(name);
+                    if (child) (name == "Portrait" ? both : win).Add(child.gameObject);
+                }
+            if (resultTitle) win.Add(resultTitle.gameObject);
+            foreach (var t in new[] { resultLevel, resultProgress })
+                if (t) both.Add(t.gameObject);
+            winHidden = win.ToArray(); loseHidden = both.ToArray();
+        }
+        // 2026-10-17: on a loss the portrait / level / progress labels make way for the overlay's fail page
+        // (BubbleLose); the panel, the title and the buttons stay.
+        public void SetWinLayout(bool win, bool lose = false)
+        {
+            foreach (var go in winHidden) if (go && go.activeSelf == win) go.SetActive(!win);
+            bool hide = win || lose;
+            foreach (var go in loseHidden) if (go && go.activeSelf == hide) go.SetActive(!hide);
         }
 
         // 2026-10-16 22:50: main-action buttons get a big spaced title and a small level line under it, like 开 始.
@@ -69,15 +134,23 @@ namespace Flightbeat.Garden.UI
             if (resultContinue)
             {
                 resultContinue.text = "下 一 关"; resultContinue.alternateText = "再 试 一 次";
-                resultContinueSub = SplitButtonLabel(resultContinue, 62f, 26f);
+                CenterButtonLabel(resultContinue, 62f, 26f);
             }
             if (resumeLabel)
             {
-                resumeLabel.text = "继 续 战 斗"; resumeLabel.alternateText = "关 闭";
-                resumeSub = SplitButtonLabel(resumeLabel, 54f, 24f);
+                resumeLabel.text = "继 续 战 斗"; resumeLabel.alternateText = "完  成";   // 21:10 (user): home settings button reads 完  成
+                CenterButtonLabel(resumeLabel, 54f, 24f);
             }
             foreach (var text in pausedPanel.GetComponentsInChildren<GardenUiText>(true))
-                if (text.text == "继续") { text.text = "继 续"; resumeSimpleSub = SplitButtonLabel(text, 52f, 24f); break; }
+                if (text.text == "继续") { text.text = "继 续"; CenterButtonLabel(text, 52f, 24f); break; }
+        }
+        // 2026-10-17 11:10: no level line under these; the bigger label is centred on its whole button.
+        static void CenterButtonLabel(GardenUiText main, float buttonHeight, float size)
+        {
+            var r = main.rectTransform;
+            r.anchoredPosition = new Vector2(r.anchoredPosition.x, 0f);
+            r.sizeDelta = new Vector2(r.sizeDelta.x, buttonHeight);
+            main.fontSize = size; main.middle = true; main.SetVerticesDirty();
         }
         // The label takes the upper ~62 % of its button (bigger, centred), a clone below shows "第 {0} 关".
         static GardenUiText SplitButtonLabel(GardenUiText main, float buttonHeight, float size)
@@ -189,8 +262,27 @@ namespace Flightbeat.Garden.UI
             if (!visible) return false;
             // Identical precedence to the former paint order: result covers pause,
             // modal shade blocks all lower actions, then controls and header.
-            return Hit(resultActions, world, out id) || Hit(pauseActions, world, out id)
-                || Hit(controlActions, world, out id) || Hit(headerActions, world, out id);
+            if (Hit(resultActions, world, out id)) return true;
+            if (Hit(pauseActions, world, out id))
+            {
+                // 2026-10-17 (user): a tap on the shade outside the settings / pause panel closes it, as that
+                // panel's own resume button would (settings: 24, simple pause: 1).
+                if (id == 0) id = OutsideOpenPanel(world, out int resume) ? resume : 0;
+                return true;
+            }
+            return Hit(controlActions, world, out id) || Hit(headerActions, world, out id);
+        }
+        bool OutsideOpenPanel(Vector3 world, out int resume)
+        {
+            resume = 0;
+            foreach (var (path, action) in new[] { ("Settings/Content/Panel", 24), ("Paused/Content/Panel", 1) })
+            {
+                var panel = pauseDialog ? pauseDialog.transform.Find(path) as RectTransform : null;
+                if (!panel || !panel.gameObject.activeInHierarchy) continue;
+                resume = action;
+                return !panel.rect.Contains(panel.InverseTransformPoint(world));
+            }
+            return false;
         }
         static bool Hit(GardenUiAction[] actions, Vector3 world, out int id)
         {

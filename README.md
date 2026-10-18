@@ -20,6 +20,10 @@ python3 -m http.server 8792 --bind 127.0.0.1 --directory Builds/WebGL/GardenR1-b
 - `?perf=1`：显示并导出只读性能数据。
 - 本地进度按浏览器/站点保存。清理该站点存储可重新开始；换端口会使用另一份站点存储。
 
+## 发布
+
+发布规则见 [发布说明](docs/发布说明.md)。默认直接发布 `Builds/WebGL/GardenR1-bubble/` 中的现有产物，只有明确要求编译时才编译并发布。线上目录为 `118.178.99.37:/www/wwwroot/minigame/paopao`；每次成功发布后保留当前版本和上一版备份，并提供本次改动概述及带 `?v={version}` 的访问地址。
+
 ## 目录
 
 | 路径 | 内容 |

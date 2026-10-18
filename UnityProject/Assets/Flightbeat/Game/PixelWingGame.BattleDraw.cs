@@ -11,6 +11,7 @@ namespace Flightbeat.Game
         private void Draw(PixelSurface s)
         {
 #if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            // 2026-10-17 17:03 (user): the original finale particles are back (they hit harder); the bubble bursts stay too.
             Flightbeat.Garden.GardenSkin.HideOriginalParticles = !InHome && Battle.ActiveFinale == null;
             if (!InHome) { DrawGarden(s); return; }
 #endif

@@ -38,7 +38,16 @@ namespace Flightbeat.Audio
         public void SetMute(AudioSource source, bool value) { Observe(54202, source, value: value ? 1 : 0); source.mute = value; }
         // Original f55161 uses Resources.Load<AudioClip>. The independent bundle
         // retains those native clips/keys while avoiding a second AAC encoding pass.
-        public AudioClip LoadClip(string path) => OriginalAudioAssets.Load(path);
+        public AudioClip LoadClip(string path)
+        {
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            // 2026-10-17 21:21 (user): bubble-squad sound set v1 (scripts/r1v3/bubble_audio_v1.py). A clip with the same
+            // key in Resources/GardenR1/Audio wins; the original bundle is only opened for keys without one.
+            AudioClip bubble = Resources.Load<AudioClip>("GardenR1/" + path);
+            if (bubble) return bubble;
+#endif
+            return OriginalAudioAssets.Load(path);
+        }
         public AudioClip GetClip(AudioSource source) => source.clip;
         public AudioDataLoadState LoadState(AudioClip clip) => clip.loadState;
         public bool LoadAudioData(AudioClip clip) => clip.LoadAudioData();

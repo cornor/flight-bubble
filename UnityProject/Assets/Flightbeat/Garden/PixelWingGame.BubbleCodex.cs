@@ -48,8 +48,48 @@ namespace Flightbeat.Game
             // 2026-10-17: feature entries live in the right-hand column at mid height (as in most casual games),
             // beside the squad; settings stays in the top-left corner.
             HomeArtView(out float k, out _, out float oy);
-            HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 70f, oy + 470f * k, "plants/home/btn-codex", "图鉴", Hex(0xFFB347));   // squad mid height (10-17)
+            HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 70f, oy + 410f * k, "plants/home/btn-codex", "图鉴", Hex(0xFFB347));   // squad mid height (10-17)
             s.MapLayout = mapped;
+        }
+        // 2026-10-17 (user: a reason to come back). Under the start button: the next member still to join, its name,
+        // how many more clears it takes and pips from the last member to this one. Tapping it opens the codex.
+        int homeNextLevel = -1;
+        string homeNextName = "", homeNextLine = "";
+        void DrawHomeNextMember(PixelSurface s, float y)
+        {
+            int current = NextBubbleLevel() + 1;   // the 1-based level the start button opens
+            CodexEntry next = default;
+            bool found = false;
+            foreach (var e in Codex)
+            {
+                if (CodexObtained(e)) continue;
+                next = e; found = true; break;
+            }
+            if (!found) return;
+            int left = Mathf.Max(1, next.level - current + 1);
+            if (current != homeNextLevel)
+            {
+                homeNextLevel = current; homeNextName = next.name;
+                homeNextLine = left == 1 ? "通关这一关就来啦！" : "再通关 " + left + " 关就来啦！";
+            }
+            // 16:18 (user picked version A of four mock-ups): no box. The member floats inside a big soap bubble
+            // (bubble behind, member, bubble film in front), two small bubbles drift beside it, and the words sit to
+            // the right: 新伙伴 + gold name, then 再通关 N 关就来啦！
+            float bob = Mathf.Sin(ui * 1.8f) * 4f, gx = 196f, gy = y + 46f + bob, d = 110f;
+            HitBox(s, CodexOpenAction, gx - d * .5f, y, 300f, d);
+            s.Glow(gx, gy, 150f, 130f, A(next.tint, .32f + .08f * Mathf.Sin(ui * 2.4f)), 0f);
+            SoapBubble(s, new Vector2(gx, gy), d, Color.white, .55f, 7);
+            bool before = GardenSkin.Celebrate;
+            GardenSkin.Celebrate = true;
+            Creature(s, next.tint, gx, gy + 34f, 84f, 0, "", 0f, 12f, false, false, .03f, 1.3f);
+            GardenSkin.Celebrate = before;
+            SoapBubble(s, new Vector2(gx, gy), d, Color.white, .45f, 7);
+            SoapBubble(s, new Vector2(gx - 58f, gy - 34f + Mathf.Sin(ui * 2.3f) * 3f), 14f, Color.white, .9f, 2);
+            SoapBubble(s, new Vector2(gx + 54f, gy - 48f + Mathf.Sin(ui * 2.7f + 1f) * 3f), 10f, Color.white, .9f, 4);
+            float tx = 252f, tagW = TextWidth("新伙伴", 17f);
+            TextOutline(s, "新伙伴", tx, y + 18f, 17f, Hex(0xFFF0C8), Outline, 1.6f, false);
+            TextOutline(s, homeNextName, tx + tagW + 8f, y + 12f, 24f, Gold, Outline, 2f, false);
+            TextOutline(s, homeNextLine, tx, y + 48f, 19f, Cream, Outline, 1.7f, false);
         }
         void HomeIconButton(PixelSurface s, int id, float x, float y, string art, string label, Color fallback, float size = 56f)
         {
@@ -108,9 +148,7 @@ namespace Flightbeat.Game
             s.Rect(L, 0f, w, h, new Color(.05f, .12f, .28f, .95f * t));
             s.Glow(L + w * .5f, oy + 290f, 640f, 560f, new Color(.35f, .62f, 1f, .35f * t), 0f);
             // Title ribbon, collected count and progress bar, close button.
-            if (Asset(s, "ui/popup-ribbon", 80f, oy + 16f - slide, 380f, 60f, Color.white))
-                TextOutline(s, "泡泡图鉴", 270f, oy + 29f - slide, 26f, Cream, Outline, 2.2f);
-            else TextOutline(s, "泡泡图鉴", 270f, oy + 29f - slide, 26f, Cream, Outline, 2.2f);
+            GardenTitle(s, "泡泡图鉴", 270f, oy + 24f - slide, 30f, true);
             HitBox(s, CodexCloseAction, 470f, oy + 14f, 60f, 60f);
             float cb = 1f - PressPulse(CodexCloseAction) * .1f;
             GardenSkin.Shot(s, Hex(0xFF8A7A), new Vector2(500f, oy + 44f), 42f * cb, t);
@@ -125,28 +163,24 @@ namespace Flightbeat.Game
             const float cx = 270f;
             float feet = oy + 372f;
             Color glow = have ? e.tint : new Color(.4f, .5f, .7f, 1f);
-            GardenSkin.Spin(s, "plants/ui/card-rays", cx, oy + 268f, 400f, ui * .25f, new Color(1f, 1f, 1f, (have ? .85f : .3f) * t));
-            s.Glow(cx, oy + 268f, 300f, 300f, new Color(glow.r, glow.g, glow.b, .35f * t), 0f);
+            DrawBubbleHalo(s, cx, oy + 288f, 330f, (have ? 1f : .45f) * t);   // clears the count line above
+            if (have) DrawHaloBubbles(s, cx, oy + 288f, 330f, 99f, t, false, false);   // calm: no burst, fewer, slower
+            s.Glow(cx, oy + 272f, 220f, 220f, new Color(glow.r, glow.g, glow.b, .22f * t), 0f);
             s.Glow(cx, feet, 260f, 64f, new Color(glow.r, glow.g, glow.b, .55f * t), 0f);
             Asset(s, "scene/plot", cx - 100f, feet - 26f, 200f, 50f, new Color(1f, 1f, 1f, t));
             if (have)
             {
-                for (int i = 0; i < 6; i++)
-                {
-                    float a = ui * .7f + i * Mathf.PI / 3f;
-                    Vector2 p = new Vector2(cx + Mathf.Cos(a) * 128f, oy + 268f + Mathf.Sin(a) * 70f);
-                    GardenSkin.Shot(s, e.tint, p, (i % 2 == 0 ? 12f : 8f) * (1f + .2f * Mathf.Sin(ui * 3f + i)), .8f * t);
-                }
                 bool cheer = pick < .9f, before = GardenSkin.Celebrate;
                 GardenSkin.Celebrate = cheer;
                 Creature(s, e.tint, cx, feet, 210f * pop, 0, "", 0f, 12f, false, false, .03f, codexSelected * 1.3f);
+                DrawHaloBubbles(s, cx, oy + 288f, 330f, 99f, t, false, true);
                 GardenSkin.Celebrate = before;
             }
             else
             {
                 float ah = 210f * pop, aw = ah * ArtAspect;
                 Asset(s, PlantSlot(e.tint, "idle"), cx - aw * .5f, feet - ah * FeetLine, aw, ah, new Color(.1f, .16f, .3f, .95f * t));
-                Asset(s, "scene/plot-locked", cx - 30f, feet - 112f, 60f, 60f, new Color(1f, 1f, 1f, t));
+                Asset(s, "scene/lock-bubble", cx - 23f, feet - 118f, 46f, 46f, new Color(1f, 1f, 1f, t));   // 12:30: lock only, no pad plate
             }
             // Name ribbon, personality and a line about the member (locked: where it joins).
             // 2026-10-17: the name has no button-like plate: a soft dark halo for contrast, big gold title, a short
@@ -171,14 +205,14 @@ namespace Flightbeat.Game
             {
                 TextOutline(s, "性格 · " + blurb[0], cx, feet + 64f, 15f, Hex(0xFFE58A), Outline, 1.5f);
                 TextOutline(s, blurb[1], cx, feet + 86f, 15f, Cream, Outline, 1.5f);
-                TextOutline(s, "第 " + e.level + " 关加入队伍", cx, feet + 108f, 12f, Hex(0xBFD4F2), Outline, 1.2f);
+                TextOutline(s, "第 " + e.level + " 关加入队伍", cx, feet + 106f, 15f, Hex(0xBFD4F2), Outline, 1.2f);
             }
             else
             {
                 TextOutline(s, "还没遇见它", cx, feet + 70f, 16f, Cream, Outline, 1.5f);
                 TextOutline(s, "通过第 " + e.level + " 关就能获得", cx, feet + 94f, 15f, Hex(0xFFE58A), Outline, 1.5f);
             }
-            // Card grid: 5 x 4, tinted by each member's color; the selected card is lifted with a gold rim.
+            // Card grid: 5 x 4, tinted by each member's color; the selected card is lifted, with its own rim turned gold (2026-10-18).
             const int cols = 5;
             const float cw = 88f, ch = 90f, gap = 8f;
             float gx = 270f - (cols * cw + (cols - 1) * gap) * .5f, gy = oy + 500f + slide;
@@ -194,23 +228,25 @@ namespace Flightbeat.Game
                 float w2 = cw * grow, h2 = ch * grow, x = bx + (cw - w2) * .5f, y = by + (ch - h2) * .5f - (sel ? 6f + 2f * Mathf.Sin(ui * 3f) : 0f), mid = x + w2 * .5f;
                 if (sel)
                 {
-                    Color halo = owned ? c.tint : new Color(.6f, .7f, .9f, 1f);
-                    s.Glow(mid, y + h2 * .5f, w2 + 56f, h2 + 56f, new Color(halo.r, halo.g, halo.b, .75f * t), 0f);
-                    s.Glow(mid, y + h2 * .5f, w2 + 20f, h2 + 20f, new Color(1f, 1f, 1f, .35f * t), 0f);
+                    // 2026-10-18 00:06 (user picked A): the blue glow vanished against the blue card rim and the navy
+                    // page, so the pick now has a gold rim (the card art recoloured) over a soft gold
+                    // halo; the lift, enlarge and bob stay.
+                    float lit = .85f + .15f * Mathf.Sin(ui * 4f);
+                    s.Glow(mid, y + h2 * .5f, w2 + 52f, h2 + 52f, new Color(1f, .78f, .24f, .62f * lit * t), 0f);
                 }
-                Color card = owned ? Color.Lerp(Color.white, c.tint, .45f) : new Color(.45f, .52f, .66f, 1f);
-                if (!sel) card = Color.Lerp(card, new Color(.2f, .28f, .45f, 1f), .22f);
-                card.a = t;
-                if (!Asset9(s, "ui/popup-panel", x, y, w2, h2, 30f, 30f, 14f * grow, 14f * grow, card)) s.Rect(x, y, w2, h2, card);
+                Color card = new Color(1f, 1f, 1f, t);   // 11:10: every card is white
+                // 00:14 (user): no frame around the card; the selected card's own rim is gold (ui/popup-panel-gold).
+                if (!(sel && Asset9(s, "ui/popup-panel-gold", x, y, w2, h2, 30f, 30f, 14f * grow, 14f * grow, card))
+                    && !Asset9(s, "ui/popup-panel", x, y, w2, h2, 30f, 30f, 14f * grow, 14f * grow, card)) s.Rect(x, y, w2, h2, card);
                 float f = y + 64f * grow, ah = 70f * grow;
                 if (owned) Creature(s, c.tint, mid, f, ah, 0, "", 0f, 12f, false, false, sel ? .04f : 0f, i * 1.3f);
                 else
                 {
                     float aw = ah * ArtAspect;
                     Asset(s, PlantSlot(c.tint, "idle"), mid - aw * .5f, f - ah * FeetLine, aw, ah, new Color(.12f, .18f, .32f, .9f * t));
-                    Asset(s, "scene/plot-locked", mid - 13f * grow, f - 40f * grow, 26f * grow, 26f * grow, new Color(1f, 1f, 1f, t));
+                    Asset(s, "scene/lock-bubble", mid - 14f * grow, y + 21f * grow, 28f * grow, 28f * grow, new Color(1f, 1f, 1f, t));   // 15:51: centred on the silhouette
                 }
-                TextOutline(s, owned ? c.name : "第" + c.level + "关", mid, y + h2 - 22f * grow, (owned ? 13f : 11f) * grow, owned ? Cream : Hex(0xDCE6F5), Outline, 1.3f);
+                TextOutline(s, owned ? c.name : "第" + c.level + "关", mid, y + h2 - 24f * grow, (owned ? 15f : 14f) * grow, owned ? Cream : Hex(0xDCE6F5), Outline, 1.5f);   // 2026-10-17: bigger (readability)
             }
             s.MapLayout = mapped;
         }
@@ -218,7 +254,7 @@ namespace Flightbeat.Game
         {
             if (index == codexSelected && ui - codexPickedAt < .5f) return;
             codexSelected = index; codexPickedAt = ui;
-            audioChip.Play(index >= 0 && index < Codex.Count && CodexObtained(Codex[index]) ? "merge" : "ui");
+            audioChip.Play("ui");   // 22:21 (user): no bell-like chime (was "merge" for collected members)
         }
         void OpenCodex() { codexOpen = true; codexOpenedAt = ui; codexSelected = -1; codexPickedAt = ui - .1f; audioChip.Play("page"); }
         void CloseCodex() { codexOpen = false; audioChip.Play("ui"); }
@@ -239,7 +275,7 @@ namespace Flightbeat.Game
         {
             if (newMembers.Count == 0 || Battle == null || Battle.State != Phase.Won) return;
             bool teaching = Battle.Level.lesson > 0;
-            if (!teaching && !(feedback.EndAge > .48f)) return;   // same gate as the result dialog
+            if (!teaching) return;   // 2026-10-17: mission wins show new members on the victory screen (BubbleWin)
             if (membersShownAt < 0f) membersShownAt = ui;
             bool mapped = s.MapLayout;
             s.MapLayout = false;
@@ -249,23 +285,12 @@ namespace Flightbeat.Game
             float t = ui - membersShownAt, y0 = oy + (teaching ? 492f : 536f);
             float head = OutBack(Clamp01(t / .3f));
             if (head > .02f)
-                TextOutline(s, "新伙伴加入！", ox + 270f, y0, 18f * head, Gold, Outline, 2f);
+                TextOutline(s, "新伙伴入队！", ox + 270f, y0, 18f * head, Gold, Outline, 2f);
             int n = newMembers.Count;
-            const float step = 92f;
-            for (int i = 0; i < n; i++)
-            {
-                float a = t - .25f - i * .15f;
-                if (a < 0f) continue;
-                float k = OutBack(Clamp01(a / .35f)), x = ox + 270f + (i - (n - 1) * .5f) * step;
-                var e = newMembers[i];
-                GardenFx.Burst(s, "merge-burst", new Vector2(x, y0 + 52f), 96f, a, .5f);
-                if (k > .02f) Creature(s, e.tint, x, y0 + 76f, 60f * k, 0, "", 0f, 12f, false, false, .03f, i * 1.7f);
-                float alpha = Clamp01(a / .3f);
-                TextOutline(s, e.name, x, y0 + 79f, 13f, new Color(1f, 1f, 1f, alpha), new Color(Outline.r, Outline.g, Outline.b, alpha), 1.4f);
-            }
+            DrawMemberAvatars(s, ox + 270f, y0 + 56f, newMembers, t - .25f);   // 11:39: avatars, no names
             float note = Clamp01((t - .6f - n * .15f) / .3f);
             if (note > 0f)
-                TextOutline(s, "已收入泡泡图鉴", ox + 270f, y0 + 96f, 11f, new Color(.86f, .92f, 1f, note), new Color(Outline.r, Outline.g, Outline.b, note), 1.2f);
+                TextOutline(s, "已收入泡泡图鉴", ox + 270f, y0 + 95f, 14f, new Color(.86f, .92f, 1f, note), new Color(Outline.r, Outline.g, Outline.b, note), 1.2f);
             s.MapLayout = mapped;
         }
     }

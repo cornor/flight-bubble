@@ -40,7 +40,7 @@ namespace Flightbeat.Game
             if (InHome)
             {
                 view.ShowHome(settings);
-                if (view.resumeSub) view.resumeSub.gameObject.SetActive(false);   // at home the button reads 关 闭
+                if (view.resumeSub) view.resumeSub.gameObject.SetActive(false);   // at home the button reads 完  成
                 view.ShowHomeBackground(HomeArtReady);
                 RefreshGardenSettings(view);
                 if (gardenOverlay) gardenOverlay.Redraw();
@@ -73,30 +73,31 @@ namespace Flightbeat.Game
             }
             bool showSettings = Battle.State != Phase.ReviveOffer && settings;
             bool simplePause = Battle.State != Phase.ReviveOffer && !settings && !finaleGuide && paused && selection == 0 && !transitionActive;
-            view.pauseDialog.SetActive(showSettings || simplePause);
+            // 2026-10-18 22:55 (user): the 连胜中断 confirm was drawn on top of the still-open pause / settings panel. While
+            // it is up the panel is hidden (its buttons stop taking taps too); cancelling it brings the panel back.
+            view.pauseDialog.SetActive((showSettings || simplePause) && !streakPrompt);
             view.settingsPanel.SetActive(showSettings); view.pausedPanel.SetActive(simplePause);
             if (view.resumeSub) { view.resumeSub.gameObject.SetActive(true); view.resumeSub.Present(false, levelIndex + 1); }
             if (view.resumeSimpleSub) view.resumeSimpleSub.Present(false, levelIndex + 1);
             RefreshGardenSettings(view);
             bool won = Battle.State == Phase.Won;
-            bool result = (Battle.State == Phase.Lost || (won && !teaching)) && feedback.EndAge > .48f;
-            bool completedLesson = won && teaching;
+            // 2026-10-17 (user decision 11:46): the two teaching levels end on the same victory screen with a
+            // 下 一 关 button as every other level (no small "课堂完成" card, no automatic handoff).
+            bool result = (Battle.State == Phase.Lost || won) && feedback.EndAge > .48f;
+            bool completedLesson = false;
             view.resultDialog.SetActive(result || completedLesson);
             view.missionResult.SetActive(result); view.lessonComplete.SetActive(completedLesson);
             view.resultTitle.Present(!won); view.resultContinue.Present(!won);
             // 下 一 关 shows the level it opens; 再 试 一 次 the level being retried.
             if (view.resultContinueSub) view.resultContinueSub.Present(false, won ? Mathf.Min(levelIndex + 2, Levels.Length) : levelIndex + 1);
             view.resultPortrait.sprite = won ? view.happyPortrait : view.worriedPortrait;
-            view.resultLesson.gameObject.SetActive(false); view.resultLevel.gameObject.SetActive(true);
+            view.resultLesson.gameObject.SetActive(false);   // resultLevel visibility: SetWinLayout
             view.resultLevel.Present(false, levelIndex + 1);
             view.resultProgress.Present(false, Mathf.FloorToInt(Battle.Progress * 100));
-            view.rewardGroup.SetActive(won && LastReward != null);
-            if (won && LastReward != null)
-            {
-                view.coins.Present(false, LastReward.coins); view.seeds.Present(false, LastReward.fragments);
-                view.statistics.Present(false, Battle.BestCombo, ResultRound(Battle.Time));
-            }
-            view.campaignComplete.SetActive(won && levelIndex == Levels.Length - 1);
+            // 2026-10-17: no coins/fragments in this game for now; a win uses the victory screen (BubbleWin).
+            view.rewardGroup.SetActive(false);
+            view.SetWinLayout(won && result, !won && result);
+            if (!(won && result)) view.campaignComplete.SetActive(false);
         }
         void RefreshGardenSettings(GardenBattlePage view)
         {

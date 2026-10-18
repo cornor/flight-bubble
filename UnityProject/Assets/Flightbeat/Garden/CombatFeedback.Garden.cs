@@ -214,7 +214,7 @@ namespace Flightbeat.Feedback
             s.Glow(right - width * .5f, y + size * .5f, width + 70f, size + 30f, Alpha(color, fade * (.22f + milestone * .25f + flicker)), 0f);
             GardenSkin.TextOutline(s, text, x, y, size, Alpha(Mix(color, Color.white, punch * .6f), fade), ink, 2.6f + punch, false);
             GardenSkin.TextOutline(s, "×", x - 3f - GardenSkin.TextWidth("×", 20f), y + size - 22f, 20f, Alpha(color, fade), ink, 1.8f, false);
-            GardenSkin.TextOutline(s, "连击", right - GardenSkin.TextWidth("连击", 13f), y - 15f, 13f, Alpha(color, fade), ink, 1.4f, false);
+            GardenSkin.TextOutline(s, "连击", right - GardenSkin.TextWidth("连击", 16f), y - 18f, 16f, Alpha(color, fade), ink, 1.4f, false);
             // Life bar: a short capsule under the number that drains until the combo breaks.
             float barW = Mathf.Max(width, 44f), barY = y + size + 3f, life = Mathf.Clamp01(battle.ComboLife);
             s.Rect(right - barW, barY, barW, 5f, new Color(.08f, .16f, .32f, fade * .55f));

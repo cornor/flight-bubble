@@ -194,7 +194,11 @@ namespace Flightbeat.Game
                 {
                     int lost = Economy.BreakStreak();
                     Economy.Abandon();
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                    // 2026-10-17 (user): no scolding on launch; the streak still breaks, quietly.
+#else
                     if (lost > 0) notices.Add("上局未完成，" + lost.ToString() + " 连胜已中断");
+#endif
                 }
                 List<string> broken = Economy.TakeBroken();
                 if (broken.Count > 0)

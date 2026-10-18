@@ -54,6 +54,11 @@ namespace Flightbeat.Audio
         {
             if (paused) return;
             if (Runtime.UnscaledTime() < pilotUntil) return;
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            // 2026-10-18 22:23 (user: the talking sounded like noise): one soft syllable every third glyph (~10 a
+            // second) instead of one per glyph (~30 a second, each cutting the previous one off).
+            if ((index - 1) % 3 != 0) return;
+#endif
             string[] names = { "voice-a", "voice-e", "voice-o" }; // slots 5859868/72/76
             if (!clips.TryGetValue(names[unchecked(glyph + index) % 3], out AudioClip clip)) return;
             if (!Runtime.ClipAlive(clip)) return;

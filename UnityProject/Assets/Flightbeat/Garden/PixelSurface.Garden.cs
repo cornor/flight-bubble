@@ -35,6 +35,18 @@ namespace Flightbeat.Rendering
             v.position = new Vector3(x, top, 0); v.uv0 = new Vector4(tl.x, tl.y, 0, 0); quad[3] = v;
             mesh.AddUIVertexQuad(quad);
         }
+        // 2026-10-17: a textured quad with free corners (screen y-down, MapLayout ignored), for rotating art.
+        public void GardenQuadCorners(Vector2 tl, Vector2 tr, Vector2 br, Vector2 bl, Rect uv, Color tint, int atlas = 0) {
+            PrepareGardenMaterial();
+            float hgt = ScreenLayout.Height;
+            var v = UIVertex.simpleVert;
+            v.color = VertexColor(tint); v.uv1 = new Vector4(atlas == 1 ? 22f : 20f, 0, 0, 0);
+            v.position = new Vector3(bl.x, hgt - bl.y, 0); v.uv0 = new Vector4(uv.xMin, uv.yMin, 0, 0); quad[0] = v;
+            v.position = new Vector3(br.x, hgt - br.y, 0); v.uv0 = new Vector4(uv.xMax, uv.yMin, 0, 0); quad[1] = v;
+            v.position = new Vector3(tr.x, hgt - tr.y, 0); v.uv0 = new Vector4(uv.xMax, uv.yMax, 0, 0); quad[2] = v;
+            v.position = new Vector3(tl.x, hgt - tl.y, 0); v.uv0 = new Vector4(uv.xMin, uv.yMax, 0, 0); quad[3] = v;
+            mesh.AddUIVertexQuad(quad);
+        }
         // Mute: run an original draw routine for its side effects only (cues, hit regions, clocks) while its
         // quads go to a scratch buffer that is thrown away; the bubble version is then drawn on the real mesh.
         VertexHelper mutedMesh;

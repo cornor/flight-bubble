@@ -21,26 +21,124 @@ namespace Flightbeat.Game
         static readonly Color FinaleInk = Hex(0x7A3A00);
         bool BubbleFinaleArt => GardenSkin.Has(KingReady) && GardenSkin.Has(FinaleButtonArt);
 
-        // ---- button (f54740 timing: pop-in .16 s, then a damped wobble; same 340x86 box at (270, 759))
+        // ---- button (same 340x86 box at (270, 759); hit regions come from the muted original)
+        // 2026-10-17 17:03 (user: it appeared like an ordinary button, not a super-move switch). Entrance (~1 s): the
+        // screen dims a little and every member on the pads shoots a beam of its color into the button spot; the button
+        // slams down from 2.2x with a screen kick, a rainbow shockwave and a ring of bubbles, and the title flashes
+        // white. While waiting: a rainbow comet runs round the rim, a heartbeat every 1.2 s with a rainbow echo of the
+        // button, and small bubbles and stars orbit it.
+        const float SlamAt = .45f, SlamTime = .15f;
+        float finaleSlamKicked = -1f;
         void DrawBubbleFinaleButton(PixelSurface s)
         {
             if (!BubbleFinaleArt) { DrawFinaleButton(s); return; }
             s.BeginMute();
             try { DrawFinaleButton(s); } finally { s.EndMute(); }
             if (!FinaleButtonVisible || finaleReadyAt < 0f) return;
-            float age = ui - finaleReadyAt, alpha, scale;
-            if (age < .16f) { alpha = age / .16f; scale = Mathf.Min(alpha * alpha, 1f) * -.9f + 1.9f; }
-            else { float t = age - .16f; alpha = 1f; scale = Mathf.Sin(t * 38f) * Mathf.Exp(t * -9f) * .07f + 1f; }
-            scale *= 1f - PressPulse(8) * .05f;
-            float w = 340f * scale, h = 86f * scale, pulse = Mathf.Sin(ui * 5f) * .5f + .5f;
-            s.Glow(270f, 759f, w + 90f, h + 70f, new Color(1f, .82f, .3f, alpha * (.22f + .12f * pulse)), 0f);
+            float age = ui - finaleReadyAt;
+            const float cx = 270f, cy = 759f;
+            // 1) dim + beams from the squad into the button spot
+            if (age < 1.1f)
+            {
+                float dim = Clamp01(age / .15f) * Clamp01((1.1f - age) / .4f);
+                bool mapped = s.MapLayout;
+                s.MapLayout = false;
+                s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, new Color(.03f, .08f, .2f, .3f * dim));
+                s.MapLayout = mapped;
+                for (int i = 0; i < Battle.Fleet.Count; i++)
+                {
+                    var ship = Battle.Fleet[i];
+                    Vector2 from = feedback.Position(ship.Id, i) + new Vector2(0f, -22f), to = new Vector2(cx, cy);
+                    float head = Clamp01((age - i * .03f) / SlamAt), tail = Clamp01((age - SlamAt - .05f) / .3f);
+                    if (head <= tail) continue;
+                    Color c = Color.Lerp(GardenColor(ship.Color), Color.white, .25f);
+                    Vector2 a = Vector2.Lerp(from, to, tail * tail), b = Vector2.Lerp(from, to, head * head);
+                    s.GlowLine(a, b, 22f, A(c, .55f));
+                    s.GlowLine(a, b, 7f, A(Color.white, .7f));
+                    s.Glow(b.x, b.y, 34f, 34f, A(c, .9f), 0f);
+                }
+            }
+            if (age < SlamAt) return;
+            // 2) slam
+            float t = age - SlamAt, alpha = Clamp01(t / .06f), scale;
+            if (t < SlamTime) { float u = t / SlamTime; scale = 2.2f - 1.2f * u * u; }
+            else { float r = t - SlamTime; scale = 1f - .08f * Mathf.Exp(-r * 8f) * Mathf.Cos(r * 30f); }
+            if (t >= SlamTime && finaleSlamKicked != finaleReadyAt) { finaleSlamKicked = finaleReadyAt; feedback.Kick(7f); }
+            float hit = t - SlamTime;
+            if (hit >= 0f && hit < .6f)
+            {
+                float u = hit / .6f;
+                for (int k = 0; k < 3; k++)
+                {
+                    float uk = Clamp01(u * 1.15f - k * .08f);
+                    s.Ring(new Vector2(cx, cy), 60f + 230f * uk, A(finaleRainbow[k * 2 % 7], (1f - uk) * .8f), 6f * (1f - uk) + 1.5f, 40, 0f, 360f);
+                }
+                for (int k = 0; k < 12; k++)
+                {
+                    float ang = k * 30f * Mathf.Deg2Rad + .3f, dist = 40f + 170f * (1f - (1f - u) * (1f - u));
+                    SoapBubble(s, new Vector2(cx + Mathf.Cos(ang) * dist * 1.3f, cy + Mathf.Sin(ang) * dist * .6f), 18f + (k % 3) * 6f,
+                        Color.Lerp(Color.white, finaleRainbow[k % 7], .4f), (1f - u), k);
+                }
+                if (hit < .2f) s.Glow(cx, cy, 520f, 260f, new Color(1f, 1f, 1f, (1f - hit / .2f) * .55f), 0f);
+            }
+            // 3) waiting: heartbeat, echo, comet, orbiters
+            float beat = 0f;
+            if (t > .8f)
+            {
+                float b = ((t - .8f) % 1.2f) / 1.2f;
+                beat = b < .15f ? Mathf.Sin(b / .15f * Mathf.PI) : 0f;
+                float e = Clamp01(b / .7f);
+                if (b < .7f)
+                {
+                    float k = 1f + e * .32f, ew = 340f * k, eh = 86f * k + e * 34f;
+                    Asset(s, FinaleButtonArt, cx - ew * .5f, cy - eh * .5f, ew, eh, A(Color.Lerp(Color.white, RainbowAt(ui * .2f), .55f), (1f - e) * (1f - e) * .5f));
+                }
+            }
+            scale *= (1f + .06f * beat) * (1f - PressPulse(8) * .05f);
+            float pulse = Mathf.Sin(ui * 5f) * .5f + .5f, w = 340f * scale, h = 86f * scale;
+            s.Glow(cx, cy, w + 110f, h + 90f, new Color(1f, .82f, .3f, alpha * (.3f + .15f * pulse + .25f * beat)), 0f);
+            for (int k = 0; k < 6; k++)   // orbiting bubbles and stars
+            {
+                float ang = ui * .9f + k * Mathf.PI / 3f;
+                Vector2 p = new Vector2(cx + Mathf.Cos(ang) * (w * .5f + 26f), cy + Mathf.Sin(ang) * (h * .5f + 20f));
+                if (k % 2 == 0) SoapBubble(s, p, 14f, Color.white, alpha * .9f, k);
+                else { s.Glow(p.x, p.y, 18f, 18f, new Color(1f, .95f, .6f, alpha * .9f), 0f); s.Glow(p.x, p.y, 6f, 6f, A(Color.white, alpha), 0f); }
+            }
+            DrawFinaleButtonFace(s, scale, alpha);
+            // rainbow comet running round the pill rim
+            if (t > SlamTime)
+                for (int k = 0; k < 7; k++)
+                {
+                    Vector2 p = PillPoint(cx, cy, w * .5f - 6f * scale, h * .5f - 6f * scale, ui * .45f - k * .012f);
+                    s.Glow(p.x, p.y, 22f - k * 2f, 22f - k * 2f, A(finaleRainbow[k], alpha * (1f - k / 8f)), 0f);
+                }
+            if (t > SlamTime && t < SlamTime + .25f)   // title flash
+            {
+                float f = 1f - (t - SlamTime) / .25f, title = 38f * scale;
+                TextOutline(s, "决 战", cx, cy - title * .5f - 3f * scale, title, A(Color.white, f), A(Color.white, f * .6f), 2.6f * scale);
+            }
+        }
+        // A point on a pill outline (straight top/bottom, round ends), u = fraction of the way round.
+        static Vector2 PillPoint(float cx, float cy, float hw, float hh, float u)
+        {
+            float r = hh, straight = Mathf.Max(0f, hw - r) * 2f, arc = Mathf.PI * r, total = straight * 2f + arc * 2f;
+            float d = ((u % 1f) + 1f) % 1f * total;
+            if (d < straight) return new Vector2(cx - straight * .5f + d, cy - r);
+            d -= straight;
+            if (d < arc) { float a = -Mathf.PI * .5f + d / r; return new Vector2(cx + straight * .5f + Mathf.Cos(a) * r, cy + Mathf.Sin(a) * r); }
+            d -= arc;
+            if (d < straight) return new Vector2(cx + straight * .5f - d, cy + r);
+            d -= straight;
+            float b = Mathf.PI * .5f + d / r;
+            return new Vector2(cx - straight * .5f + Mathf.Cos(b) * r, cy + Mathf.Sin(b) * r);
+        }
+        // 2026-10-17 (user, readability): the 10 px second line ("全员合体 · 彩虹泡泡扫射") is gone; the guide above the
+        // button already says it. The title alone, a little bigger, centred on the face.
+        void DrawFinaleButtonFace(PixelSurface s, float scale, float alpha)
+        {
+            float w = 340f * scale, h = 86f * scale, title = 38f * scale;
             Asset(s, FinaleButtonArt, 270f - w * .5f, 759f - h * .5f, w, h, new Color(1f, 1f, 1f, alpha));
-            // 2026-10-16 22:29: title and line as one block centred on the button face; the line keeps ~10 px off
-            // the rainbow rim (at 759+34 the line touched it).
-            float title = 34f * scale, line = 10.5f * scale, gap = 4f * scale;
-            float top = 759f - (title + gap + line) * .5f - 2f * scale;
-            TextOutline(s, "决 战", 270f, top, title, A(Cream, alpha), A(FinaleInk, alpha), 2.4f * scale);
-            TextOutline(s, "全员合体 · 彩虹泡泡扫射", 270f, top + title + gap, line, A(Cream, alpha), A(FinaleInk, alpha), 1.2f * scale);
+            TextOutline(s, "决 战", 270f, 759f - title * .5f - 3f * scale, title, A(Cream, alpha), A(FinaleInk, alpha), 2.6f * scale);
         }
 
         // ---- first-time guide (f54731 layout: mask with a hole over the button, title, dialogue, pointer)
@@ -54,27 +152,33 @@ namespace Flightbeat.Game
             float alpha = Clamp01(finaleGuideAge * 4f), pulse = Mathf.Sin(ui * 6f) * .5f + .5f;
             bool mapped = s.MapLayout;
             s.MapLayout = false;
-            float y = ScreenLayout.Y(710f), bottom = ScreenLayout.Y(808f);
+            // 2026-10-17 (user: the lighter box with four gold corners read like a debug selection). One even veil over
+            // everything; the button is drawn again on top of it, breathing, with rainbow echoes swelling out of it.
             Color mask = new Color(.04f, .1f, .22f, alpha * .7f);
-            s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, y, mask);
-            s.Rect(ScreenLayout.Left, bottom, ScreenLayout.Width, ScreenLayout.Height - bottom, mask);
-            s.Rect(ScreenLayout.Left, y, 94f - ScreenLayout.Left, bottom - y, mask);
-            s.Rect(446f, y, ScreenLayout.Right - 446f, bottom - y, mask);
+            s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, mask);
             s.MapLayout = mapped;
-            s.Glow(270f, 759f, 460f, 176f, new Color(1f, .85f, .35f, alpha * (.2f + .15f * pulse)), 0f);
-            GardenCorners(s, 92f, 708f, 356f, 102f, A(Color.Lerp(Gold, Color.white, pulse * .5f), alpha));
+            for (int i = 0; i < 3; i++)
+            {
+                float t = FinaleRepeat(ui * .8f + i / 3f, 1f), k = 1f + t * .3f;
+                float ew = 340f * k, eh = 86f * k + t * 36f;
+                Color echo = Color.Lerp(Color.white, finaleRainbow[i * 2 % 7], .55f);
+                Asset(s, FinaleButtonArt, 270f - ew * .5f, 759f - eh * .5f, ew, eh, A(echo, alpha * (1f - t) * (1f - t) * .5f));
+            }
+            float breathe = 1f + .045f * pulse;
+            s.Glow(270f, 759f, 460f * breathe, 176f * breathe, new Color(1f, .85f, .35f, alpha * (.25f + .2f * pulse)), 0f);
+            DrawFinaleButtonFace(s, breathe * (1f - PressPulse(8) * .05f), alpha);
             TextOutline(s, "决 战 时 刻", 270f, 478f, 34f, A(Gold, alpha), A(Outline, alpha), 2.6f);
             TextOutline(s, "全员已出战 · 泡泡不到 " + Flightbeat.Model.Battle.FinaleThreshold + " 个", 270f, 528f, 16f, A(Cream, alpha), A(Outline, alpha), 1.6f);
             // Speech bubble with Xiao Lan; reveal at the original typing speed (spokenCharacters of the source line).
             if (!Asset9(s, "ui/speech-bubble", 96f, 586f, 414f, 92f, 30f, 30f, 18f, 18f, new Color(1f, 1f, 1f, alpha))) GardenPanel(s, 32f, 588f, 476f, 88f);
             Asset(s, "ui/guide-happy", 14f, 582f, 96f, 96f, new Color(1f, 1f, 1f, alpha));
-            TextOutline(s, "小蓝", 150f, 580f, 13f, A(Cream, alpha), A(Outline, alpha), 1.4f);
+            TextOutline(s, "小蓝", 150f, 578f, 15f, A(Cream, alpha), A(Outline, alpha), 1.5f);
             int shown = dialogue.Length == 0 ? FinaleGuideLine.Length
                 : Mathf.Clamp(Mathf.CeilToInt(FinaleGuideLine.Length * (float)spokenCharacters / dialogue.Length), 0, FinaleGuideLine.Length);
             string[] lines = FinaleGuideLine.Substring(0, shown).Split('\n');
             for (int i = 0; i < lines.Length; i++) Text(s, lines[i], 124f, 612f + i * 29f, 16f, false, A(Ink, alpha));
-            float bounce = Mathf.Abs(Mathf.Sin(ui * 5f)) * 6f;
-            Asset(s, "fx/arrow", 256f, 684f - bounce, 28f, 28f, new Color(1f, 1f, 1f, alpha));
+            float bounce = Mathf.Abs(Mathf.Sin(ui * 5f)) * 7f;
+            Asset(s, "fx/arrow", 252f, 681f - bounce, 36f, 36f, new Color(1f, 1f, 1f, alpha));
         }
 
         // ---- the finale itself (f54742, mode 0 "彩虹扇击": the only mode without a hangar)
@@ -116,6 +220,7 @@ namespace Flightbeat.Game
                 Creature(s, tint, at.x, at.y + canvas * .42f, canvas, ship.tier, "", t > .2f && t < .8f ? .6f : 0f, 10f, false, false);
             }
             DrawBubbleKing(s, finale, age, after, mouth);
+            DrawBubbleFinaleBursts(s, age, after);
             if (age >= 1.65f && age < 1.85f)
             {
                 // The release: one white flash over the whole screen.
@@ -134,13 +239,16 @@ namespace Flightbeat.Game
             float appear = OutBack(age / .3f, 2.4f), alpha = Clamp01((1.5f - age) / .35f);
             if (appear < .05f) return;
             s.Glow(270f, 300f, appear * 420f, appear * 150f, new Color(1f, .9f, .5f, alpha * .35f), 0f);
+            // 17:10 (user: the subtitle sat in the wrong place): the rainbow bars ran through 泡泡大王 · 彩虹扫射！
+            // (bars 316-344, subtitle 336). Bars now sit right under 决 战 (296-324) and the subtitle below them.
             for (int i = 0; i < 7; i++)
-                s.Rect(270f - appear * 150f, appear * 30f + 286f + i * 4f, appear * 300f, 3f, A(finaleRainbow[i], alpha * .75f));
+                s.Rect(270f - appear * 150f, appear * 30f + 266f + i * 4f, appear * 300f, 3f, A(finaleRainbow[i], alpha * .75f));
             TextOutline(s, "决 战", 270f, 262f - 26f * appear, 52f * appear, A(Gold, alpha), A(Outline, alpha), 3f * appear);
             if (age > .35f)
             {
                 float a = alpha * Clamp01((age - .35f) / .2f);
-                TextOutline(s, "泡泡大王 · 彩虹扫射！", 270f, 336f, 20f, A(Cream, a), A(Outline, a), 1.8f);
+                s.Glow(270f, 349f, 300f, 46f, new Color(.03f, .08f, .2f, .45f * a), 0f);
+                TextOutline(s, "泡泡大王 · 彩虹扫射！", 270f, 338f, 21f, A(Cream, a), A(Outline, a), 1.8f);
             }
         }
 
@@ -236,6 +344,44 @@ namespace Flightbeat.Game
                 }
             }
             if (age < 2.1f) GardenFx.Burst(s, "rocket-pop", mouth, 220f, age - 1.65f, .45f);
+        }
+
+        // 2026-10-17 (user: the original sparks/explosions in the finale -> bubble style). The original particle bursts
+        // (FinaleEvents f54734: squad merge, power-up ring at 1.15 s, victory volley at 3.15 s) are hidden now
+        // (BattleDraw), and soap bubbles take their place at the same moments and spots.
+        void DrawBubbleFinaleBursts(PixelSurface s, float age, float after)
+        {
+            float fade = 1f - Clamp01(after / .6f);
+            if (fade <= 0f) return;
+            // The squad has merged into the king (~.88 s): one soft pop at the king.
+            float m = (age - .88f) / .45f;
+            if (m >= 0f && m < 1f) SoapPop(s, new Vector2(270f, 694f), 46f, m, fade);
+            // Power-up (1.15 s): seven rainbow bubbles swell on the ring around the king, rise a little and pop in turn.
+            for (int i = 0; i < 7; i++)
+            {
+                float t = age - 1.15f - i * .035f;
+                if (t < 0f || t > .9f) continue;
+                Vector2 at = finaleTierUpAt[i];
+                if (t < .45f) SoapBubble(s, at + new Vector2(0f, -t * 30f), 54f * OutBack(Clamp01(t / .25f), 2f), Color.Lerp(Color.white, finaleRainbow[i], .35f), fade, i);
+                else SoapPop(s, at + new Vector2(0f, -13.5f), 30f, (t - .45f) / .45f, fade);
+            }
+            // Victory volley (3.15 s): a dozen big bubbles burst across the board, flinging droplet bubbles.
+            for (int i = 0; i < 12; i++)
+            {
+                float t = age - 3.15f - (i % 6) * .05f;
+                if (t < 0f || t > .7f) continue;
+                Vector2 at = i < 7 ? new Vector2(40f + i * 76f, (i & 1) == 0 ? 200f : 320f)
+                    : new Vector2(70f + (i - 7) * 100f, ((i - 7) & 1) == 0 ? 260f : 370f);
+                float r = i < 7 ? 40f : 56f;
+                SoapPop(s, at, r, t / .7f, fade);
+                if (t < .5f)
+                    for (int k = 0; k < 6; k++)
+                    {
+                        float a = k * 1.047f + i;
+                        GardenSkin.Shot(s, finaleRainbow[(i + k) % 7], at + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r * (.6f + 1.6f * t),
+                            7f * (1f - t * 1.6f) + 2f, fade * (1f - t * 2f));
+                    }
+            }
         }
 
         // f54753: big end title at (270, 330) from age 3.1, fading with the closing clock.

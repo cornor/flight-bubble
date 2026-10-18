@@ -10,7 +10,7 @@ name='泡泡小队'
 label='R1 试玩版' if bubble else 'R1 第一版美术' if art else 'R1 灰盒'
 port=8792
 p=build/'index.html'
-s=p.read_text().replace('<title>Flightbeat</title>',f'<title>{name} · {label}</title>').replace('aria-label="Flightbeat 游戏画面"',f'aria-label="{name}游戏画面"').replace('<strong>Flightbeat</strong>',f'<strong>{name} · {label}</strong>')
+s=p.read_text().replace('<title>Flightbeat</title>',f'<title>{name} · {label}</title>').replace('aria-label="Flightbeat 游戏画面"',f'aria-label="{name}游戏画面"').replace('<strong>Flightbeat</strong>',f'<strong>{name} · {label}</strong>').replace('<title>泡泡小队</title>',f'<title>{name} · {label}</title>')
 if 'r1-perf.js' not in s:s=s.replace('</body>','<script src="r1-perf.js"></script>\n</body>')
 if 'rel="icon"' not in s:s=s.replace('</head>','<link rel="icon" href="data:,">\n</head>')
 p.write_text(s)

@@ -83,10 +83,13 @@ namespace Flightbeat.Garden
             var dir = delta / length;
             float step = width * .62f, flow = (age * 140f) % step;
             int n = 0;
-            const float head = 30f;   // start above the creature's head (the start point is its mouth): no bubbles over the body
+            // 2026-10-18 23:12 (user: the Ⅱ / MAX stream started too far from the member). It used to skip the first
+            // 30 px (the whole head) so no bubble sat on the body; now it leaves the mouth like the Ⅰ shots do: the
+            // balls start 6 px out and grow to full size over the next 16 px.
+            const float head = 6f;
             for (float d = head + flow; d < length; d += step, n++) {
                 float size = width * ((n % 3 == 0) ? .62f : (n % 3 == 1) ? .48f : .55f);
-                float grow = Mathf.Clamp01((d - head) / 14f);               // solid balls: grow in instead of fading in
+                float grow = Mathf.Clamp01((d - head) / 16f);               // solid balls: grow in instead of fading in
                 GardenSkin.Shot(s, tint, from + dir * d, size * grow, 1f);
             }
             float pulse = .5f + .5f * Mathf.Sin(age * 18f);

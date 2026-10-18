@@ -18,23 +18,28 @@ namespace Flightbeat.Game
         }
 
         // 2026-10-16 (user item 5): a smaller start and wider steps so each upgrade reads; tier 3 keeps the old size.
-        static float PadTierScale(int tier) => tier >= 3 ? 1.18f : tier == 2 ? 1.07f : tier == 1 ? .955f : .84f;
-        readonly Dictionary<int, int> padTier = new Dictionary<int, int>();
+        // 16:51 (user: a merge did not visibly grow the member): steps widened again (+21 %, +16 %, +12 %; MAX stays
+        // about the old 1.18 so neighbours on 7 pads do not overlap).
+        static float PadTierScale(int tier) => tier >= 3 ? 1.2f : tier == 2 ? 1.07f : tier == 1 ? .92f : .76f;
+        readonly Dictionary<int, int> padTier = new Dictionary<int, int>(), padFromTier = new Dictionary<int, int>();
         readonly Dictionary<int, float> padPopAt = new Dictionary<int, float>();
         Flightbeat.Model.Battle padBattle;
         // Size of a pad member; when its tier goes up it swells and springs back over 0.4 s.
         float PadScale(Fighter ship)
         {
-            if (padBattle != Battle) { padBattle = Battle; padTier.Clear(); padPopAt.Clear(); }
-            if (padTier.TryGetValue(ship.Id, out int was) && ship.Tier > was) padPopAt[ship.Id] = ui;
+            if (padBattle != Battle) { padBattle = Battle; padTier.Clear(); padPopAt.Clear(); padFromTier.Clear(); }
+            if (padTier.TryGetValue(ship.Id, out int was) && ship.Tier > was) { padPopAt[ship.Id] = ui; padFromTier[ship.Id] = was; }
             padTier[ship.Id] = ship.Tier;
-            float pop = 1f;
-            if (padPopAt.TryGetValue(ship.Id, out float at))
+            // The growth used to play in the first 0.4 s, hidden under the partners rushing in and the white merge
+            // flash (.22 s). Now the member keeps its old size until the burst, then springs up to the new size with
+            // an overshoot over 0.55 s, so the change is seen.
+            if (padPopAt.TryGetValue(ship.Id, out float at) && padFromTier.TryGetValue(ship.Id, out int from))
             {
-                float p = (ui - at) / .4f;
-                if (p >= 0f && p < 1f) pop = 1f + .25f * Mathf.Sin(p * Mathf.PI) * (1f - p * .5f);
+                float p = (ui - at - .22f) / .55f;
+                if (p < 0f) return PadTierScale(from);
+                if (p < 1f) return Mathf.LerpUnclamped(PadTierScale(from), PadTierScale(ship.Tier), OutBack(p, 3.2f));
             }
-            return PadTierScale(ship.Tier) * pop;
+            return PadTierScale(ship.Tier);
         }
 
         // 2026-10-16 22:09 (user: sit down on the pad with some weight). Drawing only, inside the original 0.32 s
@@ -139,6 +144,19 @@ namespace Flightbeat.Game
             s.Segment(c + new Vector2(0f, m * .4f), c + new Vector2(0f, m + 6f), 3f, Color.white);
             s.Glow(c.x, c.y, 10f, 10f, new Color(1f, .5f, .35f, 1f), 0f);
             s.MapLayout = mapped;
+        }
+
+        // Mystery members reveal their color at the queue head and can merge after deployment.
+        // The source WouldMerge still excludes Kind 2, so the bubble hint uses the revealed color.
+        internal static bool GardenMergeHintVisible(Flightbeat.Model.Battle battle, int lane)
+        {
+            if (battle == null || !battle.Active || battle.ActiveFinale != null
+                || lane < 0 || lane >= battle.Reserve.Length || battle.Reserve[lane].Count == 0
+                || battle.Fleet.Count >= battle.UnlockedSlots) return false;
+            int color = battle.Reserve[lane][0].Color, matching = 0;
+            foreach (Fighter ship in battle.Fleet)
+                if (ship.Color == color) matching++;
+            return matching % 3 == 2;
         }
 
         // 2026-10-16 (user item 4): the original's golden 「合」 disc (f54834) as a bubble badge instead of the word 可合成.

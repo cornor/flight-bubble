@@ -70,8 +70,7 @@ SLOTS = [
     ('ui/button-secondary', 'ui2/button-secondary.png', UI, P.button_secondary),
     ('ui/toggle-on', 'ui2/toggle-on.png', UI, lambda: P.toggle(True)),
     ('ui/toggle-off', 'ui2/toggle-off.png', UI, lambda: P.toggle(False)),
-    # 2026-10-17: card-frame dropped (no longer drawn); the rays live on the creature atlas to keep room for glyphs.
-    ('plants/ui/card-rays', 'ui2/card-rays.png', 0.5, P.card_rays),
+    # 2026-10-17: card-frame and the gold card-rays are no longer drawn (11:39: the rays read dark and off-theme).
     ('ui/speech-bubble', 'ui2/speech-bubble.png', UI, P.speech_bubble),
     ('ui/banner-warning', 'ui2/banner-warning.png', UI, lambda: P.banner('warning')),
     ('ui/banner-hint', 'ui2/banner-hint.png', UI, lambda: P.banner('hint')),
@@ -104,8 +103,42 @@ for _cid in ['blue', 'orange', 'yellow', 'green', 'purple']:
 # 2026-10-17 home soap bubbles: delivery/soap-bubble.png (H13) when delivered; until then the bubble the yellow
 # member is blowing in its own layer (already given a soft alpha by the art AI) is cropped out and used.
 _HOME = DEL / '../../home-v1'
+# 2026-10-17: the H13 bubble is fully clear inside (reads as a hollow ring); a faint pale-rainbow film and a soft
+# sheen are laid under it so it reads as a soap bubble. Also applied to the first pop frame (the whole bubble).
+import numpy as np
+from PIL import ImageFilter as _IF
+def add_film(img, strength=1.0):
+    img = img.convert('RGBA'); w, h = img.size
+    a = np.array(img.getchannel('A'))
+    ys, xs = np.nonzero(a > 40)
+    cx, cy = (xs.min() + xs.max()) / 2, (ys.min() + ys.max()) / 2
+    R = min(xs.max() - xs.min(), ys.max() - ys.min()) / 2 * .96
+    Y, X = np.mgrid[0:h, 0:w]
+    dx, dy = X - cx, Y - cy
+    r = np.sqrt(dx * dx + dy * dy) / R
+    ang = (np.arctan2(dy, dx) / (2 * np.pi)) % 1
+    hue = (ang + .18 * np.sin(r * np.pi * 2.2) + .1 * np.sin(ang * 6 * np.pi)) % 1
+    rgb = np.zeros((h, w, 3))
+    hh = hue * 6; i = np.floor(hh).astype(int) % 6; f = hh - np.floor(hh); s = .45; v = 1.0
+    p = v * (1 - s); q = v * (1 - s * f); t = v * (1 - s * (1 - f))
+    for k, (rr, gg, bb) in enumerate([(v, t, p), (q, v, p), (p, v, t), (p, q, v), (t, p, v), (v, p, q)]):
+        m = i == k
+        rgb[..., 0] = np.where(m, rr if np.isscalar(rr) else rr, rgb[..., 0])
+        rgb[..., 1] = np.where(m, gg if np.isscalar(gg) else gg, rgb[..., 1])
+        rgb[..., 2] = np.where(m, bb if np.isscalar(bb) else bb, rgb[..., 2])
+    alpha = (.07 + .26 * np.clip(r, 0, 1) ** 3) * strength
+    alpha[r > 1] = 0
+    rgb = rgb * .55 + .45
+    sheen = np.clip(1 - np.sqrt(((X - (cx - R * .35)) / (R * .75)) ** 2 + ((Y - (cy - R * .4)) / (R * .55)) ** 2), 0, 1) ** 1.5 * .22
+    alpha = np.maximum(alpha, sheen * (r <= 1)); rgb = rgb * (1 - sheen[..., None]) + sheen[..., None]
+    film = np.dstack([rgb * 255, alpha * 255]).clip(0, 255).astype('uint8')
+    film = Image.fromarray(film, 'RGBA').filter(_IF.GaussianBlur(w / 160))
+    out = film.copy(); out.alpha_composite(img); return out
+
 if (_HOME / 'delivery/soap-bubble.png').exists():
-    SLOTS.append(('plants/home/soap-bubble', f'{HOME_REL}soap-bubble.png', 0.5, None))
+    (_HOME / 'generated').mkdir(exist_ok=True)
+    add_film(Image.open(_HOME / 'delivery/soap-bubble.png')).save(_HOME / 'generated/soap-bubble-film.png')
+    SLOTS.append(('plants/home/soap-bubble', '../../home-v1/generated/soap-bubble-film.png', 0.5, None))
 elif (_HOME / 'delivery/squad-yellow.png').exists():
     (_HOME / 'generated').mkdir(exist_ok=True)
     # Bubble centre (884, 718), radius ~74 in the 1080x1920 frame; a soft circular mask drops the face and film.
@@ -122,8 +155,122 @@ if (_HOME / 'delivery/soap-pop.png').exists():
     _strip = Image.open(_HOME / 'delivery/soap-pop.png').convert('RGBA')
     _n = max(1, _strip.width // _strip.height)
     for _i in range(_n):
-        _strip.crop((_i * _strip.height, 0, (_i + 1) * _strip.height, _strip.height)).save(_HOME / f'generated/soap-pop-{_i}.png')
+        _fr = _strip.crop((_i * _strip.height, 0, (_i + 1) * _strip.height, _strip.height))
+        (add_film(_fr) if _i == 0 else _fr).save(_HOME / f'generated/soap-pop-{_i}.png')
         SLOTS.append((f'plants/home/soap-pop/{_i}', f'../../home-v1/generated/soap-pop-{_i}.png', 0.5, None))
+# H14 celebration halo behind showcased members (victory screen, codex); optional until delivered.
+# 2026-10-17 (user: the light is right, the outer bubbles too big): the bubble-free core is kept and its rays are
+# continued outward (clean_halo); the program circles smaller bubbles around it. One of the halo's big bubbles
+# (milky iridescent inside, user preferred it to the H13 one) becomes the home/codex soap bubble and pop frame 0.
+def clean_halo(img, r0=200.0, r1=430.0):
+    """Keep the bubble-free core of the H14 halo (r < r0) and continue its rays outward: beyond r0 every pixel
+    takes the colour of the core's edge at the same angle, fading smoothly to nothing at r1."""
+    im = np.array(img.convert('RGBA')).astype(np.float32)
+    h, w = im.shape[:2]
+    Y, X = np.mgrid[0:h, 0:w]
+    cx, cy = (w - 1) / 2, (h - 1) / 2
+    dx, dy = X - cx, Y - cy
+    R = np.sqrt(dx * dx + dy * dy) + 1e-6
+    pm = im.copy(); pm[..., :3] *= pm[..., 3:4] / 255
+    # sample the ring at r0 (bilinear) along each pixel's angle
+    sx = cx + dx / R * r0; sy = cy + dy / R * r0
+    x0 = np.floor(sx).astype(int); y0 = np.floor(sy).astype(int); fx = (sx - x0)[..., None]; fy = (sy - y0)[..., None]
+    def g(yy, xx): return pm[np.clip(yy, 0, h - 1), np.clip(xx, 0, w - 1)]
+    edge = (g(y0, x0) * (1 - fx) * (1 - fy) + g(y0, x0 + 1) * fx * (1 - fy) + g(y0 + 1, x0) * (1 - fx) * fy + g(y0 + 1, x0 + 1) * fx * fy)
+    u = np.clip((R - r0) / (r1 - r0), 0, 1); fall = (1 - u) ** 2.2
+    ext = edge * fall[..., None]
+    t = np.clip((R - (r0 - 14)) / 14, 0, 1)[..., None]   # 14 px blend into the extension
+    out = pm * (1 - t) + ext * t
+    a = out[..., 3:4]
+    rgb = np.where(a > 0, out[..., :3] / np.maximum(a, 1e-3) * 255, 0)
+    return Image.fromarray(np.dstack([np.clip(rgb, 0, 255), np.clip(a, 0, 255)]).astype(np.uint8), 'RGBA')
+
+# 2026-10-17 12:30 (user): the codex lock showed the battle pad's plate under it. Lift just the lock bubble out of
+# pad-locked.png: its bottom sat inside the plate, so the hidden rows are mirrored from the top of the bubble.
+def lock_bubble():
+    from PIL import ImageDraw as _ID2, ImageChops as _IC2
+    src = Image.open(DEL / 'ui/pad-locked.png').convert('RGBA')
+    cx, cy, r = 69.5, 45.0, 41.0
+    out = src.copy(); px = src.load(); po = out.load()
+    for y in range(58, 140):
+        sy = int(round(2 * cy - y)); w = 1.0 if y >= 62 else (y - 57) / 4.0   # rows 58-61 cross-fade, no seam
+        for x in range(140):
+            a = px[x, y]; b = px[x, sy] if 0 <= sy < 140 else (0, 0, 0, 0)
+            if y < 62 and 50 <= x <= 90: b = a                         # keep the padlock's own bottom edge
+            po[x, y] = tuple(int(round(a[i] * (1 - w) + b[i] * w)) for i in range(4))
+    m = Image.new('L', out.size, 0); _ID2.Draw(m).ellipse((cx - r, cy - r, cx + r, cy + r), fill=255)
+    out.putalpha(_IC2.multiply(out.getchannel('A'), m.filter(_IF.GaussianBlur(.6))))
+    return out.crop((int(cx - r) - 1, int(cy - r) - 1, int(cx + r) + 2, int(cy + r) + 2))
+(_HOME / 'generated').mkdir(exist_ok=True)
+if (_HOME / 'delivery/codex-lock.png').exists():   # H16, drawn on its own by the art AI
+    Image.open(_HOME / 'delivery/codex-lock.png').convert('RGBA').resize((96, 96), Image.LANCZOS).save(_HOME / 'generated/lock-bubble.png')
+else:
+    lock_bubble().save(_HOME / 'generated/lock-bubble.png')
+SLOTS.append(('scene/lock-bubble', '../../home-v1/generated/lock-bubble.png', 0.8, None))
+
+# 2026-10-18 00:14 (user): the selected codex card's own rim turns gold (no extra frame around it). The blue jelly
+# rim of ui2/popup-panel.png is recoloured along a luminance ramp (amber shadow -> gold -> pale gold highlights);
+# the low-saturation face and white sheen spots are kept, so it is the same card with a gold rim.
+def popup_panel_gold():
+    im = np.asarray(Image.open(DEL / 'ui2/popup-panel.png').convert('RGBA')).astype(np.float32) / 255
+    rgb, a = im[..., :3], im[..., 3:]
+    mx, mn = rgb.max(-1), rgb.min(-1)
+    sat = np.where(mx > 0, (mx - mn) / np.maximum(mx, 1e-6), 0)
+    t = np.clip((rgb @ np.array([.299, .587, .114]) - .2) / .75, 0, 1)[..., None]
+    dark, mid, light = np.array([.62, .36, .02]), np.array([1., .76, .16]), np.array([1., .97, .72])
+    gold = np.where(t < .55, dark + (mid - dark) * (t / .55), mid + (light - mid) * ((t - .55) / .45))
+    w = np.clip((sat - .22) / .18, 0, 1)[..., None]
+    out = np.concatenate([rgb * (1 - w) + gold * w, a], -1)
+    return Image.fromarray((out * 255 + .5).clip(0, 255).astype(np.uint8), 'RGBA')
+(DEL.parent / 'generated/ui2').mkdir(parents=True, exist_ok=True)
+popup_panel_gold().save(DEL.parent / 'generated/ui2/popup-panel-gold.png')
+SLOTS.append(('ui/popup-panel-gold', '../generated/ui2/popup-panel-gold.png', UI, None))
+
+# 2026-10-18 00:15 (user): make the guard line itself flow and turn red on warning (no extra band). The rail art is a
+# chain of bubble beads repeating about every 130 px; one 130 px period (cut where the seam matches best, edges
+# cross-faded) is tiled across the width so the game can scroll it seamlessly. A red recolour of the same strip is
+# cross-faded in while the beads close in.
+RAIL_PERIOD = 130
+def rail_tiled():
+    im = np.asarray(Image.open(DEL / 'scene/rail.png').convert('RGBA')).astype(np.float32)
+    P = RAIL_PERIOD
+    c = min(range(8, im.shape[1] - P - 8), key=lambda c: float(np.abs(im[:, c - 3:c + 3] - im[:, c + P - 3:c + P + 3]).mean()))
+    T = im[:, c:c + P].copy()
+    for k in range(6):
+        w = (6 - k) / 12
+        T[:, k] = T[:, k] * (1 - w) + im[:, c + P + k] * w
+        T[:, P - 1 - k] = T[:, P - 1 - k] * (1 - w) + im[:, c - 1 - k] * w
+    out = np.concatenate([T] * (im.shape[1] // P + 1), 1)[:, :im.shape[1]]
+    return Image.fromarray(out.clip(0, 255).astype(np.uint8), 'RGBA')
+def recolor(img, dark, mid, light, knee=.55):
+    im = np.asarray(img).astype(np.float32) / 255
+    rgb, a = im[..., :3], im[..., 3:]
+    t = np.clip((rgb @ np.array([.299, .587, .114]) - .2) / .75, 0, 1)[..., None]
+    dark, mid, light = map(np.array, (dark, mid, light))
+    col = np.where(t < knee, dark + (mid - dark) * (t / knee), mid + (light - mid) * ((t - knee) / (1 - knee)))
+    return Image.fromarray((np.concatenate([col, a], -1) * 255 + .5).clip(0, 255).astype(np.uint8), 'RGBA')
+(DEL.parent / 'generated/scene').mkdir(parents=True, exist_ok=True)
+_rail = rail_tiled(); _rail.save(DEL.parent / 'generated/scene/rail-tiled.png')
+recolor(_rail, (.50, .02, .06), (.98, .16, .20), (1., .82, .80), knee=.6).save(DEL.parent / 'generated/scene/rail-red.png')
+SLOTS[:] = [(sid, '../generated/scene/rail-tiled.png', sc, fb) if sid == 'scene/fence' else (sid, src, sc, fb) for sid, src, sc, fb in SLOTS]
+SLOTS.append(('scene/fence-red', '../generated/scene/rail-red.png', UI, None))
+
+if (_HOME / 'delivery/celebrate-halo.png').exists():
+    (_HOME / 'generated').mkdir(exist_ok=True)
+    _halo = Image.open(_HOME / 'delivery/celebrate-halo.png').convert('RGBA')
+    # 12:19 (user): the bubble-free light again; the program draws livelier bubbles around it (BubbleWin).
+    clean_halo(_halo).save(_HOME / 'generated/halo-glow.png')
+    SLOTS.append(('home/halo', '../../home-v1/generated/halo-glow.png', 0.5, None))
+    from PIL import ImageDraw as _ID, ImageChops as _IC
+    _b = _halo.crop((512 - 102, 178 - 102, 512 + 102, 178 + 102))
+    _m = Image.new('L', _b.size, 0); _ID.Draw(_m).ellipse((6, 6, 198, 198), fill=255); _m = _m.filter(_IF.GaussianBlur(1.2))
+    _b.putalpha(_IC.multiply(_b.getchannel('A'), _m))
+    _b.save(_HOME / 'generated/soap-bubble-halo.png')
+    SLOTS[:] = [e for e in SLOTS if e[0] != 'plants/home/soap-bubble']
+    SLOTS.append(('plants/home/soap-bubble', '../../home-v1/generated/soap-bubble-halo.png', 1.0, None))
+    if (_HOME / 'generated/soap-pop-0.png').exists():
+        _f0 = Image.new('RGBA', (256, 256), (0, 0, 0, 0)); _f0.alpha_composite(_b.resize((200, 200), Image.LANCZOS), (28, 28))
+        _f0.save(_HOME / 'generated/soap-pop-0.png')
 SLOTS.append(('plants/home/btn-settings', f'{HOME_REL}btn-settings.png', 0.5, None))   # H11, optional until delivered
 SLOTS.append(('plants/home/btn-codex', f'{HOME_REL}btn-codex.png', 0.5, None))         # H12
 SLOTS.append(('plants/home/logo', f'{HOME_REL}logo.png', 0.8, None))
@@ -298,7 +445,12 @@ for entry in SLOTS:
         out = ROOT / 'Art/generated/placeholders' / rel; out.parent.mkdir(parents=True, exist_ok=True); im.save(out)
     if sid == 'scene/pad-swirl':               # room to rotate the UVs without leaving the slot (UI spec v3 4.3)
         k = math.ceil(im.width * 1.42); pad = Image.new('RGBA', (k, k), (0, 0, 0, 0))
-        pad.alpha_composite(im, ((k - im.width) // 2, (k - im.height) // 2)); im = pad
+        # 2026-10-17 16:47 (user: the turning swirl looked crooked): the art's visual centre (alpha centroid) is ~4.6 px
+        # right of its canvas centre, so it wobbled as it turned. Paste it so the centroid sits on the slot centre.
+        import numpy as _np
+        _a = _np.asarray(im.getchannel('A'), dtype=float); _ys, _xs = _np.indices(_a.shape)
+        _cx, _cy = (_xs * _a).sum() / _a.sum(), (_ys * _a).sum() / _a.sum()
+        pad.alpha_composite(im, (round(k / 2 - _cx), round(k / 2 - _cy))); im = pad
     im = im.resize((max(1, round(im.width * sc)), max(1, round(im.height * sc))), Image.LANCZOS)
     tiles.append((sid, im, src))
 for sid, im in GENERATED.items(): tiles.append((sid, im, 'generated'))
@@ -319,6 +471,50 @@ if _home_bg.exists():
         _src = (OUT / 'background.png.meta').read_text(encoding='utf-8')
         _guid = hashlib.md5(b'GardenR1/home-background').hexdigest()
         _meta.write_text(re.sub(r'guid: [0-9a-f]{32}', 'guid: ' + _guid, _src, count=1), encoding='utf-8')
+# 2026-10-17 loading page (WebGL template, shown before the game downloads, so kept small: ~300 KB in all).
+# Softened home sky, the title logo, Xiao Lan blowing a bubble (H15 when delivered, otherwise its cheer pose) and
+# the halo soap bubble that grows with the download progress. Anchor = where the bubble starts, in the hero image.
+def export_loading():
+    import json as _json
+    tpl = ROOT / 'UnityProject/Assets/WebGLTemplates/Flightbeat/TemplateData'
+    tpl.mkdir(parents=True, exist_ok=True)
+    home = DEL / '../../home-v1'
+    bg = home / 'delivery/background.png'
+    if bg.exists():
+        im = Image.open(bg).convert('RGB').resize((540, 1170), Image.LANCZOS).filter(_IF.GaussianBlur(2.2))
+        im.save(tpl / 'loading-bg.jpg', quality=70, optimize=True, progressive=True)
+    # 16:11 (user): no game name on the loading page, so no logo image.
+    bub = home / 'generated/soap-bubble-halo.png'
+    if bub.exists():
+        Image.open(bub).convert('RGBA').resize((240, 240), Image.LANCZOS).save(tpl / 'loading-bubble.webp', quality=90, method=6)
+    # 2026-10-17 15:45 (user): the squad blows bubbles from the mouth, not with a wand. 16:01 (user: Xiao Lan looked
+    # rough): the 1080-frame home layer is only ~370 px wide and was palette-quantized; the page now uses the full
+    # resolution H3 original (~1100 px), in full color, as WebP at 600 px wide. No blink frame at this size.
+    h3 = Image.open(home / 'delivery/_originals/H3-attempt-01.png').convert('RGBA')
+    crop = (17, 5, 1195, 1284)   # H3 body bbox (57,45)-(1155,1244) plus a margin
+    h3.crop(crop).resize((600, 651), Image.LANCZOS).save(tpl / 'loading-hero.webp', quality=90, method=6)
+    for stale in ('loading-hero.png', 'loading-hero-blink.png', 'loading-logo.png', 'loading-logo.webp', 'loading-bubble.png'):
+        for f in (tpl / stale, tpl / (stale + '.meta')):
+            if f.exists(): f.unlink()
+    # Mouth: (562,1062) in the home frame = (.539,.493) of that layer's body bbox -> H3 pixels -> crop fraction.
+    mx, my = 57 + .539 * 1098, 45 + .493 * 1199
+    anchor = {'x': round((mx - crop[0]) / (crop[2] - crop[0]), 4), 'y': round((my - crop[1]) / (crop[3] - crop[1]), 4), 'dir': 0.3}
+    # 16:33 (user): two more of the squad on the loading page, smaller, behind Xiao Lan: orange (H4) on the left and
+    # purple (H7) on the right. Their mouth points are fixed in index.html: orange (.557,.527), purple (.536,.49).
+    # 17:24 (user confirmed the redesign): purple is the new art-v3 redesign/purple-A (both ears hang in arcs, smiling).
+    for src, name, box in ((home / 'delivery/_originals/H4-attempt-01.png', 'orange', (0, 47, 1204, 1238)),
+                           (DEL / 'redesign/purple-A.png', 'purple', (72, 152, 952, 901))):
+        o = Image.open(src).convert('RGBA')
+        c = o.crop((max(0, box[0] - 30), max(0, box[1] - 30), min(o.width, box[2] + 30), min(o.height, box[3] + 30)))
+        c.resize((420, round(420 * c.height / c.width)), Image.LANCZOS).save(tpl / ('loading-' + name + '.webp'), quality=88, method=6)
+    for src, dst in (('progress-frame.png', 'loading-bar-frame.png'), ('progress-fill.png', 'loading-bar-fill.png')):
+        Image.open(DEL / 'ui' / src).convert('RGBA').quantize(colors=180, method=Image.FASTOCTREE).save(tpl / dst, optimize=True)
+    (tpl / 'loading-anchor.js').write_text('window.LOADING_ANCHOR=' + _json.dumps(anchor) + ';\n')
+    return sum(f.stat().st_size for f in tpl.iterdir())
+try:
+    print('loading page assets', export_loading(), 'bytes', file=sys.stderr)
+except Exception as _e:   # the atlas must not fail because of the loading page
+    print('loading page assets skipped:', _e, file=sys.stderr)
 fx_sources = {}
 for name, count in FX_SPECS.items():
     path = DEL / 'fx' / (name + '.png')

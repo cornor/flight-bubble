@@ -86,25 +86,32 @@ namespace Flightbeat.Game
             if (n == 0 || age > ChipHold + ChipFly + ChipStagger * n + ChipBurst) return;
             if (debutLanes.Length != n) debutLanes = new int[n];
             if (age < ChipHold) for (int k = 0; k < n; k++) debutLanes[k] = DebutLane(debut[k]);   // fixed once flying
-            const float tagW = 64f, chipW = 96f, h = 36f, gap = 8f, y = 446f;
+            const float tagW = 80f, chipW = 96f, h = 36f, gap = 8f, y = 446f;
             float rowX = 270f - (tagW + n * (chipW + gap)) * .5f;
             float tagAlpha = Clamp01(age * 5f) * (1f - Clamp01((age - ChipHold) / .3f));
             if (tagAlpha > 0f)
             {
                 if (!Asset9(s, "ui/banner-warning", rowX, y + 3f, tagW, h - 6f, 45f, 0f, (h - 6f) * .58f, 0f, new Color(1f, .85f, .4f, tagAlpha)))
                     s.Rect(rowX, y + 3f, tagW, h - 6f, A(Gold, tagAlpha));
-                TextOutline(s, "新队员", rowX + tagW * .5f, y + 10f, 14f, A(Cream, tagAlpha), A(Hex(0x7A3A00), tagAlpha), 1.4f);
+                TextOutline(s, "初次登场", rowX + tagW * .5f, y + 9.5f, 15f, A(Cream, tagAlpha), A(Hex(0x7A3A00), tagAlpha), 1.4f);
             }
             for (int k = 0; k < n; k++)
             {
                 Color tint = new Color32((byte)(debut[k] >> 16), (byte)(debut[k] >> 8), (byte)debut[k], 255);
                 Vector2 home = new Vector2(rowX + tagW + gap + k * (chipW + gap) + chipW * .5f, y + h * .5f);
-                Vector2 mouth = new Vector2(Battle.QueuePositionX(debutLanes[k]), 694f);
+                // 2026-10-17: the member dives to the BOTTOM of its glass tube and vanishes with a whoosh (stretched,
+                // shrinking, with a short streak); only a faint glow in its color is left, no burst.
+                Vector2 mouth = new Vector2(Battle.QueuePositionX(debutLanes[k]), 852f);
                 float fly = (age - ChipHold - k * ChipStagger) / ChipFly;
-                if (fly >= 1f) { GardenFx.Burst(s, "merge-burst", mouth, 64f, (fly - 1f) * ChipFly, ChipBurst); continue; }
+                if (fly >= 1f)
+                {
+                    float g = (fly - 1f) * ChipFly / .25f;
+                    if (g < 1f) s.Glow(mouth.x, mouth.y - 12f, 64f, 44f, A(tint, (1f - g) * .45f), 0f);
+                    continue;
+                }
                 float pop = OutBack(Clamp01((age - k * .12f) / .25f));
                 if (pop <= 0f) continue;
-                float f = fly <= 0f ? 0f : InOut(fly), scale = pop * Mathf.Lerp(1f, .35f, f);
+                float f = fly <= 0f ? 0f : fly * fly, scale = pop * Mathf.Lerp(1f, .35f, f);   // speeds up: whoosh
                 Vector2 c = Vector2.Lerp(home, mouth, f) + new Vector2(0f, -Mathf.Sin(f * Mathf.PI) * 60f);   // gentle arc
                 float w = chipW * scale, ch = h * scale;
                 if (f < .5f)
@@ -112,13 +119,28 @@ namespace Flightbeat.Game
                     float panelAlpha = 1f - f * 2f;
                     if (!Asset9(s, "ui/popup-panel", c.x - w * .5f, c.y - ch * .5f, w, ch, 30f, 30f, 12f * scale, 12f * scale, new Color(1f, 1f, 1f, panelAlpha)))
                         s.Rect(c.x - w * .5f, c.y - ch * .5f, w, ch, A(Paper, panelAlpha));
-                    if (pop >= .9f && f <= 0f) Text(s, Name(tint), c.x + 16f, c.y - 9f, 16f, true, Ink);
+                    if (pop >= .9f && f <= 0f) Text(s, Name(tint), c.x + 18f, c.y - 9f, 16f, true, Ink);   // 22:40: centred right of the avatar
                 }
                 if (pop < .9f) continue;
                 // The avatar leads the flight (it is what lands in the tube); it starts at the chip's left end.
-                float av = 38f * Mathf.Lerp(1f, .8f, f);
-                Vector2 a = Vector2.Lerp(new Vector2(home.x - chipW * .5f + 21f, home.y), mouth, f) + new Vector2(0f, -Mathf.Sin(f * Mathf.PI) * 60f);
-                Asset(s, PlantSlot(tint, "idle"), a.x - av * .5f, a.y - av * .75f, av, av * 256f / 224f, Color.white);
+                Vector2 from = new Vector2(home.x - chipW * .5f + 24f, home.y);
+                Vector2 At(float q) => Vector2.Lerp(from, mouth, q) + new Vector2(0f, -Mathf.Sin(q * Mathf.PI) * 60f);
+                Vector2 a = At(f);
+                float vanish = fly > .6f ? Clamp01((fly - .6f) / .4f) : 0f, stretch = Clamp01((fly - .35f) / .65f);
+                float av = 44f * Mathf.Lerp(1f, .8f, f) * (1f - vanish * vanish);   // 22:40: 38 -> 44
+                if (fly > .25f)
+                    for (int j = 1; j <= 3; j++)
+                    {
+                        Vector2 b = At(Mathf.Max(0f, (fly - j * .06f) * (fly - j * .06f)));
+                        s.GlowLine(b, a, Mathf.Max(6f, av * .55f), A(tint, .32f * (1f - j * .25f) * (1f - vanish * .5f)));
+                    }
+                if (av > .5f)
+                {
+                    float sw = av * (1f - .35f * stretch), sh = av * 256f / 224f * (1f + .7f * stretch);
+                    // 2026-10-18 22:40 (user): the avatar sat high in its chip (anchored at 3/4 of the canvas); the body centre
+                    // (137/256 of the 224x256 canvas, between BodyTop and FeetLine) now sits on the chip centre.
+                    Asset(s, PlantSlot(tint, "idle"), a.x - sw * .5f, a.y - sh * (137f / 256f), sw, sh, Color.white);
+                }
             }
         }
     }

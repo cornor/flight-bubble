@@ -92,11 +92,16 @@ namespace Flightbeat.Garden
                 float grow = Mathf.Clamp01((d - head) / 16f);               // solid balls: grow in instead of fading in
                 GardenSkin.Shot(s, tint, from + dir * d, size * grow, 1f);
             }
-            float pulse = .5f + .5f * Mathf.Sin(age * 18f);
-            GardenSkin.Shot(s, tint, to, width * (1.05f + .25f * pulse), 1f);
-            for (int k = 0; k < 3; k++) {
-                float a = age * 3f + k * 2.094f, r = width * (.75f + .2f * pulse);
-                GardenSkin.Shot(s, tint, to + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r, width * .42f, 1f);
+            // 2026-10-19 09:34 (user picked C): no big pulsing ball at the hit point any more; a small splash keeps
+            // spraying there instead: 7 droplets in the stream's color fly out in a ring (each with its own cycle, a
+            // fresh angle every cycle, a little gravity), shrinking and fading as they go.
+            for (int k = 0; k < 7; k++) {
+                float cycle = age * 2.6f + k / 7f, u = cycle - Mathf.Floor(cycle);
+                float seed = Mathf.Floor(cycle) * 1.618f + k * .9f;
+                float a = (k / 7f) * Mathf.PI * 2f + Mathf.Sin(seed * 12.9898f) * .5f;
+                float reach = width * (.35f + 1.25f * u) * (.85f + .3f * Mathf.Abs(Mathf.Sin(seed * 7.3f)));
+                Vector2 p = to + new Vector2(Mathf.Cos(a), Mathf.Sin(a) * .8f) * reach + new Vector2(0f, width * 1.1f * u * u);
+                GardenSkin.Shot(s, tint, p, width * (.36f - .2f * u), 1f - u * u);
             }
         }
         public static void Aim(PixelSurface s, Vector2 at, float radius, float alpha = 1f)

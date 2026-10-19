@@ -22,7 +22,7 @@ python3 -m http.server 8792 --bind 127.0.0.1 --directory Builds/WebGL/GardenR1-b
 
 ## 发布
 
-发布规则见 [发布说明](docs/发布说明.md)。默认直接发布 `Builds/WebGL/GardenR1-bubble/` 中的现有产物，只有明确要求编译时才编译并发布。线上目录为 `118.178.99.37:/www/wwwroot/minigame/paopao`；每次成功发布后保留当前版本和上一版备份，并提供本次改动概述及带 `?v={version}` 的访问地址。
+发布规则见 [发布说明](docs/发布说明.md)。默认直接发布 `Builds/WebGL/GardenR1-bubble/` 中的现有产物，只有明确要求编译时才编译并发布。线上目录为 `118.178.99.37:/www/wwwroot/minigame/paopao`；每次成功发布后保留当前版本和上一版备份，并提供本次游戏更新内容（逻辑、玩法、表现及问题修复）和带 `?v={version}` 的访问地址。
 
 ## 目录
 

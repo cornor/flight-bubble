@@ -94,7 +94,9 @@ namespace Flightbeat.Feedback
                 int slot = battle.Fleet.IndexOf(ship);
                 var from = MouthOr(ship.Id, Position(ship.Id, slot));
                 var to = ShownPoint(ship.BeamX, ship.BeamY);
-                GardenFx.BubbleStream(s, from, to, ship.Tier >= 3 ? 12 : 10, color(ship.Color), time);
+                // 2026-10-18 23:40 (user: Ⅱ bullets too small). Stream balls are .48-.62 of the width, so width 10 made
+                // 5-6 px balls next to the 12 px Ⅰ shots; now Ⅱ 18 (9-11 px balls) and MAX 22 (11-14 px).
+                GardenFx.BubbleStream(s, from, to, ship.Tier >= 3 ? 22 : 18, color(ship.Color), time);
             }
             foreach (var f in flights) {
                 var shot = f.shot;

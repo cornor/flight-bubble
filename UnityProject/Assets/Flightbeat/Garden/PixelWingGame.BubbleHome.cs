@@ -192,6 +192,7 @@ namespace Flightbeat.Game
                 DrawHomeNextMember(s, 624f);
                 DrawHomeCornerButtons(s);   // 2026-10-16 22:35: settings moved to the top-left, codex top-right
                 DrawBubbleCodex(s);
+                DrawLevelPick(s);
                 return;
             }
             s.MapLayout = false;
@@ -240,6 +241,7 @@ namespace Flightbeat.Game
             DrawHomeNextMember(s, 846f);
             DrawHomeCornerButtons(s);
             DrawBubbleCodex(s);
+            DrawLevelPick(s);
         }
     }
 }

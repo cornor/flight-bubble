@@ -156,6 +156,9 @@ namespace Flightbeat.Game
             if (!String.IsNullOrEmpty(capturePath)) Directory.CreateDirectory(capturePath);
             ApplyDisplay(evidenceViewport.x > 0 ? evidenceViewport.x : Screen.width,
                 evidenceViewport.y > 0 ? evidenceViewport.y : Screen.height);
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            InitializeLevelSet(args);   // 2026-10-19: B level set (Garden/PixelWingGame.LevelSet.cs), before the first load
+#endif
             ResetRuntime();
             if (!TryBubbleLevelFromUrl() && !evidenceControlled && Economy.Data.unlocked == 1 && Economy.Data.cleared.Count == 0) StartSortie(0);
             if (InHome)

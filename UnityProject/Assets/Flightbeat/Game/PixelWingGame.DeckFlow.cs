@@ -75,16 +75,21 @@ namespace Flightbeat.Game
                 else if (id >= CodexCardAction && id < CodexCardAction + 64) SelectCodex(id - CodexCardAction);
                 return;
             }
+            if (levelPickOpen) { LevelPickTap(id); return; }   // 2026-10-19 level select page is modal
             if (settings)
             {
                 if (id >= 20 && id <= 22) OnBattleUi(id);
                 else if (id == 24) { settings = false; SetPaused(false); DisarmResetProgress(); audioChip.Play("ui"); }
                 else if (id == 802) TapResetProgress();
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                else if (id == Flightbeat.Garden.UI.GardenBattlePage.LevelSetAction) ToggleLevelSet();
+#endif
                 return;
             }
             if (id == 800) StartBubbleLevel();
             else if (id == 801) { settings = true; DisarmResetProgress(); audioChip.Play("page"); }
             else if (id == CodexOpenAction) OpenCodex();
+            else if (id == LevelPickOpenAction) OpenLevelPick();
             else if (id >= HomeMemberAction && id < HomeMemberAction + 5) PokeHomeMember(id - HomeMemberAction);
         }
     }

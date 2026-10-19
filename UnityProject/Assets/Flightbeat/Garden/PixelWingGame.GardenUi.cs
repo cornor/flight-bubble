@@ -106,6 +106,7 @@ namespace Flightbeat.Game
             view.toggleIcons[1].sprite = audioChip.EffectsMuted ? view.toggleOff : view.toggleOn;
             view.toggleIcons[2].sprite = effects.Enabled ? view.toggleOn : view.toggleOff;
             view.PresentResetProgress(ResetProgressLabel);
+            view.PresentLevelSet(InHome && LevelSetAvailableCount > 0, LevelSetCurrent == LevelSetB);
         }
         bool TryGardenUiHit(Vector2 logical, out int id)
         {

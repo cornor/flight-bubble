@@ -49,6 +49,8 @@ namespace Flightbeat.Game
             // beside the squad; settings stays in the top-left corner.
             HomeArtView(out float k, out _, out float oy);
             HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 70f, oy + 410f * k, "plants/home/btn-codex", "图鉴", Hex(0xFFB347));   // squad mid height (10-17)
+            // 2026-10-19: level select / replay (PixelWingGame.LevelPick.cs) under the codex entry.
+            HomeIconButton(s, LevelPickOpenAction, ScreenLayout.Right - 70f, oy + 410f * k + 92f, "plants/home/btn-levels", "选关", Hex(0x7CC4F0));
             s.MapLayout = mapped;
         }
         // 2026-10-17 (user: a reason to come back). Under the start button: the next member still to join, its name,

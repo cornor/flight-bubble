@@ -19,12 +19,19 @@ namespace Flightbeat.Garden {
             public int denseFrames; public float denseSeconds, denseFps, denseP95ms, denseP99ms;
             public bool home, settings, paused, finaleReady, finaleGuide, transition, musicMuted, soundMuted, lightEnabled;
             public int[] fleetColors; public Lane[] lanes;
+            // 2026-10-19 B level set: which set is on, where this level was loaded from ("A", "B", "B-test"),
+            // Actual resource bytes and parsed board, plus release-list expectations (empty for A).
+            public int levelSet;
+            public string levelName, levelSource, fileSha256, cellsSha256, expectedFileSha256, expectedCellsSha256;
         }
         readonly List<float> frameTimes = new List<float>(18000);
         readonly List<float> denseTimes = new List<float>(18000);
         double denseSum;
         PixelWingGame game;
         float reportAt; int lastLevel = -1; double sum; int visible;
+        Battle hashedBattle;
+        PixelWingGame.LevelSetSource loadedSource;
+        string loadedFile = "", loadedCells = "";
         public static GardenWebMetrics Instance;
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Install() { new GameObject("Garden R1 metrics").AddComponent<GardenWebMetrics>(); }
@@ -36,6 +43,15 @@ namespace Flightbeat.Garden {
             if (game == null || game.Battle == null) return;
             if (lastLevel != game.LevelIndex) { frameTimes.Clear(); denseTimes.Clear(); sum = 0; denseSum = 0; lastLevel = game.LevelIndex; }
             Battle b = game.Battle;
+            // Capture once when a new battle appears, before the reporting interval. Settings may change
+            // the names for the next battle; that must not relabel the battle already in memory.
+            if (hashedBattle != b) {
+                hashedBattle = b;
+                loadedSource = PixelWingGame.LevelSource(game.LevelIndex);
+                var asset = Resources.Load<TextAsset>("Levels/" + loadedSource.name);
+                loadedFile = asset ? GardenLevelHashes.FileSha256(asset.bytes) : "";
+                loadedCells = GardenLevelHashes.CellsSha256(b.Level.cells);
+            }
             // Gameplay frames only. Intro, menus, hidden tab and paused time are excluded.
             if (!game.InHome && b.State == Phase.Playing && !game.paused && !game.applicationSuspended) {
                 float ms = Time.unscaledDeltaTime * 1000;
@@ -56,6 +72,10 @@ namespace Flightbeat.Garden {
                 denseFps = denseSum > 0 ? (float)(dense.Length * 1000 / denseSum) : 0, denseP95ms = Percentile(dense,.95f), denseP99ms = Percentile(dense,.99f),
                 fps = sum > 0 ? (float)(times.Length * 1000 / sum) : 0,
                 p50ms = Percentile(times,.5f), p95ms = Percentile(times,.95f), p99ms = Percentile(times,.99f), maxMs = Percentile(times,1) };
+            sample.levelSet = PixelWingGame.LevelSetCurrent; sample.levelName = loadedSource.name; sample.levelSource = loadedSource.kind;
+            sample.fileSha256 = loadedFile; sample.cellsSha256 = loadedCells;
+            sample.expectedFileSha256 = loadedSource.fileSha256 ?? "";
+            sample.expectedCellsSha256 = loadedSource.cellsSha256 ?? "";
             for (int i = 0; i < b.Fleet.Count; i++) { sample.fleetColors[i] = b.Fleet[i].Color; sample.maxTier = Mathf.Max(sample.maxTier, b.Fleet[i].Tier); }
             for (int i = 0; i < b.LaneCount; i++) sample.lanes[i] = b.Reserve[i].Count == 0 ? new Lane { color = -1 } : new Lane {
                 color = b.Reserve[i][0].Color, ammo = b.Reserve[i][0].Ammo, exposed = b.Exposed(b.Reserve[i][0].Color), merge = PixelWingGame.GardenMergeHintVisible(b, i) };

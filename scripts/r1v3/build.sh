@@ -28,7 +28,11 @@ step "界面 Prefab"
 python3 scripts/r1v3/build_atlas_v3.py > /dev/null      # prefab copy changed: make sure every glyph is in the atlas
 python3 scripts/r1v3/coverage.py > "$output.coverage.json"
 python3 scripts/r1/check_source.py > "$output.source.json"
-step "图集补字、覆盖与源码检查"
+# B level set (docs/r1/关卡第二套-实施计划.md): only approved, released levels may ship; the B-test channel only
+# in an explicit test build (R1_LEVELS_TEST=1), which is marked and must not be published.
+if [ "${R1_LEVELS_TEST:-0}" = 1 ]; then python3 scripts/levels_b/publish.py --check --allow-test
+else python3 scripts/levels_b/publish.py --check || { echo "B 套关卡检查未通过（测试关卡请用 R1_LEVELS_TEST=1 构建）"; exit 1; }; fi
+step "图集补字、覆盖、源码与 B 套关卡检查"
 "$unity" -batchmode -nographics -quit -projectPath "$repo/UnityProject" -buildTarget WebGL \
   -executeMethod Flightbeat.Editor.WebGlCliBuild.Run --flightbeat-garden-r1 \
   --flightbeat-webgl-build "$output" ${clean_flag[@]+"${clean_flag[@]}"} -logFile "$output.build.log" || {
@@ -49,5 +53,9 @@ if p.exists():
     stamp = time.strftime('%Y%m%d%H%M%S')
     p.write_text(re.sub(r"(Build/[^'\"?]+\.(?:unityweb|js))(\?v=\d+)?", lambda m: m[1] + '?v=' + stamp, p.read_text()))
 PY
+if [ "${R1_LEVELS_TEST:-0}" = 1 ]; then
+  echo "本包含 B-test 测试关卡，仅供本机测试，不可发布（R1_LEVELS_TEST=1）" > "$output/LEVELS_TEST_BUILD.txt"
+  echo "⚠ 测试构建：包含 B-test 测试关卡，不可发布"
+fi
 echo "构建完成：${output}（共 $(( SECONDS - build_start )) 秒）"
 echo "试玩：python3 -m http.server 8792 --bind 127.0.0.1 --directory \"$output\"  然后打开 http://127.0.0.1:8792/（服务可以一直开着，重新构建后刷新即可）"

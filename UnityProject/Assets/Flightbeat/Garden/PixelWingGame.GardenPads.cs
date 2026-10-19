@@ -90,6 +90,23 @@ namespace Flightbeat.Game
             }
             return new Vector2(float.NaN, float.NaN);
         }
+        // 2026-10-19 09:45 (user: 等待 kept flashing on and off). Battle.Exposed skips beads already reserved by shots in
+        // flight, so it flips for single frames while a color is being cleared. The label now has hysteresis: it turns on
+        // after 0.4 s without a free target, off after 0.4 s with one, and fades in/out (about 0.15 s).
+        class PadWait { public bool shown; public float since, alpha; public bool last; }
+        readonly Dictionary<int, PadWait> padWait = new Dictionary<int, PadWait>();
+        Flightbeat.Model.Battle padWaitBattle;
+        float PadWaitAlpha(Fighter ship)
+        {
+            if (padWaitBattle != Battle) { padWaitBattle = Battle; padWait.Clear(); }
+            if (!padWait.TryGetValue(ship.Id, out PadWait w)) { w = new PadWait { since = ui, last = true }; padWait[ship.Id] = w; }
+            bool blocked = ship.Arrival <= 0f && !Battle.Exposed(ship.Color);
+            if (blocked != w.last) { w.last = blocked; w.since = ui; }
+            if (blocked != w.shown && ui - w.since >= .4f) w.shown = blocked;
+            w.alpha = Mathf.MoveTowards(w.alpha, w.shown ? 1f : 0f, Time.unscaledDeltaTime * 7f);
+            return w.alpha;
+        }
+
         // Where a bead is drawn (sand interpolation and smoothed advance), so shots land on the visible bead.
         Vector2 GardenEnemyAt(int index)
         {

@@ -35,6 +35,36 @@ ap.add_argument('--font', default=str(ROOT / 'Art/fonts/NotoSansSC.ttf'))
 args = ap.parse_args()
 DEL, FXDEL, OUT, GEN, CODE, FONT = map(Path, (args.delivery, args.fx_delivery, args.out, args.generated, args.code, args.font))
 SIZE, CELL, FONT_SIZE = 2048, 40, 32
+# 2026-10-19 (build speed): skip the whole run when nothing it reads has changed since the last successful run.
+# build.sh calls this twice (before and after the prefabs are regenerated); the second call normally finds nothing
+# new. Inputs: the art deliveries, fonts, colours, these scripts (size + mtime), the C# sources and level files, and
+# the non-ASCII characters in the prefabs (only their glyphs matter here). R1_ATLAS_FORCE=1 rebuilds anyway.
+_CACHE = ROOT / 'Builds/.atlas-cache.json'
+def _fingerprint():
+    h = hashlib.sha256()
+    h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
+    files = []
+    for r in (DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+              CODE / 'Resources/levels'):
+        if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
+    for p in sorted(set(files)):
+        st = p.stat(); h.update(f'{p}|{st.st_size}|{st.st_mtime_ns}\n'.encode())
+    for p in sorted(CODE.rglob('*.cs')):
+        if p.name != 'GardenColorCatalog.Generated.cs': h.update(p.read_bytes())
+    chars = set()
+    for p in CODE.rglob('*.prefab'):
+        chars |= set(c for c in re.sub(r'\\u([0-9a-fA-F]{4})', lambda m: chr(int(m[1], 16)), p.read_text(encoding='utf-8')) if ord(c) >= 128)
+    h.update(''.join(sorted(chars)).encode())
+    return h.hexdigest()
+_FP = os.environ.get('R1_ATLAS_FP') or _fingerprint()
+os.environ['R1_ATLAS_FP'] = _FP          # kept across the creature-scale re-run (os.execv below)
+if os.environ.get('R1_ATLAS_FORCE') != '1' and _CACHE.exists() and all((OUT / n).exists() for n in ('atlas.json', 'atlas.png', 'creatures.png')):
+    try: _cached = json.loads(_CACHE.read_text())
+    except Exception: _cached = {}
+    if _cached.get('fingerprint') == _FP:
+        print('atlas unchanged, skipped (R1_ATLAS_FORCE=1 to rebuild)', file=sys.stderr)
+        print(_cached.get('summary', '{}'))
+        raise SystemExit(0)
 FONT_SHA = 'a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da'
 UI = 0.75
 # Creature canvases are stored at the UI scale (224x256 -> 168x192 px, display canvas at most 118 logical px).
@@ -132,7 +162,7 @@ def add_film(img, strength=1.0):
     sheen = np.clip(1 - np.sqrt(((X - (cx - R * .35)) / (R * .75)) ** 2 + ((Y - (cy - R * .4)) / (R * .55)) ** 2), 0, 1) ** 1.5 * .22
     alpha = np.maximum(alpha, sheen * (r <= 1)); rgb = rgb * (1 - sheen[..., None]) + sheen[..., None]
     film = np.dstack([rgb * 255, alpha * 255]).clip(0, 255).astype('uint8')
-    film = Image.fromarray(film, 'RGBA').filter(_IF.GaussianBlur(w / 160))
+    film = Image.fromarray(film).filter(_IF.GaussianBlur(w / 160))
     out = film.copy(); out.alpha_composite(img); return out
 
 if (_HOME / 'delivery/soap-bubble.png').exists():
@@ -183,7 +213,7 @@ def clean_halo(img, r0=200.0, r1=430.0):
     out = pm * (1 - t) + ext * t
     a = out[..., 3:4]
     rgb = np.where(a > 0, out[..., :3] / np.maximum(a, 1e-3) * 255, 0)
-    return Image.fromarray(np.dstack([np.clip(rgb, 0, 255), np.clip(a, 0, 255)]).astype(np.uint8), 'RGBA')
+    return Image.fromarray(np.dstack([np.clip(rgb, 0, 255), np.clip(a, 0, 255)]).astype(np.uint8))
 
 # 2026-10-17 12:30 (user): the codex lock showed the battle pad's plate under it. Lift just the lock bubble out of
 # pad-locked.png: its bottom sat inside the plate, so the hidden rows are mirrored from the top of the bubble.
@@ -216,12 +246,12 @@ def popup_panel_gold():
     rgb, a = im[..., :3], im[..., 3:]
     mx, mn = rgb.max(-1), rgb.min(-1)
     sat = np.where(mx > 0, (mx - mn) / np.maximum(mx, 1e-6), 0)
-    t = np.clip((rgb @ np.array([.299, .587, .114]) - .2) / .75, 0, 1)[..., None]
+    t = np.clip((rgb[..., 0] * .299 + rgb[..., 1] * .587 + rgb[..., 2] * .114 - .2) / .75, 0, 1)[..., None]
     dark, mid, light = np.array([.62, .36, .02]), np.array([1., .76, .16]), np.array([1., .97, .72])
     gold = np.where(t < .55, dark + (mid - dark) * (t / .55), mid + (light - mid) * ((t - .55) / .45))
     w = np.clip((sat - .22) / .18, 0, 1)[..., None]
     out = np.concatenate([rgb * (1 - w) + gold * w, a], -1)
-    return Image.fromarray((out * 255 + .5).clip(0, 255).astype(np.uint8), 'RGBA')
+    return Image.fromarray((out * 255 + .5).clip(0, 255).astype(np.uint8))
 (DEL.parent / 'generated/ui2').mkdir(parents=True, exist_ok=True)
 popup_panel_gold().save(DEL.parent / 'generated/ui2/popup-panel-gold.png')
 SLOTS.append(('ui/popup-panel-gold', '../generated/ui2/popup-panel-gold.png', UI, None))
@@ -241,14 +271,14 @@ def rail_tiled():
         T[:, k] = T[:, k] * (1 - w) + im[:, c + P + k] * w
         T[:, P - 1 - k] = T[:, P - 1 - k] * (1 - w) + im[:, c - 1 - k] * w
     out = np.concatenate([T] * (im.shape[1] // P + 1), 1)[:, :im.shape[1]]
-    return Image.fromarray(out.clip(0, 255).astype(np.uint8), 'RGBA')
+    return Image.fromarray(out.clip(0, 255).astype(np.uint8))
 def recolor(img, dark, mid, light, knee=.55):
     im = np.asarray(img).astype(np.float32) / 255
     rgb, a = im[..., :3], im[..., 3:]
-    t = np.clip((rgb @ np.array([.299, .587, .114]) - .2) / .75, 0, 1)[..., None]
+    t = np.clip((rgb[..., 0] * .299 + rgb[..., 1] * .587 + rgb[..., 2] * .114 - .2) / .75, 0, 1)[..., None]
     dark, mid, light = map(np.array, (dark, mid, light))
     col = np.where(t < knee, dark + (mid - dark) * (t / knee), mid + (light - mid) * ((t - knee) / (1 - knee)))
-    return Image.fromarray((np.concatenate([col, a], -1) * 255 + .5).clip(0, 255).astype(np.uint8), 'RGBA')
+    return Image.fromarray((np.concatenate([col, a], -1) * 255 + .5).clip(0, 255).astype(np.uint8))
 (DEL.parent / 'generated/scene').mkdir(parents=True, exist_ok=True)
 _rail = rail_tiled(); _rail.save(DEL.parent / 'generated/scene/rail-tiled.png')
 recolor(_rail, (.50, .02, .06), (.98, .16, .20), (1., .82, .80), knee=.6).save(DEL.parent / 'generated/scene/rail-red.png')
@@ -581,6 +611,9 @@ write_index(slots, SIZE, OUT, GEN)
 (OUT / 'atlas.json').write_text(json.dumps(dict(size=SIZE, cell=CELL, fontSize=font_size, characters=chars,
                                                  glyphs=glyphs, slots=slots), ensure_ascii=False))
 (GEN / 'atlas-sources.json').write_text(json.dumps({'scene/background (background.png)': bg_src, **{t[0]: t[2] for t in tiles}}, indent=1, ensure_ascii=False))
-print(json.dumps(dict(slots=len(slots), creatureScale=CREATURE, glyphs=glyph_mode, characters=len(chars), usedHeight=heights, size=SIZE,
+_summary = json.dumps(dict(slots=len(slots), creatureScale=CREATURE, glyphs=glyph_mode, characters=len(chars), usedHeight=heights, size=SIZE,
                       delivered=len(delivered), placeholders=len(placeholder),
-                      fxFromV3=sorted(k for k, v in fx_sources.items() if 'art-v3' in v), backgroundHasStage=BACKGROUND_HAS_STAGE), ensure_ascii=False))
+                      fxFromV3=sorted(k for k, v in fx_sources.items() if 'art-v3' in v), backgroundHasStage=BACKGROUND_HAS_STAGE), ensure_ascii=False)
+print(_summary)
+_CACHE.parent.mkdir(parents=True, exist_ok=True)
+_CACHE.write_text(json.dumps(dict(fingerprint=_FP, summary=_summary), ensure_ascii=False))

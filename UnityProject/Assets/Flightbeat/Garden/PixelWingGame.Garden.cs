@@ -21,6 +21,99 @@ namespace Flightbeat.Game
         void GardenBanner(PixelSurface s, string id, float x, float y, float w, float h) {
             if (!Asset9(s, id, x, y, w, h, 45f, 0f, h * .58f, 0f, Color.white)) GardenPanel(s, x, y, w, h);
         }
+        // The selected light glass hint: one rigid capsule, so its rounded ends and text keep
+        // their proportions on tall screens. This is a prompt above the rail, with no hit box.
+        void DrawGardenReadyHint(PixelSurface s)
+        {
+            bool mapped = s.MapLayout;
+            // 2026-10-19 11:01: a gentle 2.5 px float so the waiting prompt draws the eye.
+            // 11:13 (user: it hid part of the picture): moved below the rail, into the empty pad row (nobody is on the
+            // pads before the first deployment), right above the queue it points to; narrower so it clears the locked
+            // pads' ad badges.
+            float cy = (mapped ? ScreenLayout.Y(600f) : 600f) + Mathf.Sin(ui * 2.2f) * 2.5f;
+            s.MapLayout = false;
+            try
+            {
+                GlassCapsule(s, 270f, cy, 300f, 44f, Hex(0x7CC4F0));
+                Text(s, "点下方队员，开始出战", 270f, cy - 11f, 20f, true, Hex(0x163E6D));
+                // 11:01 (user): no side bubbles.
+            }
+            finally { s.MapLayout = mapped; }
+        }
+
+        // 2026-10-19 11:07 (user picked C): the stalled-fleet hint uses the same glass capsule, with a coral edge, a warning
+        // sign and the problem line in red; the second line (what to do) stays navy. Not red all over: red is the rail's
+        // danger colour, and being stuck is not yet danger.
+        void DrawGardenStallHint(PixelSurface s)
+        {
+            bool mapped = s.MapLayout;
+            float cy = mapped ? ScreenLayout.Y(312f) : 312f;
+            s.MapLayout = false;
+            try
+            {
+                const float cx = 270f, w = 420f, h = 66f;
+                GlassCapsule(s, cx, cy, w, h, Hex(0xF08A6C));
+                WarnSign(s, cx - w * .5f + 34f, cy, 1f);
+                Text(s, "出战位满了，同色泡泡被挡住啦", cx + 14f, cy - 21f, 18f, true, Hex(0xB0302A));
+                Text(s, "试试泡泡炸弹，清开最下排", cx + 14f, cy + 5f, 16f, true, Hex(0x163E6D));
+            }
+            finally { s.MapLayout = mapped; }
+        }
+
+        // 2026-10-19 11:12: one-line hints in the glass capsule (logical y; rigid on tall screens like the ready hint).
+        void HintCapsule(PixelSurface s, string text, float logicalCy, float w, float h, float size, Color edge, Color ink, float alpha = 1f, float fill = 1f)
+        {
+            bool mapped = s.MapLayout;
+            float cy = mapped ? ScreenLayout.Y(logicalCy) : logicalCy;
+            s.MapLayout = false;
+            try
+            {
+                GlassCapsule(s, 270f, cy, w, h, edge, alpha, fill);
+                // See-through glass: a thin white outline keeps the text readable over the beads.
+                if (fill < .9f) TextOutline(s, text, 270f, cy - size * .55f, size, A(ink, alpha), A(Color.white, .9f * alpha), 1.6f);
+                else Text(s, text, 270f, cy - size * .55f, size, true, A(ink, alpha));
+            }
+            finally { s.MapLayout = mapped; }
+        }
+        // Top toast (2.2 s): a capsule sized to its text, popping in and fading out; coral edge for the red (refusal) toasts.
+        void DrawGardenToast(PixelSurface s)
+        {
+            float age = ui - toastAt;
+            if (age > 2.2f || toast.Length == 0) return;
+            string text = GardenWords(toast);
+            float size = Mathf.Clamp(440f / Mathf.Max(1, text.Length), 14f, 17f), w = Mathf.Clamp(TextWidth(text, size) + 70f, 200f, 510f);
+            float alpha = Clamp01(age / .15f) * Clamp01((2.2f - age) / .3f);
+            bool refusal = toastTint.r > toastTint.g + .3f;
+            HintCapsule(s, text, 108f, w, 38f, size, refusal ? Hex(0xF08A6C) : Hex(0x7CC4F0), refusal ? Hex(0xB0302A) : Hex(0x163E6D), alpha);
+        }
+        // Light glass capsule centred on (cx, cy), in screen units (call with MapLayout off): a vertical gradient drawn in
+        // one-pixel bands (no atlas asset), a white rim with a top highlight, and an outer edge in `edgeColor`.
+        // `fill` < 1 makes only the glass see-through (rim and edge stay), so the board shows through it.
+        void GlassCapsule(PixelSurface s, float cx, float cy, float w, float h, Color edgeColor, float alpha = 1f, float fill = 1f)
+        {
+            float r = h * .5f, left = cx - w * .5f + r, right = cx + w * .5f - r, top = cy - r;
+            s.Glow(cx, cy + 4f, w + 22f, h + 24f, A(Hex(0x3982B7), .12f * alpha), 0f);
+            Color upper = A(Hex(0xE6F6FF), .98f * alpha * fill), middle = A(Hex(0xD6EEFC), .96f * alpha * fill), lower = A(Hex(0xC2E5F8), .95f * alpha * fill);
+            for (int row = 0; row < (int)h; row++)
+            {
+                float t = (row + .5f) / h, dy = row + .5f - r;
+                float cap = Mathf.Sqrt(Mathf.Max(0f, r * r - dy * dy));
+                Color band = t < .5f ? Color.Lerp(upper, middle, t * 2f) : Color.Lerp(middle, lower, (t - .5f) * 2f);
+                s.Rect(left - cap, top + row, right - left + cap * 2f, 1f, band);
+            }
+            Color rim = A(Hex(0xF7FFFF), .94f * alpha);
+            s.Segment(new Vector2(left, top), new Vector2(right, top), 1.3f, rim);
+            s.Segment(new Vector2(left, cy + r), new Vector2(right, cy + r), 1f, A(rim, .75f));
+            s.Ring(new Vector2(left, cy), r, rim, 1.2f, 24, 90f, 180f);
+            s.Ring(new Vector2(right, cy), r, rim, 1.2f, 24, -90f, 180f);
+            s.Segment(new Vector2(left + 4f, top + 1.8f), new Vector2(right - 4f, top + 1.8f), 1f, A(Color.white, .48f * alpha));
+            // 11:01: an edge just outside the white rim, so the capsule still separates from light boards.
+            Color edge = A(edgeColor, .88f * alpha);
+            s.Segment(new Vector2(left, top - 1.4f), new Vector2(right, top - 1.4f), 1.5f, edge);
+            s.Segment(new Vector2(left, cy + r + 1.4f), new Vector2(right, cy + r + 1.4f), 1.5f, edge);
+            s.Ring(new Vector2(left, cy), r + 1.4f, edge, 1.5f, 28, 90f, 180f);
+            s.Ring(new Vector2(right, cy), r + 1.4f, edge, 1.5f, 28, -90f, 180f);
+        }
         void GardenButton(PixelSurface s, int id, float x, float y, float w, float h, string text) {
             HitBox(s, id, x, y, w, h);
             if (id >= 10 && id <= 12) {
@@ -170,8 +263,11 @@ namespace Flightbeat.Game
                     float pulse = .7f + .3f * Mathf.Sin(ui * 4f);
                     Asset(s, "fx/glow", Battle.QueuePositionX(lane) - 54, QueueDisplayY(725f) - 58, 108, 108, new Color(1f, .82f, .32f, pulse));
                 }
-                if (reserve.Count > 0) {
-                    Color mark = GardenColor(reserve[0].Color);
+                // 2026-10-19 11:46 (user): during the intro the corner marks waited for nobody; they now fade in only as
+                // the front member settles into the tube (its drop offset 160 -> 0, marks over the last 12 px).
+                float markAlpha = Battle.State == Phase.Intro ? 1f - Clamp01(FleetOpening.BayOffset(Battle.IntroTime, lane, 0) / 12f) : 1f;
+                if (reserve.Count > 0 && markAlpha > .01f) {
+                    Color mark = A(GardenColor(reserve[0].Color), markAlpha);
                     if (!Asset(s, "scene/queue-corner", x + 4, 692, 14, 14, mark)) s.Corners(x + 3, 691, w - 6, 56, mark, 9, 3);
                     else Asset(s, "scene/queue-corner", x + w - 18, 692, 14, 14, mark, false, true, true);
                 }
@@ -211,7 +307,8 @@ namespace Flightbeat.Game
                 float squash = PadLanding(s, ship, i, ref at, bayCanvas);
                 Creature(s, GardenColor(ship.Color), at.x, at.y + 12, bayCanvas, ship.Tier, ship.Ammo.ToString(),
                     Mathf.Clamp01(1 - (Battle.Time - ship.LastFired) / .18f), bayNumber, true, true, .035f, ship.Id * 1.7f, PadScale(ship), squash);
-                if (ship.Arrival <= 0 && !Battle.Exposed(ship.Color)) TextOutline(s, "等待", at.x, 664, 15f, Cream, Outline, 1.5f);
+                float wait = PadWaitAlpha(ship);
+                if (wait > .01f) TextOutline(s, "等待", at.x, 664, 15f, A(Cream, wait), A(Outline, wait), 1.5f);
             }
             float queueScale = Mathf.Min(108f, 500f / Battle.LaneCount - 8f) / 108f;
             GardenHintLane(out int hintLane);
@@ -247,10 +344,11 @@ namespace Flightbeat.Game
             if (Battle.State != Phase.ReviveOffer) feedback.DrawGardenFeedback(s, GardenColor);
             // Third batch: bubble finale; the original routines still run muted for their cues, hit regions and clocks.
             DrawBubbleFinaleButton(s); DrawBubbleFinale(s);
-            if (selection == 1) TextOutline(s, "选择前三排任意队员", 270, 527, 19f, Cream, Outline, 1.8f);
+            if (selection == 1) HintCapsule(s, "选择前三排任意队员", 512f, 330f, 48f, 21f, Hex(0x7CC4F0), Hex(0x163E6D));   // 11:12: glass capsule
             if (selection == 2) {
                 DrawBombAim(s);
-                TextOutline(s, "拖动选择泡泡，双击确认", 270, 128, 18f, Cream, Outline, 1.8f);
+                // 11:16 (user): see-through glass (fill 45 %) so the picture under it stays visible while aiming.
+                HintCapsule(s, "拖动选择泡泡，双击确认", 140f, 340f, 44f, 19f, Hex(0x7CC4F0), Hex(0x163E6D), 1f, .45f);
                 // 2026-10-18 22:21 (user): the confirm button sat right over the rail, i.e. on the bottom rows players
                 // bomb most, hiding the reticle and catching drags. While aiming, the queue cannot be used anyway, so
                 // the queue area is dimmed and holds 确认使用 (id 9) and 取消 (id 12, the bomb prop's own cancel).
@@ -263,11 +361,10 @@ namespace Flightbeat.Game
                 TextOutline(s, "取  消", 270, 792 + (48 - 20) / 2 - 1, 20f, Cream, Outline, 1.8f);
             }
             if (Battle.State == Phase.Ready && tutorialStep < 0) {
-                GardenPanel(s, 105, 500, 330, 44); Text(s, "点下方队员，开始出战", 270, 513, 18);
+                DrawGardenReadyHint(s);
             }
             if (Battle.Stalled && selection == 0 && !settings && Battle.State == Phase.Playing) {
-                GardenPanel(s, 40, 280, 460, 64); Text(s, "出战位满了，同色泡泡被挡住啦", 270, 290, 16);
-                Text(s, "试试泡泡炸弹，清开最下排", 270, 317, 16);
+                DrawGardenStallHint(s);
             }
             if (Battle.NoticeTime > 0 && selection == 0 && !settings) TextOutline(s, GardenWords(Battle.Notice), 270, 862, 16f, Cream, Outline, 1.6f);
             DrawHeldBadge(s);
@@ -295,7 +392,7 @@ namespace Flightbeat.Game
                 GardenTitleButton(s, 501, 84, 506, 372, 62, "补充体力 +5", true);
                 GardenButton(s, 502, 84, 576, 372, 50, "400 金币补充体力 +5");
             }
-            if (ui - toastAt <= 2.2f && toast.Length > 0) { GardenPanel(s, 40, 90, 460, 36); Text(s, GardenWords(toast), 270, 101, 15); }
+            DrawGardenToast(s);   // 2026-10-19 11:12: glass capsule (was the wide jelly panel over the combo counter)
             DrawGardenTransition(s);
         }
         void DrawGardenTransition(PixelSurface s) {

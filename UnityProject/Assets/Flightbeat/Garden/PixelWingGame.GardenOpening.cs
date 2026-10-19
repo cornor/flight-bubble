@@ -79,6 +79,32 @@ namespace Flightbeat.Game
             return best >= 0 ? best : Battle.LaneCount / 2;
         }
 
+        // 2026-10-19 11:40 (user picked C): the debut chip is the hint glass capsule with a gold edge, a soft gold halo
+        // and a twinkling four-point star on its top-right shoulder (replaces the old popup-panel jelly frame).
+        void DebutCapsule(PixelSurface s, float cx, float logicalCy, float w, float h, float alpha, int k)
+        {
+            bool mapped = s.MapLayout;
+            float cy = mapped ? ScreenLayout.Y(logicalCy) : logicalCy;
+            s.MapLayout = false;
+            try
+            {
+                s.Glow(cx, cy, w + 18f, h + 20f, A(Hex(0xFFD45A), .3f * alpha), 0f);
+                GlassCapsule(s, cx, cy, w, h, Hex(0xF5B83A), alpha);
+                float r = Mathf.Min(7f, h * .2f), sx = cx + w * .5f - h * .22f, sy = cy - h * .5f + 1f;
+                float tw = .75f + .25f * Mathf.Sin(ui * 5f + k * 1.7f);
+                Color star = A(Hex(0xFFF3B0), alpha), rim = A(Hex(0xE8A21C), alpha * .9f);
+                for (int pass = 0; pass < 2; pass++)
+                {
+                    float rr = r * tw + (pass == 0 ? 1.2f : 0f), width = pass == 0 ? 3.2f : 2f;
+                    Color col = pass == 0 ? rim : star;
+                    s.Segment(new Vector2(sx, sy - rr), new Vector2(sx, sy + rr), width, col);
+                    s.Segment(new Vector2(sx - rr, sy), new Vector2(sx + rr, sy), width, col);
+                }
+                s.Rect(sx - 1.5f, sy - 1.5f, 3f, 3f, A(Color.white, alpha));
+            }
+            finally { s.MapLayout = mapped; }
+        }
+
         void DrawDebutChips(PixelSurface s, float age)
         {
             int[] debut = GardenColorCatalog.Debut(levelIndex);
@@ -117,9 +143,8 @@ namespace Flightbeat.Game
                 if (f < .5f)
                 {
                     float panelAlpha = 1f - f * 2f;
-                    if (!Asset9(s, "ui/popup-panel", c.x - w * .5f, c.y - ch * .5f, w, ch, 30f, 30f, 12f * scale, 12f * scale, new Color(1f, 1f, 1f, panelAlpha)))
-                        s.Rect(c.x - w * .5f, c.y - ch * .5f, w, ch, A(Paper, panelAlpha));
-                    if (pop >= .9f && f <= 0f) Text(s, Name(tint), c.x + 18f, c.y - 9f, 16f, true, Ink);   // 22:40: centred right of the avatar
+                    DebutCapsule(s, c.x, c.y, w, ch, panelAlpha, k);
+                    if (pop >= .9f && f <= 0f) Text(s, Name(tint), c.x + 18f, c.y - 9f, 16f, true, Hex(0x163E6D));   // 22:40: centred right of the avatar
                 }
                 if (pop < .9f) continue;
                 // The avatar leads the flight (it is what lands in the tube); it starts at the chip's left end.

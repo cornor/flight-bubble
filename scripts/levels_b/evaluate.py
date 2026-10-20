@@ -86,9 +86,14 @@ def main():
     ap.add_argument('--strategies', default='0,1,2,3')
     ap.add_argument('--out', type=Path)
     ap.add_argument('--unity', default=UNITY)
+    ap.add_argument('--trace', action='store_true', help='记录开局、首次卡住前决策和复活/终局快照，不改变打法')
+    ap.add_argument('--no-manifest', action='store_true', help='隔离评估，只写证据，不更新制作清单')
+    ap.add_argument('--candidate-dir', type=Path, help='从独立目录读取 sectorNN.json，必须配合 --no-manifest')
     args = ap.parse_args()
     strategies = [int(x) for x in args.strategies.split(',')]
     kind = next((m for m in ('temp', 'self', 'noise') if getattr(args, m)), 'draft')
+    if args.candidate_dir and (kind != 'draft' or not args.no_manifest):
+        ap.error('--candidate-dir 只用于独立候选对比，必须配合 --no-manifest，不能与 self/noise/temp 混用')
     out = (args.out or ROOT / 'Builds/R1-evidence' / f'levels-b-eval-{kind}-{datetime.now():%Y%m%d-%H%M%S}').resolve()
     out.mkdir(parents=True, exist_ok=False)
     manifest = load_manifest()
@@ -106,6 +111,8 @@ def main():
             if run.returncode not in (0, 2):
                 print(run.stdout + run.stderr); return 1
             b_path = folder / f'{res}.json'
+        elif args.candidate_dir:
+            b_path = (args.candidate_dir / f'{res}.json').resolve()
         else:
             entry = manifest['levels'].get(res)
             if not entry:
@@ -113,13 +120,14 @@ def main():
             b_path = ROOT / entry['draft']
             if file_sha256(b_path.read_bytes()) != entry['fileSha256']:
                 print(f'{label(game)}：草稿文件与清单哈希不一致，先重新 convert'); return 1
-        sources[game] = dict(a=str(a_path), b=str(b_path), bSha=file_sha256(b_path.read_bytes()))
+        sources[game] = dict(a=str(a_path), aSha=file_sha256(a_path.read_bytes()),
+                             b=str(b_path), bSha=file_sha256(b_path.read_bytes()))
         for s in strategies:
             for k in range(args.runs):
                 seed = 1 + k
-                cases.append(dict(name=f'{game}-A-{s}-{k}', path=str(a_path), game=game, strategy=s, seed=seed))
+                cases.append(dict(name=f'{game}-A-{s}-{k}', path=str(a_path), game=game, strategy=s, seed=seed, trace=args.trace))
                 cases.append(dict(name=f'{game}-B-{s}-{k}', path=str(b_path), game=game, strategy=s,
-                                  seed=seed + 1000 if args.noise else seed))
+                                  seed=seed + 1000 if args.noise else seed, trace=args.trace))
     input_path, result_path = out / 'input.json', out / 'results.json'
     input_path.write_text(json.dumps(dict(cases=cases), ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     print(f'{len(args.levels)} 关 × {len(strategies)} 种打法 × {args.runs} 次 × A/B = {len(cases)} 局，启动 Unity…（证据：{out}）', flush=True)
@@ -132,6 +140,9 @@ def main():
         print(f'Unity 没有生成结果（退出码 {run.returncode}），见 {out / "unity.log"}'); return 1
     print(f'Unity 用时 {(datetime.now() - started).total_seconds():.0f} 秒')
     report_unity = json.loads(result_path.read_text())
+    if run.returncode != 0 or not report_unity.get('passed') or report_unity.get('error'):
+        print(f'Unity 运行未成功（退出码 {run.returncode}），不记录评估状态；见 {out / "unity.log"}')
+        return 1
     results = report_unity['results']
     # Every expected run must be there exactly once.
     expected = {c['name'] for c in cases}
@@ -171,13 +182,19 @@ def main():
         lines.append(f'| {row["game"]} | {STRATEGIES[row["strategy"]]} | {row["verdict"]} | {fmt(row["a"])} | {fmt(row["b"])} | {row["note"]} |')
     lines += ['', '| 关 | 结论 |', '|---|---|'] + [f'| {label(g)} | {v} |' for g, v in level_verdicts.items()]
     (out / 'report.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
-    (out / 'report.json').write_text(json.dumps(dict(kind=kind, runs=args.runs, levels=level_verdicts, rows=rows, sources=sources,
+    (out / 'report.json').write_text(json.dumps(dict(kind=kind, isolated=args.no_manifest, trace=args.trace,
+                                                     candidateDirectory=str(args.candidate_dir) if args.candidate_dir else None,
+                                                     runs=args.runs, levels=level_verdicts, rows=rows, sources=sources,
                                                      tolerance=dict(winGap=WIN_GAP, timeRel=TIME_REL, blockedRel=BLOCKED_REL,
                                                                     blockedAbs=BLOCKED_ABS, distancePx=DISTANCE_PX)),
                                                 ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     for g, v in level_verdicts.items():
         print(f'{label(g)}：{v}')
-    if kind == 'draft':
+    if args.trace:
+        from diagnose import write_report
+        write_report(results, out)
+        print(f'诊断：{out / "diagnostics.md"}')
+    if kind == 'draft' and not args.no_manifest:
         evidence = str(out.relative_to(ROOT)) if out.is_relative_to(ROOT) else str(out)
         for g, v in level_verdicts.items():
             record_check(g, 'bot', v, evidence, sources[g]['bSha'], dict(runs=args.runs))

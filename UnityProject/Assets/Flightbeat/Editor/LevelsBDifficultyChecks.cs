@@ -22,7 +22,7 @@ namespace Flightbeat.Editor
     public static class LevelsBDifficultyChecks
     {
         public const float Step = .02f, DecisionEvery = .6f, MaxSeconds = 900f, IdleSeconds = 120f;
-        [Serializable] sealed class Case { public string name, path; public int game, strategy, seed; }
+        [Serializable] sealed class Case { public string name, path; public int game, strategy, seed; public bool trace; }
         [Serializable] sealed class Input { public Case[] cases; }
         [Serializable] public sealed class Result
         {
@@ -31,6 +31,35 @@ namespace Flightbeat.Editor
             public bool revived; public float reviveAt = -1f, progress;
             public float seconds, blockedSeconds, minDistance, longestBlocked;
             public float[] firstExposed;   // per colour index, -1 = never
+            public Trace trace;
+        }
+        [Serializable] public sealed class Member
+        {
+            public int color, ammo, tier, kind;
+            public float arrival;
+        }
+        [Serializable] public sealed class Head
+        {
+            public int lane, color, ammo, kind, queued, matchingFleet, exposedColumns;
+            public bool deployable, completesThree, lastPadEligible;
+        }
+        [Serializable] public sealed class Snapshot
+        {
+            public string reason, phase;
+            public float seconds, blockedTime, distance;
+            public int remaining, freePads, chosenLane = -1;
+            public bool hesitated, deployed;
+            public int[] frontColors;
+            public bool[] frontReserved;
+            public Member[] fleet;
+            public Head[] heads;
+        }
+        [Serializable] public sealed class Trace
+        {
+            public List<Snapshot> firstDecisions = new List<Snapshot>();
+            public Snapshot[] beforeFirstStall;
+            public Snapshot[] beforeRevive, beforeEnd;
+            public List<Snapshot> events = new List<Snapshot>();
         }
         [Serializable] sealed class Report { public bool passed; public string unityVersion, error; public List<Result> results = new List<Result>(); }
 
@@ -55,7 +84,7 @@ namespace Flightbeat.Editor
                 foreach (var c in input.cases)
                 {
                     Result r;
-                    try { r = Play(JsonUtility.FromJson<LevelData>(File.ReadAllText(c.path)), c.strategy, c.seed); }
+                    try { r = Play(JsonUtility.FromJson<LevelData>(File.ReadAllText(c.path)), c.strategy, c.seed, c.trace); }
                     catch (Exception e) { r = new Result { outcome = "error", error = e.ToString() }; }
                     r.name = c.name; r.path = c.path; r.game = c.game; r.strategy = c.strategy; r.seed = c.seed;
                     report.results.Add(r);
@@ -77,13 +106,16 @@ namespace Flightbeat.Editor
         // won/lost), so the comparison uses several runs per strategy. seed 0 = the fixed bot; seed > 0 adds a
         // reproducible "human" spread: each decision comes 0.4-0.8 s after the previous one, ties between
         // equally good lanes are broken at random and 15 % of decisions are skipped (hesitation).
-        public static Result Play(LevelData level, int strategy, int seed = 0)
+        public static Result Play(LevelData level, int strategy, int seed = 0, bool trace = false)
         {
             var rng = seed > 0 ? new System.Random(seed) : null;
             using var b = new Battle(level, null, true);
             b.ApplyLoadout(FleetLoadout.Empty);
             b.ApplyWeapon(new WeaponProfile());
             var r = new Result { total = b.Total, colorCount = b.ColorCount, minDistance = float.MaxValue, firstExposed = new float[b.ColorCount] };
+            if (trace) r.trace = new Trace();
+            var recent = trace ? new Queue<Snapshot>() : null;
+            bool capturedStall = false, capturedWait = false;
             for (int i = 0; i < r.firstExposed.Length; i++) r.firstExposed[i] = -1f;
             float clock = 0f, nextDecision = 0f, lastProgress = 0f, blockedRun = 0f;
             int lastRemaining = b.Remaining;
@@ -91,6 +123,11 @@ namespace Flightbeat.Editor
             {
                 if (b.State == Phase.ReviveOffer)
                 {
+                    if (trace)
+                    {
+                        r.trace.beforeRevive = recent.ToArray();
+                        r.trace.events.Add(Capture(b, "revive-offer"));
+                    }
                     if (!b.Revived && b.Revive()) { r.revived = true; r.reviveAt = b.Time; lastProgress = clock; }
                     else b.DeclineRevive();
                 }
@@ -103,8 +140,26 @@ namespace Flightbeat.Editor
                     nextDecision = clock + (rng == null ? DecisionEvery : .4f + .4f * (float)rng.NextDouble());
                     for (int color = 0; color < r.firstExposed.Length; color++)
                         if (r.firstExposed[color] < 0f && b.Exposed(color)) r.firstExposed[color] = b.Time;
-                    int lane = rng != null && rng.NextDouble() < .15 ? -1 : Choose(b, strategy, rng);
-                    if (lane >= 0 && b.Deploy(lane)) { r.deploys++; lastProgress = clock; }
+                    bool hesitated = rng != null && rng.NextDouble() < .15;
+                    int lane = hesitated ? -1 : Choose(b, strategy, rng);
+                    var snapshot = trace ? Capture(b, "decision") : null;
+                    bool deployed = lane >= 0 && b.Deploy(lane);
+                    if (deployed) { r.deploys++; lastProgress = clock; }
+                    if (trace)
+                    {
+                        snapshot.chosenLane = lane; snapshot.hesitated = hesitated; snapshot.deployed = deployed;
+                        if (r.trace.firstDecisions.Count < 20) r.trace.firstDecisions.Add(snapshot);
+                        recent.Enqueue(snapshot);
+                        while (recent.Count > 16) recent.Dequeue();
+                        // An observation, not a new "blocked" timer or verdict: strategies can wait
+                        // with free pads and never trigger the game's full-pad stalled hint.
+                        if (!capturedWait && !hesitated && lane < 0 && snapshot.freePads > 0)
+                        {
+                            capturedWait = true;
+                            var waiting = Capture(b, "first-bot-wait-with-space");
+                            r.trace.events.Add(waiting);
+                        }
+                    }
                 }
                 b.Tick(Step);
                 clock += Step;
@@ -114,12 +169,66 @@ namespace Flightbeat.Editor
                     if (b.FrontY >= 0f) r.minDistance = Mathf.Min(r.minDistance, Battle.DefenseLine - b.FrontY);
                     if (b.BlockedTime > 0f) { r.blockedSeconds += Step; blockedRun += Step; r.longestBlocked = Mathf.Max(r.longestBlocked, blockedRun); }
                     else blockedRun = 0f;
+                    // Use the game's own hint predicate. Capture only once, without any targeting probes.
+                    if (trace && !capturedStall && b.Stalled)
+                    {
+                        capturedStall = true;
+                        r.trace.beforeFirstStall = recent.ToArray();
+                        r.trace.events.Add(Capture(b, "first-stall-hint"));
+                    }
                 }
             }
             r.seconds = b.Time; r.merges = b.Merges; r.remaining = b.Remaining;
             r.progress = b.Total > 0 ? (b.Total - b.Remaining) / (float)b.Total : 0f;
             if (r.minDistance == float.MaxValue) r.minDistance = -1f;
+            if (trace)
+            {
+                r.trace.beforeEnd = recent.ToArray();
+                r.trace.events.Add(Capture(b, r.outcome));
+            }
             return r;
+        }
+
+        // Exposed/ExposedAt/SuggestedQueue are NOT read-only: they mutate pierce fields. The diagnostic
+        // observes raw fronts instead. Evaluation always uses an empty loadout (no penetration).
+        static Snapshot Capture(Battle b, string reason)
+        {
+            var s = new Snapshot
+            {
+                reason = reason, phase = b.State.ToString(), seconds = b.Time, blockedTime = b.BlockedTime,
+                distance = b.FrontY >= 0 ? Battle.DefenseLine - b.FrontY : -1,
+                remaining = b.Remaining, freePads = b.UnlockedSlots - b.Fleet.Count,
+                frontColors = new int[b.Level.columns], frontReserved = new bool[b.Level.columns],
+                fleet = new Member[b.Fleet.Count], heads = new Head[b.LaneCount]
+            };
+            for (int column = 0; column < s.frontColors.Length; column++)
+            {
+                int index = b.Front(column);
+                s.frontColors[column] = index >= 0 ? b.ColorAt(index) : -1;
+                s.frontReserved[column] = index >= 0 && b.Pending(index);
+            }
+            for (int i = 0; i < b.Fleet.Count; i++)
+            {
+                var f = b.Fleet[i];
+                s.fleet[i] = new Member { color = f.Color, ammo = f.Ammo, tier = f.Tier, kind = f.Kind, arrival = f.Arrival };
+            }
+            for (int lane = 0; lane < b.LaneCount; lane++)
+            {
+                var h = new Head { lane = lane, color = -1, queued = b.Reserve[lane].Count };
+                if (h.queued > 0)
+                {
+                    var f = b.Reserve[lane][0];
+                    h.color = f.Color; h.ammo = f.Ammo; h.kind = f.Kind;
+                    foreach (var ship in b.Fleet) if (ship.Color == f.Color) h.matchingFleet++;
+                    foreach (int color in s.frontColors) if (color == f.Color) h.exposedColumns++;
+                    h.deployable = b.Active && s.freePads > 0;
+                    h.completesThree = h.matchingFleet % 3 == 2;
+                    // Bot eligibility only; actual game hint also checks mystery-head kind.
+                    h.lastPadEligible = h.completesThree || h.exposedColumns >= LastPadColumns;
+                }
+                s.heads[lane] = h;
+            }
+            return s;
         }
 
         public const int LastPadColumns = 3;

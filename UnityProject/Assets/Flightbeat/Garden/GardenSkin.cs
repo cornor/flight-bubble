@@ -197,10 +197,24 @@ namespace Flightbeat.Garden
         public static bool Celebrate;
         // `breath` > 0 adds a gentle idle squash-and-stretch (amplitude) with its own `phase`; `attack` (0..1, decays over
         // .18 s after a real shot) squashes the body and lets it spring back. Feet stay on the same line.
+        // 2026-10-20 14:07 (user: 小翠 looks clearly smaller). Every tier scales all colours alike (1 + .06 per tier), but
+        // three members are drawn thinner on the shared 224x256 canvas: visible body area against the median of the 23
+        // members is 小翠 67-78 % (narrowest, 117 wide vs ~160), 小清 77-81 %, 小玫 77-84 % depending on the pose.
+        // They are drawn larger by these factors (about the square root of the area gap; 小翠 kept a little lower because
+        // it is already of average height). Applies wherever a member's art is drawn: pads, queue, finale, codex, opening.
+        public static float ArtScale(Color tint) {
+            Color32 c = tint;
+            switch ((c.r << 16) | (c.g << 8) | c.b) {
+                case 0x0C7E1C: return 1.12f;   // 小翠
+                case 0xC5FFE4: return 1.10f;   // 小清
+                case 0x9C225E: return 1.07f;   // 小玫
+                default: return 1f;
+            }
+        }
         public static void Creature(PixelSurface s, Color tint, float centerX, float feet, float canvasHeight, int tier, string ammo,
             float attack = 0f, float numberSize = 14f, bool showTier = true, bool badge = true, float breath = 0f, float phase = 0f,
             float sizeScale = 0f, float squash = 0f, float numberLift = 0f) {
-            float scale = sizeScale > 0f ? sizeScale : 1f + Mathf.Min(tier, 3) * .06f;
+            float scale = (sizeScale > 0f ? sizeScale : 1f + Mathf.Min(tier, 3) * .06f) * ArtScale(tint);
             if (Celebrate) breath *= 2.2f;                                                  // happy bounce on a win
             float wave = breath > 0f ? Mathf.Sin(Clock * (Celebrate ? 7f : 3.9f) + phase) : 0f;  // ~1.6 s cycle
             float spring = attack > 0f ? Mathf.Sin(attack * Mathf.PI) : 0f;                 // 0 -> 1 -> 0 over the shot

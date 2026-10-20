@@ -8,8 +8,10 @@
 The only thing a B level changes is where each colour sits on the 60 x 60 board, i.e. in which order colours
 reach the front of their columns. Two measures, both deterministic:
 
-1. Front layers: the colour shares of the first 3 / 10 / 20 rows from the defence line (row 59 is the front)
-   and the half-distance between A and B (0 = same mix, 1 = nothing in common). Reported, not judged.
+1. Front layers: the colour shares of the first 1 / 3 / 10 / 20 rows from the defence line (row 59 is the front)
+   and the half-distance D_k = 0.5 x sum over colours |A share - B share| (0 = same mix, 1 = nothing in common).
+   Rows 10 and 20 are judged (below); row 1 (what can be shot at the start) and row 3 are reported only, as is the
+   lowest row of each colour (A vs B, both earlier and later), until playtests calibrate them.
 2. Ideal player: a simplified, timeless replay. Columns are stacks (board bottom row first, then the column's
    sand stream); a member on a pad removes front beads of its colour (tier rate 1 / 3.4 / 4.6 / 6.3 per step,
    three of a kind merge into one, tier + 1); one member is deployed per step: one that completes a merge,
@@ -21,8 +23,9 @@ reach the front of their columns. Two measures, both deterministic:
    18:45: this replay is chaotic: swapping 20 adjacent cells (invisible) moved its steps by up to 35 % and flipped
    the old verdict on 7 of 10 sample levels, so it is reported only.
 
-Judgement (18:50, provisional until the pilot playtests calibrate it): the mean front-mix difference of rows 10 and
-20 must be at most MIX_LIMIT; otherwise 超差. The first generated pictures scored 0.02-0.05 (fish), 0.08-0.15 (fox)
+Judgement (18:50, provisional until the pilot playtests calibrate it): D_10 and D_20 must EACH be at most MIX_LIMIT
+(2026-10-19 review R1: was their mean, which let 0.30 + 0.10 pass); otherwise 超差. Passing is a coarse screen, not
+proof of equal difficulty. The first generated pictures scored 0.02-0.05 (fish), 0.08-0.15 (fox)
 and 0.11-0.21 (turtle).
 """
 import argparse
@@ -31,16 +34,18 @@ import subprocess
 import sys
 import tempfile
 from collections import Counter, deque
+from fractions import Fraction
 from datetime import datetime
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import make_temp
-from levelsb_common import FIRST, LAST, LEVELS_A, ROOT, SIDE, file_sha256, label, load_a, load_manifest, record_check, resource
+from levelsb_common import FIRST, LAST, LEVELS_A, ROOT, SIDE, apply_sigma, invert, file_sha256, label, load_a, load_manifest, name, record_check, resource
 
 RATE = (1.0, 3.4, 4.6, 6.3)
-LAYERS = (3, 10, 20)
+LAYERS = (1, 3, 10, 20)
+JUDGED = (10, 20)
 
 
 def columns_of(level):
@@ -59,7 +64,7 @@ def layers(level):
     for depth in LAYERS:
         cells = [level['cells'][r * SIDE + c] for r in range(SIDE - depth, SIDE) for c in range(SIDE)]
         n = len(cells)
-        out[depth] = {k: v / n for k, v in Counter(cells).items()}
+        out[depth] = {k: Fraction(v, n) for k, v in Counter(cells).items()}   # exact (review S1: 0.2 must equal 0.2)
     return out
 
 
@@ -171,11 +176,38 @@ def level_total(level):
     return len(level['cells']) + len(level.get('stream') or [])
 
 
-MIX_LIMIT = .20
+MIX_LIMIT = Fraction(1, 5)   # 0.20; exact fractions, so a difference of exactly 0.20 passes
 
 
-def judge_mix(mix):
-    return ('通过', '') if mix <= MIX_LIMIT else ('超差', f'前排颜色构成差异 {mix:.2f} > {MIX_LIMIT}')
+def front_mix(la, lb):
+    """The judged front-mix difference, exact: the larger of D_10 and D_20."""
+    return max(layer_distance(la[d], lb[d]) for d in JUDGED)
+
+
+def mix_passes(la, lb):
+    """The one pass rule, shared by convert.py (choosing) and this check (judging): D_10 and D_20 each <= MIX_LIMIT."""
+    return all(layer_distance(la[d], lb[d]) <= MIX_LIMIT for d in JUDGED)
+
+
+def judge_mix(la, lb):
+    over = [f'下 {d} 排差异 {float(layer_distance(la[d], lb[d])):.3f} > {float(MIX_LIMIT):.2f}' for d in JUDGED
+            if layer_distance(la[d], lb[d]) > MIX_LIMIT]
+    return ('超差', '；'.join(over)) if over else ('通过', '')
+
+
+def lowest_rows(level):
+    """Lowest row (1 = the front row) of every colour."""
+    out = {}
+    for i, c in enumerate(level['cells']):
+        r = SIDE - i // SIDE
+        out[c] = min(out.get(c, SIDE), r)
+    return out
+
+
+def lowest_shifts(a, b, limit=5):
+    """Colours whose lowest row moved by more than `limit` rows (reported only)."""
+    la, lb = lowest_rows(a), lowest_rows(b)
+    return {c: (la[c], lb.get(c)) for c in la if lb.get(c) is None or abs(lb[c] - la[c]) > limit}
 
 
 def judge(a, b):
@@ -225,23 +257,30 @@ def main():
                 if file_sha256(data) != entry['fileSha256']:
                     print(f'{label(game)}：草稿文件与清单哈希不一致，先重新 convert'); return 1
                 b = json.loads(data)
+                sigma = {int(k): v for k, v in (entry.get('sigma') or {}).items()}
+                if sigma:   # 22:05: judge in A's colour roles (mode P swaps colours consistently)
+                    b = apply_sigma(b, invert(sigma))
             sa, sb = simulate(a), simulate(b)
             la, lb = layers(a), layers(b)
-            mix = round(sum(layer_distance(la[d], lb[d]) for d in (10, 20)) / 2, 3)
-            verdict, note = judge_mix(mix)
+            mix = round(float(front_mix(la, lb)), 4)
+            verdict, note = judge_mix(la, lb)
+            shifts = lowest_shifts(a, b)
             replay, replay_note = judge(sa, sb)
             rows.append(dict(game=game, verdict=verdict, note=note, mix=mix, replay=replay, replayNote=replay_note, a=sa, b=sb,
-                             layers={d: round(layer_distance(la[d], lb[d]), 3) for d in LAYERS}))
+                             layers={d: round(float(layer_distance(la[d], lb[d])), 4) for d in LAYERS},
+                             lowestShifts={name(a, c).replace("小", ""): v for c, v in shifts.items()}))
             print(f'{label(game)}：{verdict} {note}', flush=True)
             if not args.temp:
                 record_check(game, 'structure', verdict, str(out.relative_to(ROOT)) if out.is_relative_to(ROOT) else str(out),
                              entry['fileSha256'])
     fmt = lambda s: f'步 {s["steps"]} 卡 {s["stuck"]} 盲 {s["blind"]} 救 {s["rescues"]} 合 {s["merges"]}'
     lines = [f'# B 套结构检查（{kind}，{datetime.now():%Y-%m-%d %H:%M}）', '',
-             '| 关 | 判定 | 前 3/10/20 排差异 | 说明 | A 理想打法（仅参考） | B 理想打法（仅参考） |', '|---|---|---|---|---|---|']
+             '| 关 | 判定 | 前 1/3/10/20 排差异（判 10、20） | 说明 | 最低排偏移 >5（仅参考，颜色: A→B） | A 理想打法（仅参考） | B 理想打法（仅参考） |',
+             '|---|---|---|---|---|---|---|']
     for r in rows:
         lines.append(f'| {r["game"]} | {r["verdict"]} | ' + ' / '.join(f'{r["layers"][d]:.2f}' for d in LAYERS)
-                     + f' | {r["note"]} | {fmt(r["a"])} | {fmt(r["b"])}（{r["replay"]}） |')
+                     + f' | {r["note"]} | ' + ('、'.join(f'{c}: {x}→{y}' for c, (x, y) in r['lowestShifts'].items()) or '无')
+                     + f' | {fmt(r["a"])} | {fmt(r["b"])}（{r["replay"]}） |')
     passed = sum(r['verdict'] == '通过' for r in rows)
     lines += ['', f'通过 {passed} / {len(rows)}']
     (out / 'report.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')

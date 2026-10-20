@@ -59,7 +59,22 @@ def main():
     wrong = dict(zip(used, used[2:] + used[:2]))
     ok(lc.validate(a, p, 'P', wrong) != [], '用错的置换还原被拒')
 
-    print('4. 临时图端到端')
+    print('4. 前排差异判定（审查 R1、S1）')
+    import structure as st
+    def board(front10, next10):
+        cells = [0] * (lc.SIDE * lc.SIDE)
+        for i in range(front10): cells[-1 - i] = 1                       # bottom 10 rows
+        for i in range(next10): cells[-1 - 10 * lc.SIDE - i] = 1          # rows 11-20
+        return st.layers({'cells': cells})
+    base = board(0, 0)
+    exact = board(120, 120)   # D_10 = 120/600 = 0.20, D_20 = 240/1200 = 0.20
+    ok(st.mix_passes(base, exact) and st.judge_mix(base, exact)[0] == '通过', '恰好 0.20 / 0.20 → 通过（转换和结构检查共用同一判定）')
+    over = board(150, 0)      # D_10 = 0.25, D_20 = 0.125: the old mean (0.1875) passed
+    ok(not st.mix_passes(base, over) and st.judge_mix(base, over)[0] == '超差', '0.25 / 0.125 → 超差（不再取平均）')
+    just = board(121, 119)    # D_10 just over 0.20
+    ok(not st.mix_passes(base, just), '0.2017 / 0.20 → 超差')
+
+    print('5. 临时图端到端')
     with tempfile.TemporaryDirectory(prefix='levels-b-selftest-') as temporary:
         out = Path(temporary)
         for game in (3, 7, 40):

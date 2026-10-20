@@ -90,6 +90,12 @@ namespace Flightbeat.Audio
                 "hit-quake", "fx-quake", "fx-collapse", "shot-blaze", "hit-blaze", "fx-burn", "shot-arc", "hit-arc", "fx-arc", "fx-split"
             };
             foreach (string name in names) clips[name] = Engine.LoadClip("Audio/" + name);
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            {   // 2026-10-20: bubble-only finale release (ChipAudio.Garden.cs); there is no original clip of this name
+                AudioClip release = Resources.Load<AudioClip>("GardenR1/Audio/" + GardenReleaseCue);
+                if (release) clips[GardenReleaseCue] = release;
+            }
+#endif
             foreach (AudioClip clip in clips.Values)
                 if (Runtime.ClipAlive(clip) && Engine.LoadState(clip) == AudioDataLoadState.Unloaded) Engine.LoadAudioData(clip);
             foreach (AudioSource source in new[] { lead, backing, laser, alarm })

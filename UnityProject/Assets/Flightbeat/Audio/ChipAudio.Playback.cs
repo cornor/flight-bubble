@@ -50,12 +50,19 @@ namespace Flightbeat.Audio
             bool leadTerminal = terminal;
             bool ducking = musicNow < heldDuckUntil;
             float leadTarget = !leadTerminal && ducking ? 0.196559995f : leadTerminal ? 0f : 0.233999997f;
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            float gardenMusic = GardenMusicGain(musicNow);   // 2026-10-19: deep duck around the finale release
+            leadTarget *= gardenMusic;
+#endif
             float leadStep = OriginalMath.Binary32(OriginalMath.Binary32(Playback.UnscaledDeltaTime() * 3f) * 0.65f);
             Runtime.SetVolume(leadSource, MoveAudio(leadVolume, leadTarget, leadStep));
             AudioSource backingSource = backing;
             float backingVolume = Playback.GetVolume(backingSource);
             bool backingTerminal = terminal;
             float backingTarget = !backingTerminal && ducking ? 0.245959982f : backingTerminal ? 0f : 0.285999984f;
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            backingTarget *= gardenMusic;
+#endif
             float dt = Playback.UnscaledDeltaTime();
             float backingStep = OriginalMath.Binary32((OriginalMath.Binary32(dt + dt)) * 0.65f);
             Runtime.SetVolume(backingSource, MoveAudio(backingVolume, backingTarget, backingStep));
@@ -81,6 +88,9 @@ namespace Flightbeat.Audio
             using var audioScope = new Flightbeat.Diagnostics.RuntimeLoopInputs.AudioMethodScope(55175);
             Flightbeat.Diagnostics.RuntimeLoopInputs.AudioEvent?.Invoke(55175, null, null, 0, cue);
 #endif
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            cue = GardenCue(cue);   // 2026-10-20: the finale's maxpower becomes the bubble release (ChipAudio.Garden.cs)
+#endif
             if (!clips.TryGetValue(cue, out AudioClip clip) || Playback.ClipIsNull(clip)) return;
             if (Interface.Contains(cue))
             {
@@ -103,8 +113,12 @@ namespace Flightbeat.Audio
             if (cue.StartsWith("finale-"))
             {
                 AudioSource source = cue == "finale-charge" ? superWeapon : finale;
+                float finaleVolume = cue == "finale-beam" ? 0.480999976f : cue == "finale-ready" ? 0.233999997f : 0.363999993f;
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                if (cue == GardenReleaseCue) { source = superWeapon; finaleVolume = GardenReleaseVolume; }   // the beam keeps `finale`
+#endif
                 Runtime.SetClip(source, clip);
-                Runtime.SetVolume(source, cue == "finale-beam" ? 0.480999976f : cue == "finale-ready" ? 0.233999997f : 0.363999993f);
+                Runtime.SetVolume(source, finaleVolume);
                 Runtime.Play(source);
                 float previous = duckUntil;
                 float until = OriginalMath.Binary32(Runtime.UnscaledTime() + (cue == "finale-ready" ? 0.4f : Playback.ClipLength(clip)));
@@ -187,7 +201,11 @@ namespace Flightbeat.Audio
                 return;
             }
             if (cue.StartsWith("shot") && OriginalMath.Binary32(Runtime.UnscaledTime() - shotAt) < 0.07f) return;
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            if (cue.StartsWith("hit") && Runtime.UnscaledTime() - hitAt < GardenHitGap()) return;   // 2026-10-19: 80 -> 110 ms when dense
+#else
             if (cue.StartsWith("hit") && OriginalMath.Binary32(Runtime.UnscaledTime() - hitAt) < 0.08f) return;
+#endif
             AudioSource selected = accent;
             bool shot = false, hit = false;
             if (cue.StartsWith("shot"))
@@ -211,6 +229,9 @@ namespace Flightbeat.Audio
             else
             {
                 float now = Runtime.UnscaledTime();
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                if (!GardenSkipsDuck(cue))   // 2026-10-19: frequent small cues no longer keep the music ducked
+#endif
                 duckUntil = OriginalMath.Binary32(now + (cue == "maxpower" || cue == "blast" ? 0.35f : 0.18f));
             }
             if (cue == "win" || cue == "lose")
@@ -223,7 +244,11 @@ namespace Flightbeat.Audio
             float pitch;
             if (shot || hit)
             {
-                Runtime.SetVolume(selected, OriginalMath.Binary32(OriginalMath.Binary32((OriginalMath.Binary32(OriginalMath.Binary32(density * -0.25f) + 1f)) * (shot ? 0.42f : 0.36f)) * 0.65f));
+                Runtime.SetVolume(selected, OriginalMath.Binary32(OriginalMath.Binary32((OriginalMath.Binary32(OriginalMath.Binary32(density * -0.25f) + 1f)) * (shot ? 0.42f : 0.36f)) * 0.65f)
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                    * GardenDenseGain()   // 2026-10-19: a further x0.75 at full density
+#endif
+                    );
                 pitch = OriginalMath.Binary32(OriginalMath.Binary32(Playback.RandomValue() * 0.06f) + 0.97f);
             }
             else

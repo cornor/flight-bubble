@@ -406,7 +406,8 @@ namespace Flightbeat.Game
             Text(s, transitionKind == TransitionKind.Home ? "返回主页" : "前往第 " + (transitionLevel + 1) + " 关", 270, ScreenLayout.Height / 2 - 12, 25, true, A(Ink, alpha));
             s.MapLayout = mapped;
         }
-        static string GardenWords(string text) => text.Replace("战机", "队员").Replace("机位", "出战位").Replace("敌阵", "泡泡阵").Replace("敌人", "泡泡").Replace("出击", "出战").Replace("火力", "攻击").Replace("超级炸弹", "泡泡炸弹");
+        // 2026-10-20 (UI review board 14): "战机位" first, or "已解锁战机位" became "已解锁队员位".
+        static string GardenWords(string text) => text.Replace("战机位", "出战位").Replace("战机", "队员").Replace("机位", "出战位").Replace("敌阵", "泡泡阵").Replace("敌人", "泡泡").Replace("出击", "出战").Replace("火力", "攻击").Replace("超级炸弹", "泡泡炸弹");
         // UI spec v3 3: queue rows display at 721 / 779 / 837 instead of the logical 725 / 775 / 825.
         // Linear in y, so arrival and shift animations keep their proportions; hit areas stay on the logical rows.
         static float QueueDisplayY(float y) => 721f + (y - 725f) * 1.16f;

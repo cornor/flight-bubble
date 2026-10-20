@@ -161,7 +161,8 @@ namespace Flightbeat.Game
                     }
                 if (av > .5f)
                 {
-                    float sw = av * (1f - .35f * stretch), sh = av * 256f / 224f * (1f + .7f * stretch);
+                    float art = GardenSkin.ArtScale(tint);   // 2026-10-20: thin members drawn larger (GardenSkin.ArtScale)
+                    float sw = av * art * (1f - .35f * stretch), sh = av * art * 256f / 224f * (1f + .7f * stretch);
                     // 2026-10-18 22:40 (user): the avatar sat high in its chip (anchored at 3/4 of the canvas); the body centre
                     // (137/256 of the 224x256 canvas, between BodyTop and FeetLine) now sits on the chip centre.
                     Asset(s, PlantSlot(tint, "idle"), a.x - sw * .5f, a.y - sh * (137f / 256f), sw, sh, Color.white);

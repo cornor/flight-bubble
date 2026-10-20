@@ -180,7 +180,7 @@ namespace Flightbeat.Game
             }
             else
             {
-                float ah = 210f * pop, aw = ah * ArtAspect;
+                float ah = 210f * pop * GardenSkin.ArtScale(e.tint), aw = ah * ArtAspect;
                 Asset(s, PlantSlot(e.tint, "idle"), cx - aw * .5f, feet - ah * FeetLine, aw, ah, new Color(.1f, .16f, .3f, .95f * t));
                 Asset(s, "scene/lock-bubble", cx - 23f, feet - 118f, 46f, 46f, new Color(1f, 1f, 1f, t));   // 12:30: lock only, no pad plate
             }
@@ -244,8 +244,8 @@ namespace Flightbeat.Game
                 if (owned) Creature(s, c.tint, mid, f, ah, 0, "", 0f, 12f, false, false, sel ? .04f : 0f, i * 1.3f);
                 else
                 {
-                    float aw = ah * ArtAspect;
-                    Asset(s, PlantSlot(c.tint, "idle"), mid - aw * .5f, f - ah * FeetLine, aw, ah, new Color(.12f, .18f, .32f, .9f * t));
+                    float lah = ah * GardenSkin.ArtScale(c.tint), aw = lah * ArtAspect;
+                    Asset(s, PlantSlot(c.tint, "idle"), mid - aw * .5f, f - lah * FeetLine, aw, lah, new Color(.12f, .18f, .32f, .9f * t));
                     Asset(s, "scene/lock-bubble", mid - 14f * grow, y + 21f * grow, 28f * grow, 28f * grow, new Color(1f, 1f, 1f, t));   // 15:51: centred on the silhouette
                 }
                 TextOutline(s, owned ? c.name : "第" + c.level + "关", mid, y + h2 - 24f * grow, (owned ? 15f : 14f) * grow, owned ? Cream : Hex(0xDCE6F5), Outline, 1.5f);   // 2026-10-17: bigger (readability)

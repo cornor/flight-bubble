@@ -195,6 +195,8 @@ namespace Flightbeat.Game
             if (finaleEndClock >= 0f) { after = ui - finaleEndClock; if (after > 1.2f) return; }
             float dim = Clamp01(age / .3f) * (1f - Clamp01(after / .8f));
             s.Rect(12f, 574f, 516f, 300f, new Color(.05f, .12f, .26f, dim * .45f));
+            BubbleFinaleCues(age);
+            DrawBubbleFinaleHold(s, age, after);
             DrawBubbleFinaleTitle(s, age);
             Vector2 mouth = KingMouthAt(finale, age, after);
             if (age >= 1.65f) DrawBubbleFan(s, finale, age, after, mouth);
@@ -221,14 +223,7 @@ namespace Flightbeat.Game
             }
             DrawBubbleKing(s, finale, age, after, mouth);
             DrawBubbleFinaleBursts(s, age, after);
-            if (age >= 1.65f && age < 1.85f)
-            {
-                // The release: one white flash over the whole screen.
-                bool mapped = s.MapLayout;
-                s.MapLayout = false;
-                s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, new Color(1f, 1f, 1f, .45f * (1f - (age - 1.65f) / .2f)));
-                s.MapLayout = mapped;
-            }
+            DrawBubbleFinaleRelease(s, age, after, mouth);
             DrawBubbleFinaleEnd(s, finale, age, after, mouth);
             DrawBubbleFinaleCount(s, finale, age);
         }
@@ -268,14 +263,15 @@ namespace Flightbeat.Game
             if (age < 1.65f)
             {
                 float c = (age - 1.15f) / .5f;
-                wide = 1f + .07f * c; tremble = 1f + 4f * c;
+                float hold = Clamp01((age - 1.45f) / .2f);   // 23:09: the last breath puffs the cheeks out further
+                wide = 1f + .07f * c + .08f * hold; tremble = 1f + 4f * c + 2f * hold;
                 return .7f + .45f * c * c;
             }
             if (age < 1.95f)
             {
                 float r = (age - 1.65f) / .3f, w = Mathf.Exp(-r * 6f);
-                wide = 1f - .08f * w;
-                return 1f + .15f * w * Mathf.Cos(r * Mathf.PI * 3f);
+                wide = 1f - .14f * w;
+                return 1f + .24f * w * Mathf.Cos(r * Mathf.PI * 3f);   // 23:09: recoil .15 -> .24
             }
             return 1f - .15f * Clamp01((age - 1.95f) / 1.35f);
         }
@@ -326,24 +322,110 @@ namespace Flightbeat.Game
             if (alpha <= 0f || spread <= .5f) return;
             const float step = 7.5f, gap = 36f;   // 2026-10-16: 36 (was 24) to cut the per-frame quads
             float flow = (clock * 420f) % gap;
+            float punch = Clamp01(1f - (age - 1.65f) / .25f);   // 23:09: the first quarter second comes out thick and bright
             for (float angle = -spread; angle <= spread + .01f; angle += step)
             {
                 float rad = angle * Mathf.Deg2Rad;
                 Vector2 dir = new Vector2(Mathf.Sin(rad), -Mathf.Cos(rad));
                 Color tint = RainbowAt((angle / 180f + .5f) + clock * .15f);
-                s.GlowLine(mouth, mouth + dir * 1100f, 34f, A(Color.Lerp(tint, Color.white, .35f), alpha * .2f));
+                s.GlowLine(mouth, mouth + dir * 1100f, 34f * (1f + 1.2f * punch), A(Color.Lerp(tint, Color.white, .35f + .3f * punch), alpha * (.2f + .3f * punch)));
                 int n = 0;
                 for (float d = 18f + flow; d < 1100f; d += gap, n++)
                 {
                     Vector2 p = mouth + dir * d;
                     if (p.y < -30f || p.x < -30f || p.x > 570f) break;
-                    float size = (n % 3 == 0 ? 15f : n % 3 == 1 ? 11f : 13f) * Mathf.Clamp01((d - 18f) / 30f);
+                    // 2026-10-20 14:22 (user): the rainbow bubbles 30 % bigger (15/11/13 -> x1.3).
+                    float size = (n % 3 == 0 ? 15f : n % 3 == 1 ? 11f : 13f) * 1.3f * Mathf.Clamp01((d - 18f) / 30f) * (1f + .4f * punch);
                     // Only every third (largest) bubble gets the rim layer; the others are a single quad.
                     if (n % 3 == 0) GardenSkin.Shot(s, tint, p, size, alpha);
                     else Asset(s, "bugs/bead-main", p.x - size * .5f, p.y - size * .5f, size, size, A(tint, alpha));
                 }
             }
             if (age < 2.1f) GardenFx.Burst(s, "rocket-pop", mouth, 220f, age - 1.65f, .45f);
+        }
+
+        // 2026-10-19 23:09 (user: after the deep breath the release had no weight, the move did not feel strong).
+        // Two beats now. Hold (1.45-1.65 s): the screen darkens further, a rainbow ring closes in on the mouth, the
+        // cheeks puff out and the music drops away. Release (1.65 s): a harder screen
+        // kick, a bright flash with rainbow speed lines, three shockwave rings out to the screen edge and a ring of
+        // bubbles flung from the mouth; the fan's first quarter second is thick and bright and the king recoils harder.
+        // The original FinaleEvents (protected) still plays its cues, flash, kick and hit-stop at 1.65 s.
+        float bubbleFinaleLastAge = -1f;
+        void BubbleFinaleCues(float age)
+        {
+            float last = bubbleFinaleLastAge;
+            bubbleFinaleLastAge = age;
+            if (last > age) last = -1f;   // a new finale
+            if (last < 1.45f && age >= 1.45f) audioChip?.GardenDuckMusic(.95f, .22f, .9f);
+            // 2026-10-20 09:38 (user picked option 1, "光炮"): the release is now maxpower.ogg + finale-beam.ogg themselves
+            // (scripts/r1v3/bubble_audio_finale2.py), so the borrowed bubble-bomb impact and shockwave are gone.
+            if (last < 1.65f && age >= 1.65f) feedback.Kick(14f);
+        }
+
+        void DrawBubbleFinaleHold(PixelSurface s, float age, float after)
+        {
+            if (age < 1.45f || age >= 1.65f || after > 0f) return;
+            float h = (age - 1.45f) / .2f;
+            bool mapped = s.MapLayout;
+            s.MapLayout = false;
+            s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, new Color(.02f, .05f, .14f, .28f * h));
+            s.MapLayout = mapped;
+        }
+
+        void DrawBubbleFinaleRelease(PixelSurface s, float age, float after, Vector2 mouth)
+        {
+            float fade = 1f - Clamp01(after / .6f);
+            if (fade <= 0f) return;
+            if (age >= 1.45f && age < 1.65f)
+            {
+                // The breath: a rainbow ring shrinking into the mouth, twice.
+                for (int k = 0; k < 2; k++)
+                {
+                    float t = Clamp01((age - 1.45f - k * .06f) / .14f);
+                    if (t <= 0f || t >= 1f) continue;
+                    s.Ring(mouth, Mathf.Lerp(170f, 24f, InOut(t)), A(finaleRainbow[(k * 3) % 7], .75f * t * fade), 3f + 7f * t, 40, 0f, 360f);
+                }
+                return;
+            }
+            float r = age - 1.65f;
+            if (r < 0f || r > .7f) return;
+            if (r < .3f)
+            {
+                // Flash: bright white, a rainbow tinge as it fades.
+                bool mapped = s.MapLayout;
+                s.MapLayout = false;
+                float f = 1f - r / .3f;
+                s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, A(Color.Lerp(RainbowAt(clock * .5f), Color.white, f), .75f * f * f * fade));
+                s.MapLayout = mapped;
+            }
+            s.Glow(mouth.x, mouth.y, 520f * (1f - r), 520f * (1f - r), new Color(1f, .97f, .85f, .7f * (1f - r / .7f) * fade), 0f);
+            // Speed lines racing out from the mouth.
+            if (r < .4f)
+                for (int i = 0; i < 24; i++)
+                {
+                    float a = (i * 15f + (i & 1) * 7f) * Mathf.Deg2Rad;
+                    Vector2 dir = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+                    float d0 = 60f + r * 1400f + (i % 3) * 30f;
+                    s.GlowLine(mouth + dir * d0, mouth + dir * (d0 + 160f), 10f, A(Color.Lerp(finaleRainbow[i % 7], Color.white, .5f), .7f * (1f - r / .4f) * fade));
+                }
+            // Three shockwave rings out to the screen edge.
+            for (int k = 0; k < 3; k++)
+            {
+                float t = (r - k * .07f) / .5f;
+                if (t <= 0f || t >= 1f) continue;
+                float e = OutCubic(t);
+                s.Ring(mouth, 30f + 700f * e, A(Color.Lerp(finaleRainbow[k * 2 % 7], Color.white, .3f), .85f * (1f - t) * fade), 4f + 22f * (1f - t), 64, 0f, 360f);
+            }
+            // A ring of bubbles flung from the mouth.
+            for (int i = 0; i < 28; i++)
+            {
+                float t = (r - (i % 4) * .02f) / .6f;
+                if (t <= 0f || t >= 1f) continue;
+                float a = (i * 12.86f + (i % 3) * 5f) * Mathf.Deg2Rad;
+                float reach = 150f + (i * 37 % 5) * 45f;
+                Vector2 at = mouth + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * (OutCubic(t) * reach + 20f);
+                GardenSkin.Shot(s, finaleRainbow[i % 7], at, (16f - 8f * t) * (i % 2 == 0 ? 1f : .7f), (1f - t * t) * fade);
+            }
         }
 
         // 2026-10-17 (user: the original sparks/explosions in the finale -> bubble style). The original particle bursts

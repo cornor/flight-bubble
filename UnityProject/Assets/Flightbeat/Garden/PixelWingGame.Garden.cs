@@ -253,10 +253,10 @@ namespace Flightbeat.Game
             }
             GardenWebMetrics.Visible(visibleBugs);
             // UI spec v3 3: foam-cloud ceiling over the mosaic's top edge; new rows appear from under it.
-            // 2026-10-21 (docs/r1/战斗页-突出泡泡板-改动清单.md 3.1, user chose A): thinner (40 -> 28) and slightly
-            // see-through so the brightest white next to the board calms down; the bottom edge stays at 116, still
-            // covering the line where new rows come in (beads are drawn from y 114).
-            Asset(s, "scene/ceiling", 0, 88, 540, 28, new Color(1f, 1f, 1f, .92f));
+            // 2026-10-21 (docs/r1/战斗页-突出泡泡板-改动清单.md 3.1): squashing the strip to 28 high made its row of
+            // small puffs read as a rope (user 17:47); back to the art's own 540x40 at y 76. The calmer look comes from
+            // redrawn art (Art/R1/ui-calm-design-20261021/顶部云带-出图需求.md): thin over the board, fuller at the ends.
+            Asset(s, "scene/ceiling", 0, 76, 540, 40, Color.white);
             // Foam rail centered on the logical defense line y=562; it flushes red when hit.
             DrawBubbleRail(s);   // 2026-10-18: the rail's bubble beads flow; red, faster and pulsing while the beads close in
             if (feedback.Hurt > 0) s.Border(10, 92, 520, 466, A(Hex(0xE25555), feedback.Hurt), 3);

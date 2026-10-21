@@ -253,7 +253,10 @@ namespace Flightbeat.Game
             }
             GardenWebMetrics.Visible(visibleBugs);
             // UI spec v3 3: foam-cloud ceiling over the mosaic's top edge; new rows appear from under it.
-            Asset(s, "scene/ceiling", 0, 76, 540, 40, Color.white);
+            // 2026-10-21 (docs/r1/战斗页-突出泡泡板-改动清单.md 3.1, user chose A): thinner (40 -> 28) and slightly
+            // see-through so the brightest white next to the board calms down; the bottom edge stays at 116, still
+            // covering the line where new rows come in (beads are drawn from y 114).
+            Asset(s, "scene/ceiling", 0, 88, 540, 28, new Color(1f, 1f, 1f, .92f));
             // Foam rail centered on the logical defense line y=562; it flushes red when hit.
             DrawBubbleRail(s);   // 2026-10-18: the rail's bubble beads flow; red, faster and pulsing while the beads close in
             if (feedback.Hurt > 0) s.Border(10, 92, 520, 466, A(Hex(0xE25555), feedback.Hurt), 3);
@@ -263,6 +266,7 @@ namespace Flightbeat.Game
             if (!AssetBandsFrom(s, "scene/stage", 574f)) Asset9(s, "scene/tray", 6, 576, 528, 384, 28f, 20f, Color.white);
             // UI spec v3 3: flat bubble-ring pads centered on y=647 (no pad numbers); locked pads carry a padlock bubble.
             float plotW = Mathf.Min(70f, baySpacing - 5f), plotH = plotW * .5f;
+            // 2026-10-21 17:24 (改动清单 3.2, user): every open pad looks the same, empty or not; no golden swirl.
             for (int bay = 0; bay < Battle.MaximumSlots; bay++) {
                 float cx = Battle.FleetPositionX(bay);
                 if (Battle.BayOpen(bay)) {
@@ -272,32 +276,14 @@ namespace Flightbeat.Game
                     s.Rect(cx - plotW / 2, 647 - plotH / 2, plotW, plotH, Wood);
             }
             PadUnlockFx(s, plotW);   // 2026-10-21 14:18: the unlocked pad celebrates (replaces the 「已解锁出战位」 bar)
-            // UI spec v3 4.3 (user decision 2026-10-15): empty open pads show a slowly turning golden swirl.
-            bool[] used = new bool[Battle.MaximumSlots];
-            for (int i = 0; i < Battle.Fleet.Count; i++) { int v = Battle.VisualSlot(i); if (v >= 0 && v < used.Length) used[v] = true; }
-            float swirlAngle = -(ui % 4f) / 4f * 2f * Mathf.PI, swirlAlpha = .85f + .15f * Mathf.Sin(ui * Mathf.PI);
-            for (int bay = 0; bay < Battle.MaximumSlots; bay++)
-                if (Battle.BayOpen(bay) && !used[bay])
-                {
-                    float bx = Battle.FleetPositionX(bay);
-                    // 16:26 (user, with a reference crop): not a rising light; the turning gold swirl itself should
-                    // stand fuller (it was squashed to 45 % height, a thin line) and sit a little above the pad,
-                    // with a warm glow behind it.
-                    float breathe = .85f + .15f * Mathf.Sin(ui * 2.4f + bay);
-                    // 16:47 (user: looked crooked and too high): flattened to the pad's own perspective (pad height =
-                    // half its width) and sitting on the pad surface; the art is re-centred in the atlas so it no longer
-                    // wobbles while turning.
-                    s.Glow(bx, 642f, plotW * 1.1f, plotW * .62f, new Color(1f, .84f, .38f, .38f * breathe), 0f);
-                    for (int pass = 0; pass < 2; pass++) Swirl(s, bx, 645, plotW * .95f, swirlAngle, swirlAlpha, .5f);
-                }
-            // Queue: one glass tube per lane (UI spec v3 3); front-row corner marks take the front creature's color.
+            // UI spec v3 4.3 (2026-10-15) gave empty open pads a turning golden swirl; removed 2026-10-21 17:24 (user:
+            // all pads alike, nothing on the stage competing with the board).
+            // Queue (UI spec v3 3). 2026-10-21 (改动清单 3.3, user): no glass tube any more; each lane is a shallow
+            // groove pressed into the stage. 17:24 (user): no pad under the front member either.
             for (int lane = 0; lane < Battle.LaneCount; lane++) {
-                float w = Mathf.Min(108f, 500f / Battle.LaneCount - 8f), x = Battle.QueuePositionX(lane) - w / 2;
+                float w = Mathf.Min(108f, 500f / Battle.LaneCount - 8f), qx = Battle.QueuePositionX(lane);
                 var reserve = Battle.Reserve[lane];
-                if (!Asset9(s, "scene/queue-panel", x, 688, w, 180, 24f, 16f, Color.white)) {
-                    s.Rect(x, 688, w, 180, new Color(.85f, .93f, 1f, .35f));
-                    s.Border(x, 688, w, 180, Wood, 1);
-                }
+                QueueGroove(s, qx, 694f, 866f, w * .86f);
                 if (GardenHintLane(out int hint) && hint == lane && reserve.Count > 0) {
                     // Tutorial hint (option A): warm pulsing glow behind the suggested front creature.
                     float pulse = .7f + .3f * Mathf.Sin(ui * 4f);
@@ -306,6 +292,43 @@ namespace Flightbeat.Game
                 // 2026-10-21 14:32 (user): the coloured corner marks at the top of each queue are gone (the front member
                 // now carries a white outline when it can be tapped).
             }
+        }
+        // 2026-10-21 (改动清单 3.3): one queue lane as a shallow groove in the stage: a faint navy wash with round
+        // ends, a soft shadow under its top edge and a thin light lip along the lower curve. Drawn in 1 px screen rows
+        // (MapLayout off, ends mapped like Asset9) so the round ends keep their shape on tall screens.
+        static void QueueGroove(PixelSurface s, float cx, float top, float bottom, float w)
+        {
+            bool mapped = s.MapLayout;
+            if (mapped) { top = ScreenLayout.Y(top); bottom = ScreenLayout.Y(bottom); }
+            s.MapLayout = false;
+            try
+            {
+                float half = w * .5f, r = Mathf.Min(half * .9f, (bottom - top) * .5f);
+                int cap = Mathf.CeilToInt(r);
+                float RowHalf(int row) {
+                    if (row >= cap) return half;
+                    float dy = r - row - .5f;
+                    return half - r + Mathf.Sqrt(Mathf.Max(0f, r * r - dy * dy));
+                }
+                Color wash = new Color(.09f, .2f, .38f, .06f);
+                for (int row = 0; row < cap; row++) {
+                    float h = RowHalf(row);
+                    s.Rect(cx - h, top + row, h * 2f, 1f, wash);
+                    s.Rect(cx - h, bottom - row - 1f, h * 2f, 1f, wash);
+                }
+                s.Rect(cx - half, top + cap, w, Mathf.Max(0f, bottom - top - cap * 2f), wash);
+                for (int row = 0; row < 14; row++) {
+                    float h = RowHalf(row);
+                    s.Rect(cx - h, top + row, h * 2f, 1f, new Color(.09f, .2f, .38f, .1f * (1f - row / 14f)));
+                }
+                Color lip = new Color(1f, 1f, 1f, .45f), side = new Color(1f, 1f, 1f, .22f);
+                s.Ring(new Vector2(cx - half + r, bottom - r), r, lip, 1.2f, 14, 90f, 90f);
+                s.Ring(new Vector2(cx + half - r, bottom - r), r, lip, 1.2f, 14, 0f, 90f);
+                if (half - r > .5f) s.Segment(new Vector2(cx - half + r, bottom), new Vector2(cx + half - r, bottom), 1.2f, lip);
+                s.Segment(new Vector2(cx - half, top + r), new Vector2(cx - half, bottom - r), 1f, side);
+                s.Segment(new Vector2(cx + half, top + r), new Vector2(cx + half, bottom - r), 1f, side);
+            }
+            finally { s.MapLayout = mapped; }
         }
         void DrawGardenHUD(PixelSurface s) {
             BeginHitsCore(); s.MapLayout = true;

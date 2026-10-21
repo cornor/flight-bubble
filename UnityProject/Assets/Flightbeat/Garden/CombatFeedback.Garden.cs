@@ -60,6 +60,8 @@ namespace Flightbeat.Feedback
         // Every bead the model resolves raises Battle.Hit once; it pops where it was drawn: a short white flash, a ring in
         // a lighter tint of its colour that opens and thins, and five tiny beads flung out with a little gravity, .32 s.
         // Display only (the event is read, the model is untouched). At most 64 at once; the oldest give way.
+        // 2026-10-21 17:24 (改动清单 3.5, user): at high combos the overlapping foam formed a white haze across the
+        // board right on the row being shot; now at most 32 at once, smaller, closer to the bead colour, softer flash.
         struct GardenPop { public Vector2 at; public float born; public int color, seed; public bool lite; }
         readonly System.Collections.Generic.List<GardenPop> gardenPops = new System.Collections.Generic.List<GardenPop>();
         bool gardenPopsHooked;
@@ -67,7 +69,7 @@ namespace Flightbeat.Feedback
         void GardenOnHit(int color, float x, float y) {
             int hits = 0;
             foreach (var q in gardenPops) if (!q.lite) hits++;
-            if (hits >= 64) { for (int i = 0; i < gardenPops.Count; i++) if (!gardenPops[i].lite) { gardenPops.RemoveAt(i); break; } }
+            if (hits >= 32) { for (int i = 0; i < gardenPops.Count; i++) if (!gardenPops[i].lite) { gardenPops.RemoveAt(i); break; } }
             gardenPops.Add(new GardenPop { at = ShownPoint(x, y), born = time, color = color, seed = gardenPopSeed++ });
         }
         static float GardenHash(int n) { float v = Mathf.Sin(n * 12.9898f) * 43758.5453f; return v - Mathf.Floor(v); }
@@ -80,11 +82,14 @@ namespace Flightbeat.Feedback
                 if (age < 0f) continue;
                 float u = age / life, e = 1f - (1f - u) * (1f - u);
                 Color tint = color(p.color);
-                if (age < .08f) s.Glow(p.at.x, p.at.y, 22f, 22f, new Color(1f, 1f, 1f, .7f * (1f - age / .08f)), 0f);
+                if (age < .08f) s.Glow(p.at.x, p.at.y, 16f, 16f, new Color(1f, 1f, 1f, .45f * (1f - age / .08f)), 0f);
                 // 11:09 (user: the explosions looked program-drawn): the painted foam burst (impact-dust) in the bead's
                 // colour; the drawn ring and droplets are only the fallback.
                 if (GardenFx.Has("impact-dust")) {
-                    GardenFx.BurstTint(s, "impact-dust", p.at, p.lite ? 26f : 24f, age, life, Color.Lerp(tint, Color.white, .3f));
+                    // 17:43 (user): with only 10 % white the foam of black / very dark beads read as dirty black spikes;
+                    // dark colours lean further to white (35 %).
+                    float lift = tint.grayscale < .3f ? .35f : .1f;
+                    GardenFx.BurstTint(s, "impact-dust", p.at, p.lite ? 18f : 16f, age, life, Color.Lerp(tint, Color.white, lift));
                     continue;
                 }
                 Color ring = Color.Lerp(tint, Color.white, .45f); ring.a = .9f * (1f - u);

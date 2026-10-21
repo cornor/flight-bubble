@@ -98,7 +98,9 @@ namespace Flightbeat.Game
             {
                 float mx = cx + (i - (winRow.Count - 1) * .5f) * step;
                 WinMember(s, mx, feet, t - (.9f + i * .12f), fade, winRow[i].tint, winRow[i].tags, winRow[i].n);
-                if ((winRow[i].tags & (2 | 8)) != 0)
+                // 17:41 (user): one mark per member, the MVP first: a crowned member is left out of the group chip (an
+                // MVP that is the only newcomer shows just its crown).
+                if ((winRow[i].tags & (2 | 8)) != 0 && (winRow[i].tags & 1) == 0)
                 {
                     groupMin = Mathf.Min(groupMin, mx); groupMax = Mathf.Max(groupMax, mx); groupLast = i; groupNew |= (winRow[i].tags & 2) != 0;
                     // 16:52 (user: the chip covered the crown): the chip goes above the highest head / crown of the group.

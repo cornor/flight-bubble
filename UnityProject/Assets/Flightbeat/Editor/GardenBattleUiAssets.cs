@@ -21,8 +21,8 @@ namespace Flightbeat.Editor
         [Serializable] class Spec { public string name, slot; public Rect crop = new Rect(0, 0, 1, 1); public Vector4 border; }
         [Serializable] class Specs { public List<Spec> sprites = new List<Spec>(); }
         static Specs specs;
-        static GardenSkin.Atlas atlas;
-        static Texture2D texture, backgroundTexture, creatureTexture;
+        static GardenSkin.Atlas atlas, barAtlas;
+        static Texture2D texture, backgroundTexture, creatureTexture, barTexture;
         const string BackgroundSlot = "scene/background";   // own texture (background.png) since 2026-10-15
         static readonly Color Cream = GardenSkin.Cream, Ink = GardenSkin.Ink;
 
@@ -71,6 +71,7 @@ namespace Flightbeat.Editor
             view.levelTitle = Find<GardenUiText>(view.header, "Level title");
             view.progressText = Find<GardenUiText>(view.header, "Progress percent");
             view.progressFill = Find<Image>(view.header, "Progress fill");
+            view.progressSpark = Find<Image>(view.header, "Progress spark");
             view.tutorialHint = Find<RectTransform>(view.controls, "Tutorial hint").gameObject;
             view.propButtons = Find<RectTransform>(view.controls, "Prop buttons").gameObject;
             view.props = new GardenUiAction[3]; view.propAmounts = new GardenUiText[3]; view.propCancelLabels = new GameObject[3];
@@ -116,6 +117,9 @@ namespace Flightbeat.Editor
             atlas = JsonUtility.FromJson<GardenSkin.Atlas>(File.ReadAllText("Assets/Flightbeat/Resources/GardenR1/atlas.json"));
             texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Flightbeat/Resources/GardenR1/atlas.png");
             if (!texture) throw new FileNotFoundException("Garden atlas texture");
+            barAtlas = JsonUtility.FromJson<GardenSkin.Atlas>(File.ReadAllText("Assets/Flightbeat/Resources/GardenR1/bars.json"));
+            barTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Flightbeat/Resources/GardenR1/bars.png");
+            if (!barTexture) throw new FileNotFoundException("Garden glass atlas texture");
             creatureTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Flightbeat/Resources/GardenR1/creatures.png");
             backgroundTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Flightbeat/Resources/GardenR1/background.png");
             if (!backgroundTexture) throw new FileNotFoundException("Garden background texture");
@@ -130,7 +134,7 @@ namespace Flightbeat.Editor
             if (page)
                 foreach (var label in page.GetComponentsInChildren<GardenUiText>(true))
                     foreach (char c in label.text + label.alternateText)
-                        if (!char.IsWhiteSpace(c) && atlas.characters.IndexOf(c) < 0)
+                        if (!char.IsWhiteSpace(c) && (label.roundedFont ? barAtlas : atlas).characters.IndexOf(c) < 0)
                             throw new InvalidOperationException($"Missing garden font glyph '{c}' in {label.name}. Rebuild the font atlas before building the game.");
         }
         static Sprite Sprite(string id, Vector4 border = default, string suffix = "", Rect? crop = null)
@@ -150,9 +154,11 @@ namespace Flightbeat.Editor
             }
             else
             {
-                var slot = atlas.slots.Single(s => s.id == spec.slot);
-                if (slot.atlas == 1) source = creatureTexture;
-                rect = new Rect(slot.x + slot.w * spec.crop.x, atlas.size - slot.y - slot.h * (spec.crop.y + spec.crop.height), slot.w * spec.crop.width, slot.h * spec.crop.height);
+                var slot = SlotFor(spec.slot);
+                if (slot.atlas == 2) source = barTexture;
+                else if (slot.atlas == 1) source = creatureTexture;
+                float size = slot.atlas == 2 ? barAtlas.size : slot.atlas == 1 && atlas.creatureHeight > 0 ? atlas.creatureHeight : atlas.size;
+                rect = new Rect(slot.x + slot.w * spec.crop.x, size - slot.y - slot.h * (spec.crop.y + spec.crop.height), slot.w * spec.crop.width, slot.h * spec.crop.height);
             }
             string path = SpriteRoot + "/" + spec.name + ".asset";
             Sprite existing = AssetDatabase.LoadAssetAtPath<Sprite>(path);
@@ -184,16 +190,28 @@ namespace Flightbeat.Editor
         static RectTransform Header()
         {
             var root = Section("GardenBattleHeader"); var band = Node("Top safe band", root, 0, 0, 540, 114);
-            // UI spec v3 3: pause, level capsule and progress bar on one row (as in the bubble mockup).
+            // UI redesign 12: same glass and rounded type as the battle hints; retain the pause action.
             var pause = Action("Pause button", band, 1, 6, 4, 56, 56);
-            Art("Icon", pause, "scene/pause", 6, 4, 44, 44);
-            Art("Level plaque", band, "scene/level", 66, 12, 98, 36);
-            Label("Lesson title", band, "泡泡课堂 {0}/2", 66, 18.8f, 98, 15, Cream, 1.6f);
-            Label("Level title", band, "第 {0} 关", 66, 18.1f, 98, 17, Cream, 1.8f).gameObject.SetActive(false);
-            Art("Progress frame", band, "scene/progress-frame", 172, 16, 276, 28);
-            Image fill = Art("Progress fill", band, "scene/progress-fill", 178, 21, 264, 18);
-            fill.type = Image.Type.Filled; fill.fillMethod = Image.FillMethod.Horizontal; fill.fillOrigin = 0; fill.fillAmount = .35f;
-            Label("Progress percent", band, "{0}%", 394, 21.6f, 50, 12, Color.white, 1.4f);
+            Art("Icon", pause, "bars/pause", 4, 4, 48, 48);
+            Glass("Level plaque", band, 66, 12, 106, 38);
+            RoundLabel("Lesson title", band, "泡泡课堂 {0}/2", 66, 19, 106, 15, GardenBars.Navy);
+            RoundLabel("Level title", band, "第 {0} 关", 66, 18.4f, 106, 18, GardenBars.Navy).gameObject.SetActive(false);
+            // 2026-10-21 10:44 (user: too much room around the number): the frame ends 14 px earlier on the right (344 -> 330).
+            Glass("Progress frame", band, 180, 12, 330, 38);
+            // 2026-10-21 (quality pass): the empty groove read as a dull grey bar. Now a pale frosted groove with a fine
+            // inner shade along its top edge, like a channel pressed into the glass.
+            var track = Glass("Progress track", band, 190, 22, GardenBattlePage.ProgressWidth, 18);
+            track.color = new Color(.84f, .92f, .99f, .9f);
+            var shade = Node("Progress track shade", band, 199, 23.5f, GardenBattlePage.ProgressWidth - 18f, 2f);
+            var shadeImage = shade.gameObject.AddComponent<Image>(); shadeImage.raycastTarget = false;
+            shadeImage.color = new Color(.09f, .2f, .38f, .16f);
+            Image fill = Glass("Progress fill", band, 190, 22, GardenBattlePage.ProgressWidth * .35f, 18);
+            fill.color = new Color(.25f, .78f, 1f, 1f);   // 2026-10-21: cyan-blue as in the design; mint stays for success hints
+            // A soft spark rides the head of the fill (moved by PixelWingGame.GardenUi).
+            Image spark = Art("Progress spark", band, "fx/glow", 190, 15, 30, 32);
+            spark.color = new Color(1f, 1f, 1f, .8f);
+            // 2026-10-21: the percent a size larger (16 -> 18) and closer to the groove.
+            RoundLabel("Progress percent", band, "{0}%", 448, 18.6f, 56, 18, GardenBars.Navy);
             return root;
         }
         static RectTransform Controls()
@@ -201,9 +219,10 @@ namespace Flightbeat.Editor
             var root = Section("GardenBattleControls"); var band = Node("Bottom safe band", root, 0, 574, 540, 386);
             band.anchorMin = band.anchorMax = Vector2.zero; band.anchoredPosition = new Vector2(0, 386);
             var tutorial = Node("Tutorial hint", band, 18, 298, 504, 84);
-            Art("Hint banner", tutorial, "ui/banner-hint", 0, 0, 504, 84, true, 45, 0, 84 * 45 / 78f);
-            Label("Hint first line", tutorial, "看颜色 · 派队员 · 三合一", 0, 30, 504, 17, Cream, 1.7f);
-            Label("Hint second line", tutorial, "守住护栏，别让泡泡压下来", 0, 53, 504, 13, Cream, 1.3f);
+            Glass("Hint banner", tutorial, 0, 4, 504, 72);
+            Art("Hint icon", tutorial, "ui/bar-icon-bubbles", 24, 17, 48, 48);
+            RoundLabel("Hint first line", tutorial, "看颜色 · 派队员 · 三合一", 80, 17, 394, 20, GardenBars.Navy);
+            RoundLabel("Hint second line", tutorial, "守住护栏，别让泡泡压下来", 80, 46, 394, 16, GardenBars.Navy);
             var buttons = Node("Prop buttons", band, 0, 0, 540, 386);
             string[] keys = { "scene/button-shuffle", "scene/button-designate", "scene/button-water" };
             for (int i = 0; i < 3; i++)
@@ -211,9 +230,18 @@ namespace Flightbeat.Editor
                 var button = Action("Prop " + i, buttons, i + 10, 27 + i * 164, 306, 156, 72);
                 Image art = Art("Button image", button, keys[i], 0, 0, 156, 72);
                 button.GetComponent<GardenUiAction>().selectedVisual = art;
+                // 2026-10-21 10:44: the art is text-free now; the word sits right of the icon in the rounded font, white
+                // with a dark outline of the button's own hue (sampled from the old baked words). It is a child of the
+                // art so it moves with the pressed offset.
+                string[] words = { "重排", "优先出战", "泡泡炸弹" };
+                Color[] inks = { new Color32(0, 42, 193, 255), new Color32(187, 58, 0, 255), new Color32(54, 0, 184, 255) };
+                float wordSize = i == 0 ? 24f : 20f, wordLeft = i == 0 ? 60f : 56f, wordWidth = i == 0 ? 96f : 92f;
+                GardenUiText word = RoundLabel("Word", art.rectTransform, words[i], wordLeft, 36.5f - wordSize * .5f, wordWidth, wordSize, Color.white);
+                word.outlineWidth = 2.2f; word.outlineColor = inks[i];
+                // 2026-10-21 (user): the count / + / × corner badge goes back to the earlier navy badge and white number.
                 Art("Count badge", button, "scene/badge", 134, -7, 24, 24);
                 Label("Amount", button, "{0}", 134, -2.5f, 24, 14, Color.white);
-                Label("Cancel hint", button, "取消选择", 0, -18, 156, 12, Cream, 1.3f).gameObject.SetActive(false);
+                RoundLabel("Cancel hint", button, "取消选择", 0, -22, 156, 15, GardenBars.Navy).gameObject.SetActive(false);
             }
             tutorial.gameObject.SetActive(false);
             return root;
@@ -261,6 +289,21 @@ namespace Flightbeat.Editor
             var next = Button("Continue", content, 40, 80, 650, 380, 62, "下一关", "Continue text");
             Find<GardenUiText>(next.gameObject, "Continue text").alternateText = "再试一次";
             Button("Home", content, 41, 180, 740, 180, 40, "返回主页");
+            // 2026-10-21 (user, victory page after a reference): one row of a small square 主页, a big 下一关 and a small
+            // square 重玩 (action 42). Shown only on a win (GardenBattlePage.SetWinLayout hides Continue / Home then);
+            // the lose page keeps 再试一次 / 返回主页. Painted art when delivered (win/*.png), program fallback before.
+            var winButtons = Node("Win buttons", content, 0, 0, 540, 960);
+            // 15:51 (user: too far below the info): moved up 70 px.
+            SquareButton("Win home", winButtons, 41, 70, 702, "plants/win/button-home", "主页", new Color32(0xB8, 0x65, 0x0A, 0xFF));
+            SquareButton("Win replay", winButtons, 42, 394, 702, "plants/win/button-replay", "重玩", new Color32(0x4E, 0x1F, 0xA8, 0xFF));
+            var winNext = Action("Win next", winButtons, 40, 166, 696, 208, 84);
+            if (HasSlot("plants/win/button-next")) Art("Button image", winNext, "plants/win/button-next", 0, 0, 208, 84);
+            else Art("Button image", winNext, "ui/button-primary", 0, 0, 208, 84, true, 45, 0, 84 * 45f / 78f);
+            // 15:59 (user: words not centred): centred on the button face (rows 4-134 of 168, i.e. 2-67 of 84), not
+            // on the whole art with its thick lower edge.
+            var nextLabel = RoundLabel("Win next text", winNext, "下一关", 0, 19f, 208, 32, Color.white);
+            nextLabel.outlineWidth = 3f; nextLabel.outlineColor = HasSlot("plants/win/button-next") ? new Color32(0x1B, 0x7A, 0x2A, 0xFF) : new Color32(0x16, 0x3E, 0x6D, 0xFF);
+            winButtons.gameObject.SetActive(false);
             var lesson = Node("Lesson complete", root, 0, 0, 540, 960); Center(lesson);
             Art("Panel", lesson, "ui/popup-panel", 70, 380, 400, 98, true);
             Art("Portrait", lesson, "ui/guide-happy", 20, 352, 96, 96);
@@ -288,6 +331,22 @@ namespace Flightbeat.Editor
             Label(labelName, root, text, 0, (h - size) / 2 - 1, w, size, Cream, 1.8f);
             return root;
         }
+        static bool HasSlot(string id) => id.StartsWith("bars/") ? barAtlas.slots.Any(s => s.id == id.Substring(5)) : atlas.slots.Any(s => s.id == id);
+        // 76 x 76 square button: painted art with its icon when delivered, the light secondary glass otherwise; the
+        // word sits in its lower part (white, outlined in the button's own dark hue; bigger and centred on the fallback).
+        static RectTransform SquareButton(string name, RectTransform parent, int id, float x, float y, string art, string word, Color ink)
+        {
+            var root = Action(name, parent, id, x, y, 76, 76);
+            bool painted = HasSlot(art);
+            if (painted) Art("Button image", root, art, 0, 0, 76, 76);
+            else Art("Button image", root, "ui/button-secondary", 0, 0, 76, 76, true, 30, 0, 76 * 30f / 72f);
+            // 15:59 (user: the words touched the edge): centred in the free band between the icon (ends at row 86 of
+            // 152) and the thick lower rim (starts at 134), i.e. around y 55 of 76; one size larger.
+            float size = painted ? 14f : 18f;
+            var label = RoundLabel(name + " text", root, word, 0, painted ? 48f : (76f - size) * .5f - 1f, 76, size, Color.white);
+            label.outlineWidth = painted ? 2.4f : 2.6f; label.outlineColor = painted ? ink : new Color32(0x16, 0x3E, 0x6D, 0xFF);
+            return root;
+        }
         static RectTransform Action(string name, RectTransform parent, int id, float x, float y, float w, float h)
         { var r = Node(name, parent, x, y, w, h); r.gameObject.AddComponent<GardenUiAction>().actionId = id; return r; }
         static GardenUiText Label(string name, RectTransform parent, string text, float x, float y, float w, float size, Color color, float outline = 0)
@@ -296,9 +355,18 @@ namespace Flightbeat.Editor
             var t = r.gameObject.AddComponent<GardenUiText>(); t.text = text; t.fontSize = size;
             t.color = color; t.outlineWidth = outline; t.SetFontAtlas(texture); return t;
         }
+        static GardenUiText RoundLabel(string name, RectTransform parent, string text, float x, float y, float w, float size, Color color)
+        {
+            var t = Label(name, parent, text, x, y, w, size, color);
+            t.roundedFont = true; t.SetFontAtlas(barTexture); return t;
+        }
+        static Image Glass(string name, RectTransform parent, float x, float y, float w, float h)
+            => Art(name, parent, "bars/capsule", x, y, w, h, true, 144f * 1.1f, 0, h * 1.1f);
+        static GardenSkin.Slot SlotFor(string id) => id.StartsWith("bars/")
+            ? barAtlas.slots.Single(s => s.id == id.Substring(5)) : atlas.slots.Single(s => s.id == id);
         static Image Art(string name, RectTransform parent, string id, float x, float y, float w, float h, bool sliced = false, float bx = 30, float by = 30, float edge = 18)
         {
-            var slot = atlas.slots.Single(s => s.id == id);
+            var slot = SlotFor(id);
             // Images have real RectTransforms, including the original transparent-frame trim.
             if (!sliced && slot.fw > 0 && slot.fh > 0)
             { x += slot.ox * w / slot.fw; y += slot.oy * h / slot.fh; w *= slot.w / slot.fw; h *= slot.h / slot.fh; }

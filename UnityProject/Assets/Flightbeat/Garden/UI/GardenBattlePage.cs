@@ -9,12 +9,13 @@ namespace Flightbeat.Garden.UI
     [AddComponentMenu("Flightbeat/Garden UI/Battle Page")]
     public sealed class GardenBattlePage : MonoBehaviour
     {
+        public const float ProgressWidth = 256f;   // 2026-10-21: 266 -> 256, room for the larger percent
         [Header("Layers and responsive containers")]
         public GameObject background, header, controls, pauseDialog, resultDialog;
         public RectTransform backgroundTop, backgroundField, backgroundBottom, headerBand, controlsBand;
         [Header("Header")]
         public GardenUiText lessonTitle, levelTitle, progressText;
-        public Image progressFill;
+        public Image progressFill, progressSpark;
         [Header("Controls")]
         public GameObject tutorialHint, propButtons;
         public GardenUiAction[] props;
@@ -113,18 +114,33 @@ namespace Flightbeat.Garden.UI
         // 2026-10-17 victory screen (after the lightup reference): no panel on a win. The panel, portrait, title,
         // level/progress lines and rewards are hidden and the overlay draws headline, hero, confetti and stats;
         // the 下 一 关 / 返回主页 buttons stay where they are.
-        GameObject[] winHidden = new GameObject[0], loseHidden = new GameObject[0];
+        GameObject[] winHidden = new GameObject[0], loseHidden = new GameObject[0], winOnly = new GameObject[0];
+        // 2026-10-21 15:55 (user, after the reference): on a win the shade is a deep indigo at 80 % (was black 65 %), so
+        // the board behind all but disappears in a clean night blue and the card, ribbon and buttons stand out.
+        UnityEngine.UI.Image resultShield;
+        Color resultShieldColor;
+        static readonly Color WinShade = new Color(.055f, .078f, .2f, .8f);
         void FindWinParts()
         {
             var win = new System.Collections.Generic.List<GameObject>();
             var both = new System.Collections.Generic.List<GameObject>();
             var mission = resultDialog.transform.Find("Mission result/Content");
+            var only = new System.Collections.Generic.List<GameObject>();
             if (mission)
-                foreach (string name in new[] { "Panel", "Portrait", "Campaign complete" })
+            {
+                // 2026-10-21: Continue / Home make way on a win for the 主页 · 下一关 · 重玩 row ("Win buttons").
+                foreach (string name in new[] { "Panel", "Portrait", "Campaign complete", "Continue", "Home" })
                 {
                     var child = mission.Find(name);
                     if (child) (name == "Portrait" ? both : win).Add(child.gameObject);
                 }
+                var row = mission.Find("Win buttons");
+                if (row) only.Add(row.gameObject);
+            }
+            winOnly = only.ToArray();
+            var shield = resultDialog.transform.Find("Mission result/Modal input shield");
+            resultShield = shield ? shield.GetComponent<UnityEngine.UI.Image>() : null;
+            if (resultShield) resultShieldColor = resultShield.color;
             if (resultTitle) win.Add(resultTitle.gameObject);
             foreach (var t in new[] { resultLevel, resultProgress })
                 if (t) both.Add(t.gameObject);
@@ -135,6 +151,8 @@ namespace Flightbeat.Garden.UI
         public void SetWinLayout(bool win, bool lose = false)
         {
             foreach (var go in winHidden) if (go && go.activeSelf == win) go.SetActive(!win);
+            foreach (var go in winOnly) if (go && go.activeSelf != win) go.SetActive(win);
+            if (resultShield) { Color want = win ? WinShade : resultShieldColor; if (resultShield.color != want) resultShield.color = want; }
             bool hide = win || lose;
             foreach (var go in loseHidden) if (go && go.activeSelf == hide) go.SetActive(!hide);
         }

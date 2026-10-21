@@ -45,6 +45,13 @@ namespace Flightbeat.Garden
             s.GardenFxQuad(center.x - width * .5f, center.y - height * .5f, width, height,
                 clip.uv[Mathf.Clamp(frame, 0, clip.uv.Length - 1)], tint, angle);
         }
+        // Burst with a tint (2026-10-21: bead-coloured foam pops).
+        public static void BurstTint(PixelSurface s, string id, Vector2 at, float size, float age, float duration, Color tint)
+        {
+            if (age < 0f || age >= duration) return;
+            var clip = Get(id);
+            Draw(s, id, at, size, size, tint, Mathf.Min(clip.frames.Length - 1, (int)(age / duration * clip.frames.Length)));
+        }
         public static void Burst(PixelSurface s, string id, Vector2 at, float size, float age, float duration)
         {
             if (age < 0f || age >= duration) return;
@@ -76,21 +83,31 @@ namespace Flightbeat.Garden
         // from the creature to the target, with a pulsing bubble cluster at the end. Replaces the tiled "beam" strip,
         // whose wavy art did not join between tiles (it read as a tangled line) and turned muddy when tinted.
         // Endpoints and timing are the existing BeamX/BeamY/BeamLife; nothing here touches the model.
+        // Size factor of a shot `distance` px from the mouth: a quarter at the lips, full size once it has cleared the
+        // head (about 34 px above the mouth on a pad), with a smooth ease between.
+        public static float MouthGrow(float distance)
+        {
+            float u = Mathf.Clamp01(distance / 34f);
+            return .25f + .75f * u * u * (3f - 2f * u);
+        }
         public static void BubbleStream(PixelSurface s, Vector2 from, Vector2 to, float width, Color tint, float age)
         {
             var delta = to - from; float length = delta.magnitude;
             if (length <= .001f) return;
             var dir = delta / length;
             float step = width * .62f, flow = (age * 140f) % step;
-            int n = 0;
+            // 2026-10-21 10:39 (user: balls in the stream kept shrinking and growing). The size pattern was indexed from the
+            // first ball, so every time a new ball entered at the mouth all the others shifted pattern; it now follows the
+            // ball (index counted against the flow), so each ball keeps its size all the way.
+            int n = -Mathf.FloorToInt(age * 140f / step);
             // 2026-10-18 23:12 (user: the Ⅱ / MAX stream started too far from the member). It used to skip the first
-            // 30 px (the whole head) so no bubble sat on the body; now it leaves the mouth like the Ⅰ shots do: the
-            // balls start 6 px out and grow to full size over the next 16 px.
-            const float head = 6f;
+            // 30 px (the whole head) so no bubble sat on the body; now it leaves the mouth like the Ⅰ shots do.
+            // 2026-10-21 (user: small at the mouth so the face stays visible): from 2 px out, sized by MouthGrow.
+            const float head = 2f;
             for (float d = head + flow; d < length; d += step, n++) {
-                float size = width * ((n % 3 == 0) ? .62f : (n % 3 == 1) ? .48f : .55f);
-                float grow = Mathf.Clamp01((d - head) / 16f);               // solid balls: grow in instead of fading in
-                GardenSkin.Shot(s, tint, from + dir * d, size * grow, 1f);
+                int m = ((n % 3) + 3) % 3;
+                float size = width * (m == 0 ? .62f : m == 1 ? .48f : .55f);
+                GardenSkin.Shot(s, tint, from + dir * d, size * MouthGrow(d), 1f);
             }
             // 2026-10-19 09:34 (user picked C): no big pulsing ball at the hit point any more; a small splash keeps
             // spraying there instead: 7 droplets in the stream's color fly out in a ring (each with its own cycle, a

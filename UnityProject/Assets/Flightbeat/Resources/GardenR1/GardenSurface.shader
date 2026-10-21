@@ -20,6 +20,7 @@ Shader "Garden/R1 Surface"
         _CodexTex ("Codex Thumbnails", 2D) = "black" {}
         _GardenTex ("Garden Atlas", 2D) = "white" {}
         _GardenTex2 ("Creature Atlas", 2D) = "white" {}
+        _GardenBarsTex ("Hint Glass and Rounded Type", 2D) = "white" {}
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
         _StencilOp ("Stencil Operation", Float) = 0
@@ -62,6 +63,8 @@ Shader "Garden/R1 Surface"
             // The retired codex branch is unreachable. Reuse its sampler declaration
             // for creatures to stay within WebGL's 16 fragment-sampler limit.
             #define _CodexTex _GardenTex2
+            // R1 replaces the original launch plate (DeckArt 18); reuse that sampler too.
+            #define _LaunchTex _GardenBarsTex
             #define FbFrag OriginalFrag
             #if defined(UNITY_UI_ALPHACLIP) && defined(UNITY_UI_CLIP_RECT)
             #include "../../Rendering/Shaders/Shader22Program5.hlsl"
@@ -74,10 +77,26 @@ Shader "Garden/R1 Surface"
             #endif
             #undef FbFrag
             #undef _CodexTex
+            #undef _LaunchTex
             sampler2D _GardenTex;
             float4 _GardenTex_TexelSize;
             float4 _GardenTex2_TexelSize;
             float4 GardenFrag(FbVaryings input) : SV_Target {
+                if (input.vs_TEXCOORD1.x > 23.5) {
+                    float4 art = tex2D(_GardenBarsTex, input.vs_TEXCOORD0);
+                    if (input.vs_TEXCOORD1.x > 25.5) {
+                        // Recolour the cyan glass while preserving white reflections, detail and alpha.
+                        float low = min(art.r, min(art.g, art.b));
+                        float high = max(art.r, max(art.g, art.b));
+                        float3 edge = input.vs_COLOR0.rgb / max(.001, max(input.vs_COLOR0.r, max(input.vs_COLOR0.g, input.vs_COLOR0.b)));
+                        art.rgb = low + (high - low) * edge;
+                        // Keep bright rim/reflections and saturated edges visible in see-through hints.
+                        float rim = max(smoothstep(.85, 1., low), smoothstep(.45, .7, high - low));
+                        art.a *= lerp(input.vs_TEXCOORD1.y, 1., rim) * input.vs_COLOR0.a;
+                        return art;
+                    }
+                    return art * input.vs_COLOR0;
+                }
                 if (input.vs_TEXCOORD1.x > 21.5) {
                     float2 uv = input.vs_TEXCOORD0;
                     if (input.vs_TEXCOORD1.x > 22.5) uv = (floor(uv * _GardenTex2_TexelSize.zw) + .5) * _GardenTex2_TexelSize.xy;

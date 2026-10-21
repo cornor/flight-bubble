@@ -50,6 +50,8 @@ namespace Flightbeat.Game
             view.Show(GardenUiActive);
             if (gardenOverlay) { gardenOverlay.Lighting = hud.Lighting; gardenOverlay.Redraw(); }
             if (!GardenUiActive) return;
+            // 2026-10-20: 1500 / 2500 / ... milestones are drawn by the bubble HUD; give them the milestone sound too.
+            if (feedback.RefreshGardenComboMilestone() && Battle.State == Phase.Playing) audioChip?.Play("combo-high");
             bool teaching = Battle.Level.lesson > 0;
             // 2026-10-16: one continuous level number like the original header (f54833 "第 NN 关"): the two
             // lessons are 第 1、2 关 and the first formal level is 第 3 关; transitions already used this number.
@@ -57,6 +59,22 @@ namespace Flightbeat.Game
             view.levelTitle.gameObject.SetActive(true);
             view.levelTitle.Present(false, levelIndex + 1);
             view.progressFill.fillAmount = Battle.Progress;
+            view.progressFill.enabled = Battle.Progress > 0f;
+            float progressWidth = GardenBattlePage.ProgressWidth * Mathf.Clamp01(Battle.Progress);
+            if (!Mathf.Approximately(view.progressFill.rectTransform.sizeDelta.x, progressWidth))
+                view.progressFill.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, progressWidth);
+            if (view.progressSpark)
+            {
+                // 2026-10-21 (quality pass): a soft spark on the head of the fill, gently pulsing, so progress reads as alive.
+                bool on = Battle.Progress > .005f && Battle.Progress < .995f;
+                if (view.progressSpark.enabled != on) view.progressSpark.enabled = on;
+                if (on)
+                {
+                    RectTransform spark = view.progressSpark.rectTransform, fillRect = view.progressFill.rectTransform;
+                    spark.anchoredPosition = new Vector2(fillRect.anchoredPosition.x + progressWidth - spark.sizeDelta.x * .5f, spark.anchoredPosition.y);
+                    view.progressSpark.color = new Color(1f, 1f, 1f, .55f + .3f * Mathf.Sin(ui * 5f));
+                }
+            }
             view.progressText.Present(false, Mathf.FloorToInt(Battle.Progress * 100));
             view.tutorialHint.SetActive(teaching && !evidenceControlled);
             view.propButtons.SetActive(!teaching || evidenceControlled);

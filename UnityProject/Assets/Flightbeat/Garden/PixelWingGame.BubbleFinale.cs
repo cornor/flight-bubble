@@ -20,6 +20,10 @@ namespace Flightbeat.Game
         const float KingMouth = -.222f;         // mouth centre in king-blow (measured y 142.5 of 512), fraction of KingSize from centre
         static readonly Color FinaleInk = Hex(0x7A3A00);
         bool BubbleFinaleArt => GardenSkin.Has(KingReady) && GardenSkin.Has(FinaleButtonArt);
+        // 2026-10-20 (UI redesign 31/33/34): blank plates from the art AI; the words are written here. Each is optional.
+        const string ButtonPlate = "finale/button-plate", TitlePlate = "finale/title-plate", ClearPlate = "finale/clear-plate";
+        static readonly Color FinalePurple = Hex(0x5B2A9E), FinaleYellow = Hex(0xFFE36A);
+        string ButtonArt => GardenSkin.Has(ButtonPlate) ? ButtonPlate : FinaleButtonArt;
 
         // ---- button (same 340x86 box at (270, 759); hit regions come from the muted original)
         // 2026-10-17 17:03 (user: it appeared like an ordinary button, not a super-move switch). Entrance (~1 s): the
@@ -91,7 +95,7 @@ namespace Flightbeat.Game
                 if (b < .7f)
                 {
                     float k = 1f + e * .32f, ew = 340f * k, eh = 86f * k + e * 34f;
-                    Asset(s, FinaleButtonArt, cx - ew * .5f, cy - eh * .5f, ew, eh, A(Color.Lerp(Color.white, RainbowAt(ui * .2f), .55f), (1f - e) * (1f - e) * .5f));
+                    Asset(s, ButtonArt, cx - ew * .5f, cy - eh * .5f, ew, eh, A(Color.Lerp(Color.white, RainbowAt(ui * .2f), .55f), (1f - e) * (1f - e) * .5f));
                 }
             }
             scale *= (1f + .06f * beat) * (1f - PressPulse(8) * .05f);
@@ -114,8 +118,13 @@ namespace Flightbeat.Game
                 }
             if (t > SlamTime && t < SlamTime + .25f)   // title flash
             {
-                float f = 1f - (t - SlamTime) / .25f, title = 38f * scale;
-                TextOutline(s, "决 战", cx, cy - title * .5f - 3f * scale, title, A(Color.white, f), A(Color.white, f * .6f), 2.6f * scale);
+                float f = 1f - (t - SlamTime) / .25f;
+                FaceTitle(scale, out float tx, out float ty, out float title);
+                bool mapped = s.MapLayout;
+                float dy = GardenBars.ScreenY(s, 759f) - 759f;
+                s.MapLayout = false;
+                GardenBarArt.TextOutline(s, "决 战", tx, ty + dy, title, A(Color.white, f), A(Color.white, f * .6f), 2.6f * scale);
+                s.MapLayout = mapped;
             }
         }
         // A point on a pill outline (straight top/bottom, round ends), u = fraction of the way round.
@@ -134,11 +143,44 @@ namespace Flightbeat.Game
         }
         // 2026-10-17 (user, readability): the 10 px second line ("全员合体 · 彩虹泡泡扫射") is gone; the guide above the
         // button already says it. The title alone, a little bigger, centred on the face.
+        // 2026-10-20 (user, UI review): with the new plate the second line comes back, bigger: 「点击合体」 in the plate's
+        // purple pill (centre at 82 % of its height); 「决 战」 sits above it, a little right of centre (crown on the left).
+        void FaceTitle(float scale, out float x, out float top, out float size)
+        {
+            bool plate = GardenSkin.Has(ButtonPlate);
+            size = (plate ? 40f : 38f) * scale;   // 2026-10-21 (user): 34 -> 40 on the plate, fills the button
+            x = 270f;   // 2026-10-20 21:24 (user): centred on the same axis as 「点击合体」 (was 17 px right of it)
+            float centre = plate ? 759f - 43f * scale + 86f * scale * .38f : 759f - 3f * scale;
+            top = centre - size * (plate ? .55f : .5f);
+        }
         void DrawFinaleButtonFace(PixelSurface s, float scale, float alpha)
         {
-            float w = 340f * scale, h = 86f * scale, title = 38f * scale;
-            Asset(s, FinaleButtonArt, 270f - w * .5f, 759f - h * .5f, w, h, new Color(1f, 1f, 1f, alpha));
-            TextOutline(s, "决 战", 270f, 759f - title * .5f - 3f * scale, title, A(Cream, alpha), A(FinaleInk, alpha), 2.6f * scale);
+            float w = 340f * scale, h = 86f * scale;
+            bool plate = GardenSkin.Has(ButtonPlate);
+            bool mapped = s.MapLayout;
+            float cy = GardenBars.ScreenY(s, 759f);
+            s.MapLayout = false;
+            try
+            {
+                Asset(s, ButtonArt, 270f - w * .5f, cy - h * .5f, w, h, new Color(1f, 1f, 1f, alpha));
+                FaceTitle(scale, out float x, out float top, out float title);
+                top += cy - 759f;
+                if (!plate) { GardenBarArt.TextOutline(s, "决 战", x, top, title, A(Cream, alpha), A(FinaleInk, alpha), 2.6f * scale); return; }
+                GardenBarArt.TextOutline(s, "决 战", x, top, title, A(FinaleYellow, alpha), A(FinalePurple, alpha), 2.8f * scale);
+                float sub = 15f * scale, pill = cy - h * .5f + h * .82f;   // 2026-10-21: 13 -> 15
+                GardenBarArt.TextOutline(s, "点击合体", 270f, pill - sub * .58f, sub, A(Cream, alpha), A(FinalePurple, alpha), 1.3f * scale);
+                // 2026-10-21 (user, the right side looked empty next to the crown): a few see-through rainbow bubbles
+                // rise off the ribbon on the right, swell, drift a little and fade, then come round again.
+                for (int k = 0; k < 3; k++)
+                {
+                    float u = ui / 2.2f + k / 3f, t = u - Mathf.Floor(u), life = Mathf.Sin(t * Mathf.PI);
+                    float bx = 270f + w * (.22f + .07f * k) + Mathf.Sin(t * 6.3f + k) * 3f * scale;
+                    float by = cy + h * .2f - t * h * .55f, d = (k % 2 == 0 ? 10f : 7.5f) * scale * (.6f + .4f * life);
+                    Color tint = Color.Lerp(Color.white, finaleRainbow[(k * 2 + (int)Mathf.Floor(u)) % 7], .45f);
+                    SoapBubble(s, new Vector2(bx, by), d, tint, alpha * life * .9f, k);
+                }
+            }
+            finally { s.MapLayout = mapped; }
         }
 
         // ---- first-time guide (f54731 layout: mask with a hole over the button, title, dialogue, pointer)
@@ -162,23 +204,21 @@ namespace Flightbeat.Game
                 float t = FinaleRepeat(ui * .8f + i / 3f, 1f), k = 1f + t * .3f;
                 float ew = 340f * k, eh = 86f * k + t * 36f;
                 Color echo = Color.Lerp(Color.white, finaleRainbow[i * 2 % 7], .55f);
-                Asset(s, FinaleButtonArt, 270f - ew * .5f, 759f - eh * .5f, ew, eh, A(echo, alpha * (1f - t) * (1f - t) * .5f));
+                Asset(s, ButtonArt, 270f - ew * .5f, 759f - eh * .5f, ew, eh, A(echo, alpha * (1f - t) * (1f - t) * .5f));
             }
             float breathe = 1f + .045f * pulse;
             s.Glow(270f, 759f, 460f * breathe, 176f * breathe, new Color(1f, .85f, .35f, alpha * (.25f + .2f * pulse)), 0f);
             DrawFinaleButtonFace(s, breathe * (1f - PressPulse(8) * .05f), alpha);
-            TextOutline(s, "决 战 时 刻", 270f, 478f, 34f, A(Gold, alpha), A(Outline, alpha), 2.6f);
-            TextOutline(s, "全员已出战 · 泡泡不到 " + Flightbeat.Model.Battle.FinaleThreshold + " 个", 270f, 528f, 16f, A(Cream, alpha), A(Outline, alpha), 1.6f);
+            HintCapsule(s, "决战时刻", 496f, 172f, 40f, 20f, GardenBars.Gold, GardenBars.Brown,
+                alpha, 1f, "crown", GardenBars.Deco.Many, finaleGuideAge);
+            GardenBarArt.TextOutline(s, "全员已出战 · 泡泡不到 " + Flightbeat.Model.Battle.FinaleThreshold + " 个", 270f, 528f, 16f, A(Cream, alpha), A(Outline, alpha), 1.6f);
             // Speech bubble with Xiao Lan; reveal at the original typing speed (spokenCharacters of the source line).
-            if (!Asset9(s, "ui/speech-bubble", 96f, 586f, 414f, 92f, 30f, 30f, 18f, 18f, new Color(1f, 1f, 1f, alpha))) GardenPanel(s, 32f, 588f, 476f, 88f);
-            Asset(s, "ui/guide-happy", 14f, 582f, 96f, 96f, new Color(1f, 1f, 1f, alpha));
-            TextOutline(s, "小蓝", 150f, 578f, 15f, A(Cream, alpha), A(Outline, alpha), 1.5f);
             int shown = dialogue.Length == 0 ? FinaleGuideLine.Length
                 : Mathf.Clamp(Mathf.CeilToInt(FinaleGuideLine.Length * (float)spokenCharacters / dialogue.Length), 0, FinaleGuideLine.Length);
             string[] lines = FinaleGuideLine.Substring(0, shown).Split('\n');
-            for (int i = 0; i < lines.Length; i++) Text(s, lines[i], 124f, 612f + i * 29f, 16f, false, A(Ink, alpha));
+            DrawGardenDialogue(s, "ui/guide-happy", lines, 632f, alpha);
             float bounce = Mathf.Abs(Mathf.Sin(ui * 5f)) * 7f;
-            Asset(s, "fx/arrow", 252f, 681f - bounce, 36f, 36f, new Color(1f, 1f, 1f, alpha));
+            Asset(s, "fx/arrow", 256f, 692f - bounce, 28f, 28f, new Color(1f, 1f, 1f, alpha));
         }
 
         // ---- the finale itself (f54742, mode 0 "彩虹扇击": the only mode without a hangar)
@@ -233,17 +273,40 @@ namespace Flightbeat.Game
             if (age > 1.5f) return;
             float appear = OutBack(age / .3f, 2.4f), alpha = Clamp01((1.5f - age) / .35f);
             if (appear < .05f) return;
+            if (GardenSkin.Has(TitlePlate))
+            {
+                // 2026-10-20 (UI redesign 33): rainbow plate 520x100 centred at y 305; 「决 战」 at 45 %, the subtitle in
+                // the cream pill at 82 % of its height.
+                // Map the entire banner once: separately mapped glyphs drift out of the plate on tall screens.
+                bool mapped = s.MapLayout;
+                float pw = 520f * appear, ph = 100f * appear, pcy = GardenBars.ScreenY(s, 305f);
+                s.MapLayout = false;
+                try
+                {
+                    s.Glow(270f, pcy, pw + 80f, ph + 60f, new Color(1f, .9f, .5f, alpha * .35f), 0f);
+                    Asset(s, TitlePlate, 270f - pw * .5f, pcy - ph * .5f, pw, ph, new Color(1f, 1f, 1f, alpha));
+                    float big = 46f * appear;
+                    GardenBarArt.TextOutline(s, "决 战", 270f, pcy - ph * .05f - big * .55f, big, A(FinaleYellow, alpha), A(FinalePurple, alpha), 3f * appear);
+                    if (age > .35f)
+                    {
+                        float a = alpha * Clamp01((age - .35f) / .2f), sub = 16f * appear;
+                        GardenBarArt.Text(s, "泡泡大王 · 彩虹扫射！", 270f, pcy + ph * .32f - sub * .58f, sub, true, A(FinalePurple, a));
+                    }
+                }
+                finally { s.MapLayout = mapped; }
+                return;
+            }
             s.Glow(270f, 300f, appear * 420f, appear * 150f, new Color(1f, .9f, .5f, alpha * .35f), 0f);
             // 17:10 (user: the subtitle sat in the wrong place): the rainbow bars ran through 泡泡大王 · 彩虹扫射！
             // (bars 316-344, subtitle 336). Bars now sit right under 决 战 (296-324) and the subtitle below them.
             for (int i = 0; i < 7; i++)
                 s.Rect(270f - appear * 150f, appear * 30f + 266f + i * 4f, appear * 300f, 3f, A(finaleRainbow[i], alpha * .75f));
-            TextOutline(s, "决 战", 270f, 262f - 26f * appear, 52f * appear, A(Gold, alpha), A(Outline, alpha), 3f * appear);
+            GardenBarArt.TextOutline(s, "决 战", 270f, 262f - 26f * appear, 52f * appear, A(Gold, alpha), A(Outline, alpha), 3f * appear);
             if (age > .35f)
             {
                 float a = alpha * Clamp01((age - .35f) / .2f);
                 s.Glow(270f, 349f, 300f, 46f, new Color(.03f, .08f, .2f, .45f * a), 0f);
-                TextOutline(s, "泡泡大王 · 彩虹扫射！", 270f, 338f, 21f, A(Cream, a), A(Outline, a), 1.8f);
+                GardenBarArt.TextOutline(s, "泡泡大王 · 彩虹扫射！", 270f, 338f, 21f, A(Cream, a), A(Outline, a), 1.8f);
             }
         }
 
@@ -482,8 +545,28 @@ namespace Flightbeat.Game
                 s.GlowLine(new Vector2(270f, 330f), new Vector2(Mathf.Cos(angle) * 320f + 270f, Mathf.Sin(angle) * 320f + 330f), 46f, ray);
             }
             s.Glow(270f, 330f, scale * 420f, scale * 220f, new Color(1f, .9f, .45f, fade * .35f), 0f);
-            float size = 46f * scale;
-            TextOutline(s, "全部打光！", 270f, 330f - size * .55f, size, A(Gold, fade), A(Outline, fade), 3.2f * scale);
+            if (GardenSkin.Has(ClearPlate))
+            {
+                // 2026-10-20 (UI redesign 34): gold plate 520x110 (title at 45 %, count pill at 84 %), red title with a
+                // white outline and the final count in the pill.
+                bool mapped = s.MapLayout;
+                float pw = 520f * scale, ph = 110f * scale, pcy = GardenBars.ScreenY(s, 335f);
+                s.MapLayout = false;
+                try
+                {
+                    Asset(s, ClearPlate, 270f - pw * .5f, pcy - ph * .5f, pw, ph, new Color(1f, 1f, 1f, fade));
+                    float big = 40f * scale;
+                    GardenBarArt.TextOutline(s, "全部打光！", 270f, pcy - ph * .05f - big * .55f, big, A(Hex(0xF2482E), fade), A(Color.white, fade), 3.2f * scale);
+                    float sub = 16f * scale;
+                    GardenBarArt.Text(s, "打掉 ×" + finale.Kills, 270f, pcy + ph * .34f - sub * .58f, sub, true, A(GardenBars.Navy, fade));
+                }
+                finally { s.MapLayout = mapped; }
+            }
+            else
+            {
+                float size = 46f * scale;
+                GardenBarArt.TextOutline(s, "全部打光！", 270f, 330f - size * .55f, size, A(Gold, fade), A(Outline, fade), 3.2f * scale);
+            }
             if (endAge < .12f) s.Glow(270f, 330f, 700f, 700f, new Color(1f, 1f, 1f, (1f - endAge / .12f) * .7f), 0f);
         }
 
@@ -496,7 +579,7 @@ namespace Flightbeat.Game
             float elapsed = ui - finaleMilestoneAt, pop = Mathf.Max(1f - elapsed * 4f, 0f) * .35f + 1f;
             float size = 24f * appear * pop;
             if (size < 2f) return;
-            TextOutline(s, "打掉 ×" + finale.Kills, 270f, 146f - size * .5f, size, A(Cream, alpha), A(Outline, alpha), 2f);
+            GardenBarArt.TextOutline(s, "打掉 ×" + finale.Kills, 270f, 146f - size * .5f, size, A(Cream, alpha), A(Outline, alpha), 2f);
         }
     }
 }

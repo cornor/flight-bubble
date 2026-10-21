@@ -155,6 +155,7 @@ namespace Flightbeat.Game
                 case 31: ConfirmStreakBreak("放弃复活", () => Battle.DeclineRevive(), true); break;
                 case 40: if (Battle.State == Phase.Won) NextLevel(); else Restart(); break;
                 case 41: ReturnToDeck(); break;
+                case 42: Restart(); break;   // 2026-10-21: 重玩 on the victory page
                 case 50: lesson?.ShowHelp(); break;
             }
         }

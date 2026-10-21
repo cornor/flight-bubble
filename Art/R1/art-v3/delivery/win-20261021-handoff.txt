@@ -1,0 +1,24 @@
+胜利结算页 5 张素材 · 2026-10-21
+
+需求：docs/r1/结算页-出图需求.md
+生成方式：内置 imagegen。飘带、黄色主页按钮、钟表全新生成；紫色重玩按钮和绿色下一关按钮以黄色按钮作为图片编辑输入，保持同套材质。
+交付目录：Art/R1/art-v3/delivery/win/
+
+ribbon.png        800×224  RGBA 透明 PNG，珊瑚红飘带、深红折尾、无字。
+button-home.png   152×152  RGBA 透明 PNG，黄色果冻方块、上部白色房子、下部留字区。
+button-replay.png 152×152  RGBA 透明 PNG，紫色果冻方块、上部白色循环箭头、下部留字区。
+button-next.png   416×168  RGBA 透明 PNG，绿色果冻大按钮、全空白表面。
+icon-clock.png    128×128  RGBA 透明 PNG，白色表盘、蓝色外圈、深蓝指针。
+
+整理：裁去生成稿的多余透明边距，按交付画布整理尺寸和居中站位；保留生成的图案、材质及透明边缘，未添加文字。
+验收：5 张尺寸与 RGBA 通道均符合要求；四边保持透明；深浅背景均已目视检查，无可见底色、落地阴影和裁切。两张方块的图标都在上部，下三分之一留空。
+既有参考素材的 SHA-256 校验未变化。
+已只读确认图集入口 plants/win/{ribbon,button-home,button-replay,button-next,icon-clock} 和结算页接入代码。
+本次未重建图集、未编译游戏，游戏内效果待下次构建检查。
+
+完整出图记录（全部提示词、生成输入、原始文件、尺寸和 SHA-256）：generation-20261021-win.json
+浅底总览：_qa/win-20261021/overview.png
+深底检查：_qa/win-20261021/dark-review.png
+原始生成图：_qa/win-20261021/originals/
+整理脚本与请求记录：_qa/win-20261021/deliver.cjs、request.json
+

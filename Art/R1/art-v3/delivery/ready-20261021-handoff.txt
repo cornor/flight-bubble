@@ -1,0 +1,42 @@
+鼓腮蓄势 ready.png 出图交付 · 2026-10-21
+
+按 docs/r1/攻击动作-蓄势图需求.md 交付，覆盖 Art/skin-colors.json 的 22 个色，不含 mystery。
+生成方式：内置 imagegen 图片编辑。以各自 idle.png 为底图；部分重做使用 attack.png 作为脸部位置参考。
+最终位置：Art/R1/art-v3/delivery/creatures/{creatureId}/{HEX}/ready.png。
+规格：22 张均为 224×256 RGBA 透明 PNG；脚底和身体站位与各自 idle 一致。
+
+验收：Alpha 通道逐像素一致；脸部矩形之外 RGBA 差异像素为 0。原 idle / attack / spent / blink / cheer / projectile 等角色文件均未改变。
+嘴闭合、两边圆鼓腮、向上看；小清去除了生成稿重复的下方小凸起。
+嘴部按 GardenSkin.MouthCanvas 的坐标进行静态对位，定位图见 _qa/ready-20261021/mouth-check.png。
+
+注意：这是出图和静态美术验收，没有重建图集或编译游戏，尚未进行游戏内蓄势→攻击切换验收。
+现有代码与图集脚本已有可选 ready 状态；后续构建/接入时需检查脸部切换、图集 creatureScale 和实机小尺寸辨识。
+
+总览：_qa/ready-20261021/ready-overview.png
+三状态对照：_qa/ready-20261021/review-1.png 至 review-6.png（idle / ready / attack）。
+出图记录：generation-20261021-ready.json（所有实际提示词、输入、原始生成图、选择结果、SHA-256）。
+原始生成图及审计、整理脚本：_qa/ready-20261021/。
+
+交付清单：
+  creatures/blue/2982F4/ready.png  3b436a9acaddfd30f229eae5272df58d204175135aeebad67a88fdeb712d2323
+  creatures/blue/42A9FF/ready.png  34f140f0f43d573c120a2f31fa9355cd6d61619634cf3a92afad8e7230685447
+  creatures/orange/FF7E27/ready.png  1b559bc74d6f7c26988894e6901b6338f34a8c7642af5491a0cf91042b965c83
+  creatures/orange/FF9D30/ready.png  49069cedaefcd259fc145cd3088b5d2dd0cb642dc1869431d1d84f7b61cf1ef4
+  creatures/green/62E18E/ready.png  b3b82e96d9e04cc2518bdbf9b9a0eb56eca5ca6eef47e612d4f4b6db9d9786b0
+  creatures/purple/BD80FF/ready.png  2af0e1d50ddeff7ce72af7804c04004f8b36f2db833cdf2e297413d941388b74
+  creatures/yellow/FFDF48/ready.png  4b58baa74a72903a6e47b6017e69fcabf41f9806f9fa37ca71d805b8e1f58eb6
+  creatures/white/FFFFFF/ready.png  a6c4bd3661555757a345d6f82884246fe19680f21b0648115900fb7079155faf
+  creatures/red/FF525B/ready.png  0761aa154d0f194075c572e090b101ac797fcce3801b5f1aa6922717f7eda997
+  creatures/charcoal/2D2D2D/ready.png  746dba70aa6b9f994f540cad286041de04ebde745eafd4445c440d0fbf191f07
+  creatures/slate-blue/696CAF/ready.png  9263db8ad26647eafc09b81e7e67d05c91457ec5e280f86c0ab673cb1d20ba5b
+  creatures/cyan/46D9FF/ready.png  bbe7d87a91c622d56a272ed4fcdf776304463dd291b716d9fd23411a2e83a47d
+  creatures/lavender/C8C5FF/ready.png  197c7166f1afd8ea2b7ddd2dbde0d093aa6d8d08789e4841c90e7a2c2cc725fb
+  creatures/berry/9C225E/ready.png  18e7a727fb1136d8a0d019e804b3719d78a4e54d24fb0d0478c07e5027409dd5
+  creatures/brown/65392D/ready.png  a0bc3aefd322d90448f7947e083eb04c69bb75a31d94ac0d8adf3adfb86a6f81
+  creatures/violet/B672FD/ready.png  fd3bd8686e6adaa82863001a5a6b6d27644804383e2d44bd26672959296a7b95
+  creatures/lime/92EF4D/ready.png  f5ed4e0ee9988df1477ad3de204e6c84c79fa4412d4ab1d6bb82fe09ceb2a413
+  creatures/mint/30D183/ready.png  ad1f6f48627a934a6a38ba2b35f369e41d7a8c34e56146be4010fa347c92131e
+  creatures/forest/0C7E1C/ready.png  a4ffd2457a1c543387fb74a090eb0858259eca4c30c7c33ce712b68f1c5bd47f
+  creatures/pink/FFC5E0/ready.png  243d61a2969ffb29e9881b70ee7ecef1e7d3374eb98bd956992e754046345cba
+  creatures/peach/FFCAA9/ready.png  5dc846d06ef89a0c9c918bbcd89ebdd00578475dcb2d76d7c8a5758308626c61
+  creatures/pale-mint/C5FFE4/ready.png  1109c8a87b5772e92f08afe0ecd033b82ab6774d14bd7ba738485914f2b597dd

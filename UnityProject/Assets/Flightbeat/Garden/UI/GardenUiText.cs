@@ -21,11 +21,15 @@ namespace Flightbeat.Garden.UI
         [Min(0)] public float outlineWidth;
         public Color outlineColor = new Color32(35, 64, 107, 255);   // v3 navy outline (UI spec v3 4.5)
         [SerializeField] Texture2D fontAtlas;
-        static Dictionary<char, GardenSkin.Glyph> glyphs;
+        public bool roundedFont;
+        static Dictionary<char, GardenSkin.Glyph> originalGlyphs, roundedGlyphs;
+        static Texture2D roundedAtlas;
+        Dictionary<char, GardenSkin.Glyph> glyphs;
         bool alternate;
         object[] arguments;
         string rendered;
-        public override Texture mainTexture => fontAtlas ? fontAtlas : Resources.Load<Texture2D>("GardenR1/atlas");
+        public override Texture mainTexture => roundedFont ? (roundedAtlas ? roundedAtlas : roundedAtlas = Resources.Load<Texture2D>("GardenR1/bars"))
+            : fontAtlas ? fontAtlas : Resources.Load<Texture2D>("GardenR1/atlas");
         public void SetFontAtlas(Texture2D value) { fontAtlas = value; SetAllDirty(); }
         // Typed overloads are called every LateUpdate by RefreshGardenUi: they return before
         // boxing or string.Format when the bound value is unchanged, so steady frames allocate nothing.
@@ -74,16 +78,20 @@ namespace Flightbeat.Garden.UI
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear();
-            var data = GardenSkin.Data;
+            var data = roundedFont ? GardenBarArt.Data : GardenSkin.Data;
+            glyphs = roundedFont ? roundedGlyphs : originalGlyphs;
             if (glyphs == null)
             {
                 glyphs = new Dictionary<char, GardenSkin.Glyph>();
                 foreach (var glyph in data.glyphs) glyphs[(char)glyph.code] = glyph;
+                if (roundedFont) roundedGlyphs = glyphs; else originalGlyphs = glyphs;
             }
             string value = rendered ?? text;
             float width = 0;
             foreach (char c in value) width += glyphs.TryGetValue(c, out var g) ? g.advance * fontSize : fontSize;
             Rect r = rectTransform.rect;
+            float fit = roundedFont ? Mathf.Min(1f, Mathf.Max(1f, r.width - 4f) / Mathf.Max(.01f, width)) : 1f;
+            float size = fontSize * fit; width *= fit;
             float x = centered ? r.center.x - width * .5f : r.xMin;
             float top = r.yMax;
             if (middle)
@@ -93,8 +101,8 @@ namespace Flightbeat.Garden.UI
                 foreach (char c in value)
                     if (glyphs.TryGetValue(c, out var g) && g.w > 0 && g.h > 0)
                     {
-                        float y = -(.86f + g.bearingY) * fontSize;
-                        inkTop = Mathf.Max(inkTop, y); inkBottom = Mathf.Min(inkBottom, y - g.h / data.fontSize * fontSize);
+                        float y = -(.86f + g.bearingY) * size;
+                        inkTop = Mathf.Max(inkTop, y); inkBottom = Mathf.Min(inkBottom, y - g.h / data.fontSize * size);
                     }
                 if (inkTop > inkBottom) top = r.center.y - (inkTop + inkBottom) * .5f;
             }
@@ -102,20 +110,20 @@ namespace Flightbeat.Garden.UI
                 for (int i = 0; i < 8; i++)
                 {
                     float a = i * Mathf.PI / 4;
-                    Draw(vh, value, x + Mathf.Cos(a) * outlineWidth, top - Mathf.Sin(a) * outlineWidth, outlineColor, data);
+                    Draw(vh, value, x + Mathf.Cos(a) * outlineWidth, top - Mathf.Sin(a) * outlineWidth, outlineColor, data, size);
                 }
-            Draw(vh, value, x, top, color, data);
+            Draw(vh, value, x, top, color, data, size);
         }
-        void Draw(VertexHelper vh, string value, float x, float top, Color tint, GardenSkin.Atlas data)
+        void Draw(VertexHelper vh, string value, float x, float top, Color tint, GardenSkin.Atlas data, float size)
         {
             foreach (char c in value)
             {
-                if (!glyphs.TryGetValue(c, out var g)) { x += fontSize; continue; }
+                if (!glyphs.TryGetValue(c, out var g)) { x += size; continue; }
                 if (g.w > 0 && g.h > 0)
                 {
-                    float left = x + g.bearingX * fontSize;
-                    float y = top - (.86f + g.bearingY) * fontSize;
-                    float right = left + g.w / data.fontSize * fontSize, bottom = y - g.h / data.fontSize * fontSize;
+                    float left = x + g.bearingX * size;
+                    float y = top - (.86f + g.bearingY) * size;
+                    float right = left + g.w / data.fontSize * size, bottom = y - g.h / data.fontSize * size;
                     float u = g.x / data.size, v = 1 - (g.y + g.h) / data.size;
                     float u1 = (g.x + g.w) / data.size, v1 = 1 - g.y / data.size;
                     int n = vh.currentVertCount;
@@ -125,7 +133,7 @@ namespace Flightbeat.Garden.UI
                     vh.AddVert(new Vector3(left, bottom), tint, new Vector2(u, v));
                     vh.AddTriangle(n, n + 1, n + 2); vh.AddTriangle(n, n + 2, n + 3);
                 }
-                x += g.advance * fontSize;
+                x += g.advance * size;
             }
         }
     }

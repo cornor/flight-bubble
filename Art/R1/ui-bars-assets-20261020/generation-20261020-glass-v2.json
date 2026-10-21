@@ -1,0 +1,33 @@
+{
+  "mode": "built-in image_gen",
+  "reference": "Art/R1/ui-bars-design-20261020/01-操作与预警.png",
+  "assets": [
+    {
+      "id": "capsule",
+      "source": "glass-v2/capsule-source.png",
+      "prompt": "Use case: precise-object-edit. Asset type: a production game UI blank glass capsule background sprite. Input image is a style reference sheet; reproduce ONLY the FIRST BLUE CAPSULE's glass frame and empty interior, removing all text, hand, bubble icons and decoration bubbles. Deliver one isolated long horizontal capsule, front-facing, approx 6:1 width-to-height, centered with generous transparent padding. Match the reference's premium cute casual bubble game rendering exactly: luminous narrow cyan-blue outer contour, crisp continuous white inner rim, thick convex glass with large curved soft white reflections at BOTH rounded ends, milky pale cyan glass interior with soft subtle irregular cloudy light and deeper blue at the bottom. Middle 60% should remain very smooth and horizontally uniform for stretching; end reflections stay inside the outer 20% at each end. Shape must be symmetrical with truly round semicircular ends, and straight parallel top and bottom. No letters, numbers, logos, icons, floating bubbles, labels, checkerboard or background. Actual transparent alpha outside the capsule. High resolution, clean antialiased edges. Only ONE capsule, no additional objects.",
+      "sha256": "a63fefe7f30a6a0ba420356cc13b1ba00a68a3f698d9f5f59a3b3f890776f5ce"
+    },
+    {
+      "id": "danger",
+      "source": "glass-v2/danger-source.png",
+      "prompt": "Use case: precise-object-edit. Asset type: production game UI danger warning strip sprite. Reference image is a style sheet; reproduce ONLY the bottom red warning strip frame and red interior without any text or triangle icons. ONE long slim horizontal strip, width to height about 11:1. Rounded RECTANGLE with small rounded corners (corner radius 20% of height), straight long top/bottom, NOT a pill button. Juicy glossy coral-red glass, bright red narrow outer outline, thin continuous white inner rim, soft white curved reflections at left and right, lighter red top shading. Middle 75% smooth and uniform to stretch. Actual transparent background and a little transparent padding around all sides. No text, no numbers, no icons, no symbols, no bubbles, no checkerboard, no scene. Isolated front-facing symmetric game UI asset.",
+      "sha256": "339ed86215fdc8fa61d2731942404fadbf1daecdba5e81523d2c3f854010c4fd"
+    },
+    {
+      "id": "ring",
+      "source": "glass-v2/ring-source.png",
+      "prompt": "Use case: precise-object-edit. Asset type: small 2D casual bubble-game countdown bezel sprite. Style reference image's panel 05 has a round cyan countdown ring with a number 3. Reproduce one isolated circular glass timer BEZEL, without any digit and without the changing progress arc. A perfect circle viewed straight on: thick glossy icy blue/cyan ring, dark teal lower inner groove, pale white-to-ice center disc for a dynamic navy digit, continuous thin luminous white outline and bright specular curved white reflections at upper left. Cheerful polished game UI rendering matching reference, chunky smooth round edge, clearly readable at 48px. Actual transparent alpha outside the circle. Centered with transparent margin. ONE circle only. No text, number, hands, progress segments, icons, label or surrounding capsule.",
+      "sha256": "438088e20916b2072784c5a0f6c10afff1c77bb4619715e23c609c5f889ed404"
+    }
+  ],
+  "font": {
+    "name": "ChillRoundF Bold 3.200",
+    "source": "https://github.com/Warren2060/ChillRound/releases/tag/v3.200",
+    "license": "Art/fonts/ChillRoundF/LICENSE.txt",
+    "rasterization": "48px, 1px stroke; fallback Noto Sans SC for ▶",
+    "sha256": "f2c4f9295d9d04a1eb6392ae3c51ecf2a9ffab355a45c6686eeec5eede3381ec"
+  },
+  "packing": "scripts/r1v3/build_bar_atlas.py",
+  "runtime": "caps: uniform height scaling; middle: horizontal stretch; cyan chroma recoloured by shader, white reflections preserved"
+}

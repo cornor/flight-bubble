@@ -24,6 +24,7 @@ from build_fx_atlas import SPECS as FX_SPECS, write_index
 # Updated in place so build_fx_atlas.write_index also lists them in fx-atlas.json. Delivered only in art-v3.
 FX_SPECS.update({'rocket-pop': 6, 'rescue-bubble': 1})
 import placeholders as P
+from bead_material import bead
 
 ap = argparse.ArgumentParser()
 ap.add_argument('--delivery', default=str(ROOT / 'Art/R1/art-v3/delivery'))
@@ -62,15 +63,20 @@ if os.environ.get('R1_ATLAS_FORCE') != '1' and _CACHE.exists() and all((OUT / n)
     try: _cached = json.loads(_CACHE.read_text())
     except Exception: _cached = {}
     if _cached.get('fingerprint') == _FP:
+        from build_bar_atlas import build as build_bars
+        build_bars(OUT)
         print('atlas unchanged, skipped (R1_ATLAS_FORCE=1 to rebuild)', file=sys.stderr)
         print(_cached.get('summary', '{}'))
         raise SystemExit(0)
 FONT_SHA = 'a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da'
 UI = 0.75
 # Creature canvases are stored at the UI scale (224x256 -> 168x192 px, display canvas at most 118 logical px).
-# If blink/cheer poses (items 58/59) make the 2048 atlas overflow, the script re-runs itself with a smaller
-# creature scale, down to 0.62 (139x159 px); the scale used is printed as creatureScale.
-CREATURE = float(os.environ.get('R1_CREATURE_SCALE', UI))
+# 2026-10-21 (user: the ready poses must not make the members blurry). The creature atlas is 4096 x 2048 (its own
+# texture, so the main atlas UVs are unchanged) and creatures are stored at full size (1.0 of the 224x256 canvas),
+# sharper than the old 0.75 that filled a 2048 square. If it still overflows, the script retries 0.04 smaller but
+# never below 0.75 (the old quality); the scale used is printed as creatureScale.
+CREATURE_W, CREATURE_H, CREATURE_MIN = 4096, 2048, 0.75
+CREATURE = float(os.environ.get('R1_CREATURE_SCALE', 1.0))
 
 # ---- (slot id, delivery file, scale, placeholder factory)
 SLOTS = [
@@ -89,9 +95,11 @@ SLOTS = [
     ('scene/crown', 'ui/crown.png', UI, P.crown),
     ('scene/queue-panel', 'ui/queue-panel.png', UI, P.queue_panel),
     ('scene/queue-corner', 'ui/queue-corner.png', UI, P.queue_corner),
-    ('scene/button-shuffle', 'ui/button-shuffle.png', UI, lambda: P.button('shuffle', '重排', FONT)),
-    ('scene/button-designate', 'ui/button-designate.png', UI, lambda: P.button('designate', '优先出战', FONT)),
-    ('scene/button-water', 'ui/button-bomb.png', UI, lambda: P.button('bomb', '泡泡炸弹', FONT)),
+    # 2026-10-21: text-free button art (buttons-v1); the words are drawn by the battle UI in the rounded font.
+    # The bomb button carries the rainbow bomb of the hint-bar icon set instead of the white splash (user 10:44).
+    ('scene/button-shuffle', 'ui/button-shuffle-blank.png', UI, lambda: P.button('shuffle', '重排', FONT)),
+    ('scene/button-designate', 'ui/button-designate-blank.png', UI, lambda: P.button('designate', '优先出战', FONT)),
+    ('scene/button-water', 'ui/button-bomb-blank.png', UI, lambda: P.button('bomb', '泡泡炸弹', FONT)),
     ('scene/badge', 'ui/badge-count.png', UI, P.badge_count),
     # second batch (v3 file names; placeholders until delivered)
     ('ui/popup-panel', 'ui2/popup-panel.png', UI, P.popup_panel),
@@ -114,7 +122,7 @@ for entry in color_data['colors']:
     for st in ['idle', 'attack', 'spent']:
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE,
                       lambda x=h, state=st: P.round_creature(x, state)))
-    for st in ['blink', 'cheer']:
+    for st in ['blink', 'cheer', 'ready']:   # ready: puffed cheeks before firing (2026-10-21, optional)
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE, None))
 # Mystery reserves reveal neither their palette nor their optional animation.
 # Art item 76 delivers only idle: a mystery member never attacks while hidden, so the other states reuse it.
@@ -122,6 +130,13 @@ for st in ['idle', 'attack', 'spent']:
     rel = f'creatures/mystery/8C919C/{st}.png'
     if not (DEL / rel).exists() and (DEL / 'creatures/mystery/8C919C/idle.png').exists(): rel = 'creatures/mystery/8C919C/idle.png'
     SLOTS.append((f'plants/color-8c919c/8C919C/{st}', rel, CREATURE, lambda state=st: P.round_creature('8C919C', state)))
+# 2026-10-21 (user): hidden members become a round rainbow bubble with question marks (optional art; the grey
+# silhouette stays until it is delivered). Same 224x256 canvas, resting on the feet line.
+SLOTS.append(('plants/mystery-bubble', 'creatures/mystery/bubble.png', CREATURE, None))
+# 2026-10-21 victory page art (optional; the page draws program fallbacks until delivered). In the creature atlas
+# (plants/ prefix) because the main atlas is full.
+for _id, _scale in (('ribbon', UI), ('button-home', UI), ('button-replay', UI), ('button-next', UI), ('icon-clock', .5)):
+    SLOTS.append((f'plants/win/{_id}', f'win/{_id}.png', _scale, None))
 # Third batch finale (art items 77/78), optional: the game falls back to the original drawing when absent.
 # The Bubble King goes to the creature atlas (plants/ prefix); king-blow falls back to king-ready in code.
 # Home key art (Art/R1/home-v1, items H3-H8, H10), optional: the home page keeps its old look until delivered.
@@ -307,6 +322,15 @@ SLOTS.append(('plants/home/logo', f'{HOME_REL}logo.png', 0.8, None))
 SLOTS += [('plants/finale/king-ready', 'finale/king-ready.png', UI, None),
           ('plants/finale/king-blow', 'finale/king-blow.png', UI, None),
           ('finale/button', 'finale/button.png', UI, None)]
+# 2026-10-20 (docs/r1/提示条UI-切图与改动清单.md): hint-bar icons (128 px deliveries, shown at 22-40 logical px, stored
+# at 64 px) and the finale's blank plates (button 340x86, title 520x100, clear 520x110 logical). Optional: the code
+# keeps its drawn fallbacks when a slot is missing.
+BAR_ICONS = ['tap', 'pick', 'crosshair', 'warn', 'bomb', 'bubbles', 'star', 'stars2', 'stars3', 'arrows', 'unlock', 'ad',
+             'coin', 'flame', 'crown', 'reinforce', 'broken-link', 'target', 'shield', 'chip-wait', 'chip-done']
+SLOTS += [(f'ui/bar-icon-{n}', f'ui3/bar-icon-{n}.png', 0.5, None) for n in BAR_ICONS]
+SLOTS += [('finale/button-plate', 'finale/button-plate.png', UI, None),
+          ('finale/title-plate', 'finale/title-plate.png', UI, None),
+          ('finale/clear-plate', 'finale/clear-plate.png', UI, None)]
 color_file.write_text(json.dumps(color_data, ensure_ascii=False, indent=2) + '\n')
 lookup = ['#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR', 'namespace Flightbeat.Garden {',
           '    public static class GardenColorCatalog {']
@@ -339,37 +363,7 @@ GUIDE = {'explain': 'idle', 'happy': 'attack', 'worried': 'spent', 'proud': 'idl
 for face, st in GUIDE.items():
     SLOTS.append((f'ui/guide-{face}', f'ui2/guide-{face}.png', UI, None, ('creatures/blue/2982F4/' + st + '.png', (lambda s=st: P.creature('blue', '2982F4', s)))))
 
-# ---- program-drawn: beads, mosaic panel, glow, arrow
-def bead(px, teaching_mark=None, rim=None):
-    s = 16; n = px * s
-    main = Image.new('RGBA', (n, n), (0, 0, 0, 0)); fixed = Image.new('RGBA', (n, n), (0, 0, 0, 0))
-    dm, df = ImageDraw.Draw(main), ImageDraw.Draw(fixed)
-    r = n * .47; cx = cy = n / 2
-    for i in range(int(r), 0, -1):          # light top-left, slightly darker lower right (tinted)
-        t = i / r
-        g = int(255 * (0.78 + 0.22 * (1 - t) ** .6))
-        ox, oy = -(1 - t) * r * .25, -(1 - t) * r * .28
-        dm.ellipse([cx - i + ox, cy - i + oy, cx + i + ox, cy + i + oy], fill=(g, g, g, 255))
-    ring = Image.new('L', (n, n), 0); ImageDraw.Draw(ring).ellipse([cx - r, cy - r, cx + r, cy + r], fill=255)
-    inner = ring.filter(ImageFilter.MinFilter(int(s * 1.4) | 1))
-    main.putalpha(ring)
-    edge = Image.composite(Image.new('L', (n, n), 0), ring, inner)
-    main.paste(Image.new('RGBA', (n, n), (158, 158, 158, 255)), (0, 0), edge)   # same-hue rim = main x 0.62
-    df.ellipse([cx - r * .58, cy - r * .62, cx - r * .08, cy - r * .2], fill=(255, 255, 255, 220))
-    if rim: fixed.paste(Image.new('RGBA', (n, n), rim), (0, 0), edge)
-    if teaching_mark:                       # UI spec v3 4.1: blue dot, orange triangle, green square, purple cross
-        mk = Image.new('RGBA', (n, n), (0, 0, 0, 0)); dk = ImageDraw.Draw(mk); w = r * .3
-        mx, my = cx + r * .06, cy + r * .14
-        if teaching_mark == 'dot': dk.ellipse([mx - w, my - w, mx + w, my + w], fill=(255, 255, 255, 255))
-        elif teaching_mark == 'tri': dk.polygon([(mx, my - w * 1.1), (mx + w * 1.05, my + w * .8), (mx - w * 1.05, my + w * .8)], fill=(255, 255, 255, 255))
-        elif teaching_mark == 'square': dk.rectangle([mx - w * .85, my - w * .85, mx + w * .85, my + w * .85], fill=(255, 255, 255, 255))
-        elif teaching_mark == 'cross':
-            dk.line([(mx - w, my - w), (mx + w, my + w)], fill=(255, 255, 255, 255), width=int(r * .2))
-            dk.line([(mx - w, my + w), (mx + w, my - w)], fill=(255, 255, 255, 255), width=int(r * .2))
-        sh = mk.split()[3].filter(ImageFilter.MaxFilter(int(s * 1.2) | 1))
-        fixed.paste(Image.new('RGBA', (n, n), (35, 64, 107, 255)), (0, 0), sh); fixed.alpha_composite(mk)
-    return main.resize((px, px), Image.LANCZOS), fixed.resize((px, px), Image.LANCZOS)
-
+# ---- program-drawn: beads (bead_material.py), mosaic panel, glow, arrow
 def field(px=96, radius=24, edge=9):
     """Mosaic panel: exact #8C919C in the middle (UI spec v3 2), soft darker inner edge; drawn 9-sliced."""
     n = px * 4; base = (0x8C, 0x91, 0x9C)
@@ -394,9 +388,11 @@ def glow(px):
     out = Image.new('RGBA', (px, px), (255, 255, 255, 0)); out.putalpha(im); return out
 
 GENERATED = {}
-m, f = bead(11); GENERATED['bugs/bead-main'], GENERATED['bugs/bead-fixed'] = m, f
-GENERATED['bugs/bead-white-fixed'] = bead(11, rim=(140, 150, 162, 255))[1]
-GENERATED['bugs/bead-dark-fixed'] = bead(11, rim=(150, 154, 160, 255))[1]
+# 2026-10-20: approved B material; prefiltered for ~9 px game quads.
+# 2026-10-21: 24 px (was 12): the formation bubbles are ~10 logical px, 20-30 device px, so 12 px was upscaled soft.
+m, f = bead(24); GENERATED['bugs/bead-main'], GENERATED['bugs/bead-fixed'] = m, f
+GENERATED['bugs/bead-white-fixed'] = bead(24, rim=(140, 150, 162, 255))[1]
+GENERATED['bugs/bead-dark-fixed'] = bead(24, rim=(150, 154, 160, 255))[1]
 GENERATED['bugs/bead-teaching-main'] = bead(21)[0]
 for key, mark in {'morning-glory': 'dot', 'carrot': 'tri', 'broccoli': 'square', 'eggplant': 'cross'}.items():
     GENERATED[f'bugs/bead-teaching-{key}-fixed'] = bead(21, teaching_mark=mark)[1]
@@ -484,6 +480,14 @@ for entry in SLOTS:
     im = im.resize((max(1, round(im.width * sc)), max(1, round(im.height * sc))), Image.LANCZOS)
     tiles.append((sid, im, src))
 for sid, im in GENERATED.items(): tiles.append((sid, im, 'generated'))
+# 2026-10-21 (user: a white outline on the front-row members you can tap): each idle silhouette (and the mystery
+# bubble) grown by 4 canvas px (12:22, was 8), softened, as a white image drawn behind the member.
+for _sid, _im, _src in list(tiles):
+    if _sid.startswith('plants/') and (_sid.endswith('/idle') or _sid == 'plants/mystery-bubble'):
+        _r = max(1, round(4 * CREATURE))   # 12:22 (user): half as thick (was 8)
+        _a = _im.getchannel('A').point(lambda v: 255 if v > 40 else 0).filter(ImageFilter.MaxFilter(2 * _r + 1)).filter(ImageFilter.GaussianBlur(1.0))
+        _o = Image.new('RGBA', _im.size, (255, 255, 255, 0)); _o.putalpha(_a)
+        tiles.append(((_sid[:-5] if _sid.endswith('/idle') else _sid) + '/outline', _o, 'generated-outline'))
 BG_SIZE = (810, 1440)
 if _bg.exists():
     background = Image.open(_bg).convert('RGB'); bg_src = _bg.name + ':' + hashlib.sha256(_bg.read_bytes()).hexdigest(); delivered.append('scene/background.png')
@@ -585,17 +589,17 @@ def place(w, h):
     return x,y
 slots, heights = [], []
 for atlas_id in [0, 1]:
-    atlas_image = image if atlas_id == 0 else Image.new('RGBA', (SIZE, SIZE))
+    atlas_image = image if atlas_id == 0 else Image.new('RGBA', (CREATURE_W, CREATURE_H))
     start_y = cursor_y if atlas_id == 0 else 0
-    free[:] = [(0, start_y, SIZE, SIZE - start_y)]
+    free[:] = [(0, start_y, SIZE, SIZE - start_y)] if atlas_id == 0 else [(0, 0, CREATURE_W, CREATURE_H)]
     top = start_y
     for sid, im, src, ox, oy, fw, fh in tiles:
         if int(sid.startswith('plants/')) != atlas_id: continue
         w, h = im.size
         at = place(w + 4, h + 4)
         if at is None:
-            if atlas_id == 1 and CREATURE > 0.62 + 1e-6:
-                os.environ['R1_CREATURE_SCALE'] = f'{max(0.62, CREATURE - 0.04):.2f}'
+            if atlas_id == 1 and CREATURE > CREATURE_MIN + 1e-6:
+                os.environ['R1_CREATURE_SCALE'] = f'{max(CREATURE_MIN, CREATURE - 0.04):.2f}'
                 print(f'Creature atlas full at {sid}; retrying at {os.environ["R1_CREATURE_SCALE"]}', file=sys.stderr)
                 os.execv(sys.executable, [sys.executable, str(Path(__file__).resolve()), *sys.argv[1:]])
             raise SystemExit(f'Atlas {atlas_id} full at {sid}')
@@ -609,7 +613,7 @@ for atlas_id in [0, 1]:
     atlas_image.save(OUT / ('atlas.png' if atlas_id == 0 else 'creatures.png'))
 write_index(slots, SIZE, OUT, GEN)
 (OUT / 'atlas.json').write_text(json.dumps(dict(size=SIZE, cell=CELL, fontSize=font_size, characters=chars,
-                                                 glyphs=glyphs, slots=slots), ensure_ascii=False))
+                                                 glyphs=glyphs, slots=slots, creatureWidth=CREATURE_W, creatureHeight=CREATURE_H), ensure_ascii=False))
 (GEN / 'atlas-sources.json').write_text(json.dumps({'scene/background (background.png)': bg_src, **{t[0]: t[2] for t in tiles}}, indent=1, ensure_ascii=False))
 _summary = json.dumps(dict(slots=len(slots), creatureScale=CREATURE, glyphs=glyph_mode, characters=len(chars), usedHeight=heights, size=SIZE,
                       delivered=len(delivered), placeholders=len(placeholder),
@@ -617,3 +621,5 @@ _summary = json.dumps(dict(slots=len(slots), creatureScale=CREATURE, glyphs=glyp
 print(_summary)
 _CACHE.parent.mkdir(parents=True, exist_ok=True)
 _CACHE.write_text(json.dumps(dict(fingerprint=_FP, summary=_summary), ensure_ascii=False))
+from build_bar_atlas import build as build_bars
+build_bars(OUT)

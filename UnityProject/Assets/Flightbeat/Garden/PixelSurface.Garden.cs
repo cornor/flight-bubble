@@ -14,12 +14,18 @@ namespace Flightbeat.Rendering
                 ownedMaterial.shader = Resources.Load<Shader>("GardenR1/GardenSurface");
                 ownedMaterial.SetTexture("_GardenTex", Resources.Load<Texture2D>("GardenR1/atlas"));
                 ownedMaterial.SetTexture("_GardenTex2", Resources.Load<Texture2D>("GardenR1/creatures"));
+                ownedMaterial.SetTexture("_GardenBarsTex", Resources.Load<Texture2D>("GardenR1/bars"));
                 gardenMaterialReady = true;
             }
         }
         public void GardenQuad(float x, float y, float w, float h, Rect uv, Color tint, bool pixel = false, bool rigid = true, int atlas = 0) {
             PrepareGardenMaterial();
-            GardenAxisQuad(x, y, w, h, uv, tint, (atlas == 1 ? 22f : 20f) + (pixel ? 1f : 0f), rigid);
+            GardenAxisQuad(x, y, w, h, uv, tint, 20f + atlas * 2f + (pixel ? 1f : 0f), rigid);
+        }
+        public void GardenGlassQuad(float x, float y, float w, float h, Rect uv, Color edge, float fill)
+        {
+            PrepareGardenMaterial();
+            Quad(x, y, w, h, uv, edge, 0f, 26f, true, Mathf.Clamp01(fill));
         }
         // v3 empty-pad swirl: axis-aligned quad with four explicit UV corners (bl, br, tr, tl), so the texture can rotate
         // while the quad stays flat. Rigid like other sprites: keeps its height and follows the mapped center.
@@ -33,6 +39,18 @@ namespace Flightbeat.Rendering
             v.position = new Vector3(x + w, bottom, 0); v.uv0 = new Vector4(br.x, br.y, 0, 0); quad[1] = v;
             v.position = new Vector3(x + w, top, 0); v.uv0 = new Vector4(tr.x, tr.y, 0, 0); quad[2] = v;
             v.position = new Vector3(x, top, 0); v.uv0 = new Vector4(tl.x, tl.y, 0, 0); quad[3] = v;
+            mesh.AddUIVertexQuad(quad);
+        }
+        // 2026-10-21: an axis-aligned quad with one colour per corner (screen y-down, MapLayout ignored); `atlas` as in
+        // GardenQuad (0 main, 1 creatures, 2 bars). Used for colour ramps and light sweeps on the combo words.
+        public void GardenQuadColors(float x, float y, float w, float h, Rect uv, Color tl, Color tr, Color br, Color bl, int atlas = 0) {
+            PrepareGardenMaterial();
+            float hgt = ScreenLayout.Height;
+            var v = UIVertex.simpleVert; v.uv1 = new Vector4(20f + atlas * 2f, 0, 0, 0);
+            v.color = VertexColor(bl); v.position = new Vector3(x, hgt - y - h, 0); v.uv0 = new Vector4(uv.xMin, uv.yMin, 0, 0); quad[0] = v;
+            v.color = VertexColor(br); v.position = new Vector3(x + w, hgt - y - h, 0); v.uv0 = new Vector4(uv.xMax, uv.yMin, 0, 0); quad[1] = v;
+            v.color = VertexColor(tr); v.position = new Vector3(x + w, hgt - y, 0); v.uv0 = new Vector4(uv.xMax, uv.yMax, 0, 0); quad[2] = v;
+            v.color = VertexColor(tl); v.position = new Vector3(x, hgt - y, 0); v.uv0 = new Vector4(uv.xMin, uv.yMax, 0, 0); quad[3] = v;
             mesh.AddUIVertexQuad(quad);
         }
         // 2026-10-17: a textured quad with free corners (screen y-down, MapLayout ignored), for rotating art.

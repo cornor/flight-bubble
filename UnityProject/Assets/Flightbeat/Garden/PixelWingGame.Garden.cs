@@ -30,15 +30,26 @@ namespace Flightbeat.Game
             // 11:13 (user: it hid part of the picture): moved below the rail, into the empty pad row (nobody is on the
             // pads before the first deployment), right above the queue it points to; narrower so it clears the locked
             // pads' ad badges.
-            float cy = (mapped ? ScreenLayout.Y(600f) : 600f) + Mathf.Sin(ui * 2.2f) * 2.5f;
+            // 2026-10-21 (quality pass): 8 px higher (600 -> 592) so it keeps a gap above the pad row.
+            float cy = (mapped ? ScreenLayout.Y(592f) : 592f) + Mathf.Sin(ui * 2.2f) * 2.5f;
             s.MapLayout = false;
             try
             {
-                GlassCapsule(s, 270f, cy, 300f, 44f, Hex(0x7CC4F0));
-                Text(s, "点下方队员，开始出战", 270f, cy - 11f, 20f, true, Hex(0x163E6D));
-                // 11:01 (user): no side bubbles.
+                // 2026-10-20 (UI redesign 01): tap icon, sky edge, one decoration bubble on the rim.
+                const string ready = "点下方队员，开始出战";
+                GardenBars.Bar(s, 270f, cy, Mathf.Max(318f, GardenBars.Width(ready, 22f, 50f, "tap")), 50f, GardenBars.Sky, "tap", ready, 22f,
+                    GardenBars.Navy, 1f, 1f, GardenBars.Deco.One, BarAge(0));
             }
             finally { s.MapLayout = mapped; }
+        }
+        // Seconds since a persistent bar (by key) started showing: a bar not drawn for 0.1 s counts as new next time.
+        readonly float[] barShownAt = new float[16], barLastDrawn = { -10f, -10f, -10f, -10f, -10f, -10f, -10f, -10f,
+            -10f, -10f, -10f, -10f, -10f, -10f, -10f, -10f };   // 8..15: the 合 badge per lane
+        float BarAge(int key)
+        {
+            if (ui - barLastDrawn[key] > .1f) barShownAt[key] = ui;
+            barLastDrawn[key] = ui;
+            return ui - barShownAt[key];
         }
 
         // 2026-10-19 11:07 (user picked C): the stalled-fleet hint uses the same glass capsule, with a coral edge, a warning
@@ -51,69 +62,89 @@ namespace Flightbeat.Game
             s.MapLayout = false;
             try
             {
-                const float cx = 270f, w = 420f, h = 66f;
-                GlassCapsule(s, cx, cy, w, h, Hex(0xF08A6C));
-                WarnSign(s, cx - w * .5f + 34f, cy, 1f);
-                Text(s, "出战位满了，同色泡泡被挡住啦", cx + 14f, cy - 21f, 18f, true, Hex(0xB0302A));
-                Text(s, "试试泡泡炸弹，清开最下排", cx + 14f, cy + 5f, 16f, true, Hex(0x163E6D));
+                const float cx = 270f, w = 420f, h = 72f;
+                GardenBars.Capsule(s, cx, cy, w, h, GardenBars.Coral);
+                if (!GardenBars.Icon(s, "warn", cx - w * .5f + 45f, cy, h * .82f)) WarnSign(s, cx - w * .5f + 34f, cy, 1f);
+                const float textCenter = cx + 32f;
+                GardenBarArt.Text(s, "出战位满了，同色泡泡被挡住啦", textCenter, cy - 23f, 19f, true, GardenBars.DeepCoral);
+                const string second = "试试泡泡炸弹，清开最下排";
+                float lineW = GardenBarArt.TextWidth(second, 17f), bomb = 27f;
+                bool hasBomb = GardenBars.HasIcon("bomb");
+                float start = textCenter - (lineW + (hasBomb ? bomb + 5f : 0f)) * .5f;
+                if (hasBomb) GardenBars.Icon(s, "bomb", start + bomb * .5f, cy + 13f, bomb);
+                GardenBarArt.Text(s, second, start + (hasBomb ? bomb + 5f : 0f), cy + 6f, 17f, false, GardenBars.Navy);
             }
             finally { s.MapLayout = mapped; }
         }
 
         // 2026-10-19 11:12: one-line hints in the glass capsule (logical y; rigid on tall screens like the ready hint).
-        void HintCapsule(PixelSurface s, string text, float logicalCy, float w, float h, float size, Color edge, Color ink, float alpha = 1f, float fill = 1f)
+        // 2026-10-20 (UI redesign): optional icon and decoration bubbles; the bar widens to fit its icon and text.
+        void HintCapsule(PixelSurface s, string text, float logicalCy, float w, float h, float size, Color edge, Color ink, float alpha = 1f, float fill = 1f,
+            string icon = null, GardenBars.Deco deco = GardenBars.Deco.None, float age = 1f)
         {
             bool mapped = s.MapLayout;
             float cy = mapped ? ScreenLayout.Y(logicalCy) : logicalCy;
             s.MapLayout = false;
             try
             {
-                GlassCapsule(s, 270f, cy, w, h, edge, alpha, fill);
+                w = Mathf.Min(520f, Mathf.Max(w, GardenBars.Width(text, size, h, icon)));
                 // See-through glass: a thin white outline keeps the text readable over the beads.
-                if (fill < .9f) TextOutline(s, text, 270f, cy - size * .55f, size, A(ink, alpha), A(Color.white, .9f * alpha), 1.6f);
-                else Text(s, text, 270f, cy - size * .55f, size, true, A(ink, alpha));
+                GardenBars.Bar(s, 270f, cy, w, h, edge, icon, text, size, ink, alpha, fill, deco, age, fill < .9f);
             }
             finally { s.MapLayout = mapped; }
+        }
+        // Kind of a short message (toasts and the model's notices): edge colour, ink and icon (UI redesign 13-20, 26).
+        static void MessageStyle(string text, bool refusal, out Color edge, out Color ink, out string icon)
+        {
+            ink = GardenBars.Navy; icon = null;
+            if (text.Contains("重排")) { edge = GardenBars.Mint; icon = "arrows"; }
+            else if (text.Contains("解锁") || text.Contains("出战位 +")) { edge = GardenBars.Mint; icon = "unlock"; }
+            else if (text.Contains("获得")) { edge = GardenBars.Mint; icon = text.Contains("炸弹") ? "bomb" : text.Contains("优先") ? "pick" : "star"; }
+            else if (text.Contains("已满")) { edge = GardenBars.Coral; icon = "warn"; }
+            else if (text.Contains("准星")) { edge = GardenBars.Amber; icon = "crosshair"; }
+            else if (text.Contains("广告")) { edge = GardenBars.Amber; icon = "ad"; }
+            else if (text.Contains("金币")) { edge = GardenBars.Amber; icon = "coin"; }
+            else if (text.Contains("连胜") && text.Contains("中断")) { edge = GardenBars.Amber; icon = "broken-link"; }
+            else if (text.Contains("先点击")) { edge = GardenBars.Sky; icon = "tap"; }
+            else if (refusal) { edge = GardenBars.Coral; ink = GardenBars.DeepCoral; icon = "warn"; }
+            else edge = GardenBars.Sky;
         }
         // Top toast (2.2 s): a capsule sized to its text, popping in and fading out; coral edge for the red (refusal) toasts.
         void DrawGardenToast(PixelSurface s)
         {
             float age = ui - toastAt;
             if (age > 2.2f || toast.Length == 0) return;
-            string text = GardenWords(toast);
-            float size = Mathf.Clamp(440f / Mathf.Max(1, text.Length), 14f, 17f), w = Mathf.Clamp(TextWidth(text, size) + 70f, 200f, 510f);
+            string text = GardenWords(toast).Replace("获得 ", "获得");   // 2026-10-20: 「获得泡泡炸弹 ×1」, no space
+            float size = Mathf.Clamp(440f / Mathf.Max(1, text.Length), 14f, 17f), w = Mathf.Clamp(TextWidth(text, size) + 70f, 160f, 510f);
             float alpha = Clamp01(age / .15f) * Clamp01((2.2f - age) / .3f);
             bool refusal = toastTint.r > toastTint.g + .3f;
-            HintCapsule(s, text, 108f, w, 38f, size, refusal ? Hex(0xF08A6C) : Hex(0x7CC4F0), refusal ? Hex(0xB0302A) : Hex(0x163E6D), alpha);
-        }
-        // Light glass capsule centred on (cx, cy), in screen units (call with MapLayout off): a vertical gradient drawn in
-        // one-pixel bands (no atlas asset), a white rim with a top highlight, and an outer edge in `edgeColor`.
-        // `fill` < 1 makes only the glass see-through (rim and edge stay), so the board shows through it.
-        void GlassCapsule(PixelSurface s, float cx, float cy, float w, float h, Color edgeColor, float alpha = 1f, float fill = 1f)
-        {
-            float r = h * .5f, left = cx - w * .5f + r, right = cx + w * .5f - r, top = cy - r;
-            s.Glow(cx, cy + 4f, w + 22f, h + 24f, A(Hex(0x3982B7), .12f * alpha), 0f);
-            Color upper = A(Hex(0xE6F6FF), .98f * alpha * fill), middle = A(Hex(0xD6EEFC), .96f * alpha * fill), lower = A(Hex(0xC2E5F8), .95f * alpha * fill);
-            for (int row = 0; row < (int)h; row++)
+            MessageStyle(text, refusal, out Color edge, out Color ink, out string icon);
+            // Avoid occupied hint rows in screen units, keeping the 38px toast rigid on tall screens.
+            bool mapped = s.MapLayout;
+            float cy = GardenBars.ScreenY(s, 108f);
+            void Avoid(float top, float bottom)
             {
-                float t = (row + .5f) / h, dy = row + .5f - r;
-                float cap = Mathf.Sqrt(Mathf.Max(0f, r * r - dy * dy));
-                Color band = t < .5f ? Color.Lerp(upper, middle, t * 2f) : Color.Lerp(middle, lower, (t - .5f) * 2f);
-                s.Rect(left - cap, top + row, right - left + cap * 2f, 1f, band);
+                if (cy + 19f > top - 6f && cy - 19f < bottom + 6f) cy = bottom + 25f;
             }
-            Color rim = A(Hex(0xF7FFFF), .94f * alpha);
-            s.Segment(new Vector2(left, top), new Vector2(right, top), 1.3f, rim);
-            s.Segment(new Vector2(left, cy + r), new Vector2(right, cy + r), 1f, A(rim, .75f));
-            s.Ring(new Vector2(left, cy), r, rim, 1.2f, 24, 90f, 180f);
-            s.Ring(new Vector2(right, cy), r, rim, 1.2f, 24, -90f, 180f);
-            s.Segment(new Vector2(left + 4f, top + 1.8f), new Vector2(right - 4f, top + 1.8f), 1f, A(Color.white, .48f * alpha));
-            // 11:01: an edge just outside the white rim, so the capsule still separates from light boards.
-            Color edge = A(edgeColor, .88f * alpha);
-            s.Segment(new Vector2(left, top - 1.4f), new Vector2(right, top - 1.4f), 1.5f, edge);
-            s.Segment(new Vector2(left, cy + r + 1.4f), new Vector2(right, cy + r + 1.4f), 1.5f, edge);
-            s.Ring(new Vector2(left, cy), r + 1.4f, edge, 1.5f, 28, 90f, 180f);
-            s.Ring(new Vector2(right, cy), r + 1.4f, edge, 1.5f, 28, -90f, 180f);
+            if (feedback != null && feedback.GardenComboVisible)
+                Avoid(GardenBars.ScreenY(s, 85f) - 25f, GardenBars.ScreenY(s, 85f) + 25f);
+            if (selection == 2)
+                Avoid(GardenBars.ScreenY(s, 140f) - 22f, GardenBars.ScreenY(s, 140f) + 22f);
+            if (lesson != null && Battle.State != Phase.Intro && Battle.State != Phase.Won && Battle.State != Phase.Lost
+                && !settings && selection == 0 && !finaleGuide)
+                Avoid(GardenBars.ScreenY(s, 104f) - 20f,
+                    GardenBars.ScreenY(s, 180f) + 52f);
+            if (Battle != null && Battle.AdvanceHeld > 0f && selection == 0)
+                Avoid(GardenBars.ScreenY(s, 240f) - 34f, GardenBars.ScreenY(s, 240f) + 34f);
+            if (Battle != null && Battle.Stalled && selection == 0 && !settings && Battle.State == Phase.Playing)
+                Avoid(GardenBars.ScreenY(s, 312f) - 36f, GardenBars.ScreenY(s, 312f) + 36f);
+            s.MapLayout = false;
+            try { HintCapsule(s, text, cy, w, 38f, size, edge, ink, alpha, 1f, icon, GardenBars.Deco.None, age); }
+            finally { s.MapLayout = mapped; }
         }
+        // Shared painted glass, fixed end reflections and stretchable centre; see-through fill keeps the rim.
+        void GlassCapsule(PixelSurface s, float cx, float cy, float w, float h, Color edgeColor, float alpha = 1f, float fill = 1f)
+            => GardenBars.Capsule(s, cx, cy, w, h, edgeColor, alpha, fill);
         void GardenButton(PixelSurface s, int id, float x, float y, float w, float h, string text) {
             HitBox(s, id, x, y, w, h);
             if (id >= 10 && id <= 12) {
@@ -170,18 +201,24 @@ namespace Flightbeat.Game
             if (secs != heldShownSeconds) { heldShownSeconds = secs; heldSecondsText = secs.ToString(); }
             float age = ui - heldStartAt, k = OutBack(Clamp01(age / .3f), 2.2f) * (left < .2f ? left / .2f : 1f);
             if (k < .05f) return;
-            const float cy = 240f;
+            bool mapped = s.MapLayout;
+            float cy = GardenBars.ScreenY(s, 240f);
             float w = 236f * k, h = 54f * k, x = 270f - w * .5f;
-            s.Glow(270f, cy, w + 70f, h + 50f, new Color(.55f, .9f, 1f, .35f * k), 0f);
-            GardenBanner(s, "ui/banner-hint", x, cy - h * .5f, w, h);
-            // Countdown ring: a faint full circle and a bright arc that empties clockwise.
-            Vector2 ring = new Vector2(x + 34f * k, cy);
-            float r = 16f * k, frac = Clamp01(left / Mathf.Max(heldTotal, .01f));
-            s.Ring(ring, r, new Color(1f, 1f, 1f, .25f), 4f * k, 24, -90f, 360f);
-            s.Ring(ring, r, Hex(0x9FF0FF), 4.2f * k, Mathf.Max(2, Mathf.CeilToInt(24 * frac)), -90f, 360f * frac);
-            TextOutline(s, heldSecondsText, ring.x, cy - 10f * k, 20f * k, Gold, Outline, 1.8f);
-            float pulse = 1f + .05f * Mathf.Sin(ui * 8f);
-            TextOutline(s, "泡泡被控住！", x + 62f * k + 74f * k, cy - 11f * k * pulse, 22f * k * pulse, Cream, Hex(0x1C4C8C), 2.2f);
+            s.MapLayout = false;
+            try
+            {
+                s.Glow(270f, cy, w + 70f, h + 50f, new Color(.55f, .9f, 1f, .35f * k), 0f);
+                GardenBars.Capsule(s, 270f, cy, w, h, GardenBars.Ice);   // 2026-10-20 (UI redesign 05): ice-edged glass
+                // Countdown ring and text share the capsule's fixed size on tall screens.
+                Vector2 ring = new Vector2(x + 34f * k, cy);
+                float r = 18f * k, frac = Clamp01(left / Mathf.Max(heldTotal, .01f));
+                GardenBarArt.Ring(s, ring.x, ring.y, 47f * k, 1f);
+                s.Ring(ring, r, Hex(0x48EAFF), 4.2f * k, Mathf.Max(2, Mathf.CeilToInt(48 * frac)), -90f, 360f * frac);
+                GardenBarArt.Text(s, heldSecondsText, ring.x, cy - 12f * k, 24f * k, true, GardenBars.Navy);
+                float pulse = 1f + .05f * Mathf.Sin(ui * 8f);
+                GardenBarArt.Text(s, "泡泡被控住！", x + 62f * k + 74f * k, cy - 11f * k * pulse, 22f * k * pulse, true, GardenBars.Navy);
+            }
+            finally { s.MapLayout = mapped; }
         }
         static readonly Color GardenGrass = Hex(0x7FA85A), GardenFloor = Hex(0xC9C29A);
         void DrawGarden(PixelSurface s) {
@@ -197,6 +234,7 @@ namespace Flightbeat.Game
             float pitchX = (Battle.Level.pitchX > 0f ? Battle.Level.pitchX : 10.5f) * ScreenLayout.EnemyScaleX;
             float pitchY = Battle.PitchY * ScreenLayout.EnemyScaleY;
             float beadW = pitchX * 1.05f / .94f, beadH = Mathf.Min(beadW, pitchY * 1.3f / .94f);
+            float strikeShake = feedback.GardenStrikeShake;
             for (int i = 0; i < Battle.Alive.Length; i++) {
                 if (!Battle.Alive[i] || !Battle.OnBoard(i)) continue;
                 float gy = shownY != null && i < shownY.Length ? shownY[i] : Battle.GridY(i);
@@ -206,6 +244,7 @@ namespace Flightbeat.Game
                     at = FleetOpening.EnemyPosition(i, Battle.IntroTime, target);
                 }
                 if (at.y < 114 || at.y > 572 || at.x < 12 || at.x > 528) continue;
+                at.y += strikeShake;   // 2026-10-21: the board jolts when a bubble bomb goes off
                 visibleBugs++;
                 Color tint = GardenColor(Battle.ColorAt(i));
                 // 2026-10-16: beads inside the bomb circle light up (the original whitened them too, f54801).
@@ -232,6 +271,7 @@ namespace Flightbeat.Game
                 } else if (!Asset(s, "scene/plot-locked", cx - plotW / 2, 647 + plotH / 2 - plotW, plotW, plotW, Color.white))
                     s.Rect(cx - plotW / 2, 647 - plotH / 2, plotW, plotH, Wood);
             }
+            PadUnlockFx(s, plotW);   // 2026-10-21 14:18: the unlocked pad celebrates (replaces the 「已解锁出战位」 bar)
             // UI spec v3 4.3 (user decision 2026-10-15): empty open pads show a slowly turning golden swirl.
             bool[] used = new bool[Battle.MaximumSlots];
             for (int i = 0; i < Battle.Fleet.Count; i++) { int v = Battle.VisualSlot(i); if (v >= 0 && v < used.Length) used[v] = true; }
@@ -263,14 +303,8 @@ namespace Flightbeat.Game
                     float pulse = .7f + .3f * Mathf.Sin(ui * 4f);
                     Asset(s, "fx/glow", Battle.QueuePositionX(lane) - 54, QueueDisplayY(725f) - 58, 108, 108, new Color(1f, .82f, .32f, pulse));
                 }
-                // 2026-10-19 11:46 (user): during the intro the corner marks waited for nobody; they now fade in only as
-                // the front member settles into the tube (its drop offset 160 -> 0, marks over the last 12 px).
-                float markAlpha = Battle.State == Phase.Intro ? 1f - Clamp01(FleetOpening.BayOffset(Battle.IntroTime, lane, 0) / 12f) : 1f;
-                if (reserve.Count > 0 && markAlpha > .01f) {
-                    Color mark = A(GardenColor(reserve[0].Color), markAlpha);
-                    if (!Asset(s, "scene/queue-corner", x + 4, 692, 14, 14, mark)) s.Corners(x + 3, 691, w - 6, 56, mark, 9, 3);
-                    else Asset(s, "scene/queue-corner", x + w - 18, 692, 14, 14, mark, false, true, true);
-                }
+                // 2026-10-21 14:32 (user): the coloured corner marks at the top of each queue are gone (the front member
+                // now carries a white outline when it can be tapped).
             }
         }
         void DrawGardenHUD(PixelSurface s) {
@@ -281,7 +315,9 @@ namespace Flightbeat.Game
             TrackNewMembers();
             TrackMvpKills();   // 17:34: per-color clears for the victory screen MVP (BubbleWin)
             // 2026-10-16: the original combo counter (f53835) in bubble style, same visibility rule as the source HUD.
-            feedback.HideCombo = selection == 2 || settings || lesson != null;
+            // 2026-10-21 16:20: the victory page hides the combo counter and the 已出战 tags behind it.
+            bool winShown = Battle.State == Phase.Won && feedback.EndAge > .48f;
+            feedback.HideCombo = selection == 2 || settings || lesson != null || winShown;
             feedback.DrawBubbleCombo(s);
             if (Battle.Level.lesson <= 0 && !settings && selection == 0) {
                 DrawRailWarning(s);   // 2026-10-18 22:21: warning tape instead of the button-like red capsule (BubbleRail)
@@ -303,12 +339,18 @@ namespace Flightbeat.Game
             for (int i = 0; i < Battle.Fleet.Count; i++) {
                 Fighter ship = Battle.Fleet[i];
                 Vector2 at = feedback.Position(ship.Id, i);
-                at.x += padShake;
+                at.x += padShake; at.y += feedback.GardenStrikeShake * .5f;
                 float squash = PadLanding(s, ship, i, ref at, bayCanvas);
+                float since = Battle.Time - ship.LastFired;
+                float fire = ship.Ammo > 0 ? (since < .1f ? 1f : Mathf.Clamp01(1f - (since - .1f) / .2f)) : 0f;
+                float pulse = since >= 0f && since < .06f ? 1f - since / .06f : 0f;
                 Creature(s, GardenColor(ship.Color), at.x, at.y + 12, bayCanvas, ship.Tier, ship.Ammo.ToString(),
-                    Mathf.Clamp01(1 - (Battle.Time - ship.LastFired) / .18f), bayNumber, true, true, .035f, ship.Id * 1.7f, PadScale(ship), squash);
+                    0f, bayNumber, true, true, .035f, ship.Id * 1.7f, PadScale(ship), squash, 0f,
+                    fire, pulse, ship.Ammo > 0 ? 1f - fire : 0f);
+                padMouth[ship.Id] = LastMouth;
                 float wait = PadWaitAlpha(ship);
-                if (wait > .01f) TextOutline(s, "等待", at.x, 664, 15f, A(Cream, wait), A(Outline, wait), 1.5f);
+                // 2026-10-21 (user): no ball icon; 10:21 a quiet regular-weight note instead of bold (it only informs).
+                if (wait > .01f) GardenBars.QuietChip(s, "等待", at.x, 674f, 54f, 23f, 15f, wait);
             }
             float queueScale = Mathf.Min(108f, 500f / Battle.LaneCount - 8f) / 108f;
             GardenHintLane(out int hintLane);
@@ -324,9 +366,29 @@ namespace Flightbeat.Game
                         at.y += offset * .35f;
                     }
                     if (row == 0 && lane == hintLane) at.y -= 3f * Mathf.Abs(Mathf.Sin(ui * 4f));
-                    Creature(s, row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color), at.x, QueueDisplayY(at.y) + 12, (row == 0 ? 82f : 76f) * queueScale, ship.Tier,
-                        row != 0 && ship.Kind == 2 ? "?" : ship.Ammo.ToString(), 0f, 14f * queueScale, false, true, row == 0 ? .03f : .02f, lane * 2.3f + row * 1.1f,
-                        0f, 0f, 9f * queueScale);   // 2026-10-16 22:30: number pill tucked against the feet (was 2 px below them)
+                    // 2026-10-21 10:21 (user): only the front row (the one you can tap) is awake; the rows behind doze
+                    // (eyes-closed frame, slower breath). Everyone is awake while the 指定 prop lets any row be picked.
+                    bool asleep = row > 0 && selection != 1;
+                    float wake = QueueWake(ship.Id, asleep), hop = wake < .3f ? Mathf.Sin(wake / .3f * Mathf.PI) : 0f;
+                    Creature(s, row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color), at.x, QueueDisplayY(at.y - 6f * hop) + 12, (row == 0 ? 82f : 76f) * queueScale, ship.Tier,
+                        row != 0 && ship.Kind == 2 ? "" : ship.Ammo.ToString(), 0f, 14f * queueScale, false, true, row == 0 ? .03f : asleep ? .03f : .02f, lane * 2.3f + row * 1.1f,
+                        0f, -.05f * hop, 9f * queueScale, -1f, 0f, 0f, asleep,
+                        row == 0 || selection == 1 ? .85f + .15f * Mathf.Sin(ui * 3f + lane) : 0f);   // 2026-10-16 22:30: number pill tucked against the feet; 2026-10-21 white outline on the tappable ones
+                    // 2026-10-21 12:26 (user): hidden members show no number pill (was a "?" pill); the bubble art carries the "?".
+                    // 2026-10-21: a hidden member reaching the front bursts out of its bubble.
+                    float reveal = QueueReveal(ship, row);
+                    if (reveal < .5f) {
+                        float qh = (row == 0 ? 82f : 76f) * queueScale, bodyY = QueueDisplayY(at.y) + 12f - qh * .35f;
+                        GardenFx.Burst(s, "rocket-pop", new Vector2(at.x, bodyY), qh * 1.35f, reveal, .4f);
+                        GardenFx.Burst(s, "impact-dust", new Vector2(at.x, bodyY + qh * .1f), qh * 1.1f, reveal - .05f, .4f);
+                        for (int k = 0; k < 6; k++) {
+                            float ang = k / 6f * Mathf.PI * 2f + .3f, d = qh * (.25f + .55f * reveal / .5f), a = 1f - reveal / .5f;
+                            Color c = Color.HSVToRGB(k / 6f, .55f, 1f); c.a = a;
+                            s.Glow(at.x + Mathf.Cos(ang) * d, bodyY + Mathf.Sin(ang) * d * .8f, 10f * queueScale, 10f * queueScale, c, 0f);
+                        }
+                    }
+                    // 10:47 (user: only the second row looked asleep): both back rows get the z, taking turns per lane.
+                    if (asleep && ship.Kind != 2) SleepZ(s, at.x + 16f * queueScale, QueueDisplayY(at.y) - 22f * queueScale, queueScale, lane, row == 2 ? 2.75f : 0f);
                     // 2026-10-15 20:52: queue numbers sit on the same navy pill as the pads (mockup); no tier coin in the queue.
                 }
                 // Priority planting (option B): pulsing gold corner marks on every selectable plant, drawn after the plants.
@@ -339,16 +401,17 @@ namespace Flightbeat.Game
                     Vector2 at = feedback.ReservePosition(reserve[0], lane, 0);
                     MergeBadge(s, at.x + 27f * queueScale, QueueDisplayY(at.y) - 30f * queueScale, queueScale, lane);
                 }
-                if (reserve.Count == 0 && !FinaleButtonVisible) TextOutline(s, "已出战", Battle.QueuePositionX(lane), 766, 19f, Cream, Outline, 1.7f);
+                if (reserve.Count == 0 && !FinaleButtonVisible && !winShown) GardenBars.Chip(s, "已出战", Battle.QueuePositionX(lane), 776f,
+                    92f * queueScale, 28f * queueScale, GardenBars.Quiet, GardenBars.Navy, null, 15f * queueScale);
             }
             if (Battle.State != Phase.ReviveOffer) feedback.DrawGardenFeedback(s, GardenColor);
             // Third batch: bubble finale; the original routines still run muted for their cues, hit regions and clocks.
             DrawBubbleFinaleButton(s); DrawBubbleFinale(s);
-            if (selection == 1) HintCapsule(s, "选择前三排任意队员", 512f, 330f, 48f, 21f, Hex(0x7CC4F0), Hex(0x163E6D));   // 11:12: glass capsule
+            if (selection == 1) HintCapsule(s, "选择前三排任意队员", 512f, 330f, 48f, 21f, GardenBars.Sky, GardenBars.Navy, 1f, 1f, "pick", GardenBars.Deco.One, BarAge(1));   // 11:12: glass capsule
             if (selection == 2) {
                 DrawBombAim(s);
                 // 11:16 (user): see-through glass (fill 45 %) so the picture under it stays visible while aiming.
-                HintCapsule(s, "拖动选择泡泡，双击确认", 140f, 340f, 44f, 19f, Hex(0x7CC4F0), Hex(0x163E6D), 1f, .45f);
+                HintCapsule(s, "拖动选择泡泡，双击确认", 140f, 340f, 44f, 19f, GardenBars.Sky, GardenBars.Navy, 1f, .45f, "crosshair", GardenBars.Deco.None, BarAge(2));
                 // 2026-10-18 22:21 (user): the confirm button sat right over the rail, i.e. on the bottom rows players
                 // bomb most, hiding the reticle and catching drags. While aiming, the queue cannot be used anyway, so
                 // the queue area is dimmed and holds 确认使用 (id 9) and 取消 (id 12, the bomb prop's own cancel).
@@ -366,7 +429,12 @@ namespace Flightbeat.Game
             if (Battle.Stalled && selection == 0 && !settings && Battle.State == Phase.Playing) {
                 DrawGardenStallHint(s);
             }
-            if (Battle.NoticeTime > 0 && selection == 0 && !settings) TextOutline(s, GardenWords(Battle.Notice), 270, 862, 16f, Cream, Outline, 1.6f);
+            if (Battle.NoticeTime > 0 && selection == 0 && !settings && Battle.Notice != "已解锁战机位") {
+                // 2026-10-20 (UI redesign 13/14/17): the model's notices (重排, 解锁, 出战位已满) as short bars.
+                string notice = GardenWords(Battle.Notice);
+                MessageStyle(notice, false, out Color nEdge, out Color nInk, out string nIcon);
+                HintCapsule(s, notice, 872f, 160f, 34f, 16f, nEdge, nInk, 1f, 1f, nIcon, GardenBars.Deco.None, BarAge(4));
+            }
             DrawHeldBadge(s);
             if (lesson != null && Battle.State != Phase.Intro && Battle.State != Phase.Won && Battle.State != Phase.Lost && !settings && selection == 0 && !finaleGuide) DrawGardenTutorial(s);
             if (Battle.State == Phase.Intro || Battle.State == Phase.Ready || Battle.State == Phase.Playing) DrawGardenOpening(s);
@@ -433,21 +501,14 @@ namespace Flightbeat.Game
             GardenTitle(s, title, 270, y + 16, 28f, false);   // 2026-10-17: no ribbon plate (it read as a heavy button)
         }
         void DrawGardenTutorial(PixelSurface s) {
-            // UI spec v3 4.6: guide "Xiao Lan" (the blue squad member) beside a speech bubble; content and conditions unchanged.
-            bool bubble = Asset9(s, "ui/speech-bubble", 96, 134, 414, 92, 30f, 30f, 18f, 18f, Color.white);
-            if (!bubble) GardenPanel(s, 32, 136, 476, 88);
             int topic = narration == null ? 0 : (int)narration.Topic;
             string face = lesson.Complete || topic == 2 ? "ui/guide-happy" : topic == 3 || topic == 6 ? "ui/guide-worried" : "ui/guide-explain";
-            if (!Asset(s, face, 14, 130, 96, 96, Color.white)) {
-                for (int i = 0; i < 5; i++) s.Segment(new Vector2(68 + i * 10, 178), new Vector2(63 + i * 10, 166), 5, Wood);
-                s.Rect(64, 179, 52, 30, Wood); s.Rect(108, 185, 15, 18, Paper); s.Rect(114, 188, 3, 3, Ink);
-            }
-            TextOutline(s, "小蓝", 150, 126, 15f, Cream, Outline, 1.5f);
-            var lines = Narration(topic);
-            Text(s, lines[0], 124, 160, 16, false); Text(s, lines[1], 124, 189, 16, false);
+            DrawGardenDialogue(s, face, Narration(topic), 180f);   // 2026-10-21: 6 px higher, a gap above the board
             if (!lesson.Complete) {
-                TextOutline(s, Goal(lesson.Step), 270, 98, 18f, Cream, Outline, 1.8f);
-                if (lesson.Practice) GardenButton(s, 50, 410, 225, 98, 28, "提示");
+                // 2026-10-20 (UI redesign 27); 14:24 (user): no target icon on every step's goal, just the words.
+                HintCapsule(s, Goal(lesson.Step), 104f, 300f, 40f, 18f, GardenBars.Sky, GardenBars.Navy, 1f, 1f, null, GardenBars.Deco.One, BarAge(3));
+                // 2026-10-21 (user): the practice-step 「提示」 button is gone. It only skipped the wait: the same glow and
+                // arrow on the suggested member still come by themselves (FlightLesson.HintLevel, from 6 s in practice).
                 if (lesson.SuggestedLane >= 0 && lesson.HintLevel > 0) {
                     float x = Battle.QueuePositionX(lesson.SuggestedLane);
                     if (lesson.HintLevel >= 3) {
@@ -457,7 +518,13 @@ namespace Flightbeat.Game
                     }
                 }
             }
-            TextOutline(s, "课堂保护中", 466, 530, 15f, Cream, Outline, 1.5f);
+            // 2026-10-20 (UI redesign 29): a small gold tag with the shield.
+            float tagW = GardenBars.Width("课堂保护中", 14f, 28f, "shield");
+            bool tagMapped = s.MapLayout;
+            float tagY = tagMapped ? ScreenLayout.Y(538f) : 538f;
+            s.MapLayout = false;
+            GardenBars.Bar(s, Mathf.Min(466f, 528f - tagW * .5f), tagY, tagW, 28f, GardenBars.Gold, "shield", "课堂保护中", 14f, GardenBars.Brown);
+            s.MapLayout = tagMapped;
         }
         // Same gating as DrawGardenTutorial: the hint only shows while the tutorial overlay does.
         bool GardenHintLane(out int lane) {

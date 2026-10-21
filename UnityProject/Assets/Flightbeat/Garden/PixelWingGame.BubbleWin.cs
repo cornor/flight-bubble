@@ -41,77 +41,248 @@ namespace Flightbeat.Game
                     if (turn < 0f) { c.r *= .82f; c.g *= .82f; c.b *= .82f; }   // the back of the paper is a shade darker
                     s.Rect(x - w * .5f, py - h * .5f, w, h, c);
                 }
-            // Headline (level line above it).
+            // ---- 2026-10-21 victory page (user, after a reference; mock-up approved): a ribbon with 挑战成功, the level's
+            // own picture rebuilt bead by bead in a white frame inside turning rays, the MVP / new member cheering on the
+            // frame's lower right corner, a purple glass line about the next new member, two small stat pills; the
+            // prefab's 主页 · 下一关 · 重玩 row sits below (y 772). Painted ribbon when delivered (win/ribbon.png).
             bool last = levelIndex == Levels.Length - 1;
-            string head = last ? "全部关卡通过！" : "泡泡全打光啦！";
-            float hp = OutBack(Clamp01(t / .35f), 2.2f), hs = 44f * hp;
-            if (hs > 1f)
+            float cx = ox + 270f;
+            const float S = 310f, F = 12f;   // 16:32: 330 -> 310, room for the members' row
+            float cardTop = oy + 200f, cardCY = cardTop + F + S * .5f, cardBottom = cardTop + S + F * 2f;
+            // 15:55: a soft blue-white spotlight behind the card over the deep indigo shade (GardenBattlePage.WinShade).
+            s.Glow(cx, cardCY, 720f, 780f, new Color(.36f, .48f, .9f, .22f * fade), 0f);
+            float cardK = OutBack(Clamp01((t - .12f) / .35f), 1.6f);
+            if (cardK > .01f) WinRays(s, cx, cardCY, t, fade * Clamp01(cardK));
+            // 16:20 (user): no 「第 N 关」 line above the ribbon.
+            if (cardK > .01f) WinPicture(s, cx, cardCY, S * cardK, F * cardK, Clamp01((t - .4f) / .6f), fade);
+            // Twinkles around the frame.
+            for (int i = 0; i < 4 && cardK > .9f; i++)
             {
-                s.Glow(ox + 270f, oy + 168f, 420f, 110f, new Color(.02f, .06f, .2f, .45f * fade), 0f);
-                TextOutline(s, "第 " + (levelIndex + 1) + " 关", ox + 270f, oy + 112f, 18f, new Color(1f, .9f, .55f, fade), new Color(Outline.r, Outline.g, Outline.b, fade), 1.6f);
-                TextOutline(s, head, ox + 270f, oy + 150f + (44f - hs) * .5f, hs, Color.white, Outline, 4f * hp);
+                float ph = (ui * .9f + i * .37f) % 1f, a = Mathf.Sin(ph * Mathf.PI) * fade, r = (i % 2 == 0 ? 12f : 7f) * (.6f + .4f * a);
+                Vector2 p = new Vector2(cx + (i < 2 ? -1f : 1f) * (S * .5f + 26f - (i % 2) * 14f), cardTop + 60f + i * 83f % (S - 40f));
+                // 16:20: a soft four-point glint (two tapered beams and a glow), not a thin 「+」.
+                s.Glow(p.x, p.y, r * 2.6f, r * 2.6f, new Color(1f, .95f, .7f, .45f * a), 0f);
+                s.Glow(p.x, p.y, r * 4.2f, r * .55f, new Color(1f, 1f, 1f, a), 0f);
+                s.Glow(p.x, p.y, r * .55f, r * 4.2f, new Color(1f, 1f, 1f, a), 0f);
+                s.Glow(p.x, p.y, r * .9f, r * .9f, new Color(1f, 1f, 1f, a), 0f);
             }
-            // Hero: the first new member; otherwise (17:34, user) this level's MVP: the member whose color cleared the
-            // most bubbles, with a crown and the count.
+            // 16:32 (user): the row under the card just shows the members themselves, no capsules: each stands on a soft
+            // floor light with its tag above the head: the MVP with a crown and 「MVP」, a new member with a 「新成员」
+            // chip, and the next newcomer as the rainbow bubble with 「N 关后加入」 (N <= 5). One to three, centred.
             int mvpCount = 0;
-            bool mvp = newMembers.Count == 0 && MvpEntry(out mvpHero, out mvpCount);
-            CodexEntry hero = newMembers.Count > 0 ? newMembers[0] : mvp ? mvpHero : WinHero();
-            float cx = ox + 270f, feet = oy + 470f;
-            DrawBubbleHalo(s, cx, oy + 372f, 380f, fade);
-            DrawHaloBubbles(s, cx, oy + 372f, 380f, t - .1f, fade, true, false);
-            s.Glow(cx, feet, 220f, 50f, new Color(hero.tint.r, hero.tint.g, hero.tint.b, .5f * fade), 0f);
-            float hop = t - .1f;
-            if (hop > 0f)
+            bool mvp = MvpEntry(out mvpHero, out mvpCount);
+            if (WinRibbon(s, cx, oy + 150f, OutBack(Clamp01(t / .35f), 2.2f), last ? "全部通关！" : "挑战成功", fade)) { }
+            int nextIn = 0;
+            foreach (var e in Codex)
+                if (e.level > levelIndex + 1) { int d = e.level - (levelIndex + 1); if (nextIn == 0 || d < nextIn) nextIn = d; }
+            winRow.Clear();
+            if (mvp)
             {
-                float scale = hop < .28f ? Mathf.Lerp(.3f, 1.1f, OutBack(hop / .28f, 1.7f)) : hop < .44f ? Mathf.Lerp(1.1f, 1f, (hop - .28f) / .16f) : 1f;
-                bool before = GardenSkin.Celebrate;
-                GardenSkin.Celebrate = true;
-                Creature(s, hero.tint, cx, feet, 230f * scale, 0, "", 0f, 12f, false, false, .04f, 0f);
-                GardenSkin.Celebrate = before;
+                bool alsoNew = false;
+                foreach (var m in newMembers) if (m.tint == mvpHero.tint) alsoNew = true;
+                winRow.Add((mvpHero.tint, 1 | (alsoNew ? 2 : 0), 0));
             }
-            DrawHaloBubbles(s, cx, oy + 372f, 380f, t - .1f, fade, true, true);
-            if (mvp && hop > .44f)
+            foreach (var m in newMembers)
+                if (winRow.Count < 3 && !(mvp && m.tint == mvpHero.tint)) winRow.Add((m.tint, 2, 0));
+            if (newMembers.Count == 0 && nextIn > 0 && nextIn <= 5 && winRow.Count < 3) winRow.Add((Color.clear, 4, nextIn));
+            float feet = cardBottom + 102f, step = 124f;   // tags clear the frame; stats at feet + 26, buttons from 696
+            for (int i = 0; i < winRow.Count; i++)
+                WinMember(s, cx + (i - (winRow.Count - 1) * .5f) * step, feet, t - (.9f + i * .12f), fade, winRow[i].tint, winRow[i].tags, winRow[i].n);
+            float y = winRow.Count > 0 ? feet + 26f : cardBottom + 60f;
+            if (t > 1.1f)
             {
-                float c = OutBack(Clamp01((hop - .44f) / .3f), 2.6f), bob = Mathf.Sin(ui * 3f) * 3f;
-                float cy = feet - 230f * (212f - 62f) / 256f - 26f + bob;
-                s.Glow(cx, cy, 120f * c, 70f * c, new Color(1f, .85f, .35f, .45f * fade), 0f);
-                Asset(s, "scene/crown", cx - 30f * c, cy - 26f * c, 60f * c, 45f * c, new Color(1f, 1f, 1f, fade));
-                if (c > .3f) TextOutline(s, "MVP", cx, cy + 14f * c, 20f * c, A(Gold, fade), A(Outline, fade), 2f * c);
-            }
-            // New members join the squad: a short caption and their avatars in bubbles (11:39: no names).
-            float y = oy + 494f;
-            if (newMembers.Count > 0 && t > .5f)
-            {
-                float a = Clamp01((t - .5f) / .25f);
-                TextOutline(s, "新伙伴入队！", cx, y, 17f, new Color(1f, .9f, .5f, a), new Color(Outline.r, Outline.g, Outline.b, a), 1.6f);
-                DrawMemberAvatars(s, cx, y + 58f, newMembers, t - .6f);
-                y += 104f;
-            }
-            else if (mvp && t > .5f)
-            {
-                float a = Clamp01((t - .5f) / .25f);
-                if (mvpLine.Length == 0 || mvpLineCount != mvpCount) { mvpLineCount = mvpCount; mvpLine = "打掉 " + mvpCount + " 颗泡泡"; }
-                float w1 = TextWidth("本关 MVP", 20f), w2 = TextWidth(mvpLine, 18f), x0 = cx - (w1 + 12f + w2) * .5f;
-                TextOutline(s, "本关 MVP", x0, y + 4f, 20f, A(Gold, a), A(Outline, a), 1.8f, false);
-                TextOutline(s, mvpLine, x0 + w1 + 12f, y + 6f, 18f, A(Color.white, a), A(Outline, a), 1.6f, false);
-                y += 44f;
-            }
-            else y += 16f;
-            // One line of results.
-            if (t > .65f)
-            {
-                float a = Clamp01((t - .65f) / .25f);
-                string combo = "最高连击 " + Battle.BestCombo, time = "用时 " + ResultRound(Battle.Time) + " 秒";
-                const float size = 17f;
-                float w1 = TextWidth(combo, size) + 36f, w2 = TextWidth(time, size) + 36f, gap = 14f, x0 = cx - (w1 + w2 + gap) * .5f;
-                Color pill = new Color(.06f, .14f, .32f, .75f * a);
-                foreach (var (text, x, w) in new[] { (combo, x0, w1), (time, x0 + w1 + gap, w2) })
-                {
-                    if (!Asset9(s, "scene/badge-ammo", x, y, w, 34f, 14f, 0f, 17f, 0f, new Color(1f, 1f, 1f, .9f * a))) s.Rect(x, y, w, 34f, pill);
-                    TextOutline(s, text, x + w * .5f, y + 8f, size, new Color(1f, 1f, 1f, a), new Color(Outline.r, Outline.g, Outline.b, a), 1.4f);
-                }
+                float a = Clamp01((t - 1.1f) / .2f) * fade;
+                WinStat(s, cx - 8f - 82f, y, a, true, "最高连击", Battle.BestCombo.ToString());
+                WinStat(s, cx + 8f + 82f, y, a, false, "用时", ResultRound(Battle.Time) + " 秒");
             }
             s.MapLayout = mapped;
+        }
+        static readonly Color winInk = Hex(0x1D2F63), winRibbonInk = Hex(0x8E2218);
+        // Warm rays turning slowly behind the card, with a glow.
+        void WinRays(PixelSurface s, float cx, float cy, float t, float a)
+        {
+            s.Glow(cx, cy, 560f, 560f, new Color(1f, .88f, .5f, .4f * a), 0f);
+            for (int i = 0; i < 18; i++)
+            {
+                float ang = i / 18f * Mathf.PI * 2f + ui * .12f, r = (i % 2 == 0 ? 340f : 270f);
+                s.GlowLine(new Vector2(cx, cy), new Vector2(cx + Mathf.Cos(ang) * r, cy + Mathf.Sin(ang) * r), i % 2 == 0 ? 46f : 30f,
+                    new Color(1f, .86f, .45f, (i % 2 == 0 ? .26f : .18f) * a));
+            }
+        }
+        // White rounded frame with a soft shadow, and the level's picture rebuilt from its beads (the battle's own bead
+        // art), rows lighting up from the bottom (`reveal` 0..1), each new row popping in.
+        void WinPicture(PixelSurface s, float cx, float cy, float size, float frame, float reveal, float a)
+        {
+            float w = size + frame * 2f, x0 = cx - w * .5f, y0 = cy - w * .5f, r = 16f * w / (330f + 24f);
+            s.Glow(cx, cy + 10f, w * 1.15f, w * 1.15f, new Color(0f, 0f, 0f, .35f * a), 0f);
+            WinRoundRect(s, x0, y0, w, w, r, new Color(1f, 1f, 1f, a));
+            WinRoundRect(s, x0 + 4f, y0 + 4f, w - 8f, w - 8f, r - 3f, new Color(.81f, .89f, .96f, a));
+            WinRoundRect(s, x0 + 6f, y0 + 6f, w - 12f, w - 12f, r - 4f, new Color(1f, 1f, 1f, a));
+            var level = Battle.Level;
+            int cols = level.columns > 0 ? level.columns : 60, rows = level.rows > 0 ? level.rows : 60;
+            float left = cx - size * .5f, top = cy - size * .5f, cell = size / cols;
+            s.Rect(left, top, size, size, new Color(.17f, .37f, .66f, a));
+            int[] cells = level.cells, pal = level.palette;
+            if (cells == null || pal == null) return;
+            // 16:20 (user): the picture's background colour (the commonest colour on its outer ring) is softened towards
+            // white so the subject stands out.
+            int bg = WinBackgroundColour(cells, cols, rows);
+            float shown = reveal * (rows + 6f);
+            for (int i = 0; i < cells.Length && i < cols * rows; i++)
+            {
+                int v = cells[i];
+                if (v < 0 || v * 3 + 2 >= pal.Length) continue;
+                // 15:51 (user: the picture was upside down): cells run from the top row down.
+                int col = i % cols, rowFromBottom = rows - 1 - i / cols;
+                float grow = rowFromBottom < shown - 6f ? 1f : Clamp01((shown - rowFromBottom) / 6f);
+                if (grow <= 0f) continue;
+                Color tint = new Color32((byte)pal[v * 3], (byte)pal[v * 3 + 1], (byte)pal[v * 3 + 2], 255);
+                if (v == bg) tint = Color.Lerp(tint, Color.white, .5f);
+                tint.a = a;
+                float d = cell * 1.16f * (.5f + .5f * OutBack(grow, 2f));
+                GardenSkin.Bug(s, tint, new Vector2(left + (col + .5f) * cell, top + (rows - rowFromBottom - .5f) * cell), d, false, d);
+            }
+        }
+        int[] winBgCells; int winBg = -1;
+        int WinBackgroundColour(int[] cells, int cols, int rows)
+        {
+            if (ReferenceEquals(cells, winBgCells)) return winBg;
+            winBgCells = cells; winBg = -1;
+            var count = new System.Collections.Generic.Dictionary<int, int>();
+            for (int i = 0; i < cells.Length && i < cols * rows; i++)
+            {
+                int c = i % cols, r = i / cols;
+                if (c != 0 && c != cols - 1 && r != 0 && r != rows - 1) continue;
+                int v = cells[i]; if (v < 0) continue;
+                count.TryGetValue(v, out int k); count[v] = k + 1;
+            }
+            int best = 0;
+            foreach (var kv in count) if (kv.Value > best) { best = kv.Value; winBg = kv.Key; }
+            if (best < (cols + rows)) winBg = -1;   // only when it really frames the picture (over a quarter of the ring)
+            return winBg;
+        }
+        static void WinRoundRect(PixelSurface s, float x, float y, float w, float h, float r, Color c)
+        {
+            // 16:20 (user: spiky corners): the rounded ends are exact quarter circles built from 1 px rows (one rect
+            // per row, no overlaps), so even see-through fills stay clean.
+            r = Mathf.Max(1f, Mathf.Min(r, Mathf.Min(w, h) * .5f));
+            s.Rect(x, y + r, w, h - r * 2f, c);
+            int n = Mathf.CeilToInt(r);
+            for (int i = 0; i < n; i++)
+            {
+                float hRow = Mathf.Min(1f, r - i), dy = r - (i + hRow * .5f), inset = r - Mathf.Sqrt(Mathf.Max(0f, r * r - dy * dy));
+                s.Rect(x + inset, y + i, w - inset * 2f, hRow, c);
+                s.Rect(x + inset, y + h - i - hRow, w - inset * 2f, hRow, c);
+            }
+        }
+        // The ribbon: painted art when delivered (win/ribbon.png, words drawn here), else a coral glass bar.
+        bool WinRibbon(PixelSurface s, float cx, float cy, float p, string title, float a)
+        {
+            if (p <= .01f) return false;
+            bool art = Has("plants/win/ribbon");
+            if (art) Asset(s, "plants/win/ribbon", cx - 200f * p, cy - 56f * p, 400f * p, 112f * p, new Color(1f, 1f, 1f, a));
+            else GardenBars.Capsule(s, cx, cy, 360f * p, 64f * p, Hex(0xF0644C), a);
+            // The delivered ribbon's band sits in the upper third of its canvas (rows 10-139 of 224 at the middle), its
+            // tails below: the title is centred on the band, 19 px above the slot centre.
+            float size = 42f * p;
+            GardenBarArt.TextOutline(s, title, cx, cy - (art ? 19f : 4f) * p - size * .55f, size, new Color(1f, 1f, 1f, a), A(winRibbonInk, a), 3.6f * p);
+            return true;
+        }
+        readonly System.Collections.Generic.List<(Color tint, int tags, int n)> winRow = new System.Collections.Generic.List<(Color tint, int tags, int n)>();
+        static readonly Color winNewEdge = Hex(0xFF6FAE), winNewInk = Hex(0xB0329B);
+        // One member of the row: `tags` 1 = MVP (crown + 「MVP」), 2 = new member (「新成员」 chip; a small NEW star when it
+        // is also the MVP), 4 = the next newcomer (the rainbow bubble, 「n 关后加入」). It hops in at `age` 0, lands
+        // with a few glints and keeps cheering.
+        void WinMember(PixelSurface s, float x, float feet, float age, float fade, Color tint, int tags, int n)
+        {
+            if (age <= 0f) return;
+            float a = Clamp01(age / .12f) * fade, p = OutBack(Clamp01(age / .32f), 1.8f), drop = age < .2f ? (1f - age / .2f) * 26f : 0f;
+            const float canvas = 96f;
+            s.Glow(x, feet + 2f, 120f * p, 26f * p, new Color(1f, .95f, .8f, .32f * a), 0f);
+            float headTop;
+            if ((tags & 4) != 0)
+            {
+                float ah = canvas * p, aw = ah * ArtAspect, bob = Mathf.Sin(ui * 2.4f) * 2f;
+                Asset(s, "plants/mystery-bubble", x - aw * .5f, feet - drop + bob - ah * FeetLine, aw, ah, new Color(1f, 1f, 1f, a));
+                headTop = feet - drop + bob - ah * (FeetLine - 71f / 256f);
+            }
+            else
+            {
+                bool before = GardenSkin.Celebrate; GardenSkin.Celebrate = true;
+                Creature(s, tint, x, feet - drop, canvas * p, 0, "", 0f, 12f, false, false, .04f, x * .013f);
+                GardenSkin.Celebrate = before;
+                headTop = feet - drop - canvas * p * ArtScale(tint) * (FeetLine - BodyTop);
+            }
+            if (age > .15f && age < .7f)   // glints as it lands
+                for (int k = 0; k < 4; k++)
+                {
+                    float u = Clamp01((age - .15f) / .55f), ang = k * 1.57f + .6f, d = 28f + 26f * u, r = 5f * (1f - u);
+                    Vector2 sp = new Vector2(x + Mathf.Cos(ang) * d, feet - 30f + Mathf.Sin(ang) * d * .7f);
+                    s.Glow(sp.x, sp.y, r * 4f, r * .6f, new Color(1f, 1f, 1f, a), 0f);
+                    s.Glow(sp.x, sp.y, r * .6f, r * 4f, new Color(1f, 1f, 1f, a), 0f);
+                }
+            float tagA = Clamp01((age - .25f) / .15f) * fade, tp = OutBack(Clamp01((age - .25f) / .25f), 2.4f);
+            if (tagA <= 0f) return;
+            float bob2 = Mathf.Sin(ui * 3f + x) * 1.5f;
+            if ((tags & 1) != 0)
+            {
+                Asset(s, "scene/crown", x - 17f * tp, headTop - 20f * tp + bob2, 34f * tp, 25f * tp, new Color(1f, 1f, 1f, tagA));
+                float sz = 20f * tp;
+                GardenBarArt.TextOutline(s, "MVP", x, headTop - 30f * tp + bob2 - sz * .55f, sz, A(Gold, tagA), A(GardenBars.Brown, tagA), 2.4f * tp);
+                if ((tags & 2) != 0)
+                {
+                    float nx = x + 30f, ny = headTop + 10f;
+                    GardenBars.Bar(s, nx, ny, 40f * tp, 20f * tp, winNewEdge, null, "NEW", 12f * tp, winNewInk, tagA);
+                }
+            }
+            else if ((tags & 2) != 0)
+                GardenBars.Bar(s, x, headTop - 14f * tp + bob2, 74f * tp, 26f * tp, winNewEdge, null, "新成员", 15f * tp, winNewInk, tagA);
+            else if ((tags & 4) != 0)
+            {
+                string w = n + " 关后加入";
+                GardenBars.Bar(s, x, headTop - 14f * tp + bob2, (GardenBarArt.TextWidth(w, 15f) + 26f) * tp, 26f * tp, GardenBars.Purple, null, w, 15f * tp, GardenBars.DeepPurple, tagA);
+            }
+        }
+        // Purple glass line: [rainbow bubble] 再过 [2] 关，新伙伴加入！ (or a star and 新伙伴加入小队！ on the level it joins).
+        void WinPartnerLine(PixelSurface s, float cx, float cy, float p, float a, string pre, string num, string post, bool joined)
+        {
+            float h = 50f * p, w = 350f * p;
+            GardenBars.Capsule(s, cx, cy, w, h, GardenBars.Purple, a);
+            float sPre = 18f * p, sNum = 30f * p, sPost = 20f * p, icon = 42f * p, gap = 6f * p;
+            float wPre = pre.Length > 0 ? GardenBarArt.TextWidth(pre, sPre) + gap : 0f, wNum = num.Length > 0 ? GardenBarArt.TextWidth(num, sNum) + gap : 0f;
+            float wPost = GardenBarArt.TextWidth(post, sPost), total = icon + gap + wPre + wNum + wPost, x = cx - total * .5f;
+            if (!joined && Has("plants/mystery-bubble"))
+            {
+                float q = icon / 141f;
+                Asset(s, "plants/mystery-bubble", x + icon * .5f - 112f * q, cy - 141.5f * q - 2f, 224f * q, 256f * q, new Color(1f, 1f, 1f, a));
+            }
+            else GardenBars.Icon(s, "star", x + icon * .5f, cy, icon * .9f, a);
+            x += icon + gap;
+            Color ink = A(GardenBars.DeepPurple, a);
+            if (pre.Length > 0) { GardenBarArt.Text(s, pre, x, cy - sPre * .55f, sPre, false, ink); x += wPre; }
+            if (num.Length > 0) { GardenBarArt.TextOutline(s, num, x, cy - 2f - sNum * .55f, sNum, A(Gold, a), ink, 2.4f * p, false); x += wNum; }
+            GardenBarArt.Text(s, post, x, cy - sPost * .55f, sPost, false, A(Hex(0xB0329B), a));
+        }
+        // Dark see-through pill: [flame / clock] label  NUMBER.
+        void WinStat(PixelSurface s, float cx, float cy, float a, bool combo, string label, string value)
+        {
+            const float w = 164f, h = 34f;
+            // 15:51: the navy number-pill art (the round ends drawn from segments showed spiky overlaps when see-through).
+            if (!GardenBarArt.Plate(s, "number-pill", cx, cy, w, h, Color.white, .85f * a))
+                s.Rect(cx - w * .5f, cy - h * .5f, w, h, new Color(.04f, .1f, .24f, .62f * a));
+            float ix = cx - w * .5f + 25f;   // 16:20: icon inside the round end, not on it
+            if (combo) GardenBars.Icon(s, "flame", ix, cy, 28f, a);
+            else if (Has("plants/win/icon-clock")) Asset(s, "plants/win/icon-clock", ix - 14f, cy - 14f, 28f, 28f, new Color(1f, 1f, 1f, a));
+            else
+            {
+                s.Ring(new Vector2(ix, cy), 5.5f, new Color(1f, 1f, 1f, a), 11f, 16, 0f, 360f);
+                s.Ring(new Vector2(ix, cy), 11f, new Color(.17f, .48f, .9f, a), 2.5f, 20, 0f, 360f);
+                s.Segment(new Vector2(ix, cy), new Vector2(ix, cy - 6.5f), 2.2f, A(winInk, a));
+                s.Segment(new Vector2(ix, cy), new Vector2(ix + 5f, cy + 2f), 2.2f, A(winInk, a));
+            }
+            float sl = 14f, sv = 19f, wl = GardenBarArt.TextWidth(label, sl), wv = GardenBarArt.TextWidth(value, sv), x = cx + 16f - (wl + 6f + wv) * .5f;
+            GardenBarArt.Text(s, label, x, cy - sl * .55f, sl, false, new Color(.66f, .83f, 1f, a));
+            GardenBarArt.TextOutline(s, value, x + wl + 6f, cy - sv * .55f, sv, new Color(1f, 1f, 1f, a), A(winInk, a), 1.6f, false);
         }
         // Light behind a showcased member (victory screen, codex): the H14 light with its big bubbles removed at pack
         // time (home/halo), slowly turning and breathing; a soft cyan-white glow until it is packed.

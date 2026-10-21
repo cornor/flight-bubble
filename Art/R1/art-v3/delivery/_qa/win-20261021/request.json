@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-21",
+  "mode": "built-in imagegen",
+  "requirement": "docs/r1/结算页-出图需求.md",
+  "destination": "Art/R1/art-v3/delivery/win",
+  "specs": [
+    {
+      "key": "ribbon",
+      "width": 800,
+      "height": 224,
+      "prompt": "Use case: stylized-concept. Production game UI asset for a bright cute bubble-shooter mobile game. Polished glossy candy-jelly material, soft cel shading, rounded plump volume, large white specular highlight on the upper-left with one smaller glint, smooth clean darker outline of the same hue, luminous subtle inner lower rim. Friendly rich candy colors matching cute cartoon jelly characters and glossy mobile game booster buttons. Not realistic, not metallic, no realistic grain. Genuine transparent RGBA background, one isolated asset fully visible, no checkerboard baked into the image, no ground or drop shadow, no extra objects or decorations, no text, letters, digits, watermark, labels or logos.\nSubject: a wide coral-red satin ribbon banner, glossy soft candy-satin rather than fabric texture. Front-facing symmetric arrangement with a gentle upward arc. Long plump smooth central band with deeply red folded tails visible behind it at BOTH ends, neat inward V-notches at the two tail tips, visible darker folded triangular connections. Clean deep-red outer outline, soft rosy-coral face, deeper red lower edge, one white highlight following the upper edge, slightly brighter upper-left. Keep the whole middle absolutely empty for a game title supplied by code.\nComposition: exactly 800x224 logical canvas, a wide horizontal aspect ratio 25:7. Overall ribbon fills most of the canvas with small clean transparent margins. The central title area takes about 70% of canvas width and 55% of canvas height, continuous uncluttered light coral-red face with enough contrast for future white text. No lettering or symbols anywhere. No bows, no rosettes, no stars, no gold trim. Keep the folds readable at small game size.",
+      "raw": "/Users/yangdage/.codex/generated_images/01a1439a-38ad-77d2-9e2b-2b836a826d91/exec-e677fafc-1d4a-4f3e-9c94-496acd442ccd.png"
+    },
+    {
+      "key": "button-home",
+      "width": 152,
+      "height": 152,
+      "prompt": "Use case: stylized-concept. Production game UI asset for a bright cute bubble-shooter mobile game. Polished glossy candy-jelly material, soft cel shading, rounded plump volume, large white specular highlight on the upper-left with one smaller glint, smooth clean darker outline of the same hue, luminous subtle inner lower rim. Friendly rich candy colors matching cute cartoon jelly characters and glossy mobile game booster buttons. Not realistic, not metallic, no realistic grain. Genuine transparent RGBA background, one isolated asset fully visible, no checkerboard baked into the image, no ground or drop shadow, no extra objects or decorations, no text, letters, digits, watermark, labels or logos.\nSubject: one yellow jelly rounded-square home button. Warm lemon-yellow upper face gradually deepens to golden-yellow near its base, clean dark-orange outline, a thick darker amber-orange bottom edge to make it visibly pressable. Rounded corners about one quarter of the side, a smooth slightly domed square face, straight enough sidewalls to remain a rounded SQUARE, not a circle or tall rectangle. Gloss and color should look juicy like yellow translucent jelly; no metal.\nCanvas: exactly 152x152 logical square, centered body with only 4 logical pixels transparent padding on each side. The square body fills about 144x144. Single big upper-left glint and smaller glint on top rim.\nIcon: one simple bold WHITE HOUSE with a dark orange outline, clearly recognizable roof, house body and a small dark orange doorway cutout, NO separate window details needed. Icon centered HORIZONTALLY in the UPPER PART: around x=76, y=59, roughly 62 pixels wide and 60 pixels tall. Keep icon entirely above y=96. Lower third of the button face (y=101 through 139) is empty uninterrupted yellow jelly, reserved for the label supplied by code. Do not draw the label. No arrow or other symbol.",
+      "raw": "/Users/yangdage/.codex/generated_images/01a1439a-38ad-77d2-9e2b-2b836a826d91/exec-183590e9-b1f1-4d0d-9e2e-2469467d19a1.png"
+    },
+    {
+      "key": "button-replay",
+      "width": 152,
+      "height": 152,
+      "intent": "edit",
+      "inputs": [
+        "/Users/yangdage/.codex/generated_images/01a1439a-38ad-77d2-9e2b-2b836a826d91/exec-183590e9-b1f1-4d0d-9e2e-2469467d19a1.png"
+      ],
+      "prompt": "Use case: precise-object-edit. Edit this yellow jelly button into the PURPLE REPLAY button from the exact same game UI kit. Input image is the edit target.\n\nKeep the square rounded silhouette, canvas composition and padding, corner radius, face-to-bottom-edge proportions, all glossy lighting placement and polished soft cel-shaded candy-jelly material identical. Recolor the yellow face to bright medium candy PURPLE, with luminous lavender-purple at the upper-left and richer violet at bottom-right. Recolor amber edge to a dark violet thick pressable bottom edge, and the outer outline to clean deep purple. Keep white highlights unchanged.\n\nReplace ONLY the house pictogram with one bold WHITE CIRCULAR REPLAY ARROW with a thin deep-purple outline: an almost complete round loop curling clockwise and ending in one obvious triangular arrowhead. A single simple loop-arrow glyph, no play triangle inside, no second arrow, no letters. Keep it centered horizontally in the UPPER part of the button, with the same approximate size and center as the house; it must fit entirely above y=96 on the final 152x152 logical canvas. Keep the lower third (y=101 through139) entirely empty purple jelly for the code-rendered label. Do not draw any text.\n\nOutput one 152x152 logical square RGBA sprite, transparent background. No extra badge, decorations, drop shadow or ground. Do not add anything outside the square. Preserve identical button geometry and only change color and icon.",
+      "raw": "/Users/yangdage/.codex/generated_images/01a1439a-38ad-77d2-9e2b-2b836a826d91/exec-234b7305-698e-4187-a485-35589b9d6295.png"
+    },
+    {
+      "key": "button-next",
+      "width": 416,
+      "height": 168,
+      "intent": "edit",
+      "inputs": [
+        "/Users/yangdage/.codex/generated_images/01a1439a-38ad-77d2-9e2b-2b836a826d91/exec-183590e9-b1f1-4d0d-9e2e-2469467d19a1.png"
+      ],
+      "prompt": "Use case: style-transfer. Transform the supplied yellow square jelly button into the WIDE GREEN NEXT-LEVEL button from the same game UI kit. This is the input to edit. Preserve its glossy soft cel-shaded candy-jelly material, lighting character, smooth plump raised face, clean darker same-hue contour, large upper-left white highlight with smaller nearby glint, subtle luminous lower inner rim, and thick darker bottom edge making it pressable.\n\nChange the button's silhouette to a wide horizontal pill button on a 416x168 logical canvas, approximately 408 pixels wide and 160 pixels tall with a 4-pixel transparent border. Use broad smooth semicircular rounded ends, a long horizontal central face. Keep the front-facing gentle jelly volume, a lower bevel about 12 logical pixels thick, and a continuous long blank central area for a future text label.\nRecolor to GREEN: bright fresh grassy candy-green face, lighter yellow-green upper-left, richer emerald-green on the right and bottom, deep green outline and darker green bottom edge. Not teal, not yellow, not neon. Match the yellow reference button's richness and gloss.\nREMOVE the white house icon completely and fill its space perfectly with continuous green jelly surface. The entire button face must be blank. No text, letters, symbols, icons, arrows, dots, stars, decor, logos or watermark.\nOne isolated full button, genuine transparent background, no drop shadow, no ground, no backing panel. Do not crop the outline. Wide horizontal composition, exact aspect ratio416:168.",
+      "raw": "/Users/yangdage/.codex/generated_images/01a1439a-38ad-77d2-9e2b-2b836a826d91/exec-cbd842a1-c0bd-47f6-b3da-daa5b8689911.png"
+    },
+    {
+      "key": "icon-clock",
+      "width": 128,
+      "height": 128,
+      "prompt": "Use case: stylized-concept. Production game UI asset for a bright cute bubble-shooter mobile game. Polished glossy candy-jelly material, soft cel shading, rounded plump volume, large white specular highlight on the upper-left with one smaller glint, smooth clean darker outline of the same hue, luminous subtle inner lower rim. Friendly rich candy colors matching cute cartoon jelly characters and glossy mobile game booster buttons. Not realistic, not metallic, no realistic grain. Genuine transparent RGBA background, one isolated asset fully visible, no checkerboard baked into the image, no ground or drop shadow, no extra objects or decorations, no text, letters, digits, watermark, labels or logos.\nSubject: one small cute CLOCK UI icon. Round WHITE clock face, thick bright sky-blue candy-jelly outer rim, clean deep blue contour, simple bold DARK NAVY hands showing about 10:10, a tiny dark navy center pivot. No numbers. Only four small clean navy hour ticks at twelve, three, six and nine o'clock, with roomy white face. Top-left broad white specular highlight on the blue rim and a small second glint. Soft blue lower rim makes it slightly raised. View straight on, almost flat frontal face, crisp and legible when tiny.\nCanvas: exactly 128x128 logical square, centered circular icon about 116 pixels diameter with transparent margins. No alarm bells, no feet, no chain, no crown or stopwatch button, no wings. No surrounding badges or background disk beyond the clock itself. This is the time-used icon shown next to a number in a game UI.",
+      "raw": "/Users/yangdage/.codex/generated_images/01a1439a-38ad-77d2-9e2b-2b836a826d91/exec-206ad432-c300-4539-a544-43a0b53a9a1a.png"
+    }
+  ],
+  "styleInspected": [
+    "Art/R1/ui-bars-assets-20261020/buttons-v1/button-designate-blank.png",
+    "Art/R1/ui-bars-assets-20261020/icon-shield.png",
+    "Art/R1/ui-bars-assets-20261020/finale-title-plate.png"
+  ]
+}

@@ -92,6 +92,10 @@ namespace Flightbeat.Garden.UI
                 if (ribbon) ribbon.gameObject.SetActive(false);
                 var title = content.Find("Title");
                 if (title) RestyleTitle(title.GetComponent<GardenUiText>(), -268f);
+                // 18:11: the same deep indigo shade as the victory page (was black 65 %).
+                var shade = content.parent ? content.parent.Find("Modal input shield") : null;
+                var shadeImage = shade ? shade.GetComponent<Image>() : null;
+                if (shadeImage) shadeImage.color = WinShade;
             }
             var mission = resultDialog.transform.Find("Mission result/Content");
             if (mission)
@@ -105,10 +109,11 @@ namespace Flightbeat.Garden.UI
         static void RestyleTitle(GardenUiText t, float y)
         {
             if (!t) return;
+            t.roundedFont = true;   // 2026-10-21 18:11: the rounded type of the rest of the bubble UI
             var r = t.rectTransform;
             r.anchoredPosition = new Vector2(r.anchoredPosition.x, y);
             r.sizeDelta = new Vector2(r.sizeDelta.x, 40f);
-            t.fontSize = 30f; t.outlineWidth = 2.6f; t.color = Color.white; t.middle = true; t.SetVerticesDirty();
+            t.fontSize = 30f; t.outlineWidth = 2.6f; t.color = Color.white; t.middle = true; t.SetVerticesDirty(); t.SetMaterialDirty();
         }
 
         // 2026-10-17 victory screen (after the lightup reference): no panel on a win. The panel, portrait, title,
@@ -166,13 +171,15 @@ namespace Flightbeat.Garden.UI
                 resultContinue.text = "下 一 关"; resultContinue.alternateText = "再 试 一 次";
                 CenterButtonLabel(resultContinue, 62f, 26f);
             }
+            // 2026-10-21 18:11: green jelly buttons with rounded type, no letter spacing; centred on the button face
+            // (the art's top 70 of 84 px; the rest is its thick lower edge).
             if (resumeLabel)
             {
-                resumeLabel.text = "继 续 战 斗"; resumeLabel.alternateText = "完  成";   // 21:10 (user): home settings button reads 完  成
-                CenterButtonLabel(resumeLabel, 54f, 24f);
+                resumeLabel.text = "继续战斗"; resumeLabel.alternateText = "完成";   // 21:10 (user): home settings button reads 完成
+                CenterButtonLabel(resumeLabel, 70f, 30f);
             }
             foreach (var text in pausedPanel.GetComponentsInChildren<GardenUiText>(true))
-                if (text.text == "继续") { text.text = "继 续"; CenterButtonLabel(text, 52f, 24f); break; }
+                if (text.text == "继续") { CenterButtonLabel(text, 70f, 30f); break; }
         }
         // 2026-10-17 11:10: no level line under these; the bigger label is centred on its whole button.
         static void CenterButtonLabel(GardenUiText main, float buttonHeight, float size)
@@ -203,6 +210,17 @@ namespace Flightbeat.Garden.UI
         }
         void CreateResetProgress()
         {
+            // 2026-10-21 18:11: the prefab now carries a quiet 「重置关卡进度」 text link (Settings/Content/Reset progress).
+            var link = pauseDialog.transform.Find("Settings/Content/Reset progress");
+            if (link && !resetProgress)
+            {
+                resetProgress = link.gameObject;
+                resetLabel = resetProgress.GetComponentInChildren<GardenUiText>(true);
+                if (resetLabel) { resetLabel.middle = true; resetLabel.SetVerticesDirty(); }
+                resetProgress.SetActive(false);
+                pauseActions = pauseDialog.GetComponentsInChildren<GardenUiAction>(true);
+                return;
+            }
             GardenUiAction retry = null;
             foreach (var action in pauseActions) if (action.actionId == 23) { retry = action; break; }
             if (!retry || resetProgress) return;
@@ -233,7 +251,10 @@ namespace Flightbeat.Garden.UI
             var rect = (RectTransform)levelSetRow.transform;
             rect.anchoredPosition = ((RectTransform)light.transform).anchoredPosition - new Vector2(0, LevelSetRow);
             levelSetRow.GetComponent<GardenUiAction>().actionId = LevelSetAction;
-            foreach (var text in levelSetRow.GetComponentsInChildren<GardenUiText>(true)) { text.text = text.alternateText = "新图案关卡"; text.SetVerticesDirty(); }
+            // 2026-10-21 18:11 (user): a wording players understand (was 新图案关卡); its own icon when delivered.
+            foreach (var text in levelSetRow.GetComponentsInChildren<GardenUiText>(true)) { text.text = text.alternateText = "新版关卡图案"; text.SetVerticesDirty(); }
+            var alt = levelSetRow.transform.Find("Alt icon");
+            if (alt) { alt.gameObject.SetActive(true); var own = levelSetRow.transform.Find("Light icon"); if (own) own.gameObject.SetActive(false); }
             levelSetToggle = levelSetRow.GetComponentsInChildren<Image>(true).Length > 0 ? FindToggle(levelSetRow.transform) : null;
             // The 光效 row has no divider under it (it was the last row); borrow the 音效 row's.
             var divider = sound ? sound.transform.Find("Divider") : null;
@@ -262,7 +283,7 @@ namespace Flightbeat.Garden.UI
                 levelSetRow.SetActive(show);
                 if (levelSetDivider) levelSetDivider.SetActive(show);
                 float shift = show ? LevelSetRow : 0f;
-                if (settingsPanelArt) settingsPanelArt.sizeDelta = new Vector2(settingsPanelArt.sizeDelta.x, panelHeight + shift);
+                if (settingsPanelArt) settingsPanelArt.sizeDelta = new Vector2(settingsPanelArt.sizeDelta.x, panelHeight + shift + (homeMode ? HomeExtra : 0f));
                 resumeRect.anchoredPosition = new Vector2(resumeRect.anchoredPosition.x, resumeY - shift);
                 if (resetProgress)
                 {
@@ -311,8 +332,17 @@ namespace Flightbeat.Garden.UI
             background.SetActive(value); header.SetActive(value); controls.SetActive(value);
             if (!value) { pauseDialog.SetActive(false); resultDialog.SetActive(false); }
         }
+        // 2026-10-21 18:11: in home settings the panel grows a little for the 重置关卡进度 link under 完成.
+        bool homeMode;
+        const float HomeExtra = 34f;
         public void SetHomeMode(bool home)
         {
+            if (home != homeMode && settingsPanelArt)
+            {
+                homeMode = home;
+                settingsPanelArt.sizeDelta = new Vector2(settingsPanelArt.sizeDelta.x, panelHeight + (levelSetShown ? LevelSetRow : 0f) + (home ? HomeExtra : 0f));
+            }
+            homeMode = home;
             if (pauseTitle) pauseTitle.Present(home);
             if (resumeLabel) resumeLabel.Present(home);
             foreach (var action in pauseActions)

@@ -68,6 +68,16 @@ namespace Flightbeat.Game
         {
             int level = NextBubbleLevel() + 1;
             if (level != homeLabelLevel) { homeLabelLevel = level; homeLabel = "第  " + level + "  关"; }
+            // 2026-10-21 18:11 (user): the victory page's green jelly button (3-sliced) with rounded white type, breathing
+            // gently to invite a tap; the blue primary button until the art is there.
+            if (Has("plants/win/button-next"))
+            {
+                HitBox(s, 800, 100, y, 340, 76);
+                float k = 1f + .025f * Mathf.Sin(ui * 2.6f), w = 340f * k, h = 80f * k, x0 = 270f - w * .5f, y0 = y + 38f - h * .45f;
+                Asset9(s, "plants/win/button-next", x0, y0, w, h, 64f, 0f, h * 64f / 126f, 0f, Color.white);
+                GardenBarArt.TextOutline(s, homeLabel, 270f, y0 + h * .42f - 32f * k * .55f, 32f * k, Color.white, Hex(0x1B7A2A), 3f * k);
+                return;
+            }
             GardenButton(s, 800, 100, y, 340, 76, "");
             TextOutline(s, homeLabel, 270f, y + (76f - 32f) * .5f - 2f, 32f, Cream, Outline, 2.4f);
         }

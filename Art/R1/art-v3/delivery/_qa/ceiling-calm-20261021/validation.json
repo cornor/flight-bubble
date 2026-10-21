@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "checks": {
+    "size_1080x80_rgba": true,
+    "rows_60_through_64_full_width_alpha_at_least_0_95": true,
+    "middle_70_percent_above_row_46_fully_transparent": true,
+    "middle_top_within_rows_46_through_58": true,
+    "single_connected_cloud_no_detached_alpha_speckles": true,
+    "both_ends_higher_than_middle": true,
+    "left_right_silhouette_not_mirrored": true,
+    "backup_preserved": true,
+    "background_unchanged": true,
+    "generation_limit_respected": true
+  },
+  "pixel_coordinates": "zero-based; middle x=162..917 inclusive; rows y=60..64 inclusive",
+  "middle_top_min_max": [
+    49,
+    58
+  ],
+  "left_right_top_min": [
+    2,
+    9
+  ],
+  "band_min_alpha_by_row": {
+    "60": 248,
+    "61": 252,
+    "62": 251,
+    "63": 249,
+    "64": 249
+  },
+  "minimum_band_opacity": 0.9725490196078431,
+  "middle_upper_region_max_alpha": 0,
+  "alpha_component_sizes": [
+    27312
+  ],
+  "opaque_rgb_quantiles": {
+    "0.05": [
+      189,
+      213,
+      243
+    ],
+    "0.25": [
+      199,
+      221,
+      246
+    ],
+    "0.5": [
+      220,
+      234,
+      250
+    ],
+    "0.75": [
+      247,
+      249,
+      252
+    ],
+    "0.95": [
+      253,
+      253,
+      255
+    ]
+  },
+  "visual_review": {
+    "asymmetric_full_end_clusters_and_three_unequal_shallow_middle_rises": true,
+    "no_repeated_beads_rope_or_chain_pattern": true,
+    "white_and_soft_pale_blue_no_gray_dark_outline_or_specular_dots": true,
+    "status": "assistant visual inspection; user aesthetic acceptance pending"
+  },
+  "scope": "source cutout and composited preview only; no game code, atlas, build, or runtime test"
+}

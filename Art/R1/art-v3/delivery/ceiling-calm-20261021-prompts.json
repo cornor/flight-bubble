@@ -1,0 +1,288 @@
+{
+  "task": "顶部云带重画（不规则云岸）",
+  "generator": "built-in image_gen",
+  "source_prompt_file": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/ui-calm-design-20261021/顶部云带-出图需求.md",
+  "source_prompt_sha256": "dc04e0968d6d604f7ac5539a6e146aaf99a0bf6b57f3f9bad430f4c03a7ed79b",
+  "base_prompt": "A single game UI strip for an all-ages mobile casual game, in EXACTLY the soft hand-painted cloud style of the top-left and top-right clouds of the third attached image (pure white puffs with soft pale-blue shading, gentle cel shading, no outlines). Strictly original; no text, no characters, no icons, no castle, no rainbow.\n\nONE wide horizontal CLOUD BANK, 1080x80 pixels, transparent background (PNG with alpha). It hangs across the top of a game board as a soft ceiling; rows of small bubbles appear from under it. It sits on a clean deep clear-day blue sky (about #3578DA).\n\nShape, from left to right:\n- Left 15% and right 15%: fuller, rounder cloud puffs of different sizes, rising up to the top of the image.\n- Middle 70%: a THIN, LOW, calm cloud edge, only about 22 to 34 px tall measured from the bottom, gently undulating with a few puffs of clearly different sizes; it must NOT look like a uniform row of identical bumps, a rope, a braid or a chain.\n- Puff sizes and spacing vary naturally; no visible repetition.\n- The bottom edge is a soft, slightly wavy cloud underside that runs the FULL width without gaps.\n\nLook: calm, soft, low contrast between light and shade; no bright specular highlights, no sparkles, no hard dark outlines, no gray, no colored tints other than pale blue shading.",
+  "reference_images": [
+    "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/ui-calm-design-20261021/12-第二次构建-第7关.png",
+    "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_originals/ceiling-v1.png",
+    "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/scene/background.png",
+    "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/ui-calm-design-20261021/14-顶部云带-画法对比.png"
+  ],
+  "backup": {
+    "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_originals/ceiling-v1.png",
+    "sha256": "6cbb820ff4fe471d708f896fc38f333a58a26c759c0c85c4533e95ccaf8b8ad5"
+  },
+  "max_generation_calls": 4,
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt": "A single game UI strip for an all-ages mobile casual game, in EXACTLY the soft hand-painted cloud style of the top-left and top-right clouds of the third attached image (pure white puffs with soft pale-blue shading, gentle cel shading, no outlines). Strictly original; no text, no characters, no icons, no castle, no rainbow.\n\nONE wide horizontal CLOUD BANK, 1080x80 pixels, transparent background (PNG with alpha). It hangs across the top of a game board as a soft ceiling; rows of small bubbles appear from under it. It sits on a clean deep clear-day blue sky (about #3578DA).\n\nShape, from left to right:\n- Left 15% and right 15%: fuller, rounder cloud puffs of different sizes, rising up to the top of the image.\n- Middle 70%: a THIN, LOW, calm cloud edge, only about 22 to 34 px tall measured from the bottom, gently undulating with a few puffs of clearly different sizes; it must NOT look like a uniform row of identical bumps, a rope, a braid or a chain.\n- Puff sizes and spacing vary naturally; no visible repetition.\n- The bottom edge is a soft, slightly wavy cloud underside that runs the FULL width without gaps.\n\nLook: calm, soft, low contrast between light and shade; no bright specular highlights, no sparkles, no hard dark outlines, no gray, no colored tints other than pale blue shading.\n\nEDIT TARGET is image 2 ONLY. Replace its repetitive cloud row with the new irregular cloud bank while preserving its exact 1080x80 panoramic canvas, transparent background format and full-width placement. Images 1, 3 and 4 are references, do not output a screenshot or a comparison.\nImage 1: position reference only.\nImage 2: canvas/alpha reference ONLY; its identical repeating cloud beads are a NEGATIVE shape example.\nImage 3: painting style reference, specifically the upper-left and upper-right clouds only.\nImage 4: strictly NEGATIVE reference: both a rope and a uniform row of puffs are rejected.\n\nAbsolute silhouette requirements in the final 1080x80 strip: for x=162..917, all pixels above y=46 must be fully transparent. The top outline of that middle section varies gently between y=46 and y=58. This makes a very low, thin central shelf, NOT a row of full round cloud balls. Far left and far right form much taller organic fluffy clusters concentrated within x<162 and x>917, with different silhouettes, no mirror symmetry. Gently descend into the low shelf by the 15% boundaries, no hard step. The shoulders at the two ends and the thin middle should read as ONE natural cloud bank. Keep just a few broad unequal shallow lobes across the long center with calm smooth areas between them.\nAcross ALL x=0..1079 the horizontal rows y=60..64 must be solid cloud with alpha at least 95%. No holes or light leaks across that band, including the extreme left/right border. Below y=64 it may have a gently waving feathered pale-blue underside through y=79. No white oval highlights anywhere; softly model the puffs with diffuse blue-white shading.\nReturn only the cloud strip, no sky, no checkerboard drawn into the image, no text.",
+      "reference_images": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/ui-calm-design-20261021/12-第二次构建-第7关.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_originals/ceiling-v1.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/scene/background.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/ui-calm-design-20261021/14-顶部云带-画法对比.png"
+      ],
+      "archive_path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_originals/ceiling-calm-attempt-01.png",
+      "native_path": "/Users/yangdage/.codex/generated_images/01a154ad-04ff-7731-b07b-72c13714ace7/exec-3ce46bdf-ce2f-4203-93e9-4785249c851c.png",
+      "native_size": [
+        1457,
+        1080
+      ],
+      "native_mode": "RGBA",
+      "native_sha256": "1a7e61e26bcf04b646b4cc7a630cb04b806ac9fc0228c7a223773807bbeb13ab",
+      "transparent_background": true,
+      "status": "rejected",
+      "verdict": "两端高云肩部侵入中段；中部厚度差异过大。"
+    },
+    {
+      "attempt": 2,
+      "prompt": "A single game UI strip for an all-ages mobile casual game, in EXACTLY the soft hand-painted cloud style of the top-left and top-right clouds of the third attached image (pure white puffs with soft pale-blue shading, gentle cel shading, no outlines). Strictly original; no text, no characters, no icons, no castle, no rainbow.\n\nONE wide horizontal CLOUD BANK, 1080x80 pixels, transparent background (PNG with alpha). It hangs across the top of a game board as a soft ceiling; rows of small bubbles appear from under it. It sits on a clean deep clear-day blue sky (about #3578DA).\n\nShape, from left to right:\n- Left 15% and right 15%: fuller, rounder cloud puffs of different sizes, rising up to the top of the image.\n- Middle 70%: a THIN, LOW, calm cloud edge, only about 22 to 34 px tall measured from the bottom, gently undulating with a few puffs of clearly different sizes; it must NOT look like a uniform row of identical bumps, a rope, a braid or a chain.\n- Puff sizes and spacing vary naturally; no visible repetition.\n- The bottom edge is a soft, slightly wavy cloud underside that runs the FULL width without gaps.\n\nLook: calm, soft, low contrast between light and shade; no bright specular highlights, no sparkles, no hard dark outlines, no gray, no colored tints other than pale blue shading.\n\nINPUT ROLES: Image 2 is the strip to REDRAW; preserve its panoramic 13.5:1 proportions. Image 3 top corner clouds are the paint-style reference. Image 1 is placement only. Image 4 is a REJECTED approach; never imitate its uniform puffs. Return ONLY the new strip asset.\n\nImportant correction: BOTH tall end clusters must be VERY NARROW horizontally. Keep all full-height fluffy shapes inside the OUTERMOST 10% on each side; a quick smooth taper occupies 10%-15%. By 15% from either edge, the cloud has ALREADY descended all the way into the low central shelf. Do not let a large shoulder extend to 20%-30% of the width. The tallest left mound sits around x=4%, while the tallest right mound sits around x=97%, with different surrounding lobes.\nThe entire middle 70%, x=15%-85%, is a very low calm cloud shelf: top contour stays between 58% and 71% of the strip height, only a handful of shallow broad UNEQUAL ripples over a continuous white cloud mass. No single tall middle cloud. No ball-shaped row. No separate clusters floating above it. The low shelf is still wide enough vertically to conceal a line: throughout the full width x=0%-100%, 75%-82% of strip height must be entirely solid white/pale-blue cloud. The cloud underside extends to 96%-100% of strip height with a gentle irregular contour. The upper area of the entire middle is totally clear transparent alpha.\n\nVERY IMPORTANT FORMAT: The cloud itself is extremely panoramic, width 13.5 times its maximum height. Do not draw tall hills in the middle of a square picture. Requested final frame 1080x80; the illustration should have the same natural wide flat proportions, FULL width to both left/right edges. If the rendering canvas is taller, keep the actual complete cloud artwork inside a thin horizontal strip with its correct 13.5:1 proportions, surrounded only by empty TRANSPARENT padding; preserve correct proportions without vertical stretching. Low-contrast white and pale-blue diffuse shading, no specular circles or shiny pearls.",
+      "reference_images": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/ui-calm-design-20261021/12-第二次构建-第7关.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_originals/ceiling-v1.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/scene/background.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/ui-calm-design-20261021/14-顶部云带-画法对比.png"
+      ],
+      "archive_path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_originals/ceiling-calm-attempt-02.png",
+      "native_path": "/Users/yangdage/.codex/generated_images/01a154ad-04ff-7731-b07b-72c13714ace7/exec-2e7f7bdf-1235-4ed6-8d5c-c1533dfc8d62.png",
+      "native_size": [
+        1457,
+        1079
+      ],
+      "native_mode": "RGBA",
+      "native_sha256": "72e302ba5eaaf127066f33f1d1b61dc3a5d606f52c04aa3463c0dbb7326560b3",
+      "transparent_background": true,
+      "status": "rejected",
+      "verdict": "中段仍是节奏均匀的小云团，左右过于相似。"
+    },
+    {
+      "attempt": 3,
+      "prompt": "Edit the SECOND input image, using ONLY the white/pale-blue cloud painting in the upper corners of the FIRST image as the style reference. Deliver just the transparent cloud strip, no scenery, sky, UI or text.\n\nThe second image is a near-miss cloud asset. KEEP its calm blue-white painted material and narrow central strip, but FIX its silhouette and repetitive details:\n1. Break the symmetry. The far LEFT edge has one fuller high fluffy mound around x=4%, followed by one smaller subordinate puff; it descends quickly and is low by x=13%. The far RIGHT has a lower small puff around x=91% and its tallest mound right at x=99%, a clearly different silhouette.\n2. Redraw the entire middle 70% as one calm continuous LOW CLOUD SHELF with ONLY THREE extremely shallow broad irregular rises. Approximate positions and widths: a small narrow rise near x=25%, a long very flat rise spanning x=36%-59%, then a medium rise near x=73%. Their shapes, heights and gaps MUST be different. Long nearly flat stretches of thin white cloud connect them. Eliminate the row of bead-like round bumps, little balls, scalloped cylinders, repetitions and rhythmic lighting.\n3. In the middle, remove all repeated inner puff circles/highlight blobs. Paint it almost as a single quiet white mass with a subtle diffuse pale blue underside, just a little soft volume under the three unequal shallow rises. No spot highlights, no shiny gel, no texture or speckles, no gray.\n4. Never make the center a rope or sausage: its upper contour has broad calm slopes, and its lower edge is a mostly straight soft continuous underside with only tiny changes. NO repeated semi-circles on the bottom. The white cloud must remain continuous edge to edge including extreme left/right edges; no holes.\n\nTarget export geometry: 1080x80 RGBA, extremely wide and shallow. Middle x=162..917 has top y=46..58; every pixel above y=46 there is alpha 0. All x across rows y=60..64 are fully opaque cloud. Cloud fades only below that, y=65..79. Ends can reach the top. If output canvas is larger, keep the artwork's wide shallow proportions with only transparent padding. Do not draw any stray translucent particles above or below the cloud: outside the cloud is perfectly empty transparent alpha.\nThis is a quiet cloud bank at the top of a mobile bubble game, NOT a decorative wavy border. Preserve fluffy round cloud shapes at the far ends and keep the thin middle deliberately understated.",
+      "reference_images": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/scene/background.png",
+        "/Users/yangdage/.codex/generated_images/01a154ad-04ff-7731-b07b-72c13714ace7/exec-2e7f7bdf-1235-4ed6-8d5c-c1533dfc8d62.png"
+      ],
+      "archive_path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_originals/ceiling-calm-attempt-03.png",
+      "native_path": "/Users/yangdage/.codex/generated_images/01a154ad-04ff-7731-b07b-72c13714ace7/exec-c1a103b4-70db-45fc-a19d-33d547b39846.png",
+      "native_size": [
+        2059,
+        764
+      ],
+      "native_mode": "RGBA",
+      "native_sha256": "201895f598b6920cd1ac7e481e2295368069fc30fe4833350fc76b6fb62f209c",
+      "transparent_background": true,
+      "status": "superseded",
+      "verdict": "形状与遮挡通过；底缘蓝色阴影偏重，由第4次减淡。",
+      "candidate_path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_qa/ceiling-calm-20261021/attempt-03-export.png"
+    },
+    {
+      "attempt": 4,
+      "prompt": "Precise color-only edit of image 2. Image 1 is the reference for gentle hand-painted white clouds in its TOP corners. The asset in image 2 already has the correct asymmetric cloud-bank shape: tall fluffy ends, only three broad shallow rises across a low continuous middle shelf. PRESERVE ITS EXISTING SILHOUETTE, POSITIONS, SIZES, PROPORTIONS, TRANSPARENCY AND CANVAS PLACEMENT. Do not introduce new puffs or change the outline.\n\nChange ONLY the interior paint/shading of the cloud in image 2:\n- It currently has overly saturated BLUE shading along its underside. Make ALL the shadow colors much paler and quieter, within a soft icy pale-blue range around RGB(201,220,242) #C9DCF2 through RGB(221,234,248) #DDEAF8.\n- Midtones mostly soft white and very pale blue. Main lit areas remain pure white or near-white.\n- Remove the narrow saturated blue line on the bottom edge. No hard outline, no electric blue, no cyan, no saturated purple, no gray.\n- The large puffs at the far ends retain soft hand-painted volume, with subtle low-contrast transitions; the middle stays one gentle thin cloud shelf, not glossy, no specular spots.\n- Keep every opaque part opaque; preserve the continuous full-width solid cloud strip through the base. Outside the cloud must be genuinely transparent alpha 0, with no stray marks or particles.\n\nThis is ONLY a pale blue shading correction of the supplied strip. No sky, no text, no stars, no other elements. Do not replace the two large end clusters with repeated identical small clouds. Preserve the asymmetric outline and low central shape exactly. Target exported asset remains 1080x80 after removing transparent canvas padding; keep the native artwork proportions identical to input 2.",
+      "reference_images": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/scene/background.png",
+        "/Users/yangdage/.codex/generated_images/01a154ad-04ff-7731-b07b-72c13714ace7/exec-c1a103b4-70db-45fc-a19d-33d547b39846.png"
+      ],
+      "archive_path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_originals/ceiling-calm-attempt-04.png",
+      "native_path": "/Users/yangdage/.codex/generated_images/01a154ad-04ff-7731-b07b-72c13714ace7/exec-fa432ec4-51aa-4f3f-b819-7478beb8c659.png",
+      "native_size": [
+        2060,
+        763
+      ],
+      "native_mode": "RGBA",
+      "native_sha256": "88bb11d7ebe3945b1f4114dbef8bf82773bcaa89d50ebc1b8fda17a5acf9d8cc",
+      "transparent_background": true,
+      "status": "selected",
+      "postprocessing": {
+        "crop": [
+          0,
+          436,
+          2060,
+          718
+        ],
+        "resize": [
+          1080,
+          80
+        ],
+        "filter": "Lanczos",
+        "alpha_cleanup": "Alpha 0..8 set to 0; all higher alpha and RGB retained from resampling; no repaint",
+        "candidate_path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_qa/ceiling-calm-20261021/attempt-04-export.png"
+      },
+      "verdict": "采用：保留第3版的不规则云岸，阴影减淡；导出后全部像素硬指标通过。",
+      "candidate_sha256": "65217ad2443fa95103172a24bf709d770b78b3d3504af88266f8df11a37875c6",
+      "matte_note": "Removed one isolated pixel at (141,47), alpha 8/255, by final alpha-noise threshold"
+    }
+  ],
+  "status": "delivered_source_asset_only",
+  "selected_attempt": 4,
+  "tool_requests": 4,
+  "generated_images": 4,
+  "postprocessing": {
+    "crop": [
+      0,
+      436,
+      2060,
+      718
+    ],
+    "resize": [
+      1080,
+      80
+    ],
+    "filter": "Lanczos",
+    "alpha_cleanup": "Only alpha values 0..8 become 0; no opacity boost, recoloring or shape repaint",
+    "reason": "ImageGen returned a padded canvas; normalize the cutout to the brief and remove near-transparent matte noise"
+  },
+  "validation": {
+    "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_qa/ceiling-calm-20261021/validation.json",
+    "passed": true,
+    "checks": {
+      "size_1080x80_rgba": true,
+      "rows_60_through_64_full_width_alpha_at_least_0_95": true,
+      "middle_70_percent_above_row_46_fully_transparent": true,
+      "middle_top_within_rows_46_through_58": true,
+      "single_connected_cloud_no_detached_alpha_speckles": true,
+      "both_ends_higher_than_middle": true,
+      "left_right_silhouette_not_mirrored": true,
+      "backup_preserved": true,
+      "background_unchanged": true,
+      "generation_limit_respected": true
+    },
+    "pixel_coordinates": "zero-based; middle x=162..917 inclusive; rows y=60..64 inclusive",
+    "middle_top_min_max": [
+      49,
+      58
+    ],
+    "left_right_top_min": [
+      2,
+      9
+    ],
+    "band_min_alpha_by_row": {
+      "60": 248,
+      "61": 252,
+      "62": 251,
+      "63": 249,
+      "64": 249
+    },
+    "minimum_band_opacity": 0.9725490196078431,
+    "middle_upper_region_max_alpha": 0,
+    "alpha_component_sizes": [
+      27312
+    ],
+    "opaque_rgb_quantiles": {
+      "0.05": [
+        189,
+        213,
+        243
+      ],
+      "0.25": [
+        199,
+        221,
+        246
+      ],
+      "0.5": [
+        220,
+        234,
+        250
+      ],
+      "0.75": [
+        247,
+        249,
+        252
+      ],
+      "0.95": [
+        253,
+        253,
+        255
+      ]
+    },
+    "visual_review": {
+      "asymmetric_full_end_clusters_and_three_unequal_shallow_middle_rises": true,
+      "no_repeated_beads_rope_or_chain_pattern": true,
+      "white_and_soft_pale_blue_no_gray_dark_outline_or_specular_dots": true,
+      "status": "assistant visual inspection; user aesthetic acceptance pending"
+    },
+    "scope": "source cutout and composited preview only; no game code, atlas, build, or runtime test"
+  },
+  "comparison": {
+    "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/ui-calm-design-20261021/15-顶部云带-新旧对比.png",
+    "kind": "composite, not rebuilt-game screenshot",
+    "background_source_crop": [
+      0,
+      0,
+      1080,
+      384
+    ],
+    "board_screenshot_crop": [
+      7,
+      196,
+      909,
+      342
+    ],
+    "board_preview_xy": [
+      0,
+      108
+    ],
+    "cloud_xy_wh": [
+      0,
+      76,
+      540,
+      40
+    ]
+  },
+  "output": {
+    "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/scene/ceiling.png",
+    "size": [
+      1080,
+      80
+    ],
+    "mode": "RGBA",
+    "sha256": "65217ad2443fa95103172a24bf709d770b78b3d3504af88266f8df11a37875c6"
+  },
+  "scope": {
+    "game_code_changed": false,
+    "atlas_changed": false,
+    "build_run": false,
+    "background_changed": false,
+    "other_cutouts_changed": false
+  },
+  "reference_metadata": [
+    {
+      "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/ui-calm-design-20261021/12-第二次构建-第7关.png",
+      "sha256": "f6907858f12b1602f1f948fe9fdf8735b0034799da6dfa9aeb52fb6909640d21",
+      "size": [
+        920,
+        1604
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/_originals/ceiling-v1.png",
+      "sha256": "6cbb820ff4fe471d708f896fc38f333a58a26c759c0c85c4533e95ccaf8b8ad5",
+      "size": [
+        1080,
+        80
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/art-v3/delivery/scene/background.png",
+      "sha256": "08282c217a613bddc2dd01e4833794d804baf89b9a0c9894490c02836deb7afd",
+      "size": [
+        1080,
+        1920
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/R1/ui-calm-design-20261021/14-顶部云带-画法对比.png",
+      "sha256": "2b2f954dd1fec9ee3479d928fa4c5dc7030e6ab2d29640bce791b8c18a88a44f",
+      "size": [
+        644,
+        1064
+      ],
+      "mode": "RGB"
+    }
+  ]
+}

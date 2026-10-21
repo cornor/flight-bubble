@@ -252,22 +252,32 @@ namespace Flightbeat.Editor
             var settings = Node("Settings", root, 0, 0, 540, 960); Stretch(settings);
             var content = Modal(settings, "暂停一下", 250, 402);
             string[] names = { "Music", "Sound", "Light" }, labels = { "音乐", "音效", "光效" };
+            string[] icons = { "plants/ui/icon-music", "plants/ui/icon-sound", "plants/ui/icon-light" };
             // v3 (2026-10-15): plain setting rows (label left, switch right, thin dividers) instead of button-styled rows.
             // The whole row stays the hit area for the same action ids; the switch art shows the state.
+            // 2026-10-21 18:11 (user): rounded type, a small icon before each label when delivered (ui/icon-*.png).
             for (int i = 0; i < 3; i++)
             {
                 var row = Action(names[i], content, 20 + i, 84, 336 + 58 * i, 372, 48);
-                var label = Label(names[i] + " text", row, labels[i], 20, 12, 200, 21, Ink);
+                bool icon = HasSlot(icons[i]);
+                if (icon) Art(names[i] + " icon", row, icons[i], 14, 8, 32, 32);
+                var label = RoundLabel(names[i] + " text", row, labels[i], icon ? 56 : 20, 12, 220, 21, Ink);
                 label.centered = false; label.alternateText = labels[i];
                 Art(names[i] + " toggle", row, "ui/toggle-on", 296, 8, 60, 32);
+                if (i == 2 && HasSlot("plants/ui/icon-pattern")) Art("Alt icon", row, "plants/ui/icon-pattern", 14, 8, 32, 32).gameObject.SetActive(false);
                 if (i < 2) { var line = Solid("Divider", row, new Color(.62f, .74f, .88f, .7f), false); var lr = line.rectTransform; lr.anchoredPosition = new Vector2(12, -52.5f); lr.sizeDelta = new Vector2(348, 1.5f); }
             }
-            Button("Resume", content, 24, 84, 516, 372, 54, "继续战斗");
-            Button("Retry", content, 23, 84, 580, 180, 46, "重新开始");
-            Button("Home", content, 25, 276, 580, 180, 46, "返回主页");
+            // 18:11 (user): the victory page's button row: 主页 square · big green 继续战斗 · 重玩 square (restart).
+            SquareButton("Home", content, 25, 84, 548, "plants/win/button-home", "主页", new Color32(0xB8, 0x65, 0x0A, 0xFF));
+            GreenButton("Resume", content, 24, 172, 542, 196, 84, "继续战斗");
+            SquareButton("Retry", content, 23, 380, 548, "plants/win/button-replay", "重玩", new Color32(0x4E, 0x1F, 0xA8, 0xFF));
+            // Home settings only: 重置关卡进度 as a quiet text link under 完成 (two taps, see BubbleReset).
+            var reset = Action("Reset progress", content, GardenBattlePage.ResetProgressAction, 150, 632, 240, 28);
+            RoundLabel("Reset text", reset, "{0}", 0, 4, 240, 15, new Color32(0x6F, 0x86, 0xA6, 0xFF));
+            reset.gameObject.SetActive(false);
             var paused = Node("Paused", root, 0, 0, 540, 960); Stretch(paused);
             var simple = Modal(paused, "休息一下", 250, 370);
-            Button("Resume simple", simple, 1, 170, 490, 200, 52, "继续");
+            GreenButton("Resume simple", simple, 1, 172, 474, 196, 84, "继续");
             paused.gameObject.SetActive(false);
             return root;
         }
@@ -317,7 +327,9 @@ namespace Flightbeat.Editor
             Image shade = Solid("Modal input shield", parent, new Color(0, 0, 0, .65f), true);
             shade.gameObject.AddComponent<GardenUiAction>().actionId = 0;
             var content = Node("Content", parent, 0, 0, 540, 960); Center(content);
-            Art("Panel", content, "ui/popup-panel", 50, y, 440, height, true);
+            // 2026-10-21 18:11: a white card panel when delivered (ui/panel-card.png, 9-sliced), else the blue glass panel.
+            if (HasSlot("plants/ui/panel-card")) Art("Panel", content, "plants/ui/panel-card", 50, y, 440, height, true, 36, 36, 24);
+            else Art("Panel", content, "ui/popup-panel", 50, y, 440, height, true);
             Art("Ribbon", content, "ui/popup-ribbon", 80, y - 26, 380, 60);
             Label(titleName, content, title, 80, y - 13, 380, 24, Cream, 2);
             return content;
@@ -329,6 +341,17 @@ namespace Flightbeat.Editor
             Art("Button image", root, primary ? "ui/button-primary" : "ui/button-secondary", 0, 0, w, h, true, primary ? 45 : 30, 0, h * (primary ? 45 : 30) / (primary ? 78 : 72));
             float size = Mathf.Min(20, h * .42f);
             Label(labelName, root, text, 0, (h - size) / 2 - 1, w, size, Cream, 1.8f);
+            return root;
+        }
+        // Big green jelly button of the victory page (win/button-next), the blue primary as fallback; white rounded word.
+        static RectTransform GreenButton(string name, RectTransform parent, int id, float x, float y, float w, float h, string word)
+        {
+            var root = Action(name, parent, id, x, y, w, h);
+            bool painted = HasSlot("plants/win/button-next");
+            if (painted) Art("Button image", root, "plants/win/button-next", 0, 0, w, h);
+            else Art("Button image", root, "ui/button-primary", 0, 0, w, h, true, 45, 0, h * 45f / 78f);
+            var label = RoundLabel("Label", root, word, 0, h * .23f, w, 30, Color.white);
+            label.outlineWidth = 3f; label.outlineColor = painted ? new Color32(0x1B, 0x7A, 0x2A, 0xFF) : new Color32(0x16, 0x3E, 0x6D, 0xFF);
             return root;
         }
         static bool HasSlot(string id) => id.StartsWith("bars/") ? barAtlas.slots.Any(s => s.id == id.Substring(5)) : atlas.slots.Any(s => s.id == id);

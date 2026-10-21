@@ -137,6 +137,9 @@ SLOTS.append(('plants/mystery-bubble', 'creatures/mystery/bubble.png', CREATURE,
 # (plants/ prefix) because the main atlas is full.
 for _id, _scale in (('ribbon', UI), ('button-home', UI), ('button-replay', UI), ('button-next', UI), ('icon-clock', .5)):
     SLOTS.append((f'plants/win/{_id}', f'win/{_id}.png', _scale, None))
+# 2026-10-21 18:11 dialogs (optional): white card panel (9-sliced, 48 px corners at 360 px) and settings row icons.
+for _id, _scale in (('panel-card', UI), ('icon-music', .5), ('icon-sound', .5), ('icon-light', .5), ('icon-pattern', .5)):
+    SLOTS.append((f'plants/ui/{_id}', f'ui4/{_id}.png', _scale, None))
 # Third batch finale (art items 77/78), optional: the game falls back to the original drawing when absent.
 # The Bubble King goes to the creature atlas (plants/ prefix); king-blow falls back to king-ready in code.
 # Home key art (Art/R1/home-v1, items H3-H8, H10), optional: the home page keeps its old look until delivered.

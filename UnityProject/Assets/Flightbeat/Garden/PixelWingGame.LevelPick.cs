@@ -72,7 +72,7 @@ namespace Flightbeat.Game
             TextOutline(s, levelPickHeader, 270f, oy + 84f, 16f, Hex(0xFFE58A), Outline, 1.5f);
             bool newSet = LevelSetCurrent == LevelSetB;
             if (LevelSetAvailableCount > 0)
-                TextOutline(s, newSet ? "当前：新图案关卡（可在设置里切换）" : "当前：经典图案（可在设置里切换）", 270f, oy + 108f, 14f, Hex(0xBFD4F2), Outline, 1.2f);
+                TextOutline(s, newSet ? "当前：新版关卡图案（可在设置里切换）" : "当前：经典关卡图案（可在设置里切换）", 270f, oy + 108f, 14f, Hex(0xBFD4F2), Outline, 1.2f);
 
             int next = NextBubbleLevel(), unlocked = Economy.Data.unlocked;
             const float cell = 92f, d = 70f, gridTop = 150f;

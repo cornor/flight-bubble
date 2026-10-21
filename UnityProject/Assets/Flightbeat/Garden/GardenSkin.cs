@@ -115,6 +115,9 @@ namespace Flightbeat.Garden
         public static bool Asset9(PixelSurface s, string id, float x, float y, float w, float h, float bx, float by, float ex, float ey, Color tint) {
             var data = Data;
             if (!slots.TryGetValue(id, out var slot)) return false;
+            // 2026-10-21: slots of the creature atlas (4096 x 2048) slice with their own texture size and atlas.
+            float tw = data.size, th = data.size;
+            if (slot.atlas == 1 && data.creatureWidth > 0) { tw = data.creatureWidth; th = data.creatureHeight; }
             // Vertically sliced panels and speech bubbles must map as one rect.
             // Independently mapping rigid tile centers leaves gaps on tall screens.
             // Horizontal-only planks (by == 0) retain their fixed-height behavior.
@@ -127,7 +130,7 @@ namespace Flightbeat.Garden
                     for (int i = 0; i < 3; i++) {
                         float u0 = slot.x + sxs[i], v0 = slot.y + sys[j], uw = sxs[i + 1] - sxs[i], vh = sys[j + 1] - sys[j];
                         s.GardenQuad(dxs[i], dys[j], dxs[i + 1] - dxs[i], dys[j + 1] - dys[j],
-                            new Rect(u0 / data.size, 1f - (v0 + vh) / data.size, uw / data.size, vh / data.size), tint, false, true);
+                            new Rect(u0 / tw, 1f - (v0 + vh) / th, uw / tw, vh / th), tint, false, true, slot.atlas);
                     }
                 return true;
             } finally { if (mapped) s.MapLayout = true; }

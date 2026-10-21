@@ -278,12 +278,15 @@ namespace Flightbeat.Game
             PadUnlockFx(s, plotW);   // 2026-10-21 14:18: the unlocked pad celebrates (replaces the 「已解锁出战位」 bar)
             // UI spec v3 4.3 (2026-10-15) gave empty open pads a turning golden swirl; removed 2026-10-21 17:24 (user:
             // all pads alike, nothing on the stage competing with the board).
-            // Queue (UI spec v3 3). 2026-10-21 (改动清单 3.3, user): no glass tube any more; each lane is a shallow
-            // groove pressed into the stage. 17:24 (user): no pad under the front member either.
+            // Queue (UI spec v3 3): one glass tube per lane. 2026-10-21 (改动清单 3.3): briefly a drawn groove, then a
+            // painted one (ui/queue-groove.png, kept but unused); 18:16 (user): the groove lost the dreamy glass feel, so
+            // the glass tube is back at 55 % opacity: same shape and soft blue rim, far less glare next to the board.
+            // No pad under the front member (17:24).
             for (int lane = 0; lane < Battle.LaneCount; lane++) {
                 float w = Mathf.Min(108f, 500f / Battle.LaneCount - 8f), qx = Battle.QueuePositionX(lane);
                 var reserve = Battle.Reserve[lane];
-                QueueGroove(s, qx, 694f, 866f, w * .86f);
+                if (!Asset9(s, "scene/queue-panel", qx - w / 2, 688, w, 180, 24f, 16f, new Color(1f, 1f, 1f, .55f)))
+                    QueueGroove(s, qx, 694f, 866f, w * .86f);
                 if (GardenHintLane(out int hint) && hint == lane && reserve.Count > 0) {
                     // Tutorial hint (option A): warm pulsing glow behind the suggested front creature.
                     float pulse = .7f + .3f * Mathf.Sin(ui * 4f);
@@ -393,7 +396,7 @@ namespace Flightbeat.Game
                     // (eyes-closed frame, slower breath). Everyone is awake while the 指定 prop lets any row be picked.
                     bool asleep = row > 0 && selection != 1;
                     float wake = QueueWake(ship.Id, asleep), hop = wake < .3f ? Mathf.Sin(wake / .3f * Mathf.PI) : 0f;
-                    Creature(s, row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color), at.x, QueueDisplayY(at.y - 6f * hop) + 12, (row == 0 ? 82f : 76f) * queueScale, ship.Tier,
+                    Creature(s, row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color), at.x, QueueDisplayY(at.y - 6f * hop) + 12, 76f * queueScale, ship.Tier,
                         row != 0 && ship.Kind == 2 ? "" : ship.Ammo.ToString(), 0f, 14f * queueScale, false, true, row == 0 ? .03f : asleep ? .03f : .02f, lane * 2.3f + row * 1.1f,
                         0f, -.05f * hop, 9f * queueScale, -1f, 0f, 0f, asleep,
                         row == 0 || selection == 1 ? .85f + .15f * Mathf.Sin(ui * 3f + lane) : 0f);   // 2026-10-16 22:30: number pill tucked against the feet; 2026-10-21 white outline on the tappable ones
@@ -401,7 +404,7 @@ namespace Flightbeat.Game
                     // 2026-10-21: a hidden member reaching the front bursts out of its bubble.
                     float reveal = QueueReveal(ship, row);
                     if (reveal < .5f) {
-                        float qh = (row == 0 ? 82f : 76f) * queueScale, bodyY = QueueDisplayY(at.y) + 12f - qh * .35f;
+                        float qh = 76f * queueScale, bodyY = QueueDisplayY(at.y) + 12f - qh * .35f;
                         GardenFx.Burst(s, "rocket-pop", new Vector2(at.x, bodyY), qh * 1.35f, reveal, .4f);
                         GardenFx.Burst(s, "impact-dust", new Vector2(at.x, bodyY + qh * .1f), qh * 1.1f, reveal - .05f, .4f);
                         for (int k = 0; k < 6; k++) {

@@ -41,7 +41,7 @@ namespace Flightbeat.Game
             {
                 view.ShowHome(settings);
                 if (view.resumeSub) view.resumeSub.gameObject.SetActive(false);   // at home the button reads 完  成
-                view.ShowHomeBackground(HomeArtReady);
+                view.ShowHomeBackground(HomeArtReady || codexOpen, codexOpen);
                 RefreshGardenSettings(view);
                 if (gardenOverlay) gardenOverlay.Redraw();
                 return;
@@ -66,7 +66,7 @@ namespace Flightbeat.Game
             if (view.progressSpark)
             {
                 // 2026-10-21 (quality pass): a soft spark on the head of the fill, gently pulsing, so progress reads as alive.
-                bool on = Battle.Progress > .005f && Battle.Progress < .995f;
+                bool on = false;   // 10-22 11:50 (user): no spark on the head of the fill
                 if (view.progressSpark.enabled != on) view.progressSpark.enabled = on;
                 if (on)
                 {
@@ -86,9 +86,11 @@ namespace Flightbeat.Game
                 if (cancel) view.propAmounts[i].Present(false, "×");
                 else if (count > 0) view.propAmounts[i].Present(false, count);
                 else view.propAmounts[i].Present(false, "+");
-                view.propCancelLabels[i].SetActive(cancel);
+                view.propCancelLabels[i].SetActive(cancel && i != 2); // The bomb prop itself reads Cancel while aiming.
                 view.props[i].SetSelected(cancel);
             }
+            view.bombPropWord.Present(selection == 2);
+            view.bombCancelBadge.interactable = selection == 2;
             bool showSettings = Battle.State != Phase.ReviveOffer && settings;
             bool simplePause = Battle.State != Phase.ReviveOffer && !settings && !finaleGuide && paused && selection == 0 && !transitionActive;
             // 2026-10-18 22:55 (user): the 连胜中断 confirm was drawn on top of the still-open pause / settings panel. While
@@ -124,7 +126,8 @@ namespace Flightbeat.Game
             view.toggleIcons[1].sprite = audioChip.EffectsMuted ? view.toggleOff : view.toggleOn;
             view.toggleIcons[2].sprite = effects.Enabled ? view.toggleOn : view.toggleOff;
             view.PresentResetProgress(ResetProgressLabel);
-            view.PresentLevelSet(InHome && LevelSetAvailableCount > 0, LevelSetCurrent == LevelSetB);
+            // 2026-10-22: hide the new-level switch for now; preserve the selected level set and saved progress.
+            view.PresentLevelSet(false, LevelSetCurrent == LevelSetB);
         }
         bool TryGardenUiHit(Vector2 logical, out int id)
         {

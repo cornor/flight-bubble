@@ -98,8 +98,8 @@ namespace Flightbeat.Game
             {
                 float mx = cx + (i - (winRow.Count - 1) * .5f) * step;
                 WinMember(s, mx, feet, t - (.9f + i * .12f), fade, winRow[i].tint, winRow[i].tags, winRow[i].n);
-                // 17:41 (user): one mark per member, the MVP first: a crowned member is left out of the group chip (an
-                // MVP that is the only newcomer shows just its crown).
+                // 17:41 (user): one mark per member, the MVP first: the MVP is left out of the group chip (an MVP that is
+                // the only newcomer shows just its 「MVP」 chip; 18:27 the crown became that chip).
                 if ((winRow[i].tags & (2 | 8)) != 0 && (winRow[i].tags & 1) == 0)
                 {
                     groupMin = Mathf.Min(groupMin, mx); groupMax = Mathf.Max(groupMax, mx); groupLast = i; groupNew |= (winRow[i].tags & 2) != 0;
@@ -222,7 +222,7 @@ namespace Flightbeat.Game
         readonly System.Collections.Generic.List<CodexEntry> winDebut = new System.Collections.Generic.List<CodexEntry>();
         readonly System.Collections.Generic.List<(Color tint, int tags, int n)> winRow = new System.Collections.Generic.List<(Color tint, int tags, int n)>();
         static readonly Color winNewEdge = Hex(0xFF6FAE), winNewInk = Hex(0xB0329B);
-        // One member of the row: `tags` 1 = MVP (crown + 「MVP」), 2 = new member (「新成员」 chip; a small NEW star when it
+        // One member of the row: `tags` 1 = MVP (gold 「MVP」 chip), 2 = new member (「新成员」 chip; a small NEW star when it
         // is also the MVP), 4 = the next newcomer (the rainbow bubble, 「n 关后加入」). It hops in at `age` 0, lands
         // with a few glints and keeps cheering.
         void WinMember(PixelSurface s, float x, float feet, float age, float fade, Color tint, int tags, int n)
@@ -263,8 +263,16 @@ namespace Flightbeat.Game
             float tagY = feet - canvas * (FeetLine - BodyTop) - 34f, bob2 = 0f;   // 16:53: tags stay still
             // 16:45 (user): the MVP keeps only its crown (no 「MVP」 word); new / debuting members get no tag of their own:
             // one 「新伙伴加入！」 / 「本关登场」 chip is drawn over the whole group (DrawWinScreen).
-            if ((tags & 1) != 0)   // 16:52: the crown sits down on the head (it rose into the group chip)
-                Asset(s, "scene/crown", x - 19f * tp, headTop - 17f * tp, 38f * tp, 28f * tp, new Color(1f, 1f, 1f, tagA));
+            // 2026-10-21 18:27 (user): the crown did not sit right (the cheering head bobs, the crown stayed put) and is
+            // replaced by a gold 「MVP」 chip with a small crown, still, just above the MVP's own head (same glass bar as the group chip).
+            if ((tags & 1) != 0)
+            {
+                const string mvpWord = "MVP";
+                float mvpY = Mathf.Max(feet - canvas * ArtScale(tint) * (FeetLine - BodyTop) - 22f, feet - 95f);
+                // 18:30 (user): with a small crown in front (ui/bar-icon-crown); the bar fits icon + gap + text + caps.
+                GardenBars.Bar(s, x, mvpY, (GardenBarArt.TextWidth(mvpWord, 17f) + 60f) * tp, 30f * tp,
+                    GardenBars.Gold, "crown", mvpWord, 17f * tp, GardenBars.Brown, tagA);
+            }
             if ((tags & 4) != 0)
             {
                 string w = n + " 关后加入";

@@ -17,6 +17,8 @@ unity='/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/MacOS/Unity
 clean_flag=()
 if [ "${CLEAN:-0}" = 1 ]; then clean_flag=(--flightbeat-clean-build); export R1_ATLAS_FORCE=1; fi
 step_start=$SECONDS; build_start=$SECONDS
+# 2026-10-22 (user): print when the build runs; the finish time also goes into the page (console + meta) and 打开说明.txt.
+echo "开始构建：$(date '+%Y-%m-%d %H:%M:%S')"
 step() { echo "[$(( SECONDS - step_start ))s] $1"; step_start=$SECONDS; }
 python3 scripts/r1v3/build_atlas_v3.py | tee "$output.atlas.json"
 step "图集"
@@ -51,11 +53,21 @@ import time, re
 p = out / 'index.html'
 if p.exists():
     stamp = time.strftime('%Y%m%d%H%M%S')
-    p.write_text(re.sub(r"(Build/[^'\"?]+\.(?:unityweb|js))(\?v=\d+)?", lambda m: m[1] + '?v=' + stamp, p.read_text()))
+    built = time.strftime('%Y-%m-%d %H:%M:%S')
+    t = p.read_text()
+    if 'name="build-time"' not in t:
+        t = t.replace('<head>', '<head>\n  <meta name="build-time" content="' + built + '">', 1)
+        t = t.replace('</body>', '  <script>console.log("泡泡小队 构建时间 ' + built + '")</script>\n</body>', 1)
+    p.write_text(t)
+    note = out / '打开说明.txt'
+    if note.exists(): note.write_text(note.read_text() + '构建时间：' + built + '\n')
+    # 2026-10-21 21:07: the loading page art too (same names when redrawn, so browsers kept the old bar images).
+    p.write_text(re.sub(r"((?:Build/[^'\"?]+\.(?:unityweb|js))|(?:TemplateData/[^'\"?)]+\.(?:png|jpg|webp|js)))(\?v=\d+)?",
+                        lambda m: m[1] + '?v=' + stamp, p.read_text()))
 PY
 if [ "${R1_LEVELS_TEST:-0}" = 1 ]; then
   echo "本包含 B-test 测试关卡，仅供本机测试，不可发布（R1_LEVELS_TEST=1）" > "$output/LEVELS_TEST_BUILD.txt"
   echo "⚠ 测试构建：包含 B-test 测试关卡，不可发布"
 fi
-echo "构建完成：${output}（共 $(( SECONDS - build_start )) 秒）"
+echo "构建完成：${output}（共 $(( SECONDS - build_start )) 秒，完成于 $(date '+%Y-%m-%d %H:%M:%S')）"
 echo "试玩：python3 -m http.server 8792 --bind 127.0.0.1 --directory \"$output\"  然后打开 http://127.0.0.1:8792/（服务可以一直开着，重新构建后刷新即可）"

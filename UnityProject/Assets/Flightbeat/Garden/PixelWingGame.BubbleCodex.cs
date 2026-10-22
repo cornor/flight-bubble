@@ -49,8 +49,7 @@ namespace Flightbeat.Game
             // beside the squad; settings stays in the top-left corner.
             HomeArtView(out float k, out _, out float oy);
             HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 70f, oy + 410f * k, "plants/home/btn-codex", "图鉴", Hex(0xFFB347));   // squad mid height (10-17)
-            // 2026-10-19: level select / replay (PixelWingGame.LevelPick.cs) under the codex entry.
-            HomeIconButton(s, LevelPickOpenAction, ScreenLayout.Right - 70f, oy + 410f * k + 92f, "plants/home/btn-levels", "选关", Hex(0x7CC4F0));
+            // 2026-10-22: hide the level picker entry for now, including its hit region.
             s.MapLayout = mapped;
         }
         // 2026-10-17 (user: a reason to come back). Under the start button: the next member still to join, its name,
@@ -102,12 +101,12 @@ namespace Flightbeat.Game
                 GardenSkin.Shot(s, fallback, new Vector2(cx, cy), d, 1f);
                 TextOutline(s, label.Substring(0, 1), cx, cy - size * .21f, size * .39f, Cream, Outline, 1.8f);
             }
-            TextOutline(s, label, cx, y + size + 1f, 13f * size / 56f, Cream, Outline, 1.5f);
+            // 2026-10-22 11:29 (user: the home buttons with the others): the words were 10-13 px in the old thin font;
+            // now the rounded type of the other buttons, 16 px, white with a navy edge.
+            GardenBarArt.TextOutline(s, label, cx, y + size + 1f, 16f, Color.white, Hex(0x163E6D), 2.2f);
         }
 
-        // ---- codex page (2026-10-17 redesign: a full-screen showcase instead of a small list panel)
-        // Top: the selected member on a glowing pedestal with spinning rays, name ribbon, personality and a line
-        // about it; tapping a card below selects it and the member cheers. Locked members stay dark with a lock.
+        // ---- codex page: cloud album; original 20-member order, unlock rules and card interactions.
         const int CodexCardAction = 810;   // 810 + index
         int codexSelected = -1;
         float codexPickedAt = -9f;
@@ -133,6 +132,24 @@ namespace Flightbeat.Game
             { "小霞", new[] { "温和", "背上一对小翅膀，像软糖一样甜。" } },
             { "小清", new[] { "害羞", "小小一团气，卷着尾巴躲在后面。" } },
         };
+        // Cloud album, 2026-10-22: the approved page concept with live collection data and original character art.
+        static readonly Color CodexInk = Hex(0x163E6D), CodexMuted = Hex(0x6482A6), CodexSilhouette = Hex(0x91A9CC);
+        static void CodexRound(PixelSurface s, float x, float y, float w, float h, float radius, Color color)
+            => s.GardenRoundedRect(x, y, w, h, radius, color, color);
+        static void CodexLock(PixelSurface s, float cx, float cy, float size)
+        {
+            float k = size / 20f;
+            CodexRound(s, cx - 6f * k, cy - 10f * k, 12f * k, 14f * k, 6f * k, Color.white);
+            CodexRound(s, cx - 3.5f * k, cy - 7.5f * k, 7f * k, 11f * k, 3.5f * k, CodexSilhouette);
+            CodexRound(s, cx - 8f * k, cy - 1f * k, 16f * k, 12f * k, 3f * k, A(CodexInk, .14f));
+            CodexRound(s, cx - 8f * k, cy - 2f * k, 16f * k, 12f * k, 3f * k, Hex(0xF9FCFF));
+            CodexRound(s, cx - 1.8f * k, cy + 1f * k, 3.6f * k, 5.5f * k, 1.8f * k, CodexMuted);
+        }
+        static void CodexSilhouetteArt(PixelSurface s, Color tint, float cx, float feet, float height)
+        {
+            float ah = height * ArtScale(tint), aw = ah * ArtAspect;
+            CreatureSilhouette(s, PlantSlot(tint, "idle"), cx - aw * .5f, feet - ah * FeetLine, aw, ah, CodexSilhouette);
+        }
         void DrawBubbleCodex(PixelSurface s)
         {
             if (!codexOpen) return;
@@ -143,113 +160,115 @@ namespace Flightbeat.Game
             int n = list.Count, got = 0, latest = 0;
             for (int i = 0; i < n; i++) if (CodexObtained(list[i])) { got++; latest = i; }
             if (codexSelected < 0 || codexSelected >= n) codexSelected = latest;
-            float w = ScreenLayout.Width, h = ScreenLayout.Height, L = ScreenLayout.Left, oy = (h - 960f) * .5f;
-            float t = Clamp01((ui - codexOpenedAt) / .3f), slide = (1f - OutBack(t)) * 30f;
+            float oy = (ScreenLayout.Height - 960f) * .5f;
+            float enter = Clamp01((ui - codexOpenedAt) / .3f), slide = (1f - OutCubic(enter)) * 10f;
             HitBlock(s);
-            // Backdrop: deep night blue with a soft light behind the showcase.
-            s.Rect(L, 0f, w, h, new Color(.05f, .12f, .28f, .95f * t));
-            s.Glow(L + w * .5f, oy + 290f, 640f, 560f, new Color(.35f, .62f, 1f, .35f * t), 0f);
-            // Title ribbon, collected count and progress bar, close button.
-            GardenTitle(s, "泡泡图鉴", 270f, oy + 24f - slide, 30f, true);
+            // The opaque cloud plate is rendered by GardenBattlePage; BubbleHome skips its home foreground.
+            GardenTitleArt.Draw(s, "泡泡图鉴", 270f, oy + 43f - slide, 42f);
+            SoapBubble(s, new Vector2(150f, oy + 50f), 26f, Color.white, .7f, 2);
+            SoapBubble(s, new Vector2(389f, oy + 40f), 17f, Color.white, .65f, 4);
             HitBox(s, CodexCloseAction, 470f, oy + 14f, 60f, 60f);
-            float cb = 1f - PressPulse(CodexCloseAction) * .1f;
-            GardenSkin.Shot(s, Hex(0xFF8A7A), new Vector2(500f, oy + 44f), 42f * cb, t);
-            TextOutline(s, "×", 500f, oy + 31f, 26f, Cream, Outline, 2f);
-            TextOutline(s, "已收集 " + got + " / " + n, 270f, oy + 84f, 15f, Hex(0xFFE58A), Outline, 1.5f);
-            s.Rect(170f, oy + 106f, 200f, 8f, new Color(.02f, .06f, .16f, .8f * t));
-            s.Rect(170f, oy + 106f, 200f * got / Mathf.Max(1, n), 8f, new Color(1f, .82f, .3f, t));
-            // Showcase.
-            var e = list[codexSelected];
-            bool have = CodexObtained(e);
-            float pick = ui - codexPickedAt, pop = pick < .45f ? 1f + .18f * Mathf.Sin(pick / .45f * Mathf.PI) * (1f - pick / .45f) : 1f;
+            float close = 42f * (1f - PressPulse(CodexCloseAction) * .1f), cy = oy + 44f;
+            CodexRound(s, 500f - close * .5f, cy - close * .5f + 2f, close, close, close * .5f, A(Hex(0xD6544C), .2f));
+            CodexRound(s, 500f - close * .5f, cy - close * .5f, close, close, close * .5f, Hex(0xF06B61));
+            s.GardenRoundedRect(501.2f - close * .5f, cy - close * .5f + 1.2f, close - 2.4f, close - 2.4f, close * .5f,
+                Hex(0xFFA08F), Hex(0xFF6C62));
+            float cross = close * .18f;
+            s.Segment(new Vector2(500f - cross, cy - cross), new Vector2(500f + cross, cy + cross), 4f, Color.white);
+            s.Segment(new Vector2(500f + cross, cy - cross), new Vector2(500f - cross, cy + cross), 4f, Color.white);
+            // Keep the small collection label single-pass so dense strokes stay distinct.
+            GardenSkin.Text(s, "已收集 " + got + " / " + n, 270f, oy + 86f, 20f, true, CodexInk);
+            CodexRound(s, 163f, oy + 110f, 214f, 19f, 9.5f, Hex(0xF5FCFF));
+            s.GardenRoundedRect(165f, oy + 112f, 210f, 15f, 7.5f, Hex(0xAFD2EA), Hex(0xC6E2F3));
+            float fill = 210f * got / Mathf.Max(1, n);
+            if (fill > 0f) s.GardenRoundedRect(165f, oy + 112f, fill, 15f, 7.5f, Hex(0x66DAFF), Hex(0x149EEB));
+
+            var entry = list[codexSelected];
+            bool have = CodexObtained(entry);
+            float pick = Mathf.Max(0f, ui - codexPickedAt);
+            float pop = pick < .45f ? 1f + .1f * Mathf.Sin(pick / .45f * Mathf.PI) * (1f - pick / .45f) : 1f;
             const float cx = 270f;
-            float feet = oy + 372f;
-            Color glow = have ? e.tint : new Color(.4f, .5f, .7f, 1f);
-            DrawBubbleHalo(s, cx, oy + 288f, 330f, (have ? 1f : .45f) * t);   // clears the count line above
-            if (have) DrawHaloBubbles(s, cx, oy + 288f, 330f, 99f, t, false, false);   // calm: no burst, fewer, slower
-            s.Glow(cx, oy + 272f, 220f, 220f, new Color(glow.r, glow.g, glow.b, .22f * t), 0f);
-            s.Glow(cx, feet, 260f, 64f, new Color(glow.r, glow.g, glow.b, .55f * t), 0f);
-            Asset(s, "scene/plot", cx - 100f, feet - 26f, 200f, 50f, new Color(1f, 1f, 1f, t));
+            float feet = oy + 331f;
+            s.Glow(cx, oy + 253f, 330f, 320f, new Color(.85f, .99f, 1f, .85f), 0f);
+            s.Glow(cx, feet + 7f, 242f, 45f, new Color(.33f, .65f, .88f, .3f), 0f);
+            Asset(s, "scene/plot", cx - 113f, feet - 19f, 226f, 43f, Color.white);
+            for (int i = 0; i < 3; i++)
+            {
+                float bx = i == 1 ? 397f : i == 0 ? 150f : 137f;
+                float by = oy + (i == 0 ? 181f : i == 1 ? 226f : 291f) + Mathf.Sin(ui * .8f + i * 2f) * 3f;
+                SoapBubble(s, new Vector2(bx, by), i == 2 ? 25f : 48f, Color.white, .64f, i + 1);
+            }
             if (have)
             {
-                bool cheer = pick < .9f, before = GardenSkin.Celebrate;
-                GardenSkin.Celebrate = cheer;
-                Creature(s, e.tint, cx, feet, 210f * pop, 0, "", 0f, 12f, false, false, .03f, codexSelected * 1.3f);
-                DrawHaloBubbles(s, cx, oy + 288f, 330f, 99f, t, false, true);
+                bool before = GardenSkin.Celebrate;
+                GardenSkin.Celebrate = pick < .9f;
+                Creature(s, entry.tint, cx, feet, 282f * pop, 0, "", 0f, 12f, false, false, .018f, codexSelected * 1.3f);
                 GardenSkin.Celebrate = before;
             }
             else
             {
-                float ah = 210f * pop * GardenSkin.ArtScale(e.tint), aw = ah * ArtAspect;
-                Asset(s, PlantSlot(e.tint, "idle"), cx - aw * .5f, feet - ah * FeetLine, aw, ah, new Color(.1f, .16f, .3f, .95f * t));
-                Asset(s, "scene/lock-bubble", cx - 23f, feet - 118f, 46f, 46f, new Color(1f, 1f, 1f, t));   // 12:30: lock only, no pad plate
+                CodexSilhouetteArt(s, entry.tint, cx, feet, 282f * pop);
+                CodexLock(s, cx, oy + 265f, 34f);
             }
-            // Name ribbon, personality and a line about the member (locked: where it joins).
-            // 2026-10-17: the name has no button-like plate: a soft dark halo for contrast, big gold title, a short
-            // fading underline and a small bubble on each side in the member's color.
-            string title = have ? e.name : "？？？";
-            float nameSize = 30f, nameW = TextWidth(title, nameSize), ny = feet + 14f;
-            s.Glow(cx, ny + nameSize * .55f, nameW + 120f, 56f, new Color(.02f, .06f, .16f, .55f * t), 0f);
-            TextOutline(s, title, cx, ny, nameSize, have ? Gold : Cream, Outline, 2.6f);
-            for (int side = -1; side <= 1; side += 2)
-            {
-                float bx = cx + side * (nameW * .5f + 20f), by = ny + nameSize * .55f + Mathf.Sin(ui * 2f + side) * 2f;
-                GardenSkin.Shot(s, have ? e.tint : new Color(.5f, .58f, .75f, 1f), new Vector2(bx, by), 13f, t);
-                GardenSkin.Shot(s, have ? e.tint : new Color(.5f, .58f, .75f, 1f), new Vector2(bx + side * 14f, by - 9f), 7f, .8f * t);
-                for (int seg = 0; seg < 6; seg++)
-                {
-                    float x0 = cx + side * seg * 15f;
-                    s.Rect(side > 0 ? x0 : x0 - 15f, ny + nameSize + 6f, 15f, 2f, new Color(1f, .84f, .35f, (1f - seg / 6f) * .8f * t));
-                }
-            }
-            string[] blurb = CodexBlurb.TryGetValue(e.name, out var b) ? b : new[] { "", "" };
+            string[] blurb = CodexBlurb.TryGetValue(entry.name, out var b) ? b : new[] { "", "" };
+            string title = have ? entry.name : "？？？";
+            float nameWidth = GardenBarArt.TextWidth(title, 36f), tagWidth = have ? GardenBarArt.TextWidth(blurb[0], 15f) + 18f : 0f;
+            float groupWidth = nameWidth + (have ? 12f + tagWidth : 0f), nameLeft = cx - groupWidth * .5f;
+            GardenBarArt.TextOutline(s, title, nameLeft + nameWidth * .5f, oy + 362f, 36f,
+                have ? Hex(0xFFD56C) : CodexInk, have ? Hex(0x985C27) : Color.white, have ? 1.3f : 2f);
             if (have)
             {
-                TextOutline(s, "性格 · " + blurb[0], cx, feet + 64f, 15f, Hex(0xFFE58A), Outline, 1.5f);
-                TextOutline(s, blurb[1], cx, feet + 86f, 15f, Cream, Outline, 1.5f);
-                TextOutline(s, "第 " + e.level + " 关加入队伍", cx, feet + 106f, 15f, Hex(0xBFD4F2), Outline, 1.2f);
+                float tagX = nameLeft + nameWidth + 12f;
+                s.GardenRoundedRect(tagX, oy + 372f, tagWidth, 24f, 12f, Hex(0x429CD4), Hex(0x267DB6));
+                GardenBarArt.TextOutline(s, blurb[0], tagX + tagWidth * .5f, oy + 375f, 15f, Color.white, Hex(0x1C6497), .7f);
+                // At most two lines; wrap after a clause so the title and unlock note keep stable positions.
+                string story = blurb[1];
+                int split = story.LastIndexOf('，');
+                if (split >= 9 && split < story.Length - 1)
+                {
+                    // Body copy uses the existing plain text atlas: no rounded-bold stroke or offset overdraw.
+                    GardenSkin.Text(s, story.Substring(0, split + 1), cx, oy + 402f, 17f, true, CodexInk);
+                    GardenSkin.Text(s, story.Substring(split + 1), cx, oy + 426f, 17f, true, CodexInk);
+                }
+                else GardenSkin.Text(s, story, cx, oy + 414f, 17f, true, CodexInk);
+                DialogText(s, "第 " + entry.level + " 关加入队伍", cx, oy + 450f, 14f, CodexMuted);
             }
             else
             {
-                TextOutline(s, "还没遇见它", cx, feet + 70f, 16f, Cream, Outline, 1.5f);
-                TextOutline(s, "通过第 " + e.level + " 关就能获得", cx, feet + 94f, 15f, Hex(0xFFE58A), Outline, 1.5f);
+                GardenSkin.Text(s, "还没遇见它", cx, oy + 410f, 18f, true, CodexInk);
+                GardenSkin.Text(s, "通过第 " + entry.level + " 关就能获得", cx, oy + 445f, 16f, true, CodexMuted);
             }
-            // Card grid: 5 x 4, tinted by each member's color; the selected card is lifted, with its own rim turned gold (2026-10-18).
+            GardenBarArt.Text(s, "伙伴一览", 24f, oy + 472f, 23f, false, CodexInk);
+            GardenBarArt.Text(s, "点击卡片查看", 516f - GardenBarArt.TextWidth("点击卡片查看", 13f), oy + 481f, 13f, false, CodexMuted);
             const int cols = 5;
-            const float cw = 88f, ch = 90f, gap = 8f;
-            float gx = 270f - (cols * cw + (cols - 1) * gap) * .5f, gy = oy + 500f + slide;
-            // 2026-10-17 10:57: no yellow rim. The selected card is a bit bigger, lifted and gently bobbing over a glow
-            // in the member's own color; the others are slightly dimmed so the pick stands out.
+            const float cw = 92f, ch = 94f, gap = 8f;
+            float gy = oy + 507f + slide;
             for (int i = 0; i < n; i++)
             {
                 var c = list[i];
-                bool owned = CodexObtained(c), sel = i == codexSelected;
-                float bx = gx + (i % cols) * (cw + gap), by = gy + (i / cols) * (ch + gap);
-                HitBox(s, CodexCardAction + i, bx, by, cw, ch);
-                float grow = sel ? 1.08f + .1f * Mathf.Max(0f, 1f - pick / .25f) : 1f;
-                float w2 = cw * grow, h2 = ch * grow, x = bx + (cw - w2) * .5f, y = by + (ch - h2) * .5f - (sel ? 6f + 2f * Mathf.Sin(ui * 3f) : 0f), mid = x + w2 * .5f;
-                if (sel)
-                {
-                    // 2026-10-18 00:06 (user picked A): the blue glow vanished against the blue card rim and the navy
-                    // page, so the pick now has a gold rim (the card art recoloured) over a soft gold
-                    // halo; the lift, enlarge and bob stay.
-                    float lit = .85f + .15f * Mathf.Sin(ui * 4f);
-                    s.Glow(mid, y + h2 * .5f, w2 + 52f, h2 + 52f, new Color(1f, .78f, .24f, .62f * lit * t), 0f);
-                }
-                Color card = new Color(1f, 1f, 1f, t);   // 11:10: every card is white
-                // 00:14 (user): no frame around the card; the selected card's own rim is gold (ui/popup-panel-gold).
-                if (!(sel && Asset9(s, "ui/popup-panel-gold", x, y, w2, h2, 30f, 30f, 14f * grow, 14f * grow, card))
-                    && !Asset9(s, "ui/popup-panel", x, y, w2, h2, 30f, 30f, 14f * grow, 14f * grow, card)) s.Rect(x, y, w2, h2, card);
-                float f = y + 64f * grow, ah = 70f * grow;
-                if (owned) Creature(s, c.tint, mid, f, ah, 0, "", 0f, 12f, false, false, sel ? .04f : 0f, i * 1.3f);
+                bool owned = CodexObtained(c), selected = i == codexSelected;
+                float x = 24f + i % cols * (cw + gap), y = gy + i / cols * (ch + gap), mid = x + cw * .5f;
+                HitBox(s, CodexCardAction + i, x, y, cw, ch);
+                CodexRound(s, x, y + 2f, cw, ch, 11f, new Color(.27f, .55f, .76f, .13f));
+                CodexRound(s, x, y, cw, ch, 11f, selected ? Hex(0xFFBD34) : Hex(0xA9DFFD));
+                s.GardenRoundedRect(x + 1.1f, y + 1.1f, cw - 2.2f, ch - 2.2f, 10f,
+                    selected ? Hex(0xFFFEF5) : Hex(0xFFFFFF), selected ? Hex(0xFFF5DA) : Hex(0xF0F8FF));
+                if (owned) Creature(s, c.tint, mid, y + 69f, 96f, 0, "", 0f, 12f, false, false, selected ? .018f : 0f, i * 1.3f);
                 else
                 {
-                    float lah = ah * GardenSkin.ArtScale(c.tint), aw = lah * ArtAspect;
-                    Asset(s, PlantSlot(c.tint, "idle"), mid - aw * .5f, f - lah * FeetLine, aw, lah, new Color(.12f, .18f, .32f, .9f * t));
-                    Asset(s, "scene/lock-bubble", mid - 14f * grow, y + 21f * grow, 28f * grow, 28f * grow, new Color(1f, 1f, 1f, t));   // 15:51: centred on the silhouette
+                    CodexSilhouetteArt(s, c.tint, mid, y + 69f, 96f);
+                    CodexLock(s, mid, y + 42f, 17f);
                 }
-                TextOutline(s, owned ? c.name : "第" + c.level + "关", mid, y + h2 - 24f * grow, (owned ? 15f : 14f) * grow, owned ? Cream : Hex(0xDCE6F5), Outline, 1.5f);   // 2026-10-17: bigger (readability)
+                DialogText(s, owned ? c.name : "第" + c.level + "关", mid, y + 75f, 14f, owned ? CodexInk : Hex(0x52739B));
+                if (selected)
+                {
+                    float checkX = x + cw - 13f, checkY = y + 12f;
+                    CodexRound(s, checkX - 8.5f, checkY - 8.5f, 17f, 17f, 8.5f, Hex(0xFFBD34));
+                    s.Segment(new Vector2(checkX - 4f, checkY), new Vector2(checkX - 1f, checkY + 3f), 2.4f, Color.white);
+                    s.Segment(new Vector2(checkX - 1f, checkY + 3f), new Vector2(checkX + 5f, checkY - 3f), 2.4f, Color.white);
+                }
             }
+            DialogText(s, got == n ? "伙伴全部到齐啦！" : "通关新关卡，认识更多伙伴", cx, oy + 929f, 14f, CodexMuted);
             s.MapLayout = mapped;
         }
         void SelectCodex(int index)

@@ -1,0 +1,88 @@
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+using Flightbeat.Rendering;
+using Flightbeat.Garden;
+using UnityEngine;
+using static Flightbeat.Garden.GardenSkin;
+
+namespace Flightbeat.Game
+{
+    public partial class PixelWingGame
+    {
+        bool TryBubbleLevelFromUrl()
+        {
+            if (!System.Uri.TryCreate(Application.absoluteURL, System.UriKind.Absolute, out var uri)) return false;
+            foreach (string pair in uri.Query.TrimStart('?').Split('&'))
+            {
+                string[] parts = pair.Split('=');
+                if (parts.Length != 2 || parts[0] != "level" || !int.TryParse(parts[1], out int requested)) continue;
+                if (requested < 1 || requested > Levels.Length) return false;
+                Economy.Data.unlocked = System.Math.Max(Economy.Data.unlocked, requested);
+                if (!Economy.CanSortie) Economy.AddEnergy(1);
+                return StartSortie(requested - 1);
+            }
+            return false;
+        }
+        void StartBubbleLevel()
+        {
+            int next = 0;
+            while (next < Levels.Length && Economy.Data.cleared.Contains(next + 1)) next++;
+            if (next == Levels.Length) next = Levels.Length - 1;
+            if (!Economy.CanSortie) Economy.AddEnergy(1);
+            StartSortie(next);
+        }
+
+        // 2026-10-16 home key art (Art/R1/home-v1): background (own texture, see GardenBattlePage), five squad
+        // layers on the creature atlas and the title logo. Every layer is a full 1080x1920 frame of the 9:16 core
+        // picture (540x960 logical), which stays vertically centred on taller screens. Until the squad art is
+        // delivered the page keeps its previous look.
+        static readonly string[] HomeSquad = { "orange", "yellow", "green", "purple", "blue" };   // back to front
+        static readonly float[] HomePhase = { 0f, 1.9f, 3.7f, 5.1f, 2.6f };
+        const float HomeSquadScale = .93f;                  // clears the 150 px side bands (user decision 17:58)
+        const float HomePivotX = 270f, HomePivotY = 600f;   // scale about the front cloud line
+        bool HomeArtReady => Has("plants/home/squad-blue");
+
+        void DrawBubbleHome(PixelSurface s)
+        {
+            if (!HomeArtReady)
+            {
+                // Logo (H10) arrived before the squad layers: it replaces the program title on the old page.
+                s.MapLayout = true;
+                float bob = Mathf.Sin(ui * 1.6f) * 3f;
+                if (!Asset(s, "home/logo", 55f, 152f + bob, 430f, 172f, Color.white))
+                    TextOutline(s, "泡泡小队", 270, 238, 48, Cream, Outline, 3f);
+                GardenButton(s, 800, 100, 530, 340, 76, "开始");
+                GardenButton(s, 801, 160, 630, 220, 64, "设置");
+                return;
+            }
+            s.MapLayout = false;
+            float ox = (ScreenLayout.Width - 540f) * .5f, oy = (ScreenLayout.Height - 960f) * .5f;
+            // Title logo in the title band (y 75-210 of the core), floating slowly.
+            float logoBob = Mathf.Sin(ui * 1.6f) * 3f;
+            if (!Asset(s, "home/logo", ox + 55f, oy + 64f + logoBob, 430f, 172f, Color.white))
+                TextOutline(s, "泡泡小队", ox + 270f, oy + 112f + logoBob, 48f, Cream, Outline, 3f);
+            // Squad: scaled about the cloud line, each member bobbing on its own phase, random blinks.
+            float fw = 540f * HomeSquadScale, fh = 960f * HomeSquadScale;
+            float fx = ox + HomePivotX - HomePivotX * HomeSquadScale, fy = oy + HomePivotY - HomePivotY * HomeSquadScale;
+            for (int i = 0; i < HomeSquad.Length; i++)
+            {
+                string id = "plants/home/squad-" + HomeSquad[i];
+                float phase = HomePhase[i], lift = (Mathf.Sin(ui * 2.1f + phase) * .5f + .5f) * 7f;
+                if (Content(id, out Rect c))
+                {
+                    // Soft contact shadow on the cloud: smaller and lighter while the member floats up.
+                    float cx = fx + (c.x + c.width * .5f) * fw, feet = fy + (c.y + c.height) * fh - 4f;
+                    float sw = c.width * fw * (.62f - lift * .012f);
+                    s.Glow(cx, feet, sw, sw * .22f, new Color(.16f, .28f, .5f, .22f - lift * .012f), 0f);
+                }
+                float cycle = 3.2f + phase % 1.8f;
+                bool blink = (ui + phase * 1.37f) % cycle < .13f && Has(id + "-blink");
+                Asset(s, blink ? id + "-blink" : id, fx, fy - lift, fw, fh, Color.white);
+            }
+            // Buttons on the cloud sea, about 20 px (10 logical) below the old plan to clear the platform's edge.
+            s.MapLayout = true;
+            GardenButton(s, 800, 100, 738, 340, 76, "开始");
+            GardenButton(s, 801, 160, 832, 220, 64, "设置");
+        }
+    }
+}
+#endif

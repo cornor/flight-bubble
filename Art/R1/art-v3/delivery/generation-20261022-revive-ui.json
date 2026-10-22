@@ -1,0 +1,56 @@
+{
+  "tool": "built-in image_gen (imagegen skill)",
+  "transparentBackground": true,
+  "postprocessing": "Only sips resizing; generated colors and alpha retained. Atlas builder performs its existing packing and scaling.",
+  "assets": [
+    {
+      "id": "bomb",
+      "raw": "_originals/revive-bomb-natural-fuse-20261022.png",
+      "output": "ui3/bar-icon-bomb.png",
+      "prompt": "Precise-object-edit of the provided transparent rainbow bomb game icon. Change ONLY the ignition at the very end of the fuse, at upper right. REMOVE the entire five-point star spark and its star-shaped orange outline. Replace it with a much more natural, small burning fuse tip: an asymmetrical teardrop flicker of warm yellow-orange flame with a pale yellow-white hot core directly touching the darkened glowing end of the braided fuse, and just 2 or 3 tiny irregular orange ember flecks very close to it. The flame should be about HALF the size of the former star and clearly organic and slightly curling, never a geometric star, sunburst, flower, sparkle cross, or symmetrical explosion. Keep it clean and legible at 40 px icon size. No long particle trail. Preserve all other parts exactly: the round glossy rainbow sphere, highlight positions, blue/purple lower-left edge, yellow-green center, green right side, magenta cap, braided fuse angle and length, colored outline, icon's scale and placement within the same square canvas. True transparent alpha background, no shadows, no backdrop, no words. Do not enlarge or redesign the bomb.",
+      "export": "sips -Z 256",
+      "rawSha256": "5fe670de4e152148b41a1467e4181c4432f586371b8aac708a9d1479371fd6e2",
+      "outputSha256": "4121303db9c3f4323e43d1882247ce5d2e6a647208b12a9a6c74009f8cbdddd5",
+      "reference": "_originals/revive-bomb-20261022.png",
+      "superseded": {
+        "raw": "_originals/revive-bomb-20261022.png",
+        "rawSha256": "b10f5472adbc83830276135b0edc52dfcc293d0aa8a9edbe95610517fa864186",
+        "prompt": "Use case: background-extraction. Extract and faithfully reproduce ONLY the colorful rainbow bomb icon in the right-hand reward column of this approved game UI mockup. Keep its exact design: round glossy rainbow glass sphere with deep blue/violet lower-left edge, purple/pink left side, brilliant yellow-green central glow, green/cyan right side; two white specular reflection spots upper left; magenta-purple neck cap ring, warm orange-brown short angled fuse pointing upper right, a small five-point warm yellow star spark with orange outline and white-yellow core. Cute polished casual mobile game asset with crisp dark colored outline. Preserve the same viewing angle and proportions. Output just ONE isolated bomb on a TRUE transparent background, centered within a square canvas, occupying about 85% of its width and height, no clipping of the star, no text, no other UI, no platform, no background, no checkerboard, no outer cast shadow or aura. Clean fully transparent space surrounding it. Do not redesign it.",
+        "reason": "用户追加要求：引信末端不要五角星，改成自然燃烧效果。"
+      }
+    },
+    {
+      "id": "ad",
+      "raw": "_originals/revive-ad-20261022.png",
+      "output": "ui3/bar-icon-ad.png",
+      "prompt": "Use case: background-extraction. Extract ONLY the white video/play icon to the left of the 复活 label on the green button in this reference. Reproduce it as a clean production game icon: a thick white rounded-square OUTLINE with a centered white right-pointing triangle, soft rounded corners on the triangle, both white components with the same thin dark green #176C26 keyline as the reference for readability. The interior of the rounded square and all spaces surrounding the triangle must be TRANSPARENT, not filled green. No button, no letters, no background, no checkerboard, no shadows. True RGBA transparent square canvas, centered icon taking 84% of the canvas. Keep the near-square frame, outline stroke, and triangle proportions of the approved reference. A simple crisp white rounded-square play mark, not a realistic television, not a video camera. This asset will be shown at 20–40 px, so all contours must remain clean and readable.",
+      "export": "sips -Z 256",
+      "rawSha256": "6d4cb07dd47bae231820f1efa586a114232a2666e1a9931c7e9a7d5871b491a9",
+      "outputSha256": "024748e238733e18dc50dfcd52a537650a6bf1822878282f213ea6642e8aab26",
+      "reference": "../../../../tools/work/revive-ui-20261022/approved-mockup.png"
+    },
+    {
+      "id": "bomb-button-base",
+      "raw": "_originals/bomb-button-base-20261022.png",
+      "output": "ui/button-bomb-base.png",
+      "prompt": "Precise edit of the supplied purple game button. Remove ONLY the small rainbow bomb icon on the LEFT of the button. Inpaint that area with the continuous glossy purple button face, matching its surrounding gradient. Preserve the existing button's exact shape, width-to-height ratio (312:144), silhouette, bright white reflections, purple colors, rounded corners, rim, lower edge and full alpha transparency outside. Output the same button as a CLEAN EMPTY PURPLE BUTTON BASE, with no icon, no text, no other changes. Keep edge-to-edge crop like the source and no extra padding. This will receive a separate replacement icon in the actual game.",
+      "export": "sips -z 144 312",
+      "rawSha256": "9e9bcc98974ee4049828be93ed556b3640c921010d09a8c6f67fba983a3cf33e",
+      "outputSha256": "8d6e6f246538007698736c02e7f162baac5fa07828d2b2b5f56e0b0364e5e548",
+      "reference": "ui/button-bomb-blank.png"
+    },
+    {
+      "id": "revive-card",
+      "raw": "_originals/revive-card-20261022.png",
+      "output": "ui4/revive-card.png",
+      "prompt": "Use case: background-extraction. Extract ONLY the large outer white / pale icy-blue rounded dialog card from this approved UI mockup as a blank reusable UI asset. Preserve its exact rounded-rectangle silhouette, generous corner radius, slim bright cyan outer rim, very thin clean white inner edge, soft subtle glow, and opaque white-to-very-pale-blue interior vertical gradient. The shape's width:height ratio is 440:560. Fill almost the entire portrait canvas with the card, leave just a tiny transparent safety margin around the rim. Smooth immaculate mobile game UI texture. REMOVE ALL CONTENT from the card: no title, no blue character, no progress bar, no reward panel, no icons, no button, no text, no divider lines. Inpaint the entire interior with the same smooth off-white at the top transitioning to very pale icy blue at the bottom. Outside the card must be genuinely transparent alpha, no game background, no checkerboard. Preserve the exact original approved card's appearance and large round corners; do not invent a different frame, do not add thick ornamentation. Output one EMPTY opaque card with transparent corners and surroundings.",
+      "export": "sips -z 560 440",
+      "rawSha256": "363e90c2c2a564ddc57772d38473497ef61fdea1e4c541c881c87918dbf7200a",
+      "outputSha256": "806edc797c26e919204642e7a59074633ce8ca089c63226c1328ae3fd05cfd5a",
+      "reference": "../../../../tools/work/revive-ui-20261022/approved-mockup.png",
+      "status": "superseded; retained as process archive only, excluded from runtime atlas",
+      "replacement": "ui4/panel-card.png (existing shared dialog card, not newly generated)",
+      "reason": "2026-10-22 用户要求复活框边框和背景底与其他弹框一致。"
+    }
+  ]
+}

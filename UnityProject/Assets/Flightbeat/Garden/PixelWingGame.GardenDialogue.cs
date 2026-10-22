@@ -16,12 +16,12 @@ namespace Flightbeat.Game
             {
                 GardenBarArt.Art(s, "speech", 303f, cy, 414f, 104f, alpha);
                 GardenSkin.Asset(s, face, 14f, cy - 48f, 96f, 96f, new Color(1f, 1f, 1f, alpha));
-                GardenBars.Bar(s, 154f, cy - 35f, 62f, 22f, GardenBars.Sky, null, "小蓝", 14f,   // 2026-10-21: 13 -> 14 (smallest size)
-                    GardenBars.Navy, alpha);
+                // 2026-10-21 20:45 (user): the "小蓝" name tag is gone from every line (the portrait says who speaks).
                 // 2026-10-21 14:24 (user: the words sat too far left, were small and hard to read). Centred in the bubble
                 // body (x 121-506 of the art, centre 315), size 18 (16 before), 28 px apart, below the name tag; words in
-                // {braces} are key words: coloured (blue for 蓝色..., orange otherwise) and a touch bolder.
-                float lineGap = 28f, first = cy + 7f - (lines.Length - 1) * lineGap * .5f;
+                // {braces} are key words: coloured (blue for 蓝色..., orange otherwise). Use plain text throughout
+                // so small counters stay open; colour supplies the emphasis without offset bold overdraw.
+                float lineGap = 28f, first = cy + 2f - (lines.Length - 1) * lineGap * .5f;   // 20:45: centred (no name tag above)
                 for (int i = 0; i < lines.Length; i++)
                     DialogueLine(s, lines[i], 315f, first + i * lineGap, alpha);
             }
@@ -33,8 +33,8 @@ namespace Flightbeat.Game
         void DialogueLine(PixelSurface s, string line, float cx, float centreY, float alpha)
         {
             string plain = line.Replace("{", "").Replace("}", "");
-            float size = Mathf.Min(18f, 340f / Mathf.Max(.01f, GardenBarArt.TextWidth(plain, 1f)));
-            float x = cx - GardenBarArt.TextWidth(plain, size) * .5f, y = centreY - size * .55f;
+            float size = Mathf.Min(18f, 340f / Mathf.Max(.01f, GardenSkin.TextWidth(plain, 1f)));
+            float x = cx - GardenSkin.TextWidth(plain, size) * .5f, y = centreY - size * .55f;
             bool key = false; int start = 0;
             for (int i = 0; i <= line.Length; i++)
             {
@@ -43,9 +43,8 @@ namespace Flightbeat.Game
                 {
                     string part = line.Substring(start, i - start);
                     Color ink = key ? (part.Contains("蓝") ? dialogueBlue : dialogueKey) : GardenBars.Navy; ink.a = alpha;
-                    GardenBarArt.Text(s, part, x, y, size, false, ink);
-                    if (key) GardenBarArt.Text(s, part, x + .7f, y, size, false, ink);   // a touch bolder
-                    x += GardenBarArt.TextWidth(part, size);
+                    GardenSkin.Text(s, part, x, y, size, false, ink);
+                    x += GardenSkin.TextWidth(part, size);
                 }
                 if (i < line.Length) key = line[i] == '{';
                 start = i + 1;

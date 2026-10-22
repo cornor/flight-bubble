@@ -47,6 +47,22 @@ namespace Flightbeat.Garden
             }
             return true;
         }
+        // 2026-10-21 21:07: the glass capsule 3-sliced and simply multiplied by `tint`, exactly like the HUD progress
+        // bar's Unity Images (frame white, groove pale, fill cyan-blue). Left/top corner at (x, y); caps 1.1 x height.
+        public static bool CapsuleTinted(PixelSurface s, float x, float y, float w, float h, Color tint)
+        {
+            if (!Ready() || !slots.TryGetValue("capsule", out var slot)) return false;
+            float cap = Mathf.Min(slot.h * 1.1f, slot.w * .4f), drawnCap = Mathf.Min(cap / slot.h * h, w * .5f);
+            for (int i = 0; i < 3; i++)
+            {
+                float sx = i == 0 ? 0f : i == 1 ? cap : slot.w - cap, sw = i == 1 ? slot.w - cap * 2f : cap;
+                float dx = i == 0 ? x : i == 1 ? x + drawnCap : x + w - drawnCap, dw = i == 1 ? w - drawnCap * 2f : drawnCap;
+                if (dw <= 0f) continue;
+                var uv = new Rect((slot.x + sx) / data.size, 1f - (slot.y + slot.h) / data.size, sw / data.size, slot.h / data.size);
+                s.GardenQuad(dx, y, dw, h, uv, tint, atlas: 2);
+            }
+            return true;
+        }
         public static bool Ring(PixelSurface s, float cx, float cy, float size, float alpha)
         {
             if (!Ready() || !slots.TryGetValue("ring", out var slot)) return false;

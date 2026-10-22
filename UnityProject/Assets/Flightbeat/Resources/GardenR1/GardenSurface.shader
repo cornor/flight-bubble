@@ -82,6 +82,23 @@ Shader "Garden/R1 Surface"
             float4 _GardenTex_TexelSize;
             float4 _GardenTex2_TexelSize;
             float4 GardenFrag(FbVaryings input) : SV_Target {
+                if (input.vs_TEXCOORD1.x > 29.5) {
+                    // Recover pixel dimensions from the normalized UV derivatives, keeping the existing float2
+                    // vertex layout and sampler budget intact. The second mode value is radius / shorter half-side.
+                    float2 halfSize = 1. / max(fwidth(input.vs_TEXCOORD0), .0001);
+                    float radius = input.vs_TEXCOORD1.y * min(halfSize.x, halfSize.y);
+                    float2 q = abs(input.vs_TEXCOORD0) * halfSize - (halfSize - radius);
+                    float distance = length(max(q, 0.)) + min(max(q.x, q.y), 0.) - radius;
+                    float aa = max(fwidth(distance), .35);
+                    float4 color = input.vs_COLOR0;
+                    color.a *= 1. - smoothstep(-aa, aa, distance);
+                    return color;
+                }
+                if (input.vs_TEXCOORD1.x > 27.5) {
+                    float4 color = input.vs_COLOR0;
+                    color.a *= tex2D(_GardenTex2, input.vs_TEXCOORD0).a;
+                    return color;
+                }
                 if (input.vs_TEXCOORD1.x > 23.5) {
                     float4 art = tex2D(_GardenBarsTex, input.vs_TEXCOORD0);
                     if (input.vs_TEXCOORD1.x > 25.5) {

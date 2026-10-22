@@ -22,13 +22,14 @@ namespace Flightbeat.Garden.UI
         public Color outlineColor = new Color32(35, 64, 107, 255);   // v3 navy outline (UI spec v3 4.5)
         [SerializeField] Texture2D fontAtlas;
         public bool roundedFont;
-        static Dictionary<char, GardenSkin.Glyph> originalGlyphs, roundedGlyphs;
+        [System.NonSerialized] public bool dialogTitleFont;
+        static Dictionary<char, GardenSkin.Glyph> originalGlyphs, roundedGlyphs, titleGlyphs;
         static Texture2D roundedAtlas;
         Dictionary<char, GardenSkin.Glyph> glyphs;
         bool alternate;
         object[] arguments;
         string rendered;
-        public override Texture mainTexture => roundedFont ? (roundedAtlas ? roundedAtlas : roundedAtlas = Resources.Load<Texture2D>("GardenR1/bars"))
+        public override Texture mainTexture => roundedFont || dialogTitleFont ? (roundedAtlas ? roundedAtlas : roundedAtlas = Resources.Load<Texture2D>("GardenR1/bars"))
             : fontAtlas ? fontAtlas : Resources.Load<Texture2D>("GardenR1/atlas");
         public void SetFontAtlas(Texture2D value) { fontAtlas = value; SetAllDirty(); }
         // Typed overloads are called every LateUpdate by RefreshGardenUi: they return before
@@ -78,19 +79,21 @@ namespace Flightbeat.Garden.UI
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear();
-            var data = roundedFont ? GardenBarArt.Data : GardenSkin.Data;
-            glyphs = roundedFont ? roundedGlyphs : originalGlyphs;
+            var data = dialogTitleFont ? GardenTitleArt.Data : roundedFont ? GardenBarArt.Data : GardenSkin.Data;
+            glyphs = dialogTitleFont ? titleGlyphs : roundedFont ? roundedGlyphs : originalGlyphs;
             if (glyphs == null)
             {
                 glyphs = new Dictionary<char, GardenSkin.Glyph>();
                 foreach (var glyph in data.glyphs) glyphs[(char)glyph.code] = glyph;
-                if (roundedFont) roundedGlyphs = glyphs; else originalGlyphs = glyphs;
+                if (dialogTitleFont) titleGlyphs = glyphs;
+                else if (roundedFont) roundedGlyphs = glyphs; else originalGlyphs = glyphs;
             }
             string value = rendered ?? text;
             float width = 0;
             foreach (char c in value) width += glyphs.TryGetValue(c, out var g) ? g.advance * fontSize : fontSize;
+            if (dialogTitleFont) width += Mathf.Max(0, value.Length - 1) * GardenTitleArt.TrackingEm * fontSize;
             Rect r = rectTransform.rect;
-            float fit = roundedFont ? Mathf.Min(1f, Mathf.Max(1f, r.width - 4f) / Mathf.Max(.01f, width)) : 1f;
+            float fit = roundedFont || dialogTitleFont ? Mathf.Min(1f, Mathf.Max(1f, r.width - 4f) / Mathf.Max(.01f, width)) : 1f;
             float size = fontSize * fit; width *= fit;
             float x = centered ? r.center.x - width * .5f : r.xMin;
             float top = r.yMax;
@@ -106,6 +109,8 @@ namespace Flightbeat.Garden.UI
                     }
                 if (inkTop > inkBottom) top = r.center.y - (inkTop + inkBottom) * .5f;
             }
+            if (dialogTitleFont)
+                Draw(vh, value, x, top - GardenTitleArt.ShadowOffset, GardenTitleArt.Shadow, data, size);
             if (outlineWidth > 0)
                 for (int i = 0; i < 8; i++)
                 {
@@ -118,7 +123,7 @@ namespace Flightbeat.Garden.UI
         {
             foreach (char c in value)
             {
-                if (!glyphs.TryGetValue(c, out var g)) { x += size; continue; }
+                if (!glyphs.TryGetValue(c, out var g)) { x += size * (dialogTitleFont ? 1f + GardenTitleArt.TrackingEm : 1f); continue; }
                 if (g.w > 0 && g.h > 0)
                 {
                     float left = x + g.bearingX * size;
@@ -133,7 +138,7 @@ namespace Flightbeat.Garden.UI
                     vh.AddVert(new Vector3(left, bottom), tint, new Vector2(u, v));
                     vh.AddTriangle(n, n + 1, n + 2); vh.AddTriangle(n, n + 2, n + 3);
                 }
-                x += g.advance * size;
+                x += (g.advance + (dialogTitleFont ? GardenTitleArt.TrackingEm : 0f)) * size;
             }
         }
     }

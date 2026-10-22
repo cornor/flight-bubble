@@ -70,6 +70,15 @@ namespace Flightbeat.Garden
             s.GardenQuad(x, y, w, h, uv, tint, pixel, rigid, slot.atlas);
             return true;
         }
+        // Locked album members use the original sprite's alpha, so every character keeps its exact contour.
+        public static bool CreatureSilhouette(PixelSurface s, string id, float x, float y, float w, float h, Color tint)
+        {
+            var data = Data;
+            if (!slots.TryGetValue(id, out var slot) || slot.atlas != 1) return false;
+            float sx = w / slot.fw, sy = h / slot.fh;
+            s.GardenSilhouetteQuad(x + slot.ox * sx, y + slot.oy * sy, slot.w * sx, slot.h * sy, Uv(slot, data.size), tint);
+            return true;
+        }
         // 2026-10-21: an atlas image rotated by `degrees` (clockwise on screen) about `center`, for falling props.
         public static bool AssetRotated(PixelSurface s, string id, Vector2 center, float w, float h, float degrees, Color tint) {
             var data = Data;
@@ -269,7 +278,7 @@ namespace Flightbeat.Garden
         public static Vector2 LastMouth;
         public static void Creature(PixelSurface s, Color tint, float centerX, float feet, float canvasHeight, int tier, string ammo,
             float attack = 0f, float numberSize = 14f, bool showTier = true, bool badge = true, float breath = 0f, float phase = 0f,
-            float sizeScale = 0f, float squash = 0f, float numberLift = 0f, float fire = -1f, float pulse = 0f, float ready = 0f, bool sleep = false, float outline = 0f) {
+            float sizeScale = 0f, float squash = 0f, float numberLift = 0f, float fire = -1f, float pulse = 0f, float ready = 0f, bool sleep = false, float outline = 0f, float inhale = -1f) {
             float scale = (sizeScale > 0f ? sizeScale : 1f + Mathf.Min(tier, 3) * .06f) * ArtScale(tint);
             if (Celebrate) breath *= 2.2f;                                                  // happy bounce on a win
             // ~1.6 s cycle; 2026-10-21 sleepers (queue rows behind the front) breathe slower, about 2.6 s.
@@ -281,22 +290,39 @@ namespace Flightbeat.Garden
             // `ready` (has ammo and is not firing). Shots come every .07 s, so the old per-shot squash (.18 s) never got
             // back up and only jittered; now the body stays pressed while firing with a small beat per shot, and leans
             // back (a little taller and narrower) while it waits, ready to blow.
+            // 2026-10-22 10:21 (user, after the review): (b) `inhale` (0..1 over ~.22 s, from the pads when a member
+            // becomes ready) plays a breath in: a quick squash, then a spring up past the ready pose and settle, the
+            // puffed-cheek frame taking over halfway. (a) The ready pose now really leans back: the body sinks ~1 px and
+            // tilts ~3.5 deg outward (away from the screen centre) about its feet. (d) Each shot kicks the body down
+            // (~1.3-2 px, the recoil of the jet) and it springs back before the next one; the number pill stays put.
+            float readyK = ready;
+            if (inhale >= 0f && inhale < 1f) {
+                float v = (inhale - .4f) / .6f - 1f;   // -1 .. 0 over the spring part
+                readyK = inhale < .4f ? -.8f * Mathf.Sin(inhale / .4f * Mathf.PI * .5f)
+                    : Mathf.LerpUnclamped(-.8f, 1f, 1f + 2.7f * v * v * v + 1.7f * v * v);   // OutBack-like overshoot
+            }
             if (fire >= 0f) {
                 float calm = 1f - fire;
-                sy = 1f + breath * wave * calm - .09f * fire - .05f * pulse + .045f * ready;
-                sx = 1f - breath * .7f * wave * calm + .08f * fire + .035f * pulse - .035f * ready;
+                sy = 1f + breath * wave * calm - .09f * fire - .05f * pulse + .045f * readyK;
+                sx = 1f - breath * .7f * wave * calm + .08f * fire + .035f * pulse - .035f * readyK;
             }
             if (sleep && !Celebrate) { sy *= .98f; sx *= 1.015f; }                         // dozing: sunk a little
             if (ammo == "0") { sy = 1f + breath * .4f * wave; sx = 1f; }                    // spent: only a tired slow sway
             sy *= 1f - squash; sx *= 1f + squash;                                           // landing/stretch (feet stay put)
             float ah = canvasHeight * scale * sy, aw = canvasHeight * scale * ArtAspect * sx;
-            float ay = feet - ah * FeetLine, ax = centerX - aw / 2;
+            float bodySize = canvasHeight * scale, lean = 0f, bodyFeet = feet;
+            if (fire >= 0f && ammo != "0") {
+                float lk = Mathf.Max(0f, readyK);
+                bodyFeet += bodySize * (.018f * pulse * fire + .011f * lk);
+                lean = 3.5f * lk * Mathf.Clamp((centerX - 270f) / 120f, -1f, 1f);
+            }
+            float ay = bodyFeet - ah * FeetLine, ax = centerX - aw / 2;
             string state = ammo == "0" ? "spent" : attack > .1f || fire > .1f ? "attack" : "idle";
             Vector2 mouth = MouthCanvas(tint);
             LastMouth = new Vector2(ax + aw * mouth.x / 224f, ay + ah * mouth.y / 256f);
             // Optional art (art-v3 items 58/59): cheer on a win, and a short random blink while idle.
             if (Celebrate && Has(PlantSlot(tint, "cheer"))) state = "cheer";
-            else if (state == "idle" && ready > .5f && Has(PlantSlot(tint, "ready"))) state = "ready";   // puffed cheeks (when delivered)
+            else if (state == "idle" && (inhale >= 0f && inhale < 1f ? inhale > .5f : ready > .5f) && Has(PlantSlot(tint, "ready"))) state = "ready";   // puffed cheeks (when delivered)
             else if (state == "idle" && sleep && Has(PlantSlot(tint, "blink"))) state = "blink";          // asleep: the eyes-closed frame
             else if (state == "idle" && breath > 0f) {
                 float cycle = 3.1f + Mathf.Abs(phase) % 1.9f;
@@ -305,8 +331,16 @@ namespace Flightbeat.Garden
             // 2026-10-21 (user): hidden members show the rainbow question-mark bubble when delivered; `outline` (alpha)
             // draws the white silhouette grown by 8 canvas px behind the member (front-row members you can tap).
             Color32 mk = tint; bool mystery = ((mk.r << 16) | (mk.g << 8) | mk.b) == 0x8C919C && Has("plants/mystery-bubble");
-            if (outline > 0f) Asset(s, mystery ? "plants/mystery-bubble/outline" : PlantSlot(tint, "outline"), ax, ay, aw, ah, new Color(1f, 1f, 1f, outline));
-            if (!Asset(s, mystery ? "plants/mystery-bubble" : PlantSlot(tint, state), ax, ay, aw, ah, Color.white)) {
+            bool tilted = false;
+            if (Mathf.Abs(lean) > .05f) {
+                // Tilted about the feet: the art centre turns round the foot point, then the art is drawn rotated there.
+                float r = lean * Mathf.Deg2Rad, c = Mathf.Cos(r), n = Mathf.Sin(r), dy = ay + ah * .5f - bodyFeet;
+                Vector2 mid = new Vector2(centerX - dy * n, bodyFeet + dy * c);
+                if (outline > 0f) AssetRotated(s, mystery ? "plants/mystery-bubble/outline" : PlantSlot(tint, "outline"), mid, aw, ah, lean, new Color(1f, 1f, 1f, outline));
+                tilted = AssetRotated(s, mystery ? "plants/mystery-bubble" : PlantSlot(tint, state), mid, aw, ah, lean, Color.white);
+            }
+            if (!tilted && outline > 0f) Asset(s, mystery ? "plants/mystery-bubble/outline" : PlantSlot(tint, "outline"), ax, ay, aw, ah, new Color(1f, 1f, 1f, outline));
+            if (!tilted && !Asset(s, mystery ? "plants/mystery-bubble" : PlantSlot(tint, state), ax, ay, aw, ah, Color.white)) {
                 float w = aw * .55f, h = ah * .5f;
                 s.Rect(centerX - w / 2 - 1, feet - h - 1, w + 2, h + 2, Ink);
                 s.Rect(centerX - w / 2, feet - h, w, h, tint);
@@ -324,8 +358,16 @@ namespace Flightbeat.Garden
                     bool mapped = s.MapLayout;
                     float cy = GardenBars.ScreenY(s, numberTop + bh * .5f); s.MapLayout = false;
                     try {
-                        GardenBarArt.Plate(s, "number-pill", cx, cy, bw, bh, Color.white);
-                        GardenBarArt.Text(s, ammo, cx, cy - size * .55f, size, true, Color.white);
+                        // 23:33 (user: the navy pills were the heaviest thing on screen): the light glass capsule of the
+                        // HUD level plaque, navy number (navy pill if the bar atlas is missing).
+                        // 09:33 (user: too close to the pale pads): the same glass tinted a medium sky blue (between the
+                        // pale pads and the old navy), white number with a fine navy edge.
+                        if (GardenBarArt.CapsuleTinted(s, cx - bw * .5f, cy - bh * .5f, bw, bh, new Color(.42f, .68f, 1f, 1f)))
+                            GardenBarArt.TextOutline(s, ammo, cx, cy - size * .55f, size, Color.white, GardenBars.Navy, Mathf.Max(.8f, size * .07f));
+                        else {
+                            GardenBarArt.Plate(s, "number-pill", cx, cy, bw, bh, Color.white);
+                            GardenBarArt.Text(s, ammo, cx, cy - size * .55f, size, true, Color.white);
+                        }
                         if (coin) {
                             // 2026-10-21 (user): the tier coin goes back to the earlier gold coin art and its Ⅰ / Ⅱ.
                             float c = bh * 1.1f, coinX = cx - bw * .5f - c * .2f;
@@ -409,7 +451,7 @@ namespace Flightbeat.Garden
         public static string[] Narration(int topic) {
             switch (topic) {
                 // 2026-10-21 14:24: {key words} are coloured in the dialogue bubble.
-                case 0: return new[] { "来，点一下{蓝色队员}出战。", "它会自己打{最下排}的{同色泡泡}。" };
+                case 0: return new[] { "点一下{蓝色队员}出战。", "它会自己打{最下排}的{同色泡泡}。" };
                 case 1: return new[] { "再派两个{蓝色队员}试试！", "{三个同色同级}，会自动合成。" };
                 case 2: return new[] { "瞧，{三个合成一个}啦！", "攻击更强，还空出{两个出战位}。" };
                 case 3: return new[] { "别急，同色泡泡{被挡住}啦。", "先清{最下排}，队员就会继续出手。" };

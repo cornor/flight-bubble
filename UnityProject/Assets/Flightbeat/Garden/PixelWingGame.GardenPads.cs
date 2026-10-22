@@ -20,7 +20,9 @@ namespace Flightbeat.Game
         // 2026-10-16 (user item 5): a smaller start and wider steps so each upgrade reads; tier 3 keeps the old size.
         // 16:51 (user: a merge did not visibly grow the member): steps widened again (+21 %, +16 %, +12 %; MAX stays
         // about the old 1.18 so neighbours on 7 pads do not overlap).
-        static float PadTierScale(int tier) => tier >= 3 ? 1.2f : tier == 2 ? 1.07f : tier == 1 ? .92f : .76f;
+        // 2026-10-22 10:30 (user: bigger on phones): tier 0 +12 % (.76 -> .85); MAX stays (on 8 pads it nearly touches
+        // its neighbours), so the steps narrow to +15 % / +11 % / +10 %.
+        static float PadTierScale(int tier) => tier >= 3 ? 1.2f : tier == 2 ? 1.09f : tier == 1 ? .98f : .85f;
         readonly Dictionary<int, int> padTier = new Dictionary<int, int>(), padFromTier = new Dictionary<int, int>();
         readonly Dictionary<int, float> padPopAt = new Dictionary<int, float>();
         readonly Dictionary<int, Vector2> padMouth = new Dictionary<int, Vector2>();   // mouth as last drawn, per member
@@ -116,8 +118,8 @@ namespace Flightbeat.Game
         Vector2 GardenEnemyAt(int index)
         {
             if (index < 0 || index >= Battle.Alive.Length) return new Vector2(float.NaN, float.NaN);
-            float gy = shownY != null && index < shownY.Length ? shownY[index] : Battle.GridY(index);
-            return ScreenLayout.EnemyPoint(Battle.EnemyX(index), gy + Battle.Offset + feedback.GardenOffsetDelta);
+            GardenSandAt(index, out float gx, out float gy);   // 2026-10-21: the falling/rolling bead as drawn
+            return ScreenLayout.EnemyPoint(gx, gy + Battle.Offset + feedback.GardenOffsetDelta);
         }
 
         // 2026-10-16 22:29 (the dashed aim art was too faint on the bead field). The true area is the original
@@ -201,6 +203,43 @@ namespace Flightbeat.Game
                 s.Segment(p - new Vector2(arm, 0f), p + new Vector2(arm, 0f), 1.4f * queueScale, new Color(1f, 1f, 1f, g));
                 s.Segment(p - new Vector2(0f, arm), p + new Vector2(0f, arm), 1.4f * queueScale, new Color(1f, 1f, 1f, g));
                 s.Glow(p.x, p.y, c * .5f, c * .5f, new Color(1f, 1f, .9f, .6f * g), 0f);
+            }
+        }
+
+        // 2026-10-22 10:21: progress (0..1 over .22 s) of the breath in a member takes when it becomes ready to blow
+        // (landed with ammo, or its jet stopped with ammo left); -1 when no breath is playing.
+        readonly Dictionary<int, float> padReadyAt = new Dictionary<int, float>();
+        readonly HashSet<int> padReady = new HashSet<int>();
+        Flightbeat.Model.Battle padReadyBattle;
+        float PadInhale(Fighter ship, bool ready)
+        {
+            if (padReadyBattle != Battle) { padReadyBattle = Battle; padReady.Clear(); padReadyAt.Clear(); }
+            if (!ready) { padReady.Remove(ship.Id); padReadyAt.Remove(ship.Id); return -1f; }
+            if (padReady.Add(ship.Id)) padReadyAt[ship.Id] = ui;
+            if (!padReadyAt.TryGetValue(ship.Id, out float at)) return -1f;
+            float u = (ui - at) / .22f;
+            if (u >= 1f) { padReadyAt.Remove(ship.Id); return -1f; }
+            return u;
+        }
+
+        // 2026-10-21 23:33 (user): gold light for the members you can tap. 10-22 09:53 (user): only the ring at the feet
+        // is kept (no aura, no floor pool, no rising specks): a gold ellipse round the feet, brighter at the front edge,
+        // 2 px wide (14:24, user), breathing gently (~2.6 s), lanes out of step.
+        void QueueFootLight(PixelSurface s, float x, float feet, float queueScale, float size, float phase)
+        {
+            float b = .5f + .5f * Mathf.Sin(ui * 2.4f + phase * 1.3f), y = feet - 2f * queueScale;
+            // 11:16 (user: on 4 lanes the ring reached the tube's outer wall, on 5 lanes it sat inside): always inside the
+            // inner wall of the glass tube (tube width min(108, 500 / lanes - 8), wall ~14 px).
+            float tube = Mathf.Min(108f, 500f / Mathf.Max(1, Battle.LaneCount) - 8f);
+            float rx = Mathf.Min(size * .6f, tube * .5f - 14f), ry = rx * .233f;
+            Vector2 prev = new Vector2(x + rx, y);
+            for (int i = 1; i <= 28; i++)
+            {
+                float t = i / 28f * Mathf.PI * 2f;
+                Vector2 next = new Vector2(x + Mathf.Cos(t) * rx, y + Mathf.Sin(t) * ry);
+                float front = .5f + .5f * Mathf.Sin(t - Mathf.PI / 28f);   // 1 at the front (bottom) edge
+                s.Segment(prev, next, 2f * queueScale, new Color(1f, .8f, .27f, (.3f + .55f * front) * (.75f + .25f * b)));
+                prev = next;
             }
         }
 

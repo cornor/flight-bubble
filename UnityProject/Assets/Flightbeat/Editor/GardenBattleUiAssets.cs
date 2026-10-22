@@ -82,6 +82,8 @@ namespace Flightbeat.Editor
                 view.propAmounts[i] = Find<GardenUiText>(prop, "Amount");
                 view.propCancelLabels[i] = Find<RectTransform>(prop, "Cancel hint").gameObject;
             }
+            view.bombPropWord = Find<GardenUiText>(view.props[2].gameObject, "Word");
+            view.bombCancelBadge = Find<GardenUiAction>(view.props[2].gameObject, "Cancel badge hit");
             view.settingsPanel = Find<RectTransform>(view.pauseDialog, "Settings").gameObject;
             view.pausedPanel = Find<RectTransform>(view.pauseDialog, "Paused").gameObject;
             view.musicText = Find<GardenUiText>(view.pauseDialog, "Music text");
@@ -201,12 +203,16 @@ namespace Flightbeat.Editor
             // 2026-10-21 (quality pass): the empty groove read as a dull grey bar. Now a pale frosted groove with a fine
             // inner shade along its top edge, like a channel pressed into the glass.
             var track = Glass("Progress track", band, 190, 22, GardenBattlePage.ProgressWidth, 18);
-            track.color = new Color(.84f, .92f, .99f, .9f);
+            // 23:33 (user: at 0 % the pale groove did not read as a bar): deeper, as on the revive dialog, with a
+            // stronger inner shade.
+            // 10-22 11:50 (user picked option 3): no groove inside the frame any more, only a faint lane (frame
+            // glass shows through); the fill a softer deep blue so progress reads at a glance; no head spark.
+            track.color = new Color(.45f, .65f, .9f, .22f);
             var shade = Node("Progress track shade", band, 199, 23.5f, GardenBattlePage.ProgressWidth - 18f, 2f);
             var shadeImage = shade.gameObject.AddComponent<Image>(); shadeImage.raycastTarget = false;
-            shadeImage.color = new Color(.09f, .2f, .38f, .16f);
+            shadeImage.color = new Color(.09f, .2f, .38f, 0f);
             Image fill = Glass("Progress fill", band, 190, 22, GardenBattlePage.ProgressWidth * .35f, 18);
-            fill.color = new Color(.25f, .78f, 1f, 1f);   // 2026-10-21: cyan-blue as in the design; mint stays for success hints
+            fill.color = new Color(.32f, .68f, 1f, 1f);   // 2026-10-21: cyan-blue as in the design; mint stays for success hints
             // A soft spark rides the head of the fill (moved by PixelWingGame.GardenUi).
             Image spark = Art("Progress spark", band, "fx/glow", 190, 15, 30, 32);
             spark.color = new Color(1f, 1f, 1f, .8f);
@@ -230,6 +236,8 @@ namespace Flightbeat.Editor
                 var button = Action("Prop " + i, buttons, i + 10, 27 + i * 164, 306, 156, 72);
                 Image art = Art("Button image", button, keys[i], 0, 0, 156, 72);
                 button.GetComponent<GardenUiAction>().selectedVisual = art;
+                // 2026-10-22: the same rainbow bomb as the revive reward and projectile, not baked into the base.
+                if (i == 2) Art("Bomb icon", art.rectTransform, "ui/bar-icon-bomb", 0, 8, 54, 54);
                 // 2026-10-21 10:44: the art is text-free now; the word sits right of the icon in the rounded font, white
                 // with a dark outline of the button's own hue (sampled from the old baked words). It is a child of the
                 // art so it moves with the pressed offset.
@@ -237,10 +245,13 @@ namespace Flightbeat.Editor
                 Color[] inks = { new Color32(0, 42, 193, 255), new Color32(187, 58, 0, 255), new Color32(54, 0, 184, 255) };
                 float wordSize = i == 0 ? 24f : 20f, wordLeft = i == 0 ? 60f : 56f, wordWidth = i == 0 ? 96f : 92f;
                 GardenUiText word = RoundLabel("Word", art.rectTransform, words[i], wordLeft, 36.5f - wordSize * .5f, wordWidth, wordSize, Color.white);
+                if (i == 2) word.alternateText = "取消";
                 word.outlineWidth = 2.2f; word.outlineColor = inks[i];
                 // 2026-10-21 (user): the count / + / × corner badge goes back to the earlier navy badge and white number.
                 Art("Count badge", button, "scene/badge", 134, -7, 24, 24);
                 Label("Amount", button, "{0}", 134, -2.5f, 24, 14, Color.white);
+                // The visible × extends above the prop rectangle. Give it a full target only while aiming.
+                if (i == 2) Action("Cancel badge hit", button, 12, 124, -17, 44, 44).GetComponent<GardenUiAction>().interactable = false;
                 RoundLabel("Cancel hint", button, "取消选择", 0, -22, 156, 15, GardenBars.Navy).gameObject.SetActive(false);
             }
             tutorial.gameObject.SetActive(false);
@@ -269,11 +280,11 @@ namespace Flightbeat.Editor
             }
             // 18:11 (user): the victory page's button row: 主页 square · big green 继续战斗 · 重玩 square (restart).
             SquareButton("Home", content, 25, 84, 548, "plants/win/button-home", "主页", new Color32(0xB8, 0x65, 0x0A, 0xFF));
-            GreenButton("Resume", content, 24, 172, 542, 196, 84, "继续战斗");
+            GreenButton("Resume", content, 24, 172, 542, 196, 84, "继续战斗", 28f, 2f);
             SquareButton("Retry", content, 23, 380, 548, "plants/win/button-replay", "重玩", new Color32(0x4E, 0x1F, 0xA8, 0xFF));
             // Home settings only: 重置关卡进度 as a quiet text link under 完成 (two taps, see BubbleReset).
-            var reset = Action("Reset progress", content, GardenBattlePage.ResetProgressAction, 150, 632, 240, 28);
-            RoundLabel("Reset text", reset, "{0}", 0, 4, 240, 15, new Color32(0x6F, 0x86, 0xA6, 0xFF));
+            var reset = Action("Reset progress", content, GardenBattlePage.ResetProgressAction, 150, 628, 240, 36);
+            Label("Reset text", reset, "{0}", 0, 2.5f, 240, 22, new Color32(0x55, 0x5B, 0x66, 0xFF));
             reset.gameObject.SetActive(false);
             var paused = Node("Paused", root, 0, 0, 540, 960); Stretch(paused);
             var simple = Modal(paused, "休息一下", 250, 370);
@@ -285,8 +296,9 @@ namespace Flightbeat.Editor
         {
             var root = Section("GardenResultDialog");
             var mission = Node("Mission result", root, 0, 0, 540, 960); Stretch(mission);
-            var content = Modal(mission, "泡泡全打光啦！", 180, 630, "Result title");
-            Find<GardenUiText>(content.gameObject, "Result title").alternateText = "这次被泡泡压住了";
+            // 2026-10-21 20:51: 630 -> 590 high (the panel only shows on a loss now; its buttons moved up into one row).
+            var content = Modal(mission, "泡泡全打光啦！", 180, 590, "Result title");
+            Find<GardenUiText>(content.gameObject, "Result title").alternateText = "失败了";
             Art("Portrait", content, "ui/guide-happy", 226, 210, 88, 88);
             Label("Result lesson", content, "泡泡课堂 {0}/2", 70, 300, 400, 22, Ink).gameObject.SetActive(false);
             Label("Result level", content, "第 {0} 关", 70, 300, 400, 22, Ink);
@@ -296,9 +308,11 @@ namespace Flightbeat.Editor
             Label("Seeds", rewards, "收获碎片 +{0}", 70, 456, 400, 20, Ink);
             Label("Statistics", rewards, "最高连击 {0}  用时 {1} 秒", 70, 510, 400, 16, Ink);
             Label("Campaign complete", content, "全部关卡通过", 70, 566, 400, 20, Ink);
-            var next = Button("Continue", content, 40, 80, 650, 380, 62, "下一关", "Continue text");
-            Find<GardenUiText>(next.gameObject, "Continue text").alternateText = "再试一次";
-            Button("Home", content, 41, 180, 740, 180, 40, "返回主页");
+            // 2026-10-22: keep the original pair of buttons, as requested: square home and green retry.
+            var next = GreenButton("Continue", content, 40, 192, 656, 248, 84, "下一关");
+            var nextText = Find<GardenUiText>(next.gameObject, "Label");
+            nextText.name = "Continue text"; nextText.alternateText = "再试一次";
+            SquareButton("Home", content, 41, 100, 662, "plants/win/button-home", "主页", new Color32(0xB8, 0x65, 0x0A, 0xFF));
             // 2026-10-21 (user, victory page after a reference): one row of a small square 主页, a big 下一关 and a small
             // square 重玩 (action 42). Shown only on a win (GardenBattlePage.SetWinLayout hides Continue / Home then);
             // the lose page keeps 再试一次 / 返回主页. Painted art when delivered (win/*.png), program fallback before.
@@ -311,7 +325,7 @@ namespace Flightbeat.Editor
             else Art("Button image", winNext, "ui/button-primary", 0, 0, 208, 84, true, 45, 0, 84 * 45f / 78f);
             // 15:59 (user: words not centred): centred on the button face (rows 4-134 of 168, i.e. 2-67 of 84), not
             // on the whole art with its thick lower edge.
-            var nextLabel = RoundLabel("Win next text", winNext, "下一关", 0, 19f, 208, 32, Color.white);
+            var nextLabel = RoundLabel("Win next text", winNext, "下一关", 0, 84f * .46f - 18f, 208, 36, Color.white);   // 10-22: 32 -> 36
             nextLabel.outlineWidth = 3f; nextLabel.outlineColor = HasSlot("plants/win/button-next") ? new Color32(0x1B, 0x7A, 0x2A, 0xFF) : new Color32(0x16, 0x3E, 0x6D, 0xFF);
             winButtons.gameObject.SetActive(false);
             var lesson = Node("Lesson complete", root, 0, 0, 540, 960); Center(lesson);
@@ -344,14 +358,16 @@ namespace Flightbeat.Editor
             return root;
         }
         // Big green jelly button of the victory page (win/button-next), the blue primary as fallback; white rounded word.
-        static RectTransform GreenButton(string name, RectTransform parent, int id, float x, float y, float w, float h, string word)
+        static RectTransform GreenButton(string name, RectTransform parent, int id, float x, float y, float w, float h, string word, float fontSize = 36f, float outlineWidth = 3f)
         {
             var root = Action(name, parent, id, x, y, w, h);
             bool painted = HasSlot("plants/win/button-next");
             if (painted) Art("Button image", root, "plants/win/button-next", 0, 0, w, h);
             else Art("Button image", root, "ui/button-primary", 0, 0, w, h, true, 45, 0, h * 45f / 78f);
-            var label = RoundLabel("Label", root, word, 0, h * .23f, w, 30, Color.white);
-            label.outlineWidth = 3f; label.outlineColor = painted ? new Color32(0x1B, 0x7A, 0x2A, 0xFF) : new Color32(0x16, 0x3E, 0x6D, 0xFF);
+            // 2026-10-22 11:27 (user): the base under the face is half as thick now (atlas script), so the face centre
+            // moves from .42 to .46 of the height; the words grow 30 -> 36.
+            var label = RoundLabel("Label", root, word, 0, h * .46f - fontSize * .5f, w, fontSize, Color.white);
+            label.outlineWidth = outlineWidth; label.outlineColor = painted ? new Color32(0x1B, 0x7A, 0x2A, 0xFF) : new Color32(0x16, 0x3E, 0x6D, 0xFF);
             return root;
         }
         static bool HasSlot(string id) => id.StartsWith("bars/") ? barAtlas.slots.Any(s => s.id == id.Substring(5)) : atlas.slots.Any(s => s.id == id);
@@ -363,11 +379,11 @@ namespace Flightbeat.Editor
             bool painted = HasSlot(art);
             if (painted) Art("Button image", root, art, 0, 0, 76, 76);
             else Art("Button image", root, "ui/button-secondary", 0, 0, 76, 76, true, 30, 0, 76 * 30f / 72f);
-            // 15:59 (user: the words touched the edge): centred in the free band between the icon (ends at row 86 of
-            // 152) and the thick lower rim (starts at 134), i.e. around y 55 of 76; one size larger.
-            float size = painted ? 14f : 18f;
+            // 2026-10-22 (user: text touches the icons again): keep the glyph AND its outline in the lower blank band.
+            // At 15 px, top 48 and outline 1.2, visible lettering spans ~47-64; the painted icon ends around 43.
+            float size = painted ? 15f : 18f;
             var label = RoundLabel(name + " text", root, word, 0, painted ? 48f : (76f - size) * .5f - 1f, 76, size, Color.white);
-            label.outlineWidth = painted ? 2.4f : 2.6f; label.outlineColor = painted ? ink : new Color32(0x16, 0x3E, 0x6D, 0xFF);
+            label.outlineWidth = painted ? 1.2f : 2.6f; label.outlineColor = painted ? ink : new Color32(0x16, 0x3E, 0x6D, 0xFF);
             return root;
         }
         static RectTransform Action(string name, RectTransform parent, int id, float x, float y, float w, float h)

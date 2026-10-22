@@ -12,27 +12,30 @@
     #broadcast-status{display:none}
     /* loading page (2026-10-17 15:45): Xiao Lan blows bubbles from the mouth like on the home page; a progress bar
        in the game's own HUD art shows the download. */
-    #loading{position:absolute;inset:0;z-index:3;overflow:hidden;background:#7cc6ef url(TemplateData/loading-bg.jpg) center/cover no-repeat;transition:opacity .45s ease}
+    #loading{position:absolute;inset:0;z-index:3;overflow:hidden;background:#fff;transition:opacity .45s ease}
     #loading.out{opacity:0;pointer-events:none}
-    #loading::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(16,50,96,.16),rgba(16,50,96,.26) 55%,rgba(10,30,62,.6))}
+    /* 21:42 (user): the three members 6 % higher (hero 30 -> 24 %, orange 44 -> 38 %, purple 43 -> 37 %).
+       21:39 (user): plain white page, no background picture (and so no veil); dark text, light tip pill. */
     .lg-hero{position:absolute;transform:translateX(-50%)}
-    #lg-hero{left:50%;top:30%;width:56%;aspect-ratio:600/651;z-index:3}
-    #lg-orange{left:18%;top:44%;width:34%;aspect-ratio:.9976;z-index:2}
-    #lg-purple{left:79%;top:43%;width:37%;aspect-ratio:1.162;z-index:2}
+    #lg-hero{left:50%;top:24%;width:56%;aspect-ratio:600/651;z-index:3}
+    #lg-orange{left:18%;top:38%;width:34%;aspect-ratio:.9976;z-index:2}
+    #lg-purple{left:79%;top:37%;width:37%;aspect-ratio:1.162;z-index:2}
     .lg-hero>img.body{position:absolute;inset:0;width:100%;height:100%;transform-origin:50% 92%;animation:lg-breathe 2.6s ease-in-out infinite}
     .lg-hero>img.body.blow{animation:lg-puff .55s ease-in-out}
     .lg-bub{position:absolute;pointer-events:none;will-change:transform,opacity}
     .lg-bub img{display:block;width:100%;height:100%;animation:lg-wob 1.6s ease-in-out infinite}
     #lg-bar-wrap{position:absolute;left:50%;top:77%;width:78%;transform:translateX(-50%)}
-    #lg-text{text-align:center;font-weight:800;font-size:calc(var(--u)*26);letter-spacing:.05em;margin-bottom:calc(var(--u)*10);text-shadow:0 calc(var(--u)*2) 0 #1f5c9e,0 0 calc(var(--u)*8) rgba(20,60,120,.6)}
-    #lg-bar{position:relative;width:100%;aspect-ratio:552/56;background:url(TemplateData/loading-bar-frame.png) center/100% 100% no-repeat}
-    #lg-fill{position:absolute;left:2.17%;top:17.9%;width:0;height:64.3%;overflow:hidden}
-    #lg-fill img{display:block;height:100%;width:calc(var(--bw)*1px)}
-    #lg-tipbub{position:absolute;top:50%;width:7%;aspect-ratio:1;transform:translate(-50%,-50%);transition:opacity .2s}
+    #lg-text{text-align:center;font-weight:800;font-size:calc(var(--u)*26);letter-spacing:.05em;margin-bottom:calc(var(--u)*10);color:#163E6D}
+    /* 2026-10-21 20:51 (user): the battle HUD's progress bar: glass capsule frame, pale frosted groove, cyan-blue
+       glass fill with a rounded head (3-sliced via border-image) and a soft pulsing spark on the head.
+       21:19 (user: frame + groove looked heavy): one layer, the frosted groove 552x34 with the fill inset 3 px. */
+    #lg-bar{position:relative;width:100%;aspect-ratio:552/34;background:url(TemplateData/loading-bar-track.png) center/100% 100% no-repeat;filter:drop-shadow(0 calc(var(--u)*2) calc(var(--u)*3) rgba(16,50,96,.25))}
+    #lg-fill{position:absolute;left:.54%;top:8.82%;width:0;height:82.35%;visibility:hidden;border-style:solid;border-color:transparent;border-width:0 var(--cap,16px);border-image:url(TemplateData/loading-bar-fill.png) 0 62 fill/0 var(--cap,16px) stretch}
+    #lg-spark{position:absolute;top:50%;width:5.4%;aspect-ratio:30/32;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,255,255,.45) 45%,rgba(255,255,255,0));opacity:0;pointer-events:none}
     #lg-bar.done{animation:lg-flash .4s ease-out}
-    #lg-tip{position:absolute;left:8%;right:8%;bottom:5%;padding:calc(var(--u)*10) calc(var(--u)*18);border-radius:calc(var(--u)*24);background:rgba(8,32,64,.42);text-align:center;font-size:calc(var(--u)*19);line-height:1.45;color:#eaf6ff;transition:opacity .35s}
+    #lg-tip{position:absolute;left:8%;right:8%;bottom:5%;padding:calc(var(--u)*10) calc(var(--u)*18);border-radius:calc(var(--u)*24);background:#EEF5FC;text-align:center;font-size:calc(var(--u)*19);line-height:1.45;color:#4A6585;transition:opacity .35s}
     #lg-tip.fade{opacity:0}
-    .lg-mini{position:absolute;bottom:-12%;opacity:.7;animation:lg-rise linear infinite}
+    .lg-mini{position:absolute;bottom:-12%;opacity:.85;animation:lg-rise linear infinite}
     @keyframes lg-breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.012,.988)}}
     @keyframes lg-puff{0%{transform:scale(1,1)}35%{transform:scale(1.05,.95)}100%{transform:scale(1,1)}}
     @keyframes lg-wob{0%,100%{transform:scale(1,1)}25%{transform:scale(1.05,.95)}50%{transform:scale(.97,1.03)}75%{transform:scale(1.03,.97)}}
@@ -41,16 +44,16 @@
   </style>
 </head>
 <body>
-  <main><div id="stage"><canvas id="unity-canvas" tabindex="-1" aria-label="泡泡小队游戏画面"></canvas><div id="loading" role="status" aria-label="加载中"><div class="lg-hero" id="lg-orange"><img class="body" src="TemplateData/loading-orange.webp" alt=""></div><div class="lg-hero" id="lg-purple"><img class="body" src="TemplateData/loading-purple.webp" alt=""></div><div class="lg-hero" id="lg-hero"><img class="body" src="TemplateData/loading-hero.webp" alt=""></div><div id="lg-bar-wrap"><div id="lg-text">加载中… 0%</div><div id="lg-bar"><div id="lg-fill"><img src="TemplateData/loading-bar-fill.png" alt=""></div><img id="lg-tipbub" src="TemplateData/loading-bubble.webp" alt=""></div></div><div id="lg-tip"></div></div></div></main>
+  <main><div id="stage"><canvas id="unity-canvas" tabindex="-1" aria-label="泡泡小队游戏画面"></canvas><div id="loading" role="status" aria-label="加载中"><div class="lg-hero" id="lg-orange"><img class="body" src="TemplateData/loading-orange.webp" alt=""></div><div class="lg-hero" id="lg-purple"><img class="body" src="TemplateData/loading-purple.webp" alt=""></div><div class="lg-hero" id="lg-hero"><img class="body" src="TemplateData/loading-hero.webp" alt=""></div><div id="lg-bar-wrap"><div id="lg-text">加载中… 0%</div><div id="lg-bar"><div id="lg-fill"></div><div id="lg-spark"></div></div></div><div id="lg-tip"></div></div></div></main>
   <span id="broadcast-status" hidden aria-hidden="true"></span>
   <script src="TemplateData/loading-anchor.js"></script>
   <script>
     const canvas=document.getElementById('unity-canvas');
     const stage=document.getElementById('stage'),loading=document.getElementById('loading');
     const bar=document.getElementById('lg-bar'),fill=document.getElementById('lg-fill');
-    const tipBub=document.getElementById('lg-tipbub'),text=document.getElementById('lg-text'),tip=document.getElementById('lg-tip');
+    const tipBub=document.getElementById('lg-spark'),text=document.getElementById('lg-text'),tip=document.getElementById('lg-tip');
     let target=0,shown=0,done=false,finished=false,failed=false;
-    function unit(){stage.style.setProperty('--u',stage.clientWidth/540+'px');fill.style.setProperty('--bw',bar.clientWidth*.9565);}
+    function unit(){stage.style.setProperty('--u',stage.clientWidth/540+'px');fill.style.setProperty('--cap',bar.clientWidth*28/552*1.1+'px');}
     unit();addEventListener('resize',unit);
     // Each member blows a bubble from its mouth now and then (blue more often): it swells at the lips (cheeks
     // puff), drifts out to the side clear of the face, rises and fades.
@@ -79,7 +82,7 @@
       if(failed)return;
       shown+=(target-shown)*.12;if(target-shown<.003)shown=target;
       const p=Math.min(shown,1);
-      fill.style.width=(p*95.65)+'%';tipBub.style.left=(2.17+p*95.65)+'%';tipBub.style.opacity=p>.02&&p<.995?1:0;
+      fill.style.width=(p*98.91)+'%';fill.style.visibility=p>.003?'visible':'hidden';tipBub.style.left=(.54+p*98.91)+'%';tipBub.style.opacity=p>.005&&p<.995?.55+.3*Math.sin(performance.now()/200):0;
       if(!finished)text.textContent='加载中… '+Math.round(p*100)+'%';
       if(done&&shown>=.997&&!finished){
         finished=true;blowTimers.forEach(clearInterval);text.textContent='加载完成，出发！';bar.classList.add('done');
@@ -96,7 +99,9 @@
     let ti=Math.floor(Math.random()*tips.length);tip.textContent=tips[ti];
     const tipTimer=setInterval(()=>{tip.classList.add('fade');setTimeout(()=>{ti=(ti+1)%tips.length;tip.textContent=tips[ti];tip.classList.remove('fade');},350);},3200);
     function fail(){failed=true;clearInterval(tipTimer);blowTimers.forEach(clearInterval);text.textContent='加载失败，请刷新重试';}
-    const config={dataUrl:'Build/{{{ DATA_FILENAME }}}',frameworkUrl:'Build/{{{ FRAMEWORK_FILENAME }}}',codeUrl:'Build/{{{ CODE_FILENAME }}}',streamingAssetsUrl:'StreamingAssets',companyName:"BubbleSquad",productName:"FlightBubble",productVersion:"0.11.0",devicePixelRatio:Math.min(window.devicePixelRatio||1,1.5)};
+    // 2026-10-22 11:12 (user: text looked soft on phones): render up to 2x device pixels (was 1.5x from the original;
+    // a 3x phone drew at half resolution and the browser scaled it up).
+    const config={dataUrl:'Build/{{{ DATA_FILENAME }}}',frameworkUrl:'Build/{{{ FRAMEWORK_FILENAME }}}',codeUrl:'Build/{{{ CODE_FILENAME }}}',streamingAssetsUrl:'StreamingAssets',companyName:"BubbleSquad",productName:"FlightBubble",productVersion:"0.11.0",devicePixelRatio:Math.min(window.devicePixelRatio||1,2)};
     const loader=document.createElement('script');loader.src='Build/{{{ LOADER_FILENAME }}}';
     loader.onload=()=>createUnityInstance(canvas,config,p=>{target=Math.max(target,Math.min(p,1)*.96);}).then(instance=>{
       clearInterval(tipTimer);target=1;done=true;

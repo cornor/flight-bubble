@@ -99,7 +99,8 @@ SLOTS = [
     # The bomb button carries the rainbow bomb of the hint-bar icon set instead of the white splash (user 10:44).
     ('scene/button-shuffle', 'ui/button-shuffle-blank.png', UI, lambda: P.button('shuffle', '重排', FONT)),
     ('scene/button-designate', 'ui/button-designate-blank.png', UI, lambda: P.button('designate', '优先出战', FONT)),
-    ('scene/button-water', 'ui/button-bomb-blank.png', UI, lambda: P.button('bomb', '泡泡炸弹', FONT)),
+    # 2026-10-22: icon-free purple base; the prefab and overlay draw the shared bomb icon on top.
+    ('scene/button-water', 'ui/button-bomb-base.png', UI, lambda: P.button('bomb', '泡泡炸弹', FONT)),
     ('scene/badge', 'ui/badge-count.png', UI, P.badge_count),
     # second batch (v3 file names; placeholders until delivered)
     ('ui/popup-panel', 'ui2/popup-panel.png', UI, P.popup_panel),
@@ -135,8 +136,75 @@ for st in ['idle', 'attack', 'spent']:
 SLOTS.append(('plants/mystery-bubble', 'creatures/mystery/bubble.png', CREATURE, None))
 # 2026-10-21 victory page art (optional; the page draws program fallbacks until delivered). In the creature atlas
 # (plants/ prefix) because the main atlas is full.
+# 2026-10-22 11:27 (user: the button bases looked too thick, cf. a flatter reference): the dark base under the face of
+# the jelly buttons is squashed (half at first; 11:54 72 %) and the face stretched to fill, so the button keeps its size and
+# place (next: base from row 138 of 168; home / replay: from row 133 of 152). Written to generated/win; the
+# deliveries stay untouched and a redrawn delivery is processed the same way.
+def _thin_base(_id, cut_frac, keep=.6, gamma=.6):
+    # 12:13 (user: like the 重排 button): the base ends up ~8 % of the height (green keeps 60 % of its base, the square
+    # buttons 90 %) and is lifted (gamma) so it reads as a slightly deeper tone of the face, not a dark slab.
+    import numpy as np
+    src = DEL / f'win/{_id}.png'
+    if not src.exists(): return f'win/{_id}.png'
+    im = Image.open(src).convert('RGBA'); w, h = im.size; cut = round(h * cut_frac)
+    base = im.crop((0, cut, w, h)); nb = max(1, round(base.height * keep))
+    out = Image.new('RGBA', (w, h))
+    out.alpha_composite(im.crop((0, 0, w, cut)).resize((w, h - nb), Image.LANCZOS), (0, 0))
+    # 12:05 (user: the squashed base read too dark): the base is lifted a little (gamma .75 on its colours), since the
+    # squash also squeezed out its light reflection line.
+    _b = np.asarray(base.resize((w, nb), Image.LANCZOS)).astype(np.float32) / 255; _b[..., :3] = _b[..., :3] ** gamma
+    out.alpha_composite(Image.fromarray((_b * 255).astype(np.uint8), 'RGBA'), (0, h - nb))
+    # 14:24 (user: the base was lifted but the dark rim along the top and sides was not): the same lift on the dark
+    # outline pixels everywhere (weighted by darkness, so the face is untouched).
+    _a = np.asarray(out).astype(np.float32) / 255; _v = _a[..., :3].max(-1)
+    _w = np.clip((.62 - _v) / .35, 0, 1)[..., None]
+    _a[..., :3] = _a[..., :3] * (1 - _w) + (_a[..., :3] ** gamma) * _w
+    out = Image.fromarray((_a * 255).astype(np.uint8), 'RGBA')
+    dst = DEL / f'../generated/win/{_id}.png'; dst.parent.mkdir(parents=True, exist_ok=True); out.save(dst)
+    return f'../generated/win/{_id}.png'
+# 12:17 (user): base ~8 % of the visible height like 重排 (8.3 %): green 24 of 163 rows (14.7 %) x .55 = 8.1 %;
+# home / replay 14 of 148 rows (9.5 %) x .85 = 8.0 %.
+# 14:50 (user: still squashed too much, back a little): green keeps 65 % (14.7 % -> 9.6 %), the square buttons 95 %
+# (9.5 % -> 9.0 %).
+_WIN_REL = {'button-next': _thin_base('button-next', 138 / 168, .65, .6),
+            'button-home': _thin_base('button-home', 133 / 152, .95, .7),
+            'button-replay': _thin_base('button-replay', 133 / 152, .95, .7)}
 for _id, _scale in (('ribbon', UI), ('button-home', UI), ('button-replay', UI), ('button-next', UI), ('icon-clock', .5)):
-    SLOTS.append((f'plants/win/{_id}', f'win/{_id}.png', _scale, None))
+    SLOTS.append((f'plants/win/{_id}', _WIN_REL.get(_id, f'win/{_id}.png'), _scale, None))
+# 2026-10-21 21:14 (user): the home 第 N 关 button in blue. Derived from the green jelly button by turning every hue
+# by the same angle (body ~105 -> 208, so its highlights and dark rim follow); a delivered win/button-next-blue.png
+# takes over by itself.
+def _blue_button():
+    """12:14 (user: the blue still did not match the 重排 button): the green jelly button (base thinned) is recoloured
+    with the 重排 button's own colours: its luminance histogram is matched to the 重排 art (right 60 %, without the
+    icon) and every level takes that art's colour at the same rank, so face, rim, base and highlights use 重排's blues."""
+    import numpy as _np
+    src, out = DEL / _WIN_REL['button-next'], DEL / '../generated/win/button-next-blue.png'
+    ref = DEL / 'ui/button-shuffle-blank.png'
+    if not src.exists() or not ref.exists(): return None
+    if (DEL / 'win/button-next-blue.png').exists(): return 'win/button-next-blue.png'
+    S = Image.open(ref).convert('RGBA'); S = S.crop((int(S.width * .4), 0, S.width, S.height))
+    s = _np.asarray(Image.open(src).convert('RGBA')).astype(_np.float32) / 255
+    r = _np.asarray(S).astype(_np.float32) / 255
+    lum = lambda c: c[..., 0] * .299 + c[..., 1] * .587 + c[..., 2] * .114
+    sm, rm = s[..., 3] > .5, r[..., 3] > .8
+    rl, rc = lum(r[..., :3])[rm], r[..., :3][rm]
+    o = _np.argsort(rl); rc = rc[o]
+    k = max(1, len(rc) // 200); cs = _np.cumsum(_np.vstack([_np.zeros((1, 3)), rc]), 0); ramp = (cs[k:] - cs[:-k]) / k
+    # 14:25 (user: the rim along the top and sides kept its dark colour): the soft outer edge (alpha <= .5) was left
+    # green; every visible pixel now takes its rank among the opaque ones (searchsorted), the edge included.
+    flat = _np.sort(lum(s[..., :3])[sm]); vis = s[..., 3] > 0
+    ranks = _np.searchsorted(flat, lum(s[..., :3])[vis]) / max(1, len(flat) - 1)
+    res = s.copy(); res[..., :3][vis] = ramp[_np.clip((ranks * (len(ramp) - 1)).astype(int), 0, len(ramp) - 1)]
+    # The outline takes the darkest ranks, a shade under 重排's own rim ((0,60,215) vs (1,80,233)): lift the darkest
+    # tones (weighted by darkness) so the top and side rim matches the base and 重排.
+    _v = res[..., :3].max(-1); _w = _np.clip((.92 - _v) / .2, 0, 1)[..., None]
+    res[..., :3] = res[..., :3] * (1 - _w) + (_np.clip(res[..., :3], 0, 1) ** .75) * _w
+    out.parent.mkdir(parents=True, exist_ok=True)
+    Image.fromarray((_np.clip(res, 0, 1) * 255).astype(_np.uint8), 'RGBA').save(out)
+    return '../generated/win/button-next-blue.png'
+_blue_rel = _blue_button()
+if _blue_rel: SLOTS.append(('plants/win/button-next-blue', _blue_rel, UI, None))
 # 2026-10-21 18:11 dialogs (optional): white card panel (9-sliced, 48 px corners at 360 px) and settings row icons.
 for _id, _scale in (('panel-card', UI), ('icon-music', .5), ('icon-sound', .5), ('icon-light', .5), ('icon-pattern', .5)):
     SLOTS.append((f'plants/ui/{_id}', f'ui4/{_id}.png', _scale, None))
@@ -331,6 +399,41 @@ SLOTS += [('plants/finale/king-ready', 'finale/king-ready.png', UI, None),
 BAR_ICONS = ['tap', 'pick', 'crosshair', 'warn', 'bomb', 'bubbles', 'star', 'stars2', 'stars3', 'arrows', 'unlock', 'ad',
              'coin', 'flame', 'crown', 'reinforce', 'broken-link', 'target', 'shield', 'chip-wait', 'chip-done']
 SLOTS += [(f'ui/bar-icon-{n}', f'ui3/bar-icon-{n}.png', 0.5, None) for n in BAR_ICONS]
+def tap_hand_only(im):
+    """2026-10-22 11:32 (user): the 'tap' icon without the blue ball: hand + sparks, recentred."""
+    from PIL import ImageFilter
+    a = np.asarray(im.convert('RGBA')).astype(np.float32)
+    H, W = a.shape[:2]; yy, xx = np.mgrid[0:H, 0:W]
+    r, g, b, al = a[..., 0], a[..., 1], a[..., 2], a[..., 3]
+    blue = (b > r + 40) & (al > 128)
+    if blue.sum() < 200: return im.convert('RGBA')   # a delivered hand-only icon: use it as it is
+    cy, cx = yy[blue].mean(), xx[blue].mean(); rad = np.sqrt(blue.sum() / np.pi)
+    inside = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2) < rad + 8
+    warm = (r > b + 25) & (al > 40)
+    near = np.asarray(Image.fromarray((warm * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5))) > 0
+    kill = inside & ~warm
+    fix = kill & near & (al > 200) & (r > 150)             # the fingertip's light edge over the ball: skin tone
+    out = a.copy()
+    out[..., 3] = np.where(kill & ~fix, 0, al)
+    for ch, v in enumerate((255, 214, 192)): out[..., ch] = np.where(fix, v, out[..., ch])
+    # smooth the cut edge where the ball was (median on the alpha there), so the fingertip has a clean silhouette
+    circ = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2) < rad + 6
+    sm = np.asarray(Image.fromarray(out[..., 3].astype(np.uint8)).filter(ImageFilter.MedianFilter(5)).filter(ImageFilter.GaussianBlur(.7))).astype(np.float32)
+    out[..., 3] = np.where(circ, sm, out[..., 3])
+    img = Image.fromarray(out.astype(np.uint8), 'RGBA')
+    # the finger's outline was blended into the ball: a thin orange stroke restores it, only where the ball was
+    edge = np.asarray(img.getchannel('A').point(lambda v: 255 if v > 90 else 0).filter(ImageFilter.MaxFilter(3))).astype(np.float32)
+    edge *= np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2) < rad + 6
+    stroke = Image.new('RGBA', img.size, (236, 92, 40, 0)); stroke.putalpha(Image.fromarray(edge.astype(np.uint8)).filter(ImageFilter.GaussianBlur(.5)))
+    stroke.alpha_composite(img); img = stroke
+    c = img.crop(img.getbbox()); side = max(c.size) + 8
+    sq = Image.new('RGBA', (side, side)); sq.alpha_composite(c, ((side - c.width) // 2, (side - c.height) // 2))
+    return sq.resize((W, H), Image.LANCZOS)
+_tap_src = DEL / 'ui3/bar-icon-tap.png'
+if _tap_src.exists():
+    (DEL / '../generated/ui3').mkdir(parents=True, exist_ok=True)
+    tap_hand_only(Image.open(_tap_src)).save(DEL / '../generated/ui3/bar-icon-tap.png')
+    SLOTS[:] = [(sid, '../generated/ui3/bar-icon-tap.png', sc, fb) if sid == 'ui/bar-icon-tap' else (sid, src, sc, fb) for sid, src, sc, fb in SLOTS]
 SLOTS += [('finale/button-plate', 'finale/button-plate.png', UI, None),
           ('finale/title-plate', 'finale/title-plate.png', UI, None),
           ('finale/clear-plate', 'finale/clear-plate.png', UI, None)]
@@ -491,9 +594,40 @@ for _sid, _im, _src in list(tiles):
         _a = _im.getchannel('A').point(lambda v: 255 if v > 40 else 0).filter(ImageFilter.MaxFilter(2 * _r + 1)).filter(ImageFilter.GaussianBlur(1.0))
         _o = Image.new('RGBA', _im.size, (255, 255, 255, 0)); _o.putalpha(_a)
         tiles.append(((_sid[:-5] if _sid.endswith('/idle') else _sid) + '/outline', _o, 'generated-outline'))
+def calm_stage(im, keep=.25):
+    """2026-10-21 23:33 (user): the side cloud frame of the lower stage is filled with the stage's own gradient (narrow
+    phones cropped those clouds into half circles at the screen edges), and the cloud band right behind the guard rail
+    is thinned to a faint trace (`keep`), so the rail is the one clear edge between the field and the stage.
+    Rows/columns are those of the 1080x1920 delivery (scaled for other sizes); the bottom cloud row is kept."""
+    a = np.asarray(im.convert('RGB')).astype(np.float32)
+    H, W = a.shape[:2]; k = H / 1920
+    y0, y1, y2 = int(1100 * k), int(1850 * k), int(1900 * k)
+    ref = a[:, int(300 * k):int(780 * k)].mean(1)                     # per-row stage colour
+    x = np.arange(W)[None, :]
+    inner, outer = 125 * k, 70 * k
+    side = np.clip((inner - np.minimum(x, W - 1 - x)) / (inner - outer), 0, 1)
+    rows = np.arange(H)[:, None]
+    vert = np.clip((rows - y0) / (40 * k), 0, 1) * np.clip((y2 - rows) / (y2 - y1), 0, 1)
+    m = (side * vert)[..., None]
+    a = a * (1 - m) + ref[:, None, :] * m
+    b0, b1, s0, s1 = int(1066 * k), int(1152 * k), int(1118 * k), int(1150 * k)
+    sky, stage = a[int(1062 * k)].copy(), a[int(1168 * k)].copy()
+    clean = a.copy()
+    for y in range(b0, b1):
+        t = min(max((y - s0) / (s1 - s0), 0.0), 1.0); t = t * t * (3 - 2 * t)
+        clean[y] = sky * (1 - t) + stage * t
+    w = np.ones((H, 1, 1), np.float32)
+    w[b0:b1] = keep
+    fade = int(10 * k)
+    for i in range(fade):
+        w[b0 + i] = 1 - (1 - keep) * (i + 1) / fade
+        w[b1 - 1 - i] = 1 - (1 - keep) * (i + 1) / fade
+    band = np.zeros((H, 1, 1), bool); band[b0:b1] = True
+    a = np.where(band, clean + (a - clean) * w, a)
+    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), 'RGB')
 BG_SIZE = (810, 1440)
 if _bg.exists():
-    background = Image.open(_bg).convert('RGB'); bg_src = _bg.name + ':' + hashlib.sha256(_bg.read_bytes()).hexdigest(); delivered.append('scene/background.png')
+    background = calm_stage(Image.open(_bg)); bg_src = _bg.name + ':' + hashlib.sha256(_bg.read_bytes()).hexdigest(); delivered.append('scene/background.png')
 else:
     background = P.background().convert('RGB'); bg_src = 'placeholder'; placeholder.append('scene/background.png')
 background.resize(BG_SIZE, Image.LANCZOS).save(OUT / 'background.png')
@@ -516,10 +650,9 @@ def export_loading():
     tpl = ROOT / 'UnityProject/Assets/WebGLTemplates/Flightbeat/TemplateData'
     tpl.mkdir(parents=True, exist_ok=True)
     home = DEL / '../../home-v1'
-    bg = home / 'delivery/background.png'
-    if bg.exists():
-        im = Image.open(bg).convert('RGB').resize((540, 1170), Image.LANCZOS).filter(_IF.GaussianBlur(2.2))
-        im.save(tpl / 'loading-bg.jpg', quality=70, optimize=True, progressive=True)
+    # 21:39 (user): the loading page is plain white, no background picture.
+    for f in (tpl / 'loading-bg.jpg', tpl / 'loading-bg.jpg.meta'):
+        if f.exists(): f.unlink()
     # 16:11 (user): no game name on the loading page, so no logo image.
     bub = home / 'generated/soap-bubble-halo.png'
     if bub.exists():
@@ -544,8 +677,25 @@ def export_loading():
         o = Image.open(src).convert('RGBA')
         c = o.crop((max(0, box[0] - 30), max(0, box[1] - 30), min(o.width, box[2] + 30), min(o.height, box[3] + 30)))
         c.resize((420, round(420 * c.height / c.width)), Image.LANCZOS).save(tpl / ('loading-' + name + '.webp'), quality=88, method=6)
-    for src, dst in (('progress-frame.png', 'loading-bar-frame.png'), ('progress-fill.png', 'loading-bar-fill.png')):
-        Image.open(DEL / 'ui' / src).convert('RGBA').quantize(colors=180, method=Image.FASTOCTREE).save(tpl / dst, optimize=True)
+    # 2026-10-21 21:07 (user): the bar is the battle HUD's glass progress bar (bars glass-v2/capsule.png, the art the
+    # HUD groove / fill are cut from). 21:19 (user: frame + groove, two layers, looked heavy): one layer only, the
+    # pale frosted groove 552x34 (tint .84/.92/.99, 92 %) with the cyan-blue fill (tint .25/.78/1) inset 3 px, which
+    # index.html 3-slices with border-image (caps 1.1 x height). 2x size.
+    cap_src = Image.open(ROOT / 'Art/R1/ui-bars-assets-20261020/glass-v2/capsule.png').convert('RGBA')
+    def capsule(w, h):
+        sc, dc = round(cap_src.height * 1.1), round(h * 1.1)
+        out = Image.new('RGBA', (w, h))
+        out.paste(cap_src.crop((0, 0, sc, cap_src.height)).resize((dc, h), Image.LANCZOS), (0, 0))
+        out.paste(cap_src.crop((sc, 0, cap_src.width - sc, cap_src.height)).resize((w - 2 * dc, h), Image.LANCZOS), (dc, 0))
+        out.paste(cap_src.crop((cap_src.width - sc, 0, cap_src.width, cap_src.height)).resize((dc, h), Image.LANCZOS), (w - dc, 0))
+        return out
+    def tinted(im, rgb, alpha=1.0):
+        r, g, b, a = im.split()
+        return Image.merge('RGBA', [ch.point(lambda v, k=k: int(v * k)) for ch, k in zip((r, g, b, a), (*rgb, alpha))])
+    tinted(capsule(1104, 68), (.74, .86, .97))   # 21:39: deeper, on the white page.save(tpl / 'loading-bar-track.png', optimize=True)
+    for f in (tpl / 'loading-bar-frame.png', tpl / 'loading-bar-frame.png.meta'):
+        if f.exists(): f.unlink()
+    tinted(capsule(480, 56), (.25, .78, 1.0)).save(tpl / 'loading-bar-fill.png', optimize=True)
     (tpl / 'loading-anchor.js').write_text('window.LOADING_ANCHOR=' + _json.dumps(anchor) + ';\n')
     return sum(f.stat().st_size for f in tpl.iterdir())
 try:

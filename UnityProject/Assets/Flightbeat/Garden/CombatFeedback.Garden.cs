@@ -62,42 +62,70 @@ namespace Flightbeat.Feedback
         // Display only (the event is read, the model is untouched). At most 64 at once; the oldest give way.
         // 2026-10-21 17:24 (改动清单 3.5, user): at high combos the overlapping foam formed a white haze across the
         // board right on the row being shot; now at most 32 at once, smaller, closer to the bead colour, softer flash.
-        struct GardenPop { public Vector2 at; public float born; public int color, seed; public bool lite; }
+        // 2026-10-21 21:03 (user: with one member shooting there is no feeling of a bubble breaking). A lone hit was a
+        // .3 s puff a bead wide, drawn just as the next balls of the same colour flew into the same spot. Now each pop
+        // has a richness set by how busy the board is (hits in the last .4 s): a lone or sparse hit gets the full burst,
+        // a combo storm the light one (no haze, as 17:24 asked). Full burst, .42 s: the bead swells with a wobble, its
+        // skin tears into four curved film shards that fly out and curl, a thin ring opens, and seven droplets of its
+        // colour (bigger ones first) are thrown out and fall. Still only the bead's own colour, no white wash.
+        struct GardenPop { public Vector2 at; public float born, rich; public int color, seed; public bool lite; }
         readonly System.Collections.Generic.List<GardenPop> gardenPops = new System.Collections.Generic.List<GardenPop>();
+        readonly System.Collections.Generic.Queue<float> gardenHitTimes = new System.Collections.Generic.Queue<float>();
         bool gardenPopsHooked;
         int gardenPopSeed;
         void GardenOnHit(int color, float x, float y) {
             int hits = 0;
             foreach (var q in gardenPops) if (!q.lite) hits++;
             if (hits >= 32) { for (int i = 0; i < gardenPops.Count; i++) if (!gardenPops[i].lite) { gardenPops.RemoveAt(i); break; } }
-            gardenPops.Add(new GardenPop { at = ShownPoint(x, y), born = time, color = color, seed = gardenPopSeed++ });
+            while (gardenHitTimes.Count > 0 && (time - gardenHitTimes.Peek() > .4f || gardenHitTimes.Peek() > time)) gardenHitTimes.Dequeue();
+            gardenHitTimes.Enqueue(time);
+            // 1 up to ~5 hits in .4 s (one or two members), fading to 0 by ~16 (a full row firing / combo storm).
+            float rich = Mathf.Clamp01((16f - gardenHitTimes.Count) / 11f);
+            gardenPops.Add(new GardenPop { at = ShownPoint(x, y), born = time, color = color, seed = gardenPopSeed++, rich = rich });
         }
         static float GardenHash(int n) { float v = Mathf.Sin(n * 12.9898f) * 43758.5453f; return v - Mathf.Floor(v); }
+        public float GardenBeadSize = 11f;   // set by the game from the drawn bead size
         void DrawGardenPops(PixelSurface s, Func<int, Color> color) {
-            const float life = .32f;
+            float bead = GardenBeadSize;
             for (int i = gardenPops.Count - 1; i >= 0; i--) {
                 GardenPop p = gardenPops[i];
-                float age = time - p.born;
+                float r = p.lite ? 0f : p.rich, life = .3f + .12f * r, age = time - p.born;
                 if (age >= life || age < -1f) { gardenPops.RemoveAt(i); continue; }
                 if (age < 0f) continue;
-                float u = age / life, e = 1f - (1f - u) * (1f - u);
                 Color tint = color(p.color);
-                if (age < .08f) s.Glow(p.at.x, p.at.y, 16f, 16f, new Color(1f, 1f, 1f, .45f * (1f - age / .08f)), 0f);
-                // 11:09 (user: the explosions looked program-drawn): the painted foam burst (impact-dust) in the bead's
-                // colour; the drawn ring and droplets are only the fallback.
-                if (GardenFx.Has("impact-dust")) {
-                    // 17:43 (user): with only 10 % white the foam of black / very dark beads read as dirty black spikes;
-                    // dark colours lean further to white (35 %).
-                    float lift = tint.grayscale < .3f ? .35f : .1f;
-                    GardenFx.BurstTint(s, "impact-dust", p.at, p.lite ? 18f : 16f, age, life, Color.Lerp(tint, Color.white, lift));
-                    continue;
+                // 1. The bead swells (1.35x, up to 1.5x with a squash wobble when rich) and thins out.
+                float swell = .08f + .02f * r;
+                if (age < swell) {
+                    float k = age / swell, grow = 1f + (.35f + .15f * r) * k, wob = r * .12f * Mathf.Sin(k * Mathf.PI * 2f);
+                    Color c = tint; c.a = 1f - .7f * k;
+                    GardenSkin.Bug(s, c, p.at, bead * grow * (1f - wob), false, bead * grow * (1f + wob));
                 }
-                Color ring = Color.Lerp(tint, Color.white, .45f); ring.a = .9f * (1f - u);
-                s.Ring(p.at, 3f + 11f * e, ring, .4f + 2.2f * (1f - u), p.lite ? 10 : 14, 0f, 360f);
-                for (int k = 0; k < (p.lite ? 3 : 5); k++) {
-                    float a = (k / 5f + GardenHash(p.seed * 5 + k) * .15f) * Mathf.PI * 2f, reach = (8f + 7f * GardenHash(p.seed * 7 + k)) * e;
-                    Vector2 q = p.at + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * reach + new Vector2(0f, 10f * u * u);
-                    GardenSkin.Shot(s, tint, q, 4.2f * (1f - .6f * u), 1f - u * u);
+                float t2 = age - (swell - .04f);
+                if (t2 <= 0f) continue;
+                float span = life - (swell - .04f), u = Mathf.Clamp01(t2 / span), e = 1f - (1f - u) * (1f - u);
+                Color skin = Color.Lerp(tint, Color.white, .3f);
+                // 2. A thin ring opens (wider when rich).
+                Color ring = skin; ring.a = (.85f - .25f * r) * (1f - u);
+                s.Ring(p.at, bead * (.45f + (.7f + .35f * r) * e), ring, .5f + 1.4f * (1f - u), 14, 0f, 360f);
+                // 3. Rich: the skin tears into curved film shards that fly out, shrink their arc and fall a little.
+                if (r > .05f) {
+                    for (int k = 0; k < 4; k++) {
+                        float dir = (k * 90f + 25f + GardenHash(p.seed * 3 + k) * 40f), rad = dir * Mathf.Deg2Rad;
+                        float fly = bead * (.35f + 1.05f * e) * (.85f + .3f * GardenHash(p.seed * 11 + k));
+                        Vector2 c = p.at + new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * fly + new Vector2(0f, bead * .9f * u * u);
+                        float arc = 70f * (1f - .6f * u), curl = 35f * u * (k % 2 == 0 ? 1f : -1f);
+                        Color shard = skin; shard.a = r * (1f - u * u);
+                        s.Ring(c, bead * .5f * (1f - .35f * u), shard, 1.6f * (1f - .5f * u), 5, dir - arc * .5f + curl, arc);
+                    }
+                }
+                // 4. Droplets of the bead's colour, thrown out with gravity (3 lite, 5 normal, 7 rich; bigger when rich).
+                int n = p.lite ? 3 : 5 + Mathf.RoundToInt(2f * r);
+                for (int k = 0; k < n; k++) {
+                    float a = (k / (float)n + GardenHash(p.seed * 5 + k) * .15f) * Mathf.PI * 2f;
+                    float reach = bead * (.8f + (.8f + .7f * r) * GardenHash(p.seed * 7 + k)) * e;
+                    Vector2 q = p.at + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * reach + new Vector2(0f, bead * (1.1f + .6f * r) * u * u);
+                    float drop = (.38f + .14f * r * (k % 3 == 0 ? 1f : .4f)) * (1f - .55f * u);
+                    GardenSkin.Shot(s, tint, q, bead * drop, 1f - u * u);
                 }
             }
         }
@@ -477,7 +505,8 @@ namespace Flightbeat.Feedback
                 var to = ShownPoint(ship.BeamX, ship.BeamY);
                 // 2026-10-18 23:40 (user: Ⅱ bullets too small). Stream balls are .48-.62 of the width, so width 10 made
                 // 5-6 px balls next to the 12 px Ⅰ shots; now Ⅱ 18 (9-11 px balls) and MAX 22 (11-14 px).
-                GardenFx.BubbleStream(s, from, to, ship.Tier >= 3 ? 22 : 18, color(ship.Color), time);
+                // 2026-10-22 10:51 (user): sizes as they were, except MAX now uses the Ⅱ width (18, was 22).
+                GardenFx.BubbleStream(s, from, to, 18, color(ship.Color), time);
             }
             foreach (var f in flights) {
                 var shot = f.shot;

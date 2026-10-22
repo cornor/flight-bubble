@@ -41,7 +41,8 @@ namespace Flightbeat.Garden
             try
             {
                 Capsule(s, cx, cy, w, h, Quiet, alpha * .8f);
-                GardenSkin.Text(s, text, cx, cy - size * .56f, size, true, Al(GardenSkin.Hex(0x4A6688), alpha));
+                // 2026-10-22 11:16 (user: soft on phones): a darker ink (#4A6688 -> #34507A) so the thin regular strokes hold.
+                GardenSkin.Text(s, text, cx, cy - size * .56f, size, true, Al(GardenSkin.Hex(0x34507A), alpha));
             }
             finally { s.MapLayout = mapped; }
         }

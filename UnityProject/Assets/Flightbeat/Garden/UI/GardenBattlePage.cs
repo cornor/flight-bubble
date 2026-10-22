@@ -21,6 +21,8 @@ namespace Flightbeat.Garden.UI
         public GardenUiAction[] props;
         public GardenUiText[] propAmounts;
         public GameObject[] propCancelLabels;
+        public GardenUiText bombPropWord;
+        public GardenUiAction bombCancelBadge;
         [Header("Pause")]
         public GameObject settingsPanel, pausedPanel;
         public GardenUiText musicText, soundText, lightText;
@@ -104,16 +106,20 @@ namespace Flightbeat.Garden.UI
                 if (ribbon) ribbon.gameObject.SetActive(false);
             }
             RestyleTitle(resultTitle, -198f);
-            if (resultTitle) resultTitle.alternateText = "泡泡碰到护栏了";   // 16:09 (user): say what happened (was 这次被泡泡压住了)
+            if (resultTitle) resultTitle.alternateText = "失败了";   // 16:09 泡泡碰到护栏了; 10-22 14:38 (user): 失败了
         }
         static void RestyleTitle(GardenUiText t, float y)
         {
             if (!t) return;
-            t.roundedFont = true;   // 2026-10-21 18:11: the rounded type of the rest of the bubble UI
+            t.roundedFont = true;
+            t.dialogTitleFont = true;
             var r = t.rectTransform;
             r.anchoredPosition = new Vector2(r.anchoredPosition.x, y);
             r.sizeDelta = new Vector2(r.sizeDelta.x, 40f);
-            t.fontSize = 30f; t.outlineWidth = 2.6f; t.color = Color.white; t.middle = true; t.SetVerticesDirty(); t.SetMaterialDirty();
+            // 20:30 (user): on the white card the title is deep navy with a fine white edge (white lettering looked faint).
+            t.fontSize = GardenTitleArt.Size; t.outlineWidth = GardenTitleArt.EdgeWidth;
+            t.outlineColor = Color.white; t.color = GardenTitleArt.Ink;
+            t.middle = true; t.SetVerticesDirty(); t.SetMaterialDirty();
         }
 
         // 2026-10-17 victory screen (after the lightup reference): no panel on a win. The panel, portrait, title,
@@ -157,7 +163,8 @@ namespace Flightbeat.Garden.UI
         {
             foreach (var go in winHidden) if (go && go.activeSelf == win) go.SetActive(!win);
             foreach (var go in winOnly) if (go && go.activeSelf != win) go.SetActive(win);
-            if (resultShield) { Color want = win ? WinShade : resultShieldColor; if (resultShield.color != want) resultShield.color = want; }
+            // 20:51 (user): the fail page gets the same deep indigo shade as the victory page and the other dialogs.
+            if (resultShield) { Color want = win || lose ? WinShade : resultShieldColor; if (resultShield.color != want) resultShield.color = want; }
             bool hide = win || lose;
             foreach (var go in loseHidden) if (go && go.activeSelf == hide) go.SetActive(!hide);
         }
@@ -168,18 +175,21 @@ namespace Flightbeat.Garden.UI
         {
             if (resultContinue)
             {
-                resultContinue.text = "下 一 关"; resultContinue.alternateText = "再 试 一 次";
-                CenterButtonLabel(resultContinue, 62f, 26f);
+                // 20:51: the green jelly button of the pause dialog (no letter spacing, centred on the button face).
+                resultContinue.text = "下一关"; resultContinue.alternateText = "再试一次";
+                CenterButtonLabel(resultContinue, 77f, 36f);   // 10-22 11:27: thinner base, bigger words
             }
             // 2026-10-21 18:11: green jelly buttons with rounded type, no letter spacing; centred on the button face
             // (the art's top 70 of 84 px; the rest is its thick lower edge).
             if (resumeLabel)
             {
                 resumeLabel.text = "继续战斗"; resumeLabel.alternateText = "完成";   // 21:10 (user): home settings button reads 完成
-                CenterButtonLabel(resumeLabel, 70f, 30f);
+                // 2026-10-22: match the smaller pause-button type in GardenBattleUiAssets; do not enlarge it on Bind.
+                CenterButtonLabel(resumeLabel, 77f, 28f);
+                resumeLabel.outlineWidth = 2f;
             }
             foreach (var text in pausedPanel.GetComponentsInChildren<GardenUiText>(true))
-                if (text.text == "继续") { CenterButtonLabel(text, 70f, 30f); break; }
+                if (text.text == "继续") { CenterButtonLabel(text, 77f, 36f); break; }
         }
         // 2026-10-17 11:10: no level line under these; the bigger label is centred on its whole button.
         static void CenterButtonLabel(GardenUiText main, float buttonHeight, float size)
@@ -282,14 +292,7 @@ namespace Flightbeat.Garden.UI
                 levelSetShown = show;
                 levelSetRow.SetActive(show);
                 if (levelSetDivider) levelSetDivider.SetActive(show);
-                float shift = show ? LevelSetRow : 0f;
-                if (settingsPanelArt) settingsPanelArt.sizeDelta = new Vector2(settingsPanelArt.sizeDelta.x, panelHeight + shift + (homeMode ? HomeExtra : 0f));
-                resumeRect.anchoredPosition = new Vector2(resumeRect.anchoredPosition.x, resumeY - shift);
-                if (resetProgress)
-                {
-                    var r = (RectTransform)resetProgress.transform;
-                    r.anchoredPosition = new Vector2(r.anchoredPosition.x, resetY - shift);
-                }
+                RelayoutSettings();
             }
             if (show && levelSetToggle) levelSetToggle.sprite = on ? toggleOn : toggleOff;
         }
@@ -298,13 +301,14 @@ namespace Flightbeat.Garden.UI
         // shown only on the home page. The source is 1080x2340 with the 9:16 core picture at y 210-2130; the
         // core stays vertically centred on screen and taller screens reveal the extra sky and cloud sea.
         RawImage homeBackground;
+        Texture2D homeBackgroundTexture, codexBackgroundTexture;
         bool homeBackgroundChecked;
-        public bool ShowHomeBackground(bool show)
+        public bool ShowHomeBackground(bool show, bool album = false)
         {
             if (!homeBackgroundChecked)
             {
                 homeBackgroundChecked = true;
-                var texture = Resources.Load<Texture2D>("GardenR1/home-background");
+                var texture = homeBackgroundTexture = Resources.Load<Texture2D>("GardenR1/home-background");
                 if (texture)
                 {
                     var go = new GameObject("Home background", typeof(RectTransform), typeof(RawImage));
@@ -317,7 +321,22 @@ namespace Flightbeat.Garden.UI
             }
             if (!homeBackground) return false;
             homeBackground.gameObject.SetActive(show);
-            if (show) homeBackground.uvRect = PixelWingGame.HomeArtView(out _, out _, out _);
+            if (show)
+            {
+                if (album && !codexBackgroundTexture) codexBackgroundTexture = Resources.Load<Texture2D>("GardenR1/codex-background");
+                homeBackground.texture = album && codexBackgroundTexture ? codexBackgroundTexture : homeBackgroundTexture;
+                // The HUD root is 540 units wide even on tablets. Extend only the album plate to the screen edges.
+                homeBackground.rectTransform.offsetMin = new Vector2(album ? ScreenLayout.Left : 0f, 0f);
+                homeBackground.rectTransform.offsetMax = new Vector2(album ? -ScreenLayout.Left : 0f, 0f);
+                if (album && codexBackgroundTexture)
+                {
+                    // Cover the whole viewport without distorting clouds; content keeps its centred 540×960 frame.
+                    float scale = Mathf.Max(ScreenLayout.Width / 540f, ScreenLayout.Height / 960f);
+                    float uw = ScreenLayout.Width / (540f * scale), uh = ScreenLayout.Height / (960f * scale);
+                    homeBackground.uvRect = new Rect((1f - uw) * .5f, (1f - uh) * .5f, uw, uh);
+                }
+                else homeBackground.uvRect = PixelWingGame.HomeArtView(out _, out _, out _);
+            }
             return true;
         }
         void LateUpdate()
@@ -332,17 +351,25 @@ namespace Flightbeat.Garden.UI
             background.SetActive(value); header.SetActive(value); controls.SetActive(value);
             if (!value) { pauseDialog.SetActive(false); resultDialog.SetActive(false); }
         }
-        // 2026-10-21 18:11: in home settings the panel grows a little for the 重置关卡进度 link under 完成.
+        // 2026-10-21 18:11: in home settings the panel grows a little for the 重置关卡进度 link under 完成;
+        // 20:30 (user: a gap under the last row): there 完成 and the link sit 14 px higher, the panel 14 px shorter.
         bool homeMode;
-        const float HomeExtra = 34f;
+        const float HomeExtra = 34f, HomeLift = 14f;
+        void RelayoutSettings()
+        {
+            if (!resumeRect) return;
+            float shift = (levelSetShown ? LevelSetRow : 0f) - (homeMode ? HomeLift : 0f);
+            if (settingsPanelArt) settingsPanelArt.sizeDelta = new Vector2(settingsPanelArt.sizeDelta.x, panelHeight + shift + (homeMode ? HomeExtra : 0f));
+            resumeRect.anchoredPosition = new Vector2(resumeRect.anchoredPosition.x, resumeY - shift);
+            if (resetProgress)
+            {
+                var r = (RectTransform)resetProgress.transform;
+                r.anchoredPosition = new Vector2(r.anchoredPosition.x, resetY - shift);
+            }
+        }
         public void SetHomeMode(bool home)
         {
-            if (home != homeMode && settingsPanelArt)
-            {
-                homeMode = home;
-                settingsPanelArt.sizeDelta = new Vector2(settingsPanelArt.sizeDelta.x, panelHeight + (levelSetShown ? LevelSetRow : 0f) + (home ? HomeExtra : 0f));
-            }
-            homeMode = home;
+            if (home != homeMode) { homeMode = home; RelayoutSettings(); }
             if (pauseTitle) pauseTitle.Present(home);
             if (resumeLabel) resumeLabel.Present(home);
             foreach (var action in pauseActions)

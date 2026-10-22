@@ -70,12 +70,16 @@ namespace Flightbeat.Game
             if (level != homeLabelLevel) { homeLabelLevel = level; homeLabel = "第  " + level + "  关"; }
             // 2026-10-21 18:11 (user): the victory page's green jelly button (3-sliced) with rounded white type, breathing
             // gently to invite a tap; the blue primary button until the art is there.
-            if (Has("plants/win/button-next"))
+            // 21:14 (user): blue (plants/win/button-next-blue, the green art turned to blue by the atlas script), with a
+            // deep blue edge on the words; the green one if the blue slot is missing.
+            bool blue = Has("plants/win/button-next-blue");
+            if (blue || Has("plants/win/button-next"))
             {
                 HitBox(s, 800, 100, y, 340, 76);
                 float k = 1f + .025f * Mathf.Sin(ui * 2.6f), w = 340f * k, h = 80f * k, x0 = 270f - w * .5f, y0 = y + 38f - h * .45f;
-                Asset9(s, "plants/win/button-next", x0, y0, w, h, 64f, 0f, h * 64f / 126f, 0f, Color.white);
-                GardenBarArt.TextOutline(s, homeLabel, 270f, y0 + h * .42f - 32f * k * .55f, 32f * k, Color.white, Hex(0x1B7A2A), 3f * k);
+                Asset9(s, blue ? "plants/win/button-next-blue" : "plants/win/button-next", x0, y0, w, h, 64f, 0f, h * 64f / 126f, 0f, Color.white);
+                // 10-22 11:27: base thinned (face centre .42 -> .46 of the art), words 32 -> 36.
+                GardenBarArt.TextOutline(s, homeLabel, 270f, y0 + h * .46f - 36f * k * .55f, 36f * k, Color.white, Hex(blue ? 0x0A46C8 : 0x1B7A2A), 3f * k);   // 12:14: edge in the 重排 blue
                 return;
             }
             GardenButton(s, 800, 100, y, 340, 76, "");
@@ -191,6 +195,8 @@ namespace Flightbeat.Game
         }
         void DrawBubbleHome(PixelSurface s)
         {
+            // The album is a page of its own; home layers must not show through its pale cloud background.
+            if (codexOpen) { DrawBubbleCodex(s); return; }
             if (!HomeArtReady)
             {
                 // Logo (H10) arrived before the squad layers: it replaces the program title on the old page.

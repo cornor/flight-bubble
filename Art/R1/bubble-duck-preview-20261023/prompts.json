@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-23",
+  "mode": "built-in image_gen",
+  "preview_only": true,
+  "game_modified": false,
+  "request": "按现有8槽尺寸预演小黄鸭包装；沿用原背景和警戒线以上内容。",
+  "reference": "Art/R1/bubble-dragon-preview-20261023/02-关卡页-实际8槽-小龙预演.png",
+  "output": "01-关卡页-实际8槽-小黄鸭预演.png",
+  "source": "/Users/yangdage/.codex/generated_images/01a154ad-04ff-7731-b07b-72c13714ace7/exec-6fc8aaa9-40db-439a-b4fb-308ee322108b.png",
+  "prompt": "Use case: precise-object-edit / ui-mockup.\nAsset: one portrait mobile-game level-screen concept, same canvas/aspect as reference.\n\nThe input is the approved EIGHT-SLOT layout reference. Change the lower character packaging from baby dragons to classic LITTLE YELLOW RUBBER DUCKS blowing bubbles. Preserve the game geometry. This is a visual comparison using the same screen and practical character scale.\n\nLOCK AND PRESERVE:\n- The entire top of the input through and including the glowing cyan warning line: pause, 第7关, 0% progress, clouds, the dense colored-bead mosaic and its exact image, border positions. Do not reinterpret, rescale or redesign it.\n- The existing sky / pale blue cloud-bordered background across the WHOLE screen. No new bath-room background, no giant bathtub, no pond, no scenery replacement.\n- Exactly EIGHT equally spaced deployment bases in ONE horizontal row: SIX occupied positions on the left, TWO locked positions on the right. Preserve all positions and sizes from input, including the lock bubbles and tiny video icons.\n- Actual logical layout is 540×960: slot centers x=42,107.14,172.29,237.43,302.57,367.71,432.86,498; pad center y=647; pad width≈60 and height≈30; spacing≈65. Scale uniformly to output resolution. Do not enlarge characters or slots. Each occupied character's complete silhouette, including its swim ring and bill, stays within about 52 logical pixels wide and 50–55 high; bottom anchor near y=640.\n- Preserve the FIVE queue columns × THREE visible waiting characters with exact existing number badges and placements.\n- Preserve original three bottom buttons, icon designs, Chinese text “重排”, “优先出战”, “泡泡炸弹”, count badges 2,2,1, sizes and positions. Do not change the number of any game element.\n\nREPLACE CHARACTERS:\nReplace ALL SIX deployment dragons and ALL FIFTEEN waiting dragons with small classic yellow rubber duck characters. The whole family must be instantly recognized as bath-toy yellow ducks: bright warm yellow rounded duck head and plump body, unmistakable flat orange DUCK BILL, orange feet mostly tucked away, tiny folded wings, short upturned duck tail, big friendly black eyes with white highlights. Friendly polished soft 2.5D toy shading matching this game's existing UI, with soft vinyl/rubber satin gloss. No dragon horns, no spikes, no dragon cream belly, no dinosaur snout. Not realistic feathers. No humanoid clothes, guns, hats or weapons.\n\nCOLOR MATCHING:\nKeep every duck's main body YELLOW. Give every duck a thick, very readable colored inflatable SWIM RING around its lower body as its gameplay color identifier. The ring must be a bold saturated color, not a tiny accent. On the firing row, rings from left to right are CYAN, LIME GREEN, CORAL RED, PEACH/ORANGE, VIOLET, CYAN, matching the six former dragons. Retain ammo badges 222,447,450,446,448,226. On each waiting duck, its ring exactly matches the former queued character's dominant color; keep original ammo numbers. Charcoal queued characters become yellow ducks in charcoal-black rings. Ensure ring colors remain clear at small phone scale.\n\nACTION:\nFirst three firing ducks lean slightly back, tilt orange bills UP and gently puff yellow cheeks, with a small parted bill visibly blowing a short chain of TWO OR THREE small glossy bubbles directly from the bill into the space below the warning line. Bubble color matches each duck's ring: cyan, green, red. Bubble diameter 7–12 logical pixels. No large soap spheres obscuring UI. The other three firing ducks and all waiting ducks have relaxed happy expressions, looking toward the board. The ducks must feel playful and recognizable as bath toys, with modest puffed cheeks, not huge cheek balloons.\n\nBATH-TOY ATMOSPHERE WITHIN EXISTING SPACE:\nKeep the existing small blue bases; their surfaces can suggest a tiny glossy ripple under each ring. Add only a few tiny white foam bubbles tucked immediately beside duck swim rings, extremely subtle and contained in each slot. This is a light foreground hint of playing with bubbles; do not introduce a large bathtub or change the scene. Preserve translucent queue panels and their footprint, keep the lower screen airy.\n\nDeliver ONE clean full-screen game concept, no phone frame, no annotations or presentation title. Priority: eight real-size slots and unchanged upper screen; recognizable YELLOW RUBBER DUCKS; strong colored swim-ring identification; upward bill-origin bubbles; exact queue counts and UI geometry.",
+  "layout": {
+    "logical_canvas": [
+      540,
+      960
+    ],
+    "slots": 8,
+    "open": 6,
+    "locked": 2,
+    "pad_size": [
+      60.14,
+      30.07
+    ],
+    "pad_center_spacing": 65.14,
+    "queue_columns": 5,
+    "visible_queue_rows": 3
+  },
+  "design": {
+    "character": "黄色鸭身、橙色扁嘴的小黄鸭",
+    "color_identification": "彩色泳圈区分队伍颜色；发射泡泡与泳圈同色",
+    "scope": "角色与少量槽位泡沫装饰；不更换背景、不增加大型浴缸"
+  },
+  "review": {
+    "passed": [
+      "8槽可逐个计数：6只出战小黄鸭，2个锁定位",
+      "保留5列×3排候场队伍",
+      "所有21个角色统一为黄色鸭身与彩色泳圈",
+      "角色维持小槽位尺度，数字牌可见"
+    ],
+    "limitations": [
+      "AI美术概念图，非像素精确合成或运行截图",
+      "颜色识别面积比整身着色的小龙少，需在后续手机实测中评估泳圈辨识度"
+    ]
+  }
+}

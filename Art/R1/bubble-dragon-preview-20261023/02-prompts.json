@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-23",
+  "mode": "built-in image_gen",
+  "preview_only": true,
+  "game_modified": false,
+  "request": "按当前游戏真实卡槽数量与尺寸预演小龙吐泡泡包装。",
+  "output": "02-关卡页-实际8槽-小龙预演.png",
+  "logical_canvas": [
+    540,
+    960
+  ],
+  "verified_layout": {
+    "level7": {
+      "slots": 8,
+      "initially_open": 6,
+      "locked": 2,
+      "lanes": 5,
+      "visible_queue_rows": 3
+    },
+    "pad_width": 60.14285714285714,
+    "pad_height": 30.07142857142857,
+    "pad_center_y": 647,
+    "pad_spacing": 65.14285714285714,
+    "pad_centers_x": [
+      42,
+      107.14285714285714,
+      172.28571428571428,
+      237.42857142857142,
+      302.57142857142856,
+      367.71428571428567,
+      432.85714285714283,
+      498
+    ],
+    "character_feet_y": 640,
+    "requested_character_max_width": 52,
+    "requested_character_height": [
+      50,
+      55
+    ],
+    "other_cases": "少数前期关为7槽；复活会额外增加1槽。"
+  },
+  "code_evidence": [
+    {
+      "path": "UnityProject/Assets/Flightbeat/Garden/PixelWingGame.Garden.cs",
+      "line": 293,
+      "role": "底座尺寸和位置"
+    },
+    {
+      "path": "UnityProject/Assets/Flightbeat/Model/Battle.VisualCoordinates.cs",
+      "line": 6,
+      "role": "横向槽位中心公式"
+    },
+    {
+      "path": "UnityProject/Assets/Flightbeat/Model/Battle.Construction.cs",
+      "line": 124,
+      "role": "基础与最大槽位数取关卡配置"
+    },
+    {
+      "path": "UnityProject/Assets/Flightbeat/Model/Battle.Revive.cs",
+      "line": 45,
+      "role": "复活额外增加1槽"
+    },
+    {
+      "path": "UnityProject/Assets/Flightbeat/Resources/levels/sector05.json",
+      "role": "第7关对应配置，initialSlots=6，slotLimit=8，laneCount=5"
+    }
+  ],
+  "generation_steps": [
+    {
+      "prompt": "Use case: precise-object-edit / ui-mockup.\nMake a revised full-screen portrait game mockup, aspect 9:16.\n\nINPUT ROLES:\nImage 1 = the actual game screenshot and STRICT GEOMETRY / BACKGROUND EDIT TARGET. It has EIGHT deployment slots across one horizontal row, SIX unlocked followed by TWO locked.\nImage 2 = dragon art style reference ONLY. Its oversized three-dragon layout is INCORRECT and MUST NOT be copied. Take the friendly little dragon appearance but shrink the characters to fit the real slots.\n\nThis revision is specifically requested to correct slot COUNT and SIZE. Exact slot layout is more important than decorative art. Do not compose a row with 5 or 7 slots. There must be exactly EIGHT equally spaced small slot bases: SIX occupied by small dragons + TWO locked, all in one straight row.\n\nUse the 540×960 logical coordinate system below, scaling the whole screen uniformly to output resolution:\n- preserve everything from y=0 through y=574 inclusive from Image 1: background, pause button, 第7关, progress bar, bubble mosaic with exactly its current picture/density/extent, cloud band and cyan warning line. Preserve their placements. Do not redraw the top to match Image 2.\n- Keep the existing pale blue background below the warning line, without adding extra scenery or clouds.\n- EIGHT slot center X positions: 42, 107.14, 172.29, 237.43, 302.57, 367.71, 432.86, 498.\n- ALL eight slot bases centered at Y=647. Each base width 60.14, height 30.07. Horizontal center spacing 65.14, gap between bases about 5. Preserve the exact original bases from Image 1, including TWO lock bubbles/video badges on the far-right bases. The eight small bases span the width evenly. Do NOT stretch or enlarge a base to hold a large dragon.\n- Put ONE SMALL dragon on EACH of the first SIX bases, in order CYAN, GREEN, CORAL RED, PEACH, PURPLE, CYAN. No missing slots, no gaps replacing slots, no double occupancy. Dragon feet at Y=640. Each whole dragon including curled tail, horns and puffed cheeks has a maximum silhouette width of 52 and height around 50–55. Keep its entire body within its own slot column. All six dragons are the SAME physical size. There is NO oversized hero dragon.\n- Each occupied slot has a small dark blue ammo pill beneath the feet, centered at its own slot X at Y≈648. Exact numbers left to right: 222, 447, 450, 446, 448, 226. No number on the two locked slots.\n- The first, second and third dragon tilt the snout UP, puff cheeks moderately and blow a short stream of two or three SMALL same-color bubbles straight upward out of their mouths. Bubble diameters around 7–12 logical pixels. Their streams stay in the open area between their mouths and the warning line. No huge beach-ball bubbles. The other three dragons wait with faces looking upward.\n- Keep the lower queue as FIVE columns of THREE little dragons. Centers X=63.6,166.8,270,373.2,476.4. Original rows and number-pill locations as Image 1; do not push this area downward to enlarge the firing row. Queue characters are similar in size to the deployment dragons, never bigger. Use the open, uncluttered queue treatment from Image 2 (no tall glass cylinders), with the original small number badges.\n- Keep the three original bottom action buttons and their exact size/placement and text from Image 1: 重排, 优先出战, 泡泡炸弹. Keep count badges 2,2,1.\n\nSTYLE: same cute rounded original baby dragons as Image 2, short snout, small rounded horns, tiny dorsal bumps, curled tail tucked beside the body, cream belly, lively eyes, soft colorful toy-like 2.5D shading. Preserve their character at small game scale. Moderate puffed cheeks that do not become two oversized balls. Bright but tidy, no large VFX, no decorations covering UI.\nDeliver one full portrait screenshot-like concept, not a poster, no annotations, no title or added labels. The main visible change from the previous concept is a compact practical firing row of SIX SMALL DRAGONS AND TWO LOCKS, exactly aligned with the EIGHT actual game slots. Count and check all eight positions before finishing.",
+      "source": "/Users/yangdage/.codex/generated_images/01a154ad-04ff-7731-b07b-72c13714ace7/exec-f875117b-f9fe-4fee-92f0-8ce9aa755852.png"
+    },
+    {
+      "prompt": "Use case: precise-object-edit.\nEdit this full portrait game concept with ONE narrowly localized change: replace ONLY the fifteen waiting character illustrations in the FIVE bottom queue columns (between approximately 71% and 89% of image height) with little baby dragons matching the six deployment dragons immediately above them.\nEach replacement keeps the exact position, footprint, dominant color and numbered badge of the queued character it replaces. Preserve the existing five translucent queue panels and all 15 number badges/text. The dragons have small rounded horns, short snouts, cream bellies, tiny dorsal bumps and tucked short tails, friendly eyes, the same rounded 2.5D toy art as the deployment row. Keep the queue members compact; no growth or overlapping numbers. Preserve all current queue colors exactly, including the charcoal-black ones. Waiting dragons have relaxed cheeks and look upward; only the three front firing dragons already in the image blow bubbles.\n\nAbsolutely lock EVERY OTHER PIXEL/AREA: upper HUD, entire bubble board, warning line, background, ALL EIGHT deployment pads, the SIX correctly sized firing-row dragons, TWO locked pads, all ammo badges, three bubble streams and bottom buttons. The eight deployment slots, their count/spacing/size and six dragon sizes were just corrected and must remain exactly as in the input. No layout change, no addition or removal of any slot or queue member. This is only a character-art consistency pass on the 15 waiting characters. Output the same full portrait screen.",
+      "source": "/Users/yangdage/.codex/generated_images/01a154ad-04ff-7731-b07b-72c13714ace7/exec-c214446c-9504-4883-915f-0e5073e24b13.png"
+    }
+  ],
+  "review": {
+    "passed": [
+      "出战区8个位置可逐个计数",
+      "前6槽放置小龙，后2槽锁定",
+      "六只小龙按单槽尺度绘制，尾巴与鼓腮未遮挡相邻弹量牌",
+      "5列×3排候场角色统一为小龙",
+      "保留原蓝色背景主题、泡泡板构图和底部三按钮"
+    ],
+    "limitations": [
+      "AI概念预演，尺寸比例参考实际代码；不是像素精确的程序合成或运行截图",
+      "警戒线上方来自生成重绘，正式接入须沿用现有资源，不以此图替换"
+    ]
+  }
+}

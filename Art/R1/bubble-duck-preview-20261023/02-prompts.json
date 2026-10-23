@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-23",
+  "mode": "built-in image_gen",
+  "preview_only": true,
+  "game_modified": false,
+  "request": "修正全黄鸭身造成的队伍颜色辨识问题。",
+  "output": "02-关卡页-实际8槽-彩色洗澡鸭预演.png",
+  "source": "/Users/yangdage/.codex/generated_images/01a154ad-04ff-7731-b07b-72c13714ace7/exec-b17068f7-048d-4cd6-ba29-3377237c54de.png",
+  "reference": "Art/R1/bubble-duck-preview-20261023/01-关卡页-实际8槽-小黄鸭预演.png",
+  "prompt": "Use case: precise-object-edit / ui-mockup.\nInput: a portrait mobile-game screenshot concept with 6 yellow rubber ducks on the 6 open deployment slots, 2 locked slots, and 15 yellow rubber ducks in 5 queue columns.\n\nUSER FEEDBACK: all ducks are yellow, so it is hard to distinguish the gameplay colors. Fix this by making EACH DUCK'S ENTIRE BODY its assigned gameplay color. This is now a colorful rubber-bath-duck squad, not an all-yellow squad. The duck shape, orange bill and duck wings/tail provide the familiar identity.\n\nONE LOCALIZED EDIT: recolor all 21 duck bodies. Keep all positions, shapes, sizes, poses and the entire rest of the screen unchanged. Each duck's head, cheeks, neck, body, wings and tail must be the SAME clearly saturated dominant gameplay hue as its current swim ring. No yellow face, yellow head, yellow belly or yellow skin remains on these ducks, because none of this displayed sample is a yellow team. Their orange flat duck bills stay orange, the black eyes stay black with tiny white highlights. Preserve the cute recognizable rubber-duck profile: round head, flat orange bill, rounded body, folded wings, short upturned tail. Keep polished 2.5D casual-game toy shading and legible saturated color at small phone scale. Pale highlights are allowed but must not wash out the color.\n\nExact body colors:\nDeployment row from left to right (SIX ducks): bright cyan, lime green, coral red, peach orange, violet, bright cyan.\nWaiting rows across FIVE columns:\ntop queue row: lime green, peach orange, bright cyan, bright cyan, bright cyan.\nmiddle queue row: coral red, peach orange, peach orange, charcoal black, bright cyan.\nbottom queue row: lime green, bright cyan, bright cyan, lime green, charcoal black.\nCharcoal ducks must be genuinely charcoal with subtle cool gray highlights and orange bills, not purple or brown. Red ducks must remain clearly coral RED, distinct from peach-orange ducks. Bright cyan must remain distinct from violet. Their inflatable rings stay in the same hue family as the duck body, with subtly lighter or darker values; the whole character should read as one large patch of its gameplay color. Do not use colored hats, badges or additional clothes as the primary identifier.\n\nHARD LOCKS:\nPreserve exactly all EIGHT slot positions and sizes: six occupied + two locked. Keep deployment ammo numbers 222,447,450,446,448,226 and all waiting numbers unchanged. Preserve all 15 waiting character positions and FIVE translucent queue panels. Keep the first three bubble streams their original cyan/green/red colors. Do not enlarge characters, do not move any UI.\nPreserve the entire upper half through the cyan warning line, including bubble mosaic, all individual bead colors and density, progress HUD, 第7关, 0%, clouds. Preserve original blue background across the full screen, bottom action buttons and Chinese labels, 2/2/1 button counts, all lock/video icons. No new elements, no annotations, no presentation title.\nOutput the same full-screen portrait. The result must immediately allow a player to select the correct team by the large dominant color of the duck body, without needing to inspect the swim ring.",
+  "design": {
+    "identity": "通过橙色扁嘴、圆头、翅膀、翘尾巴保留洗澡鸭形象",
+    "color": "鸭身整体颜色对应队伍及泡泡颜色，泳圈同色；黄色只供黄色队伍使用",
+    "layout": "仍为8槽，6开放+2锁定，5列×3排候场"
+  },
+  "review": {
+    "passed": [
+      "6只出战鸭和15只候场鸭均已按队伍颜色整身着色",
+      "8槽布局、角色尺度、数字和按钮保持",
+      "不再依赖小面积泳圈辨色"
+    ],
+    "limitations": [
+      "AI包装预演，非游戏运行截图",
+      "最终配色仍须接入游戏现有色表，未做手机实测"
+    ]
+  }
+}

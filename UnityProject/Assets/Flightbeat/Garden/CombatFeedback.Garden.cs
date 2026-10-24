@@ -36,10 +36,9 @@ namespace Flightbeat.Feedback
             return fired;
         }
 
-        // 2026-10-20 21:21 (user): spoken praise per milestone, from mild to the strongest, short and punchy.
-        // 50 漂亮 · 100 太棒了 · 250 超厉害 · 500 神操作 · 1000 泡泡之神 · 1500 势不可挡 · 2000 无人能敌 · 2500 逆天啦 ·
-        // 3000 传说诞生, then the three strongest in turn. Narrow "!" (the font's full-width one has a wide blank side).
-        static readonly string[] gardenPraiseTop = { "泡泡之神!", "无人能敌!", "传说诞生!" };
+        // 4000–8000 each have their own praise; 9000 starts the same five-title cycle again.
+        // Narrow "!" avoids the full-width punctuation's blank side. Milestone timing and FX stay unchanged.
+        static readonly string[] gardenPraiseTop = { "全场沸腾!", "巅峰时刻!", "超越极限!", "奇迹降临!", "宇宙最强!" };
         static string GardenPraise(int value)
         {
             switch (value)
@@ -53,7 +52,7 @@ namespace Flightbeat.Feedback
                 case 2000: return "无人能敌!";
                 case 2500: return "逆天啦!";
                 case 3000: return "传说诞生!";
-                default: return value > 3000 ? gardenPraiseTop[(value / 1000 - 4) % 3] : "漂亮!";   // 4000, 5000 ... in turn
+                default: return value >= 4000 ? gardenPraiseTop[(value / 1000 - 4) % gardenPraiseTop.Length] : "漂亮!";
             }
         }
         // 2026-10-21 10:39 (user: cleared beads should burst, for the thrill; this lifts the 2026-10-14 "no hit FX").
@@ -72,6 +71,60 @@ namespace Flightbeat.Feedback
         readonly System.Collections.Generic.Queue<float> gardenHitTimes = new System.Collections.Generic.Queue<float>();
         bool gardenPopsHooked;
         int gardenPopSeed;
+        // Ordinary tiers and MAX's splash attack share one visual admission path.
+        // Copy values at impact: the model releases/reuses Shot immediately afterwards.
+        const float GardenAttackPopLife = .4f;
+        const float GardenAttackPopMergeWindow = .12f;
+        const int GardenAttackPopLimit = 32;
+        struct GardenAttackPop { public Vector2 at; public float born, size; }
+        readonly System.Collections.Generic.List<GardenAttackPop> gardenAttackPops =
+            new System.Collections.Generic.List<GardenAttackPop>(GardenAttackPopLimit);
+        static float GardenAttackPopSize(int tier) => tier >= 3 ? 120f : tier == 2 ? 60f : tier == 1 ? 40f : 25f;
+        void GardenOnImpact(Shot shot)
+        {
+            // MAX's main shot retains its small bead feedback; only its splash gets the large clip.
+            if (!shot.Rocket && shot.Tier >= 3) return;
+            Vector2 at = shot.Rocket ? ScreenLayout.EnemyPoint(shot.TargetX, shot.TargetY)
+                : EnemyShown(shot.TargetIndex, ShownPoint(shot.TargetX, shot.TargetY));
+            float size = GardenAttackPopSize(shot.Rocket ? 3 : shot.Tier);
+            Vector2 shown = PlushLayout.Point(at);
+            for (int i = gardenAttackPops.Count - 1; i >= 0; i--)
+            {
+                var pop = gardenAttackPops[i];
+                float age = time - pop.born;
+                if (age < 0f || age >= GardenAttackPopLife) { gardenAttackPops.RemoveAt(i); continue; }
+                if (age >= GardenAttackPopMergeWindow) continue;
+                // Group adjacent beads, with a wider neighborhood for large bursts.
+                float radius = Mathf.Max(24f, Mathf.Min(size, pop.size) * .5f);
+                if ((shown - PlushLayout.Point(pop.at)).sqrMagnitude > radius * radius) continue;
+                // A stronger impact can take over the clip, without restarting or moving it.
+                pop.size = Mathf.Max(size, pop.size);
+                gardenAttackPops[i] = pop;
+                TrimGardenAttackPops();
+                return;
+            }
+            gardenAttackPops.Add(new GardenAttackPop { at = at, born = time, size = size });
+            TrimGardenAttackPops();
+        }
+        void TrimGardenAttackPops()
+        {
+            // Retain the original 12-MAX limit as well as the shared visual budget.
+            int rockets = 0;
+            for (int i = gardenAttackPops.Count - 1; i >= 0; i--)
+                if (gardenAttackPops[i].size >= GardenAttackPopSize(3) && ++rockets > 12) gardenAttackPops.RemoveAt(i);
+            while (gardenAttackPops.Count > GardenAttackPopLimit) gardenAttackPops.RemoveAt(0);
+        }
+        void DrawGardenAttackPops(PixelSurface s)
+        {
+            bool hasArt = GardenFx.Has("rocket-pop");
+            for (int i = gardenAttackPops.Count - 1; i >= 0; i--)
+            {
+                var pop = gardenAttackPops[i];
+                float age = time - pop.born;
+                if (age >= GardenAttackPopLife || age < 0f) { gardenAttackPops.RemoveAt(i); continue; }
+                if (hasArt) GardenFx.Burst(s, "rocket-pop", pop.at, pop.size, age, GardenAttackPopLife);
+            }
+        }
         void GardenOnHit(int color, float x, float y) {
             int hits = 0;
             foreach (var q in gardenPops) if (!q.lite) hits++;
@@ -208,12 +261,19 @@ namespace Flightbeat.Feedback
             // core, and a chain of foam bursts (impact-dust) going off around the ring one after another.
             bool art = GardenFx.Has("water-splash") && GardenFx.Has("rocket-pop") && GardenFx.Has("impact-dust");
             if (art) {
-                GardenFx.Burst(s, "water-splash", at, R * 2.7f, a - .05f, .8f);
+                // The painted front grows out from the impact, rather than playing in a fixed-size box.
+                float wave = Mathf.Clamp01((a - .05f) / .55f);
+                float spread = 1f - Mathf.Pow(1f - wave, 3f);
+                GardenFx.Burst(s, "water-splash", at, R * Mathf.Lerp(.55f, 3f, spread), a - .05f, .8f);
                 GardenFx.Burst(s, "rocket-pop", at, R * 1.5f, a - .02f, .42f);
                 for (int k = 0; k < 7; k++) {
-                    float ang = (k / 7f + GardenHash(k * 19 + 3) * .08f) * Mathf.PI * 2f, d = R * (.45f + .25f * GardenHash(k * 7 + 1));
+                    float dustAge = a - (.1f + .025f * k), t = Mathf.Clamp01(dustAge / .5f);
+                    float travel = 1f - (1f - t) * (1f - t);
+                    float ang = (k / 7f + GardenHash(k * 19 + 3) * .08f) * Mathf.PI * 2f;
+                    float d = R * Mathf.Lerp(.14f, .95f + .25f * GardenHash(k * 7 + 1), travel);
                     Vector2 q = at + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang) * .8f) * d;
-                    GardenFx.Burst(s, "impact-dust", q, R * (.55f + .2f * GardenHash(k * 5 + 2)), a - (.1f + .05f * k), .5f);
+                    float size = R * (.42f + .15f * GardenHash(k * 5 + 2)) * (1f - .3f * t);
+                    GardenFx.BurstTint(s, "impact-dust", q, size, dustAge, .5f, new Color(1f, 1f, 1f, 1f - .45f * t));
                 }
                 // Afterglow: a few whole bubbles (the first frame of the pop) drift up and fade.
                 if (a >= .55f)
@@ -495,7 +555,11 @@ namespace Flightbeat.Feedback
 
         // Read existing feedback records; never advance clocks or resolve a model shot here.
         public void DrawGardenFeedback(PixelSurface s, Func<int, Color> color) {
-            if (!gardenPopsHooked) { gardenPopsHooked = true; battle.Hit += GardenOnHit; }
+            if (!gardenPopsHooked) {
+                gardenPopsHooked = true;
+                battle.Hit += GardenOnHit;
+                battle.Impacted += GardenOnImpact;
+            }
             foreach (var ship in battle.Fleet) {
                 if (ship.Tier < 2 || ship.BeamLife <= 0) continue;
                 int slot = battle.Fleet.IndexOf(ship);
@@ -533,15 +597,16 @@ namespace Flightbeat.Feedback
                 }
             }
             DrawGardenPops(s, color);
+            DrawGardenAttackPops(s);
             // Retain source effects that the initial four-level skin did not render.
             // These draw existing feedback records; no model or effect clock is changed.
             // Pierce sparks and weapon forms need hangar upgrades this build cannot reach: original drawing kept.
             DrawPierceSparks(s); DrawWeaponFx(s);
             // Third batch (art items 79/80): bubble versions of the MAX rocket burst and the revive purge.
             // Both original routines only draw, so skipping them changes nothing else.
-            if (GardenFx.Has("rocket-pop")) DrawBubbleRocketPops(s); else DrawRocketBlasts(s);
+            // Rocket clips already went through DrawGardenAttackPops and its spatial merge.
+            if (!GardenFx.Has("rocket-pop")) DrawRocketBlasts(s);
             if (GardenFx.Has("rescue-bubble")) DrawBubblePurge(s); else DrawPurge(s);
-            // User decision 2026-10-14: ordinary hits have no visual FX, including the old rings.
             // f53855 fusion record; f53871 starts the burst at age .22.
             // 2026-10-16 22:09: partners rush in with a trail and shrink, wobbling; then burst, spray and words.
             foreach (var t in transitions) {
@@ -590,11 +655,6 @@ namespace Flightbeat.Feedback
                 GardenBombBlast(s, ScreenLayout.EnemyPoint(lastStrike.X, lastStrike.Y), lastStrike.RadiusX * ScreenLayout.EnemyScaleX, superAge);
             }
         }
-        // f53879 DrawRocketBlasts: same records and .4 s life; the ring/glow becomes a bursting bubble.
-        void DrawBubbleRocketPops(PixelSurface s) {
-            foreach (Blast blast in blasts)
-                GardenFx.Burst(s, "rocket-pop", blast.at, 120f, blast.age, .4f);
-        }
         // f53915 DrawPurge: same six columns, timing and front line. Rescue bubbles drop from the top onto the
         // front row (the art points up, so it is drawn rotated 180 degrees), then burst into foam there.
         void DrawBubblePurge(PixelSurface s) {
@@ -630,6 +690,13 @@ namespace Flightbeat.Feedback
         // 2026-10-20 21:22 (user): the badge is only as wide as its digits need and widens (smoothly) when the count
         // gains a digit; it never narrows while shown, and starts small again once it has faded out.
         float gardenComboSlot, gardenComboSlotTarget, gardenComboClock = -1f;
+        // The small HUD counter needs one crisp rim; milestone lettering keeps its layered 3D treatment.
+        void DrawComboHudText(PixelSurface s, string text, float cx, float cy, float size, Color top, Color bottom, float alpha)
+        {
+            float y = cy - size * .55f;
+            GardenBarArt.TextOutline(s, text, cx, y, size, ShowA(top, alpha), ShowA(showNavy, alpha), 1.25f);
+            GardenBarArt.TextRamp(s, text, cx, y, size, ShowA(top, alpha), ShowA(bottom, alpha));
+        }
         public void DrawBubbleCombo(PixelSurface s) {
             // 2026-10-21 11:35 (user): the milestone show always plays to its end, even when the chain breaks and the
             // counter fades out meanwhile (only hidden together with the counter, e.g. under the finale).
@@ -652,25 +719,25 @@ namespace Flightbeat.Feedback
             float size = 32f * (1f + punch * .25f + milestone * .3f);
             // 11:51 (user: 「×」 got covered by the digits): the column is reserved for the largest punch, so the digits
             // grow inside it and never reach the label.
-            float need = GardenBarArt.TextWidth(text, 32f * 1.32f) + 10f;
+            float need = GardenBarArt.TextWidth(text, 32f * 1.55f) + 10f;
             if (need > gardenComboSlotTarget) gardenComboSlotTarget = need;
             float step = gardenComboClock < 0f ? 0f : Mathf.Max(0f, time - gardenComboClock);
             gardenComboClock = time;
             gardenComboSlot = gardenComboSlot <= 0f ? gardenComboSlotTarget : Mathf.MoveTowards(gardenComboSlot, gardenComboSlotTarget, 160f * step);
-            float digitSlot = gardenComboSlot, digitX = 516f - digitSlot * .5f, badgeY = GardenBars.ScreenY(s, 85f);
+            float digitSlot = gardenComboSlot, digitX = 516f - digitSlot * .5f, badgeY = GardenBars.ScreenY(s, 145f);
             bool badgeMapped = s.MapLayout;
             s.MapLayout = false;
             try
             {
                 // 11:51 (user): 「连击 ×」 in the same lettering and colours as the digits; the life bar is gone. Instead the
                 // whole counter dims a little and wavers when the chain is about to break (last 30 % of its life).
-                Color hi = Mix(color, Color.white, .7f), lo = Mix(color, GardenBars.Navy, .15f), sideC = Mix(color, GardenBars.Navy, .55f);
+                Color hi = Mix(color, Color.white, .7f), lo = Mix(color, GardenBars.Navy, .15f);
                 float life = Mathf.Clamp01(battle.ComboLife), warn = life < .3f ? (1f - life / .3f) : 0f;
                 float a = fade * (1f - .35f * warn * (.5f + .5f * Mathf.Sin(time * 18f)));
-                float markW = GardenBarArt.TextWidth("×", 19f), labelW = GardenBarArt.TextWidth("连击", 19f), right = digitX - digitSlot * .5f;
-                ShowGlyph(s, "×", right - markW * .5f, badgeY + 3f, 19f, hi, lo, sideC, a, false, -9999f);
-                ShowGlyph(s, "连击", right - markW - 2f - labelW * .5f, badgeY + 3f, 19f, hi, lo, sideC, a, false, -9999f);
-                ShowGlyph(s, text, digitX, badgeY - 2f, size, hi, lo, sideC, a, false, -9999f);
+                const float labelSize = 24f;
+                float labelW = GardenBarArt.TextWidth("连击 ×", labelSize), right = digitX - digitSlot * .5f;
+                DrawComboHudText(s, "连击 ×", right - 3f - labelW * .5f, badgeY + 1f, labelSize, hi, lo, a);
+                DrawComboHudText(s, text, digitX, badgeY - 2f, size, hi, lo, a);
             }
             finally { s.MapLayout = badgeMapped; }
         }

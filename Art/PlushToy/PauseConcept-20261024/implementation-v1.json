@@ -1,0 +1,75 @@
+{
+  "status": "implemented",
+  "buildTime": "2026-10-24 11:43:48",
+  "scope": "Pause and home settings visual style",
+  "palette": {
+    "panel": "cream with thin lavender rim",
+    "restart": "soft apple green",
+    "continue": "warm gold"
+  },
+  "unchangedIcons": [
+    "home",
+    "skip",
+    "video",
+    "close",
+    "icon-music",
+    "icon-sound",
+    "icon-light"
+  ],
+  "buttonOutlineWidth": 1.2,
+  "assets": [
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/pause-panel.png",
+      "size": [
+        360,
+        360
+      ],
+      "sha256": "4568ad9978f47070c6ecae983d0c61d7a732fbc7a98baf0817d3dcbe80111c55"
+    },
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/pause-row.png",
+      "size": [
+        320,
+        96
+      ],
+      "sha256": "b724dd6b58aa8f06aa189cb387693c93647c46ac8dd89f34945d805757551fdf"
+    },
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/pause-retry.png",
+      "size": [
+        400,
+        144
+      ],
+      "sha256": "38b17240460d38b999743d4eaad9df720c3bd2cb3e3a0510a8ea6a38da2e0137"
+    },
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/pause-resume.png",
+      "size": [
+        400,
+        144
+      ],
+      "sha256": "829a0d6569dc7da46fc21067272c1bd0a6cf843f36c4523f56556ac13fe2f8e9"
+    }
+  ],
+  "qa": {
+    "passed": true,
+    "checks": [
+      "540x960 settings / sound toggle / close / battle buttons",
+      "390x844 settings / sound toggle / close / battle buttons",
+      "revive heading and plush hero on both sizes / ad action / extra slot / reward bomb"
+    ],
+    "errors": []
+  },
+  "sourceAudit": {
+    "passed": true,
+    "source": "d53a2cc5c24de9851ed5ff1462c6c94e1e64b131",
+    "checked": 783,
+    "changed": [],
+    "missingGlyphs": []
+  },
+  "visualChecks": [
+    "540x960 pause and home settings reviewed",
+    "390x844 pause reviewed",
+    "Revive panel and reward icons retain previous style"
+  ]
+}

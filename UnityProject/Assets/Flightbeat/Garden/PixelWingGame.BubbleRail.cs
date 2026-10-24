@@ -53,16 +53,15 @@ namespace Flightbeat.Game
             if (beatAmt > .01f)
             {
                 float edgeAmt = Mathf.Clamp01((railRed - .3f) / .7f);
-                Color side = new Color(1f, .25f, .28f, .32f * edgeAmt * railPulse);
+                Color side = new Color(1f, .25f, .28f, .10f * edgeAmt * railPulse);
                 s.Glow(14f, 420f, 72f, 420f, side, 0f);
                 s.Glow(526f, 420f, 72f, 420f, side, 0f);
             }
             if (railRed > .01f)
-                s.Glow(270f, 560f, 580f, 70f, new Color(1f, .3f, .32f, .55f * railRed * (.55f + .45f * pulse)), 0f);
-            Color hurt = Color.Lerp(Color.white, new Color(1f, .45f, .45f, 1f), Clamp01(feedback.Hurt));
-            if (!RailLayer(s, "scene/fence", hurt)) { s.Rect(10, 560, 520, 4, Wood); return; }
-            float redA = railRed * Mathf.Lerp(1f, .85f + .15f * railPulse, beatAmt);
-            if (redA > .01f) RailLayer(s, "scene/fence-red", new Color(hurt.r, hurt.g, hurt.b, redA));
+                s.Glow(270f, 560f, 580f, 70f, new Color(1f, .3f, .32f, .16f * railRed * (.55f + .45f * pulse)), 0f);
+            // The rounded tray supplies the calm rim; only danger adds a colored lip.
+            float warning = Mathf.Max(railRed, Clamp01(feedback.Hurt));
+            if (warning > .01f) s.Rect(15f, 561f, 510f, 4f, new Color(1f, .43f, .53f, warning));
         }
 
         // The rail at y 551..573, scrolled right by railScroll: the part that slid in on the left is the previous period.
@@ -84,17 +83,17 @@ namespace Flightbeat.Game
             float a = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((railRed - .5f) / .2f));
             if (a <= .01f) return;
             float beat = .72f + .28f * railPulse;
-            const float top = 509f, h = 28f;
+            const float h = 26f;
             bool mapped = s.MapLayout;
-            float cy = GardenBars.ScreenY(s, top + h * .5f);
+            float cy = PlushLayout.Y(574f) + 20f;
             s.MapLayout = false;
             try
             {
-                GardenBarArt.Plate(s, "danger", 270f, cy, 524f, h, Color.white, a * beat);
+                GardenBarArt.Plate(s, "danger", 270f, cy, 348f, h, Color.white, a * beat);
                 Color ink = new Color(1f, 1f, 1f, a), edge = new Color(.6f, .03f, .08f, a);
-                GardenBarArt.TextOutline(s, "泡泡快压到护栏了！", 270f, cy - 10f, 19f, ink, edge, .7f);
-                if (!GardenBars.Icon(s, "warn", 151f, cy, 24f, a * beat)) WarnSign(s, 151f, cy, a * beat);
-                if (!GardenBars.Icon(s, "warn", 389f, cy, 24f, a * beat)) WarnSign(s, 389f, cy, a * beat);
+                GardenBarArt.TextOutline(s, "泡泡快压到护栏了！", 270f, cy - 9f, 17f, ink, edge, .7f);
+                if (!GardenBars.Icon(s, "warn", 126f, cy, 20f, a * beat)) WarnSign(s, 126f, cy, a * beat);
+                if (!GardenBars.Icon(s, "warn", 414f, cy, 20f, a * beat)) WarnSign(s, 414f, cy, a * beat);
             }
             finally { s.MapLayout = mapped; }
         }

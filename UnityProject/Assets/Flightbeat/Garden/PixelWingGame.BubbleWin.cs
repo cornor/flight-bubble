@@ -104,7 +104,7 @@ namespace Flightbeat.Game
                 {
                     groupMin = Mathf.Min(groupMin, mx); groupMax = Mathf.Max(groupMax, mx); groupLast = i; groupNew |= (winRow[i].tags & 2) != 0;
                     // 16:52 (user: the chip covered the crown): the chip goes above the highest head / crown of the group.
-                    float head = feet - 96f * ArtScale(winRow[i].tint) * (FeetLine - BodyTop) - ((winRow[i].tags & 1) != 0 ? 17f : 0f);
+                    float head = feet - 96f * ArtScale(winRow[i].tint) * (FeetLine - HeadTop(winRow[i].tint)) - ((winRow[i].tags & 1) != 0 ? 17f : 0f);
                     groupTop = Mathf.Min(groupTop, head);
                 }
             }
@@ -115,20 +115,20 @@ namespace Flightbeat.Game
                 {
                     string w = groupNew ? "新伙伴加入!" : "本关登场";   // narrow "!" keeps the chip text centred
                     float gy = Mathf.Max(groupTop - 22f, cardBottom + 17f);   // 16:53 (user): still, no bobbing
-                    GardenBars.Bar(s, (groupMin + groupMax) * .5f, gy, (GardenBarArt.TextWidth(w, 16f) + 34f) * tp, 28f * tp,
-                        GardenBars.Sky, null, w, 16f * tp, GardenBars.Navy, tagA);   // 16:47 (user): the quiet sky glass, not pink
+                    WinAwardChip(s, (groupMin + groupMax) * .5f, gy, (GardenBarArt.TextWidth(w, 16f) + 34f) * tp,
+                        30f * tp, w, 16f * tp, tagA);
                 }
             }
-            float y = winRow.Count > 0 ? feet + 28f : cardBottom + 60f;
+            float y = winRow.Count > 0 ? feet + 44f : cardBottom + 68f;
             if (t > 1.1f)
             {
                 float a = Clamp01((t - 1.1f) / .2f) * fade;
-                WinStat(s, cx - 8f - 78f, y, a, true, "最高连击", Battle.BestCombo.ToString());
-                WinStat(s, cx + 8f + 78f, y, a, false, "用时", ResultRound(Battle.Time) + " 秒");
+                WinStat(s, cx - 102f, y, a, true, "最高连击", Battle.BestCombo.ToString());
+                WinStat(s, cx + 102f, y, a, false, "用时", ResultRound(Battle.Time) + " 秒");
             }
             s.MapLayout = mapped;
         }
-        static readonly Color winInk = Hex(0x1D2F63), winRibbonInk = Hex(0x8E2218);
+        static readonly Color winInk = Hex(0x753B26), winRibbonInk = Hex(0x8C2822);
         // Warm rays turning slowly behind the card, with a glow.
         void WinRays(PixelSurface s, float cx, float cy, float t, float a)
         {
@@ -213,11 +213,23 @@ namespace Flightbeat.Game
             bool art = Has("plants/win/ribbon");
             if (art) Asset(s, "plants/win/ribbon", cx - 200f * p, cy - 56f * p, 400f * p, 112f * p, new Color(1f, 1f, 1f, a));
             else GardenBars.Capsule(s, cx, cy, 360f * p, 64f * p, Hex(0xF0644C), a);
-            // The delivered ribbon's band sits in the upper third of its canvas (rows 10-139 of 224 at the middle), its
-            // tails below: the title is centred on the band, 19 px above the slot centre.
+            // The original arched ribbon's front face sits above its folds and tails.
             float size = 42f * p;
-            GardenBarArt.TextOutline(s, title, cx, cy - (art ? 19f : 4f) * p - size * .55f, size, new Color(1f, 1f, 1f, a), A(winRibbonInk, a), 3.6f * p);
+            GardenBarArt.TextOutline(s, title, cx, cy - 16f * p - size * .55f, size, new Color(1f, 1f, 1f, a), A(winRibbonInk, a), 3.6f * p);
             return true;
+        }
+        // Warm award plaques belong to the victory page, with no queue-ammo frame or glass hint-bar styling.
+        void WinAwardChip(PixelSurface s, float cx, float cy, float w, float h, string text, float size, float a, bool mvp = false)
+        {
+            string art = mvp ? "plants/win/badge-mvp" : "plants/win/badge-partner";
+            if (!Asset9(s, art, cx - w * .5f, cy - h * .5f, w, h, 24f, 0f, h * .4f, 0f, A(Color.white, a)))
+                WinRoundRect(s, cx - w * .5f, cy - h * .5f, w, h, h * .25f, A(Hex(0xFFF0CA), a));
+            float mark = mvp ? h * .7f : 0f, gap = mvp ? 5f * h / 32f : 0f;
+            float room = w - 20f * h / 32f - mark - gap;
+            size = Mathf.Min(size, room / Mathf.Max(.01f, GardenBarArt.TextWidth(text, 1f)));
+            float textW = GardenBarArt.TextWidth(text, size), left = cx - (mark + gap + textW) * .5f;
+            if (mvp) GardenBars.Icon(s, "crown", left + mark * .5f, cy - h * .035f, mark, a);
+            GardenBarArt.Text(s, text, left + mark + gap, cy - h * .035f - size * .55f, size, false, A(Hex(0x82501C), a));
         }
         readonly System.Collections.Generic.List<CodexEntry> winDebut = new System.Collections.Generic.List<CodexEntry>();
         readonly System.Collections.Generic.List<(Color tint, int tags, int n)> winRow = new System.Collections.Generic.List<(Color tint, int tags, int n)>();
@@ -245,7 +257,7 @@ namespace Flightbeat.Game
                 bool before = GardenSkin.Celebrate; GardenSkin.Celebrate = true;
                 Creature(s, tint, x, feet - drop, canvas * p, 0, "", 0f, 12f, false, false, .04f, x * .013f);
                 GardenSkin.Celebrate = before;
-                headTop = feet - drop - canvas * p * ArtScale(tint) * (FeetLine - BodyTop);
+                headTop = feet - drop - canvas * p * ArtScale(tint) * (FeetLine - HeadTop(tint));
             }
             if (age > .15f && age < .7f)   // glints as it lands
                 for (int k = 0; k < 4; k++)
@@ -260,7 +272,7 @@ namespace Flightbeat.Game
             // 16:42 (user review): every tag sits on one shared line above the row (heads differ in height, so tags
             // following each head looked ragged); only the crown stays on the MVP's head. An MVP that is also new gets a
             // small pink 「新」 bubble after 「MVP」 instead of a NEW chip over its face.
-            float tagY = feet - canvas * (FeetLine - BodyTop) - 34f, bob2 = 0f;   // 16:53: tags stay still
+            float tagY = feet - canvas * (FeetLine - HeadTop(tint)) - 34f, bob2 = 0f;   // 16:53: tags stay still
             // 16:45 (user): the MVP keeps only its crown (no 「MVP」 word); new / debuting members get no tag of their own:
             // one 「新伙伴加入！」 / 「本关登场」 chip is drawn over the whole group (DrawWinScreen).
             // 2026-10-21 18:27 (user): the crown did not sit right (the cheering head bobs, the crown stayed put) and is
@@ -268,22 +280,23 @@ namespace Flightbeat.Game
             if ((tags & 1) != 0)
             {
                 const string mvpWord = "MVP";
-                float mvpY = Mathf.Max(feet - canvas * ArtScale(tint) * (FeetLine - BodyTop) - 22f, feet - 95f);
+                float mvpY = Mathf.Max(feet - canvas * ArtScale(tint) * (FeetLine - HeadTop(tint)) - 22f, feet - 95f);
                 // 18:30 (user): with a small crown in front (ui/bar-icon-crown); the bar fits icon + gap + text + caps.
-                GardenBars.Bar(s, x, mvpY, (GardenBarArt.TextWidth(mvpWord, 17f) + 60f) * tp, 30f * tp,
-                    GardenBars.Gold, "crown", mvpWord, 17f * tp, GardenBars.Brown, tagA);
+                WinAwardChip(s, x, mvpY, (GardenBarArt.TextWidth(mvpWord, 17f) + 60f) * tp,
+                    32f * tp, mvpWord, 17f * tp, tagA, true);
             }
             if ((tags & 4) != 0)
             {
                 string w = n + " 关后加入";
-                GardenBars.Bar(s, x, tagY + bob2, (GardenBarArt.TextWidth(w, 15f) + 26f) * tp, 26f * tp, GardenBars.Purple, null, w, 15f * tp, GardenBars.DeepPurple, tagA);
+                WinAwardChip(s, x, tagY + bob2, (GardenBarArt.TextWidth(w, 15f) + 26f) * tp,
+                    28f * tp, w, 15f * tp, tagA);
             }
         }
         // Purple glass line: [rainbow bubble] 再过 [2] 关，新伙伴加入！ (or a star and 新伙伴加入小队！ on the level it joins).
         void WinPartnerLine(PixelSurface s, float cx, float cy, float p, float a, string pre, string num, string post, bool joined)
         {
             float h = 50f * p, w = 350f * p;
-            GardenBars.Capsule(s, cx, cy, w, h, GardenBars.Purple, a);
+            Asset9(s, "plants/win/stat-card", cx - w * .5f, cy - h * .5f, w, h, 24f, 0f, 16f * p, 0f, A(Color.white, a));
             float sPre = 18f * p, sNum = 30f * p, sPost = 20f * p, icon = 42f * p, gap = 6f * p;
             float wPre = pre.Length > 0 ? GardenBarArt.TextWidth(pre, sPre) + gap : 0f, wNum = num.Length > 0 ? GardenBarArt.TextWidth(num, sNum) + gap : 0f;
             float wPost = GardenBarArt.TextWidth(post, sPost), total = icon + gap + wPre + wNum + wPost, x = cx - total * .5f;
@@ -299,16 +312,15 @@ namespace Flightbeat.Game
             if (num.Length > 0) { GardenBarArt.TextOutline(s, num, x, cy - 2f - sNum * .55f, sNum, A(Gold, a), ink, 2.4f * p, false); x += wNum; }
             GardenBarArt.Text(s, post, x, cy - sPost * .55f, sPost, false, A(Hex(0xB0329B), a));
         }
-        // Dark see-through pill: [flame / clock] label  NUMBER.
+        // Two-line achievement cards: quiet label above the larger value, with a separate icon gutter.
         void WinStat(PixelSurface s, float cx, float cy, float a, bool combo, string label, string value)
         {
-            const float w = 156f, h = 30f;   // 16:38: a little smaller and lighter, quieter than the members
-            // 15:51: the navy number-pill art (the round ends drawn from segments showed spiky overlaps when see-through).
-            if (!GardenBarArt.Plate(s, "number-pill", cx, cy, w, h, Color.white, .72f * a))
-                s.Rect(cx - w * .5f, cy - h * .5f, w, h, new Color(.04f, .1f, .24f, .62f * a));
-            float ix = cx - w * .5f + 25f;   // 16:20: icon inside the round end, not on it
-            if (combo) GardenBars.Icon(s, "flame", ix, cy, 25f, a);
-            else if (Has("plants/win/icon-clock")) Asset(s, "plants/win/icon-clock", ix - 12.5f, cy - 12.5f, 25f, 25f, new Color(1f, 1f, 1f, a));
+            const float w = 188f, h = 64f;
+            if (!Asset(s, "plants/win/stat-card", cx - w * .5f, cy - h * .5f, w, h, A(Color.white, a)))
+                WinRoundRect(s, cx - w * .5f, cy - h * .5f, w, h, 12f, A(Hex(0xFFF4DC), a));
+            float ix = cx - w * .5f + 29f;
+            if (combo) GardenBars.Icon(s, "flame", ix, cy, 30f, a);
+            else if (Has("plants/win/icon-clock")) Asset(s, "plants/win/icon-clock", ix - 15f, cy - 15f, 30f, 30f, A(Color.white, a));
             else
             {
                 s.Ring(new Vector2(ix, cy), 5.5f, new Color(1f, 1f, 1f, a), 11f, 16, 0f, 360f);
@@ -316,9 +328,10 @@ namespace Flightbeat.Game
                 s.Segment(new Vector2(ix, cy), new Vector2(ix, cy - 6.5f), 2.2f, A(winInk, a));
                 s.Segment(new Vector2(ix, cy), new Vector2(ix + 5f, cy + 2f), 2.2f, A(winInk, a));
             }
-            float sl = 13f, sv = 17f, wl = GardenBarArt.TextWidth(label, sl), wv = GardenBarArt.TextWidth(value, sv), x = cx + 16f - (wl + 6f + wv) * .5f;
-            GardenBarArt.Text(s, label, x, cy - sl * .55f, sl, false, new Color(.66f, .83f, 1f, a));
-            GardenBarArt.TextOutline(s, value, x + wl + 6f, cy - sv * .55f, sv, new Color(1f, 1f, 1f, a), A(winInk, a), 1.6f, false);
+            float x = cx - w * .5f + 55f, room = w - 69f;
+            float sv = Mathf.Min(25f, room / Mathf.Max(.01f, GardenBarArt.TextWidth(value, 1f)));
+            GardenBarArt.Text(s, label, x, cy - 24f, 15f, false, A(Hex(0x94703F), a));
+            GardenBarArt.Text(s, value, x, cy - 3f, sv, false, A(winInk, a));
         }
         // Light behind a showcased member (victory screen, codex): the H14 light with its big bubbles removed at pack
         // time (home/halo), slowly turning and breathing; a soft cyan-white glow until it is packed.

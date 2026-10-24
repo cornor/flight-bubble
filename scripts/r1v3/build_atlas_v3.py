@@ -5,8 +5,8 @@ program-drawn beads / mosaic panel, v2 battle FX frames, and the glyph block.
 usage: python3 scripts/r1v3/build_atlas_v3.py [--delivery DIR] [--font PATH]
 - Reads finished PNGs from Art/R1/art-v3/delivery (2x logical size); any file not yet delivered
   is replaced by a placeholder from placeholders.py (listed as "placeholder" in the output).
-- Stores UI and characters in separate 2048x2048 atlases. The full background has its own
-  texture (background.png, 810x1440 = x0.75). Character scale retries down to 0.62 if needed.
+- Stores UI in a 2048-square atlas and plush characters in a 4096x3072 atlas. The full
+  background has its own texture (810x1440). Plush character scale must stay at 1.0.
 - Creatures are full-color per level color under the existing slot names plants/<internal>/<HEX>/<state>
   (docs/r1/界面规范-v3.md section 5 maps creature ids to internal ids).
 - Battle FX: each strip comes from art-v3/delivery/fx when delivered, otherwise from the v2 delivery
@@ -35,6 +35,16 @@ ap.add_argument('--code', default=str(ROOT / 'UnityProject/Assets/Flightbeat'))
 ap.add_argument('--font', default=str(ROOT / 'Art/fonts/NotoSansSC.ttf'))
 args = ap.parse_args()
 DEL, FXDEL, OUT, GEN, CODE, FONT = map(Path, (args.delivery, args.fx_delivery, args.out, args.generated, args.code, args.font))
+PLUSH = ROOT / 'Art/PlushToy/P1/delivery'
+PLUSH_FIRST_FIVE = ROOT / 'Art/PlushToy/FirstFive/delivery'
+PLUSH_FULL = ROOT / 'Art/PlushToy/P2-P4/delivery'
+LOADING_ART = ROOT / 'Art/PlushToy/LoadingD1-20261024/masters'
+PLUSH_ROOTS = (PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
+
+def art_path(rel):
+    # User-restored Git glass lock must not be replaced by the plush pad override.
+    if rel == 'ui/pad-locked.png': return DEL / rel
+    return next((root / rel for root in PLUSH_ROOTS if (root / rel).is_file()), DEL / rel)
 SIZE, CELL, FONT_SIZE = 2048, 40, 32
 # 2026-10-19 (build speed): skip the whole run when nothing it reads has changed since the last successful run.
 # build.sh calls this twice (before and after the prefabs are regenerated); the second call normally finds nothing
@@ -45,7 +55,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, LOADING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     for p in sorted(set(files)):
@@ -70,16 +80,16 @@ if os.environ.get('R1_ATLAS_FORCE') != '1' and _CACHE.exists() and all((OUT / n)
         raise SystemExit(0)
 FONT_SHA = 'a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da'
 UI = 0.75
-# Creature canvases are stored at the UI scale (224x256 -> 168x192 px, display canvas at most 118 logical px).
-# 2026-10-21 (user: the ready poses must not make the members blurry). The creature atlas is 4096 x 2048 (its own
-# texture, so the main atlas UVs are unchanged) and creatures are stored at full size (1.0 of the 224x256 canvas),
-# sharper than the old 0.75 that filled a 2048 square. If it still overflows, the script retries 0.04 smaller but
-# never below 0.75 (the old quality); the scale used is printed as creatureScale.
-CREATURE_W, CREATURE_H, CREATURE_MIN = 4096, 2048, 0.75
+# Full 224x256 battle canvases and 448x512 home portraits keep visible plush fibers.
+# The separate 4096x3072 atlas fits all 22 colors and high-resolution home/finale art.
+# Its importer preserves NPOT dimensions. A full atlas now fails instead of shrinking.
+CREATURE_W, CREATURE_H, CREATURE_MIN = 4096, 3072, 1.0
 CREATURE = float(os.environ.get('R1_CREATURE_SCALE', 1.0))
 
 # ---- (slot id, delivery file, scale, placeholder factory)
 SLOTS = [
+    ('scene/plush-board', str(PLUSH / 'ui/board-frame.png'), UI, None),
+    ('scene/progress-track', str(PLUSH / 'ui/progress-track.png'), UI, None),
     ('scene/ceiling', 'scene/ceiling.png', UI, P.ceiling),
     ('scene/fence', 'scene/rail.png', UI, P.rail),
     ('scene/stage', 'scene/stage.png', 0.5, None),   # optional painted lower-half stage; program tray when absent
@@ -141,6 +151,7 @@ SLOTS.append(('plants/mystery-bubble', 'creatures/mystery/bubble.png', CREATURE,
 # place (next: base from row 138 of 168; home / replay: from row 133 of 152). Written to generated/win; the
 # deliveries stay untouched and a redrawn delivery is processed the same way.
 def _thin_base(_id, cut_frac, keep=.6, gamma=.6):
+    if (PLUSH_FULL / f'win/{_id}.png').exists(): return f'win/{_id}.png'
     # 12:13 (user: like the 重排 button): the base ends up ~8 % of the height (green keeps 60 % of its base, the square
     # buttons 90 %) and is lifted (gamma) so it reads as a slightly deeper tone of the face, not a dark slab.
     import numpy as np
@@ -171,6 +182,10 @@ _WIN_REL = {'button-next': _thin_base('button-next', 138 / 168, .65, .6),
             'button-replay': _thin_base('button-replay', 133 / 152, .95, .7)}
 for _id, _scale in (('ribbon', UI), ('button-home', UI), ('button-replay', UI), ('button-next', UI), ('icon-clock', .5)):
     SLOTS.append((f'plants/win/{_id}', _WIN_REL.get(_id, f'win/{_id}.png'), _scale, None))
+for _id in ('badge-mvp', 'badge-partner', 'stat-card'):
+    SLOTS.append((f'plants/win/{_id}', f'win/{_id}.png', UI, None))
+for _id, _scale in (('ribbon', UI), ('button-share', UI), ('hero', 1.0)):
+    SLOTS.append((f'plants/lose/{_id}', f'lose/{_id}.png', _scale, None))
 # 2026-10-21 21:14 (user): the home 第 N 关 button in blue. Derived from the green jelly button by turning every hue
 # by the same angle (body ~105 -> 208, so its highlights and dark rim follow); a delivered win/button-next-blue.png
 # takes over by itself.
@@ -178,6 +193,7 @@ def _blue_button():
     """12:14 (user: the blue still did not match the 重排 button): the green jelly button (base thinned) is recoloured
     with the 重排 button's own colours: its luminance histogram is matched to the 重排 art (right 60 %, without the
     icon) and every level takes that art's colour at the same rank, so face, rim, base and highlights use 重排's blues."""
+    if (PLUSH_FULL / 'win/button-next-blue.png').exists(): return 'win/button-next-blue.png'
     import numpy as _np
     src, out = DEL / _WIN_REL['button-next'], DEL / '../generated/win/button-next-blue.png'
     ref = DEL / 'ui/button-shuffle-blank.png'
@@ -208,14 +224,24 @@ if _blue_rel: SLOTS.append(('plants/win/button-next-blue', _blue_rel, UI, None))
 # 2026-10-21 18:11 dialogs (optional): white card panel (9-sliced, 48 px corners at 360 px) and settings row icons.
 for _id, _scale in (('panel-card', UI), ('icon-music', .5), ('icon-sound', .5), ('icon-light', .5), ('icon-pattern', .5)):
     SLOTS.append((f'plants/ui/{_id}', f'ui4/{_id}.png', _scale, None))
+# Reference settings/revive parts share the full-quality plush atlas.
+for _id in ('panel','row','close','home','skip','video','primary','resume','icon-music','icon-sound','icon-light','icon-pattern','revive-heart',
+            'pause-panel','pause-row','pause-retry','pause-resume'):
+    SLOTS.append((f'plants/dialog/{_id}', f'dialog/{_id}.png', 1.0 if _id=='revive-heart' else UI, None))
 # Third batch finale (art items 77/78), optional: the game falls back to the original drawing when absent.
 # The Bubble King goes to the creature atlas (plants/ prefix); king-blow falls back to king-ready in code.
 # Home key art (Art/R1/home-v1, items H3-H8, H10), optional: the home page keeps its old look until delivered.
 # Squad layers are full 1080x1920 frames (trimmed when packed) on the creature atlas; the logo on the main atlas.
 HOME_REL = '../../home-v1/delivery/'
+for _id in ('start-button', 'level-plate'):
+    SLOTS.append((f'plants/home/{_id}', f'home/{_id}.png', UI, None))
 for _cid in ['blue', 'orange', 'yellow', 'green', 'purple']:
-    SLOTS.append((f'plants/home/squad-{_cid}', f'{HOME_REL}squad-{_cid}.png', 0.9, None))
-    SLOTS.append((f'plants/home/squad-{_cid}-blink', f'{HOME_REL}squad-{_cid}-blink.png', 0.9, None))
+    if (PLUSH_FULL / f'home/{_cid}/idle.png').exists():
+        for _pose in ('idle', 'attack', 'blink'):
+            SLOTS.append((f'plants/plush-home/{_cid}/{_pose}', f'home/{_cid}/{_pose}.png', 1.0, None))
+    else:
+        SLOTS.append((f'plants/home/squad-{_cid}', f'{HOME_REL}squad-{_cid}.png', 0.9, None))
+        SLOTS.append((f'plants/home/squad-{_cid}-blink', f'{HOME_REL}squad-{_cid}-blink.png', 0.9, None))
 # 2026-10-17 home soap bubbles: delivery/soap-bubble.png (H13) when delivered; until then the bubble the yellow
 # member is blowing in its own layer (already given a soft alpha by the art AI) is cropped out and used.
 _HOME = DEL / '../../home-v1'
@@ -317,6 +343,10 @@ def lock_bubble():
     m = Image.new('L', out.size, 0); _ID2.Draw(m).ellipse((cx - r, cy - r, cx + r, cy + r), fill=255)
     out.putalpha(_IC2.multiply(out.getchannel('A'), m.filter(_IF.GaussianBlur(.6))))
     return out.crop((int(cx - r) - 1, int(cy - r) - 1, int(cx + r) + 2, int(cy + r) + 2))
+# Battle slots share the plush base. Extract only the Git glass lock so its old blue tray cannot return.
+(GEN / 'ui').mkdir(parents=True, exist_ok=True)
+lock_bubble().save(GEN / 'ui/pad-lock-only.png')
+SLOTS.append(('scene/plot-lock-bubble', str(GEN / 'ui/pad-lock-only.png'), UI, None))
 (_HOME / 'generated').mkdir(exist_ok=True)
 if (_HOME / 'delivery/codex-lock.png').exists():   # H16, drawn on its own by the art AI
     Image.open(_HOME / 'delivery/codex-lock.png').convert('RGBA').resize((96, 96), Image.LANCZOS).save(_HOME / 'generated/lock-bubble.png')
@@ -387,9 +417,11 @@ if (_HOME / 'delivery/celebrate-halo.png').exists():
     if (_HOME / 'generated/soap-pop-0.png').exists():
         _f0 = Image.new('RGBA', (256, 256), (0, 0, 0, 0)); _f0.alpha_composite(_b.resize((200, 200), Image.LANCZOS), (28, 28))
         _f0.save(_HOME / 'generated/soap-pop-0.png')
-SLOTS.append(('plants/home/btn-settings', f'{HOME_REL}btn-settings.png', 0.5, None))   # H11, optional until delivered
-SLOTS.append(('plants/home/btn-codex', f'{HOME_REL}btn-codex.png', 0.5, None))         # H12
-SLOTS.append(('plants/home/logo', f'{HOME_REL}logo.png', 0.8, None))
+for _name in ('settings', 'codex'):
+    _rel = f'home/btn-{_name}.png' if (PLUSH_FULL / f'home/btn-{_name}.png').exists() else f'{HOME_REL}btn-{_name}.png'
+    SLOTS.append((f'plants/home/btn-{_name}', _rel, 0.5, None))
+if not (PLUSH_FULL / 'home/blue/idle.png').exists():
+    SLOTS.append(('plants/home/logo', f'{HOME_REL}logo.png', 0.8, None))
 SLOTS += [('plants/finale/king-ready', 'finale/king-ready.png', UI, None),
           ('plants/finale/king-blow', 'finale/king-blow.png', UI, None),
           ('finale/button', 'finale/button.png', UI, None)]
@@ -561,7 +593,10 @@ glyph_mode = 'source-preserved+' + str(len(missing))
 tiles, placeholder, delivered = [], [], []
 for entry in SLOTS:
     sid, rel, sc, make = entry[:4]
-    p = DEL / rel
+    p = art_path(rel)
+    # A plush member must never blink or cheer back into the older jelly character.
+    if rel.startswith('creatures/') and any((root / Path(rel).parent / 'idle.png').exists() for root in PLUSH_ROOTS) and not any((root / rel).exists() for root in PLUSH_ROOTS):
+        if Path(rel).stem in ('blink', 'cheer', 'ready'): continue
     if p.exists():
         im = Image.open(p).convert('RGBA'); src = hashlib.sha256(p.read_bytes()).hexdigest(); delivered.append(rel)
     else:
@@ -569,7 +604,7 @@ for entry in SLOTS:
             continue
         if make is None:                       # guide portraits fall back to the blue creature
             alt_rel, alt_make = entry[4]
-            q = DEL / alt_rel
+            q = art_path(alt_rel)
             im = Image.open(q).convert('RGBA') if q.exists() else alt_make()
         else:
             im = make()
@@ -627,12 +662,13 @@ def calm_stage(im, keep=.25):
     return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), 'RGB')
 BG_SIZE = (810, 1440)
 if _bg.exists():
-    background = calm_stage(Image.open(_bg)); bg_src = _bg.name + ':' + hashlib.sha256(_bg.read_bytes()).hexdigest(); delivered.append('scene/background.png')
+    background = Image.open(PLUSH / "scene/background.png").convert("RGB") if (PLUSH / "scene/background.png").exists() else calm_stage(Image.open(_bg)); bg_src = _bg.name + ':' + hashlib.sha256(_bg.read_bytes()).hexdigest(); delivered.append('scene/background.png')
 else:
     background = P.background().convert('RGB'); bg_src = 'placeholder'; placeholder.append('scene/background.png')
 background.resize(BG_SIZE, Image.LANCZOS).save(OUT / 'background.png')
 # Home background (H2): its own texture, 1080x2340 stored at 0.75 (core 9:16 picture at y 210-2130 of the source).
 _home_bg = DEL / '../../home-v1/delivery/background.png'
+if (PLUSH_FULL / 'home/background.png').exists(): _home_bg = PLUSH_FULL / 'home/background.png'
 if _home_bg.exists():
     Image.open(_home_bg).convert('RGB').resize((810, 1755), Image.LANCZOS).save(OUT / 'home-background.png')
     delivered.append('home-v1/background.png')
@@ -642,6 +678,8 @@ if _home_bg.exists():
         _src = (OUT / 'background.png.meta').read_text(encoding='utf-8')
         _guid = hashlib.md5(b'GardenR1/home-background').hexdigest()
         _meta.write_text(re.sub(r'guid: [0-9a-f]{32}', 'guid: ' + _guid, _src, count=1), encoding='utf-8')
+if (PLUSH_FULL / 'home/codex-background.png').exists():
+    Image.open(PLUSH_FULL / 'home/codex-background.png').convert('RGB').resize((810,1755),Image.Resampling.LANCZOS).save(OUT / 'codex-background.png')
 # 2026-10-17 loading page (WebGL template, shown before the game downloads, so kept small: ~300 KB in all).
 # Softened home sky, the title logo, Xiao Lan blowing a bubble (H15 when delivered, otherwise its cheer pose) and
 # the halo soap bubble that grows with the download progress. Anchor = where the bubble starts, in the hero image.
@@ -649,6 +687,30 @@ def export_loading():
     import json as _json
     tpl = ROOT / 'UnityProject/Assets/WebGLTemplates/Flightbeat/TemplateData'
     tpl.mkdir(parents=True, exist_ok=True)
+    if (LOADING_ART / 'selected.png').exists():
+        # User-selected attachment: no white stitches along the pot rims. Every screen
+        # uses this same image; lossless encoding preserves the supplied pixels.
+        Image.open(LOADING_ART / 'selected.png').convert('RGB').save(
+            tpl / 'loading-D1-selected.webp', lossless=True, method=6)
+        for stale in ('loading-D1-long.webp', 'loading-D1-short.webp'):
+            for path in (tpl / stale, tpl / (stale + '.meta')):
+                path.unlink(missing_ok=True)
+        bub = DEL / '../../home-v1/generated/soap-bubble-halo.png'
+        Image.open(bub).convert('RGBA').resize((240, 240), Image.Resampling.LANCZOS).save(
+            tpl / 'loading-bubble.webp', quality=90, method=6)
+        return sum((tpl / name).stat().st_size for name in
+                   ('loading-D1-selected.webp', 'loading-bubble.webp'))
+    if (PLUSH_FULL / 'home/blue/attack.png').exists():
+        from build_plush_ui import capsule as plush_capsule
+        for cid,name in [('blue','hero'),('orange','orange'),('purple','purple')]:
+            Image.open(PLUSH_FULL / f'home/{cid}/attack.png').save(tpl / f'loading-{name}.webp',quality=92,method=6)
+        bub=DEL / '../../home-v1/generated/soap-bubble-halo.png'
+        Image.open(bub).convert('RGBA').resize((240,240),Image.Resampling.LANCZOS).save(tpl/'loading-bubble.webp',quality=90,method=6)
+        plush_capsule(1104,68,(241,230,244),(211,190,228),32,3,(185,150,224)).save(tpl/'loading-bar-track.png')
+        plush_capsule(480,56,(178,250,143),(87,204,79),26,2,(119,198,95)).save(tpl/'loading-bar-fill.png')
+        anchor={'x':73/224,'y':102/256,'dir':.3,'orange':{'x':56/224,'y':106/256},'purple':{'x':185/224,'y':96/256}}
+        (tpl/'loading-anchor.js').write_text('window.LOADING_ANCHOR='+_json.dumps(anchor)+';\n')
+        return sum(f.stat().st_size for f in tpl.iterdir())
     home = DEL / '../../home-v1'
     # 21:39 (user): the loading page is plain white, no background picture.
     for f in (tpl / 'loading-bg.jpg', tpl / 'loading-bg.jpg.meta'):
@@ -716,10 +778,30 @@ for name, count in FX_SPECS.items():
 for sid, im in GENERATED.items(): im.save(GEN / 'program' / (sid.replace('/', '__') + '.png'))
 
 trimmed = []
+# Head clearance uses the solid silhouette of every delivered pose, ignoring faint
+# alpha noise around fur. A shared per-character bound prevents MAX hopping on blink.
+creature_heads = {}
+creature_pots = {}
+for sid, im, src in tiles:
+    if sid.startswith('plants/') and sid.rsplit('/', 1)[-1] in ('idle', 'attack', 'ready', 'blink', 'spent', 'cheer'):
+        bb = im.getchannel('A').point(lambda v: 255 if v >= 64 else 0).getbbox()
+        if bb:
+            key = sid.rsplit('/', 1)[0]
+            creature_heads[key] = min(creature_heads.get(key, 1.0), bb[1] / im.height)
+            if sid.endswith('/idle') and re.fullmatch(r'plants/[^/]+/[0-9A-Fa-f]{6}/idle', sid):
+                # The lower pot, not asymmetric ears/trunks, anchors the ammo pill.
+                # A median across solid scanlines ignores stray translucent fur pixels.
+                alpha = np.asarray(im.getchannel('A'))
+                centers = []
+                for row in alpha[round(im.height * 174 / 256):round(im.height * 201 / 256)]:
+                    solid = np.flatnonzero(row >= 128)
+                    if len(solid) > im.width * .09:
+                        centers.append((solid[0] + solid[-1] + 1) * .5 / im.width)
+                if centers: creature_pots[key] = float(np.median(centers))
 for sid, im, src in tiles:
     fw, fh = im.size
     bb = im.getchannel('A').point(lambda v: 255 if v > 0 else 0).getbbox() or (0, 0, 1, 1)
-    if sid.startswith(('bugs/', 'fx/')) or sid in ('scene/background', 'scene/field', 'scene/pad-swirl', 'scene/tray'): bb = (0, 0, fw, fh)
+    if sid.startswith(('bugs/', 'fx/')) or sid in ('scene/background', 'scene/field', 'scene/pad-swirl', 'scene/tray', 'scene/plush-board'): bb = (0, 0, fw, fh)
     trimmed.append((sid, im.crop(bb), src, bb[0], bb[1], fw, fh))
 tiles = trimmed
 tiles.sort(key=lambda t: (-max(t[1].size), -t[1].width * t[1].height, t[0]))
@@ -761,7 +843,12 @@ for atlas_id in [0, 1]:
             px, py = at[0] + 2, at[1] + 2
             atlas_image.paste(im.crop((0,0,w,1)).resize((w,2)),(px,py-2)); atlas_image.paste(im.crop((0,h-1,w,h)).resize((w,2)),(px,py+h))
             atlas_image.paste(im.crop((0,0,1,h)).resize((2,h)),(px-2,py)); atlas_image.paste(im.crop((w-1,0,w,h)).resize((2,h)),(px+w,py))
-        slots.append(dict(id=sid, atlas=atlas_id, x=at[0]+2, y=at[1]+2, w=w, h=h, ox=ox, oy=oy, fw=fw, fh=fh))
+        slot = dict(id=sid, atlas=atlas_id, x=at[0]+2, y=at[1]+2, w=w, h=h, ox=ox, oy=oy, fw=fw, fh=fh)
+        if sid.rsplit('/', 1)[0] in creature_heads:
+            slot['headTop'] = creature_heads[sid.rsplit('/', 1)[0]]
+        if sid.rsplit('/', 1)[0] in creature_pots:
+            slot['potCenterX'] = creature_pots[sid.rsplit('/', 1)[0]]
+        slots.append(slot)
     heights.append(top)
     atlas_image.save(OUT / ('atlas.png' if atlas_id == 0 else 'creatures.png'))
 write_index(slots, SIZE, OUT, GEN)

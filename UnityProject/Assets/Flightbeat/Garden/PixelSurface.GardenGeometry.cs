@@ -19,10 +19,10 @@ namespace Flightbeat.Rendering
             }
             float halfH = OriginalMath.Binary32(h * .5f);
             if (MapLayout) {
-                if (rigid) y = OriginalMath.Binary32(ScreenLayout.Y(OriginalMath.Binary32(halfH + y)) - halfH);
+                if (rigid) y = OriginalMath.Binary32(PlushLayout.Y(OriginalMath.Binary32(halfH + y)) - halfH);
                 else {
-                    float bottom = ScreenLayout.Y(OriginalMath.Binary32(y + h));
-                    y = ScreenLayout.Y(y); h = OriginalMath.Binary32(bottom - y);
+                    float bottom = PlushLayout.Y(OriginalMath.Binary32(y + h));
+                    y = PlushLayout.Y(y); h = OriginalMath.Binary32(bottom - y);
                     halfH = OriginalMath.Binary32(h * .5f);
                 }
             }

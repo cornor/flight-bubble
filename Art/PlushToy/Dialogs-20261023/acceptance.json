@@ -1,0 +1,86 @@
+{
+  "passed": true,
+  "branch": "plush-toy",
+  "finalBuildTime": "2026-10-23 19:52:20 Asia/Shanghai",
+  "build": "Builds/WebGL/GardenR1-bubble",
+  "scope": [
+    "Reference-based settings and pause layout",
+    "Reference-based revive layout with short-fur plush winged heart",
+    "Simple dialog titles retained",
+    "Thinner button bases and cast shadows, including battle footer"
+  ],
+  "gameplayPreserved": [
+    "Music, sound and light controls",
+    "Home, restart and resume actions",
+    "Revive adds one active slot and one bubble bomb, clears front rows and pushes bubbles back"
+  ],
+  "validation": [
+    {
+      "buildTime": "2026-10-23 19:48:26",
+      "report": "evidence-controls/result.json",
+      "passed": true,
+      "checks": [
+        "540x960: five queue lanes / both slot unlocks / deployment",
+        "540x960: shuffle / priority / bomb aiming and confirmation",
+        "540x960: pause freeze / continue / restart / home / all three toggles and restore / close cross / done",
+        "390x844: five queue lanes / both slot unlocks / deployment",
+        "390x844: shuffle / priority / bomb aiming and confirmation",
+        "390x844: pause freeze / continue / restart / home / all three toggles and restore / close cross / done"
+      ]
+    },
+    {
+      "buildTime": "2026-10-23 19:48:26",
+      "report": "evidence-recovery/result.json",
+      "passed": true,
+      "checks": [
+        "revive / extra slot / bomb reward",
+        "loss presentation",
+        "retry",
+        "390x844 revive / close cross declines revival",
+        "loss to home"
+      ]
+    },
+    {
+      "buildTime": "2026-10-23 19:52:20",
+      "report": "evidence-final/result.json",
+      "passed": true,
+      "changesAfterPreviousBuild": [
+        "Add revive title glyphs",
+        "Enlarge orange settings icons"
+      ],
+      "checks": [
+        "540x960 settings / sound toggle / close / battle buttons",
+        "390x844 settings / sound toggle / close / battle buttons",
+        "revive heading and plush hero on both sizes / ad action / extra slot / reward bomb"
+      ]
+    }
+  ],
+  "visualReview": [
+    "standard-pause.png",
+    "tall-settings.png",
+    "revive.png",
+    "revive-tall.png",
+    "standard-battle.png"
+  ],
+  "viewports": [
+    [
+      540,
+      960
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "physicalDeviceTested": false,
+  "checks": {
+    "protectedSourceAudit": true,
+    "plushColors": 22,
+    "plushStates": 110,
+    "dialogAssets": 12,
+    "atlasSourceHashes": "asset-audit.json",
+    "gitDiffWhitespace": true
+  },
+  "heroGenerationRecord": "imagegen.json",
+  "deployed": false
+}

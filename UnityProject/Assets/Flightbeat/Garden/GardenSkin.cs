@@ -14,7 +14,7 @@ namespace Flightbeat.Garden
         public static readonly Color Ink = Hex(0x2A3B55), Paper = Hex(0xF6FAFF), Soil = Hex(0x9FD4FF), Wood = Hex(0x5A80B8), Leaf = Hex(0x86A67E), Field = Hex(0x8C919C);
         public static bool HideOriginalParticles;
         // v2: trimmed slots keep their full frame (fw, fh) and the trimmed offset (ox, oy) in stored pixels.
-        [Serializable] public sealed class Slot { public string id; public int atlas; public float x, y, w, h, ox, oy, fw, fh; }
+        [Serializable] public sealed class Slot { public string id; public int atlas; public float x, y, w, h, ox, oy, fw, fh; public float headTop = -1f; public float potCenterX = .5f; }
         [Serializable] public sealed class Glyph { public int code; public float x, y, w, h, advance, bearingX, bearingY; }
         [Serializable] public sealed class Atlas { public string characters; public int size, cell, fontSize, creatureWidth, creatureHeight; public Slot[] slots; public Glyph[] glyphs; }
         static Atlas atlas;
@@ -70,6 +70,23 @@ namespace Flightbeat.Garden
             s.GardenQuad(x, y, w, h, uv, tint, pixel, rigid, slot.atlas);
             return true;
         }
+        // Reuse the white/purple video badge baked into the pause page's skip button.
+        // Authored badge bounds on its 152px canvas; account for atlas scaling and trimming.
+        public static bool PauseVideoBadge(PixelSurface s, float cx, float cy, float width, float opacity = 1f)
+        {
+            var data = Data;
+            if (!slots.TryGetValue("plants/dialog/skip", out var slot)) return false;
+            float fw = slot.fw > 0f ? slot.fw : slot.w, fh = slot.fh > 0f ? slot.fh : slot.h;
+            float x = fw * (109f / 152f) - slot.ox, y = fh * (2f / 152f) - slot.oy;
+            float w = fw * (43f / 152f), h = fh * (36f / 152f);
+            Rect uv = Uv(slot, data.size);
+            var badgeUv = new Rect(uv.x + x / slot.w * uv.width, uv.yMax - (y + h) / slot.h * uv.height,
+                w / slot.w * uv.width, h / slot.h * uv.height);
+            float height = width * (36f / 43f);
+            s.GardenQuad(cx - width * .5f, cy - height * .5f, width, height, badgeUv,
+                new Color(1f, 1f, 1f, Mathf.Clamp01(opacity)), false, true, slot.atlas);
+            return true;
+        }
         // Locked album members use the original sprite's alpha, so every character keeps its exact contour.
         public static bool CreatureSilhouette(PixelSurface s, string id, float x, float y, float w, float h, Color tint)
         {
@@ -87,7 +104,7 @@ namespace Flightbeat.Garden
             Vector2 off = new Vector2((slot.ox + slot.w * .5f - fw * .5f) * sx, (slot.oy + slot.h * .5f - fh * .5f) * sy);
             float hw = slot.w * sx * .5f, hh = slot.h * sy * .5f, r = degrees * Mathf.Deg2Rad, c = Mathf.Cos(r), n = Mathf.Sin(r);
             bool mapped = s.MapLayout;
-            if (mapped) { center = ScreenLayout.Point(center); s.MapLayout = false; }
+            if (mapped) { center = PlushLayout.Point(center); s.MapLayout = false; }
             try {
                 Vector2 P(float x, float y) { x += off.x; y += off.y; return center + new Vector2(x * c - y * n, x * n + y * c); }
                 s.GardenQuadCorners(P(-hw, -hh), P(hw, -hh), P(hw, hh), P(-hw, hh), Uv(slot, data.size), tint, slot.atlas);
@@ -131,7 +148,7 @@ namespace Flightbeat.Garden
             // Independently mapping rigid tile centers leaves gaps on tall screens.
             // Horizontal-only planks (by == 0) retain their fixed-height behavior.
             bool mapped = s.MapLayout && by > 0;
-            if (mapped) { float bottom = ScreenLayout.Y(y + h); y = ScreenLayout.Y(y); h = bottom - y; s.MapLayout = false; }
+            if (mapped) { float bottom = PlushLayout.Y(y + h); y = PlushLayout.Y(y); h = bottom - y; s.MapLayout = false; }
             try {
                 float[] sxs = { 0, bx, slot.w - bx, slot.w }, sys = { 0, by, slot.h - by, slot.h };
                 float[] dxs = { x, x + ex, x + w - ex, x + w }, dys = { y, y + ey, y + h - ey, y + h };
@@ -222,6 +239,11 @@ namespace Flightbeat.Garden
         }
         // v3 creature canvases are 224x256 (7:8) with the feet on y=212 (UI spec v3 4.2); body is at most ~150/256 tall.
         public const float ArtAspect = 112f / 128f, FeetLine = 212f / 256f, BodyTop = 62f / 256f;
+        public static float HeadTop(Color tint)
+        {
+            if (Data != null && slots.TryGetValue(PlantSlot(tint, "idle"), out var slot) && slot.headTop >= 0f) return slot.headTop;
+            return BodyTop;
+        }
         // Draws a creature standing on `feet`. Number: a navy badge under the feet (bays) or a plain outlined number (queue).
         // Presentation clock for idle motion; set once per frame by the HUD (the game's UI time, never Battle time).
         public static float Clock;
@@ -239,7 +261,6 @@ namespace Flightbeat.Garden
             switch ((c.r << 16) | (c.g << 8) | c.b) {
                 case 0x0C7E1C: return 1.12f;   // 小翠
                 case 0xC5FFE4: return 1.10f;   // 小清
-                case 0x9C225E: return 1.07f;   // 小玫
                 default: return 1f;
             }
         }
@@ -250,27 +271,28 @@ namespace Flightbeat.Garden
         public static Vector2 MouthCanvas(Color tint) {
             Color32 c = tint;
             switch ((c.r << 16) | (c.g << 8) | c.b) {
-                case 0x9C225E: return new Vector2(84f, 146f);    // berry
-                case 0x2982F4: case 0x42A9FF: return new Vector2(124f, 135f);   // blue
-                case 0x65392D: return new Vector2(120f, 137f);   // brown
-                case 0x2D2D2D: return new Vector2(122f, 126f);   // charcoal
-                case 0x46D9FF: return new Vector2(117f, 121f);   // cyan
-                case 0x0C7E1C: return new Vector2(120f, 110f);   // forest
-                case 0x62E18E: return new Vector2(130f, 137f);   // green
-                case 0xC8C5FF: return new Vector2(121f, 140f);   // lavender
-                case 0x92EF4D: return new Vector2(122f, 149f);   // lime
-                case 0x30D183: return new Vector2(120f, 113f);   // mint
-                case 0xFF7E27: return new Vector2(118f, 138f);   // orange
-                case 0xFF9D30: return new Vector2(118f, 137f);   // orange (light)
-                case 0xC5FFE4: return new Vector2(119f, 114f);   // pale mint
-                case 0xFFCAA9: return new Vector2(124f, 127f);   // peach
-                case 0xFFC5E0: return new Vector2(122f, 139f);   // pink
-                case 0xBD80FF: return new Vector2(118f, 141f);   // purple
-                case 0xFF525B: return new Vector2(112f, 148f);   // red
-                case 0x696CAF: return new Vector2(130f, 126f);   // slate blue
-                case 0xB672FD: return new Vector2(118f, 132f);   // violet
-                case 0xFFFFFF: return new Vector2(118f, 138f);   // white
-                case 0xFFDF48: return new Vector2(120f, 137f);   // yellow
+                case 0x9C225E: return new Vector2(134f, 101f);   // plush berry rabbit
+                case 0x2982F4: return new Vector2(73f, 102f);
+                case 0x42A9FF: return new Vector2(72f, 105f);    // plush light blue bear
+                case 0x65392D: return new Vector2(58f, 105f);    // plush brown capybara
+                case 0x2D2D2D: return new Vector2(116f, 101f);   // plush charcoal cat
+                case 0x46D9FF: return new Vector2(74f, 105f);   // plush cyan bear
+                case 0x0C7E1C: return new Vector2(113f, 81f);   // plush forest frog
+                case 0x62E18E: return new Vector2(115f, 76f);   // green
+                case 0xC8C5FF: return new Vector2(185f, 98f);   // plush lavender trunk tip
+                case 0x92EF4D: return new Vector2(113f, 84f);   // plush lime frog
+                case 0x30D183: return new Vector2(113f, 81f);   // plush mint frog
+                case 0xFF7E27: return new Vector2(56f, 106f);   // orange
+                case 0xFF9D30: return new Vector2(56f, 110f);    // plush golden capybara
+                case 0xC5FFE4: return new Vector2(113f, 82f);   // plush pale mint frog
+                case 0xFFCAA9: return new Vector2(131f, 107f);   // plush peach rabbit
+                case 0xFFC5E0: return new Vector2(136f, 106f);   // pink
+                case 0xBD80FF: return new Vector2(185f, 96f);    // plush elephant trunk tip
+                case 0xFF525B: return new Vector2(114f, 108f);   // plush coral fox
+                case 0x696CAF: return new Vector2(73f, 103f);   // plush slate blue bear
+                case 0xB672FD: return new Vector2(185f, 97f);   // plush violet trunk tip
+                case 0xFFFFFF: return new Vector2(117f, 103f);   // white
+                case 0xFFDF48: return new Vector2(136f, 90f);   // yellow
                 default: return new Vector2(119f, 135f);
             }
         }
@@ -279,6 +301,9 @@ namespace Flightbeat.Garden
         public static void Creature(PixelSurface s, Color tint, float centerX, float feet, float canvasHeight, int tier, string ammo,
             float attack = 0f, float numberSize = 14f, bool showTier = true, bool badge = true, float breath = 0f, float phase = 0f,
             float sizeScale = 0f, float squash = 0f, float numberLift = 0f, float fire = -1f, float pulse = 0f, float ready = 0f, bool sleep = false, float outline = 0f, float inhale = -1f) {
+            bool plushMapped = PlushLayout.Enabled && s.MapLayout;
+            if (plushMapped) { feet = PlushLayout.Y(feet); s.MapLayout = false; }
+            try {
             float scale = (sizeScale > 0f ? sizeScale : 1f + Mathf.Min(tier, 3) * .06f) * ArtScale(tint);
             if (Celebrate) breath *= 2.2f;                                                  // happy bounce on a win
             // ~1.6 s cycle; 2026-10-21 sleepers (queue rows behind the front) breathe slower, about 2.6 s.
@@ -345,7 +370,12 @@ namespace Flightbeat.Garden
                 s.Rect(centerX - w / 2 - 1, feet - h - 1, w + 2, h + 2, Ink);
                 s.Rect(centerX - w / 2, feet - h, w, h, tint);
             }
-            float top = ay + ah * BodyTop, numberTop = feet + 2f - numberLift;
+            // The plush ears start much higher than the old body's fixed y=62 anchor.
+            // Use the shared silhouette bound, including breathing and outward tilt.
+            float headTop = HeadTop(tint);
+            float angle = lean * Mathf.Deg2Rad;
+            float top = bodyFeet + ah * (headTop - FeetLine) * Mathf.Cos(angle) - aw * .5f * Mathf.Abs(Mathf.Sin(angle));
+            float numberTop = feet + 2f - numberLift;
             if (ammo.Length > 0) {
                 if (badge) {
                     bool coin = showTier && tier > 0 && tier < 3;
@@ -354,6 +384,9 @@ namespace Flightbeat.Garden
                     // the rim a little, instead of the coin + pill pair being centred (that pushed the count ~10 px right).
                     float bh = numberSize * 1.3f, bw = numberSize * 3.3f;
                     float cx = centerX;
+                    // Use the idle pot's measured centre, stable across breathing, blink and firing poses.
+                    if (PlushLayout.Enabled && slots.TryGetValue(PlantSlot(tint, "idle"), out var potSlot))
+                        cx += bodySize * ArtAspect * (potSlot.potCenterX - .5f);
                     float size = Mathf.Min(numberSize, (bw - 14f) / Mathf.Max(.01f, GardenBarArt.TextWidth(ammo, 1f)));   // 2026-10-21: 7 px each side
                     bool mapped = s.MapLayout;
                     float cy = GardenBars.ScreenY(s, numberTop + bh * .5f); s.MapLayout = false;
@@ -362,7 +395,7 @@ namespace Flightbeat.Garden
                         // HUD level plaque, navy number (navy pill if the bar atlas is missing).
                         // 09:33 (user: too close to the pale pads): the same glass tinted a medium sky blue (between the
                         // pale pads and the old navy), white number with a fine navy edge.
-                        if (GardenBarArt.CapsuleTinted(s, cx - bw * .5f, cy - bh * .5f, bw, bh, new Color(.42f, .68f, 1f, 1f)))
+                        if (GardenBarArt.CapsuleTinted(s, cx - bw * .5f, cy - bh * .5f, bw, bh, new Color(.38f, .24f, 1f, 1f)))
                             GardenBarArt.TextOutline(s, ammo, cx, cy - size * .55f, size, Color.white, GardenBars.Navy, Mathf.Max(.8f, size * .07f));
                         else {
                             GardenBarArt.Plate(s, "number-pill", cx, cy, bw, bh, Color.white);
@@ -380,9 +413,14 @@ namespace Flightbeat.Garden
             }
             if (showTier && tier >= 3) {
                 // 2026-10-21 10:39 (user): back to the earlier crown + gold MAX (the glass chip did not suit it).
-                Asset(s, "scene/crown", centerX - 12f, top - 20f, 24f, 18f, Color.white);
-                TextOutline(s, "MAX", centerX, top - 7f, 14f, Gold, Outline, 1.5f);
+                // 2026-10-24: keep a modest lift over the original; the 1.5x mark dominated the plush bodies.
+                const float markScale = 1.2f;
+                Asset(s, "scene/crown", centerX - 12f * markScale, top - 32f * markScale, 24f * markScale, 18f * markScale, Color.white);
+                TextOutline(s, "MAX", centerX, top - 19f * markScale, 14f * markScale, Gold, Outline, 1.5f * markScale);
             } else if (showTier && tier > 0 && !badge) TextOutline(s, tier == 1 ? "Ⅰ" : "Ⅱ", centerX + aw * .3f, top, 15f, Gold, Outline, 1.5f);   // 2026-10-21: earlier style
+            } finally {
+                if (plushMapped) { LastMouth.y = PlushLayout.InverseY(LastMouth.y); s.MapLayout = true; }
+            }
         }
         // Projectile core: the bead body tinted with the shooter's color plus its fixed highlight (UI spec v3 4.4).
         public static void Shot(PixelSurface s, Color tint, Vector2 at, float size, float alpha) {

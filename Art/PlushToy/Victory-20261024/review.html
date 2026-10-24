@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>胜利页 · 红飘带与暖金成绩卡</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#faf5ed;color:#563b32;font-family:system-ui,-apple-system,"PingFang SC",sans-serif}main{max-width:1200px;margin:auto;padding:36px 22px}h1{font-size:29px;margin:0 0 12px}p{line-height:1.8;color:#7d695d}a{color:#9b423a;text-underline-offset:3px}.links{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}.links a{padding:12px 18px;background:#fff;border:1px solid #e7ccb4;border-radius:14px;text-decoration:none}.links a:first-child{background:#b94236;color:white;border-color:#b94236}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}figure{background:#fff;margin:0;padding:12px;border:1px solid #edddcc;border-radius:16px;align-self:start}img{display:block;width:100%;height:auto;border-radius:10px}figcaption{font-size:14px;line-height:1.7;padding:12px 4px 2px}.note{background:#fff0d5;padding:16px 20px;border-radius:15px;margin-top:24px}.small{font-size:13px}@media(max-width:720px){.grid{grid-template-columns:1fr}figure{max-width:430px;justify-self:center}main{padding:24px 15px}}
+</style>
+<main>
+<h1>胜利页 · 红飘带与暖金成绩卡</h1>
+<p>恢复之前的红色飘带与暖白标题。MVP 用金色徽章，伙伴提示用奶油色标签，连击与用时使用标题、数字分层的暖金成绩卡。底部按钮与暂停页统一为橙色主页、绿色下一关、粉色重玩，保留轻薄底边与投影。</p>
+<div class="links"><a href="http://127.0.0.1:8792/?set=A&amp;level=3&amp;v=20261024000701" target="_blank" rel="noopener">试玩第 3 关</a><a href="acceptance.json">验收记录</a><a href="asset-audit.json">素材记录</a></div>
+<div class="grid">
+<figure><img src="before/user-screenshot.png" alt="用户指出问题的旧版胜利页"><figcaption><b>修改前</b><br>紫色标题底板、狭窄成绩条与旧款底部按钮。</figcaption></figure>
+<figure><img src="evidence/standard-natural-win.png" alt="新版胜利页普通屏自然通关截图"><figcaption><b>修改后 · 540 × 960</b><br>自然通关后的实际连击和用时；红飘带直接复用之前的素材。</figcaption></figure>
+<figure><img src="evidence/tall-natural-win.png" alt="新版胜利页长屏自然通关截图"><figcaption><b>修改后 · 390 × 844</b><br>徽章、成绩卡与底部按钮保持清楚的间距。</figcaption></figure>
+</div>
+<div class="note">可在第 3 关正常游玩查看胜利页，也可以从暂停页点击“跳过此关”快速查看。现有视频接口为测试模式，直接回调成功。</div>
+<p>自然通关截图用于检查实际成绩排版；重玩、返回主页与下一关使用真实点击检查。再次通关时，“本关登场”提示也保持同一套暖金样式。</p>
+<p class="small"><a href="evidence/result.json">检查结果</a> · <a href="evidence/tall-replayed-win.png">再次通关</a> · <a href="source-checks.json">原有逻辑校验</a></p>
+<p class="small">本地构建：2026-10-24 00:07:01（Asia/Shanghai） · 分支 plush-toy</p>
+</main>
+</html>

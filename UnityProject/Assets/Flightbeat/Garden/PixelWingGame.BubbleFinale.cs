@@ -17,12 +17,15 @@ namespace Flightbeat.Game
     {
         const string KingReady = "plants/finale/king-ready", KingBlow = "plants/finale/king-blow", FinaleButtonArt = "finale/button";
         const float KingSize = 250f;            // same logical size as the original giant plane
-        const float KingMouth = -.222f;         // mouth centre in king-blow (measured y 142.5 of 512), fraction of KingSize from centre
+        // Registered plush king-blow mouth at (225,227) on the 512-square master.
+        const float KingMouthX = 225f / 512f - .5f, KingMouthY = 227f / 512f - .5f;
         static readonly Color FinaleInk = Hex(0x7A3A00);
         bool BubbleFinaleArt => GardenSkin.Has(KingReady) && GardenSkin.Has(FinaleButtonArt);
         // 2026-10-20 (UI redesign 31/33/34): blank plates from the art AI; the words are written here. Each is optional.
         const string ButtonPlate = "finale/button-plate", TitlePlate = "finale/title-plate", ClearPlate = "finale/clear-plate";
-        static readonly Color FinalePurple = Hex(0x5B2A9E), FinaleYellow = Hex(0xFFE36A);
+        // Keep the illustrated finale controls and their motion; use the plush UI's
+        // purple ink, warm gold lettering and orange success accent around them.
+        static readonly Color FinalePurple = Hex(0x553094), FinaleYellow = Hex(0xFFF794), FinaleOrange = Hex(0xE78B24);
         string ButtonArt => GardenSkin.Has(ButtonPlate) ? ButtonPlate : FinaleButtonArt;
 
         // ---- button (same 340x86 box at (270, 759); hit regions come from the muted original)
@@ -196,7 +199,7 @@ namespace Flightbeat.Game
             s.MapLayout = false;
             // 2026-10-17 (user: the lighter box with four gold corners read like a debug selection). One even veil over
             // everything; the button is drawn again on top of it, breathing, with rainbow echoes swelling out of it.
-            Color mask = new Color(.04f, .1f, .22f, alpha * .7f);
+            Color mask = new Color(.12f, .09f, .22f, alpha * .7f);
             s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, mask);
             s.MapLayout = mapped;
             for (int i = 0; i < 3; i++)
@@ -234,7 +237,8 @@ namespace Flightbeat.Game
             float age = finale.Age, after = 0f;
             if (finaleEndClock >= 0f) { after = ui - finaleEndClock; if (after > 1.2f) return; }
             float dim = Clamp01(age / .3f) * (1f - Clamp01(after / .8f));
-            s.Rect(12f, 574f, 516f, 300f, new Color(.05f, .12f, .26f, dim * .45f));
+            s.GardenRoundedRect(12f, 574f, 516f, 300f, 24f,
+                new Color(.44f,.28f,.65f,dim*.12f),new Color(.44f,.28f,.65f,dim*.2f));
             BubbleFinaleCues(age);
             DrawBubbleFinaleHold(s, age, after);
             DrawBubbleFinaleTitle(s, age);
@@ -342,17 +346,21 @@ namespace Flightbeat.Game
         // The king stands where the giant plane assembled: centre (270, 694 - lift), shaking while sweeping.
         Vector2 KingMouthAt(Finale finale, float age, float after)
         {
-            float scale = KingScale(age, out _, out float tremble);
+            float scale = KingScale(age, out float wide, out float tremble);
             float lift = FinaleLift(age, after), shake = finale.Sweeping ? Mathf.Sin(clock * 70f) * 1.6f : Mathf.Sin(clock * 83f) * tremble;
-            return new Vector2(270f + shake, 694f - lift + KingMouth * KingSize * scale);
+            bool blowing = age >= 1.65f && age < 3.3f;
+            float squash = wide * (blowing ? 1f + Mathf.Sin(clock * 30f) * .015f : 1f);
+            return new Vector2(270f + shake + KingMouthX * KingSize * scale * squash,
+                PlushLayout.InverseY(PlushLayout.Y(694f - lift) + KingMouthY * KingSize * scale / squash));
         }
         void DrawBubbleKing(PixelSurface s, Finale finale, float age, float after, Vector2 mouth)
         {
             float assemble = Clamp01((age - .5f) / .65f);
             if (assemble <= 0f) return;
             float alpha = (1f - Clamp01(after / 1.1f)) * Clamp01(assemble / .35f);
-            float scale = KingScale(age, out float wide, out _);
-            float x = mouth.x, y = mouth.y - KingMouth * KingSize * scale;
+            float scale = KingScale(age, out float wide, out float tremble);
+            float shake = finale.Sweeping ? Mathf.Sin(clock * 70f) * 1.6f : Mathf.Sin(clock * 83f) * tremble;
+            float x = 270f + shake, y = 694f - FinaleLift(age, after);
             for (int i = 0; i < 7; i++)
             {
                 float angle = clock * 1.2f + finaleOrbitPhases[i];
@@ -365,7 +373,11 @@ namespace Flightbeat.Game
             float squash = wide * (blowing ? 1f + Mathf.Sin(clock * 30f) * .015f : 1f);
             if (age >= 1.15f && age < 1.65f)   // charging glow grows with the swell
                 s.Glow(x, y, size * 1.5f, size * 1.5f, new Color(1f, .92f, .6f, alpha * .35f * (age - 1.15f) / .5f), 0f);
-            Asset(s, art, x - size * .5f * squash, y - size * .5f / squash, size * squash, size / squash, new Color(1f, 1f, 1f, alpha));
+            bool mapped = s.MapLayout;
+            float screenY = mapped ? PlushLayout.Y(y) : y;
+            s.MapLayout = false;
+            Asset(s, art, x - size * .5f * squash, screenY - size * .5f / squash, size * squash, size / squash, new Color(1f, 1f, 1f, alpha));
+            s.MapLayout = mapped;
             if (assemble < 1f) s.Glow(x, y, size * 1.2f, size * 1.2f, new Color(1f, 1f, 1f, (1f - assemble) * .5f * alpha), 0f);
             // Charging: rainbow bubbles drawn in towards the mouth.
             if (age >= 1.15f && age < 1.65f)
@@ -556,9 +568,9 @@ namespace Flightbeat.Game
                 {
                     Asset(s, ClearPlate, 270f - pw * .5f, pcy - ph * .5f, pw, ph, new Color(1f, 1f, 1f, fade));
                     float big = 40f * scale;
-                    GardenBarArt.TextOutline(s, "全部打光！", 270f, pcy - ph * .05f - big * .55f, big, A(Hex(0xF2482E), fade), A(Color.white, fade), 3.2f * scale);
+                    GardenBarArt.TextOutline(s, "全部打光！", 270f, pcy - ph * .05f - big * .55f, big, A(FinaleOrange, fade), A(Color.white, fade), 3.2f * scale);
                     float sub = 16f * scale;
-                    GardenBarArt.Text(s, "打掉 ×" + finale.Kills, 270f, pcy + ph * .34f - sub * .58f, sub, true, A(GardenBars.Navy, fade));
+                    GardenBarArt.Text(s, "打掉 ×" + finale.Kills, 270f, pcy + ph * .34f - sub * .58f, sub, true, A(FinalePurple, fade));
                 }
                 finally { s.MapLayout = mapped; }
             }

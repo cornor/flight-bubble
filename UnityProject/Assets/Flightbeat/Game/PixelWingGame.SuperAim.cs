@@ -132,7 +132,7 @@ namespace Flightbeat.Game
             s.TextF(title, 270f, 125f, 1.3f, color, 0);
             bool mapped = s.MapLayout;
             s.MapLayout = false;
-            SuperStrikeVisuals.Reticle(s, ScreenLayout.Point(aim),
+            SuperStrikeVisuals.Reticle(s, PlushLayout.Point(aim),
                 OriginalMath.Binary32((aimMissile ? 150f : 120f) * (Battle != null ? OriginalMath.Binary32(Battle.Loadout.bombRadius + 1f) : 1f)), targetClock, color, true);
             s.MapLayout = mapped;
             if (!Economy.Data.bombTutorial)

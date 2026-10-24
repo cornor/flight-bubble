@@ -50,13 +50,13 @@ namespace Flightbeat.Game
 #if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
             if (s == gardenOverlay && gardenOverlay != null)
             {
-                if (s.MapLayout) { float end = ScreenLayout.Y(y + h); y = ScreenLayout.Y(y); h = end - y; }
+                if (s.MapLayout) { float end = PlushLayout.Y(y + h); y = PlushLayout.Y(y); h = end - y; }
                 gardenOverlayHits.Add(new UiHit { x = x, y = y, w = w, h = h, id = id });
                 ObserveHitEnd(); return;
             }
 #endif
             if (s != hud) { ObserveHitEnd(); return; }
-            if (s.MapLayout) { float bottom = OriginalMath.Binary32(y + h); y = ScreenLayout.Y(y); h = OriginalMath.Binary32(ScreenLayout.Y(bottom) - y); }
+            if (s.MapLayout) { float bottom = OriginalMath.Binary32(y + h); y = PlushLayout.Y(y); h = OriginalMath.Binary32(PlushLayout.Y(bottom) - y); }
             uiHitsBuild.Add(new UiHit { x = x, y = y, w = w, h = h, id = id });
             ObserveHitEnd();
         }
@@ -90,7 +90,7 @@ namespace Flightbeat.Game
 #if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
             if (TryGardenUiHit(logical, out int gardenId)) return gardenId;
 #endif
-            float y = ScreenLayout.Y(logical.y);
+            float y = PlushLayout.Y(logical.y);
             for (int i = uiHits.Count - 1; i >= 0; i--)
             {
                 UiHit h = uiHits[i];

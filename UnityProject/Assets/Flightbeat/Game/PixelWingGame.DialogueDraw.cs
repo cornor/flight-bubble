@@ -12,7 +12,7 @@ namespace Flightbeat.Game
         private void DrawDialogue(PixelSurface s, float x, float y, float width, bool immediate)
         {
             bool mapped = s.MapLayout;
-            if (mapped) y = ScreenLayout.Y(y);
+            if (mapped) y = PlushLayout.Y(y);
             s.MapLayout = false;
             float top = OriginalMath.Binary32(y + OriginalMath.Binary32((OriginalMath.Binary32(1f - OutBack(OriginalMath.Binary32(dialogueAge / .28f)))) * 14f));
             float alpha = Clamp01(OriginalMath.Binary32(dialogueAge / .15f));

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>关卡暂停 · 跳过此关</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f1ff;color:#392953;font-family:system-ui,-apple-system,"PingFang SC",sans-serif}main{max-width:1180px;margin:auto;padding:32px 22px}h1{font-size:28px}p{line-height:1.8;color:#675877}a{color:#6844b8;text-underline-offset:3px}.links{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}.links a{background:white;border:1px solid #d9caee;border-radius:14px;padding:12px 18px;text-decoration:none}.links a:first-child{background:#6b46b9;color:white}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}figure{margin:0;padding:12px;background:white;border:1px solid #e6dcf2;border-radius:16px;align-self:start}img{width:100%;height:auto;border-radius:10px;display:block}figcaption{line-height:1.65;font-size:14px;padding:12px 4px 2px}.note{background:#eae2fa;padding:16px 20px;border-radius:15px;margin:22px 0}.small{font-size:13px}@media(max-width:720px){.grid{grid-template-columns:1fr}figure{max-width:390px;margin:auto}}
+</style>
+<main>
+<h1>关卡暂停页 · 跳过此关</h1>
+<p>“主页 · 重新开始 · 跳过此关”排成一行，继续游戏仍在下方。粉色跳过按钮带视频标识，标题与轻薄投影保持当前样式。</p>
+<div class="links"><a href="http://127.0.0.1:8792/?set=A&amp;level=3&amp;v=20261023234851" target="_blank" rel="noopener">试玩第 3 关</a><a href="acceptance.json">验收记录</a></div>
+<div class="grid">
+<figure><img src="evidence-final/standard-pause.png" alt="普通屏暂停页，右侧新增粉色跳过此关按钮"><figcaption><b>暂停页 · 540 × 960</b><br>新增按钮位于重新开始右侧。</figcaption></figure>
+<figure><img src="evidence-final/tall-pause.png" alt="长屏暂停页"><figcaption><b>暂停页 · 390 × 844</b><br>相同布局与按钮点击区域。</figcaption></figure>
+<figure><img src="evidence-final/standard-ready-win.png" alt="点击跳过并收到广告成功回调后的胜利界面"><figcaption><b>广告成功回调后</b><br>当前关卡结算胜利，弹出原有胜利界面；点击下一关后再进入下一关。</figcaption></figure>
+</div>
+<div class="note">广告沿用项目现有接口。当前接口为测试模式，直接回调成功，不播放真实视频；胜利只接在成功回调后。</div>
+<p>已检查准备阶段、战斗中和教学关跳过；重复点击只结算一次，下一关解锁与胜利记录在刷新后保留。主页设置页没有跳过按钮。普通屏与长屏浏览器检查通过。</p>
+<p class="small"><a href="evidence-final/result.json">普通关卡检查</a> · <a href="evidence-teaching/result.json">教学关检查</a> · <a href="model-checks.json">状态与攻击清理检查</a> · <a href="source-checks.json">原有逻辑文件校验</a> · <a href="evidence-final/tall-home-settings.png">主页设置页</a></p>
+<p class="small">本地构建：2026-10-23 23:48:51（Asia/Shanghai） · 分支 plush-toy</p>
+</main>
+</html>

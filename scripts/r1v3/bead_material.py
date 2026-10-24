@@ -39,18 +39,18 @@ def _master(rim):
     diffuse = np.clip(light[0]*x + light[1]*y + light[2]*z, 0, 1)
     # 2026-10-21 (user: more material and volume): a deeper light-to-shade range, a wider darker rim towards the
     # lower right, a brighter coloured bounce light inside the lower edge (was .66 + .34 d, rim .13-.20, bounce .075).
-    value = .48 + .52 * diffuse ** 1.15
+    value = .62 + .38 * diffuse ** 1.1
     edge = _smooth(.80, .995, rho)
-    value *= 1 - edge * (.14 + .14 * np.clip((x+y)*.5 + .2, 0, 1))
-    value += .13 * np.exp(-((x-.12)/.50)**2 - ((y-.60)/.20)**2)
+    value *= 1 - edge * (.07 + .08 * np.clip((x+y)*.5 + .2, 0, 1))
+    value += .075 * np.exp(-((x-.12)/.50)**2 - ((y-.60)/.20)**2)
     main = _rgba(np.repeat(np.clip(value, 0, 1)[..., None], 3, axis=2), alpha)
 
     dx, dy = x + .31, y + .43
     u, v = .866*dx - .5*dy, .5*dx + .866*dy
     # A crisper, brighter specular and a clear white glass reflection along the lower rim.
-    soft = .24 * np.exp(-((u/.46)**2 + (v/.31)**2) * 1.8)
-    core = .97 * (1 - _smooth(.6, 1.1, (u/.17)**2 + (v/.10)**2))
-    reflection = .30 * np.exp(-((rho-.82)/.06)**2) * np.exp(-((x-.30)/.42)**2 - ((y-.70)/.30)**2)
+    soft = .14 * np.exp(-((u/.46)**2 + (v/.31)**2) * 1.8)
+    core = .50 * (1 - _smooth(.6, 1.1, (u/.17)**2 + (v/.10)**2))
+    reflection = .12 * np.exp(-((rho-.82)/.06)**2) * np.exp(-((x-.30)/.42)**2 - ((y-.70)/.30)**2)
     fa = (1 - (1-soft)*(1-core)*(1-reflection)) * alpha
     frgb = np.ones((n, n, 3))
     if rim is not None:

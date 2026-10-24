@@ -19,6 +19,11 @@ namespace Flightbeat.Garden {
             public int denseFrames; public float denseSeconds, denseFps, denseP95ms, denseP99ms;
             public bool home, settings, paused, finaleReady, finaleGuide, transition, musicMuted, soundMuted, lightEnabled;
             public int[] fleetColors; public Lane[] lanes;
+            public bool plushTheme;
+            public int maximumSlots, unlockedSlots, selection, hiddenReserve, codexSelection;
+            public int wins, unlockedLevel, dayAds;
+            public bool rewardSettled;
+            public bool codexOpen;
             // 2026-10-19 B level set: which set is on, where this level was loaded from ("A", "B", "B-test"),
             // Actual resource bytes and parsed board, plus release-list expectations (empty for A).
             public int levelSet;
@@ -73,6 +78,12 @@ namespace Flightbeat.Garden {
                 fps = sum > 0 ? (float)(times.Length * 1000 / sum) : 0,
                 p50ms = Percentile(times,.5f), p95ms = Percentile(times,.95f), p99ms = Percentile(times,.99f), maxMs = Percentile(times,1) };
             sample.levelSet = PixelWingGame.LevelSetCurrent; sample.levelName = loadedSource.name; sample.levelSource = loadedSource.kind;
+            sample.plushTheme = PlushLayout.Enabled; sample.maximumSlots = b.MaximumSlots; sample.selection = game.GardenSelection;
+            sample.unlockedSlots = b.UnlockedSlots; sample.codexOpen = game.GardenCodexOpen; sample.codexSelection = game.GardenCodexSelection;
+            sample.wins = game.Economy.Data.wins; sample.unlockedLevel = game.Economy.Data.unlocked;
+            sample.dayAds = game.Economy.Data.dayAds; sample.rewardSettled = game.LastReward != null;
+            for (int i = 0; i < b.LaneCount; i++)
+                for (int row = 1; row < b.Reserve[i].Count; row++) if (b.Reserve[i][row].Kind == 2) sample.hiddenReserve++;
             sample.fileSha256 = loadedFile; sample.cellsSha256 = loadedCells;
             sample.expectedFileSha256 = loadedSource.fileSha256 ?? "";
             sample.expectedCellsSha256 = loadedSource.cellsSha256 ?? "";

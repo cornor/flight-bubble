@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>泡泡小队 · 四版加载页设计</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#252b38;background:#f4f3f0;font-synthesis:none}*{box-sizing:border-box}body{margin:0}main{max-width:1600px;margin:auto;padding:34px 28px 50px}.eyebrow{font-size:12px;letter-spacing:.15em;color:#737a84}h1{font-size:30px;letter-spacing:-.04em;margin:8px 0 10px}p{margin:0;line-height:1.65}.intro{color:#64707a;max-width:1000px}.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:24px 0 30px;border-block:1px solid #dddfdf;padding:18px 0}.principles b{font-size:14px}.principles p{font-size:13px;color:#68747e;margin-top:5px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}.card{min-width:0}.head{display:flex;gap:9px;align-items:center;margin-bottom:9px}.number{font-size:12px;font-weight:700;border:1px solid #c8cdd0;width:26px;height:26px;display:grid;place-items:center;border-radius:50%}h2{font-size:17px;margin:0}.description{font-size:13px;line-height:1.6;color:#68747e;min-height:42px;margin:0 0 13px}.art{display:block;width:100%;padding:0;background:#fff;border:0;border-radius:15px;overflow:hidden;cursor:zoom-in;box-shadow:0 6px 24px #29334915;transition:transform .2s}.art:hover{transform:translateY(-3px)}.art:focus-visible{outline:3px solid #386eca;outline-offset:4px}.art img{width:100%;height:auto;display:block}.note{font-size:12px;color:#68747e;margin-top:12px}.recommend{margin-top:28px;background:#e5eee8;border:1px solid #d6e3d9;border-radius:12px;padding:17px 20px;font-size:14px;color:#355749}.source{margin-top:18px;font-size:12px;color:#7b858c}.source a{color:inherit}dialog{border:0;border-radius:16px;padding:0;max-width:94vw;max-height:95vh;background:#fff;overflow:auto}dialog::backdrop{background:#17202bcc;backdrop-filter:blur(5px)}.toolbar{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;z-index:1;gap:18px}#detail{display:block;max-height:calc(95vh - 55px);max-width:92vw;object-fit:contain;margin:auto}.toolbar button{border:0;border-radius:8px;padding:8px 12px;background:#edf0f1;color:#253341;cursor:pointer}.toolbar a{font-size:13px;color:#536d85}@media(min-width:1700px){main{padding-top:44px}}@media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}.principles{gap:14px}}@media(max-width:560px){main{padding:24px 18px}.grid{grid-template-columns:1fr}.principles{grid-template-columns:1fr;gap:14px}h1{font-size:25px}.description{min-height:0}}
+</style>
+<main>
+<div class="eyebrow">泡泡小队 / LOADING CONCEPTS / 2026.10.24</div>
+<h1>同一支小队，四种开场</h1>
+<p class="intro">从对标加载页中提炼「大主视觉、鲜明底色、清晰加载区」，尝试活泼、清爽和简洁的不同表达。点击任意画面放大查看。</p>
+<section class="principles" aria-label="对标特性">
+<div><b>01 · 一个清楚的记忆点</b><p>大标题、单个角色或角色群像三选一，其他元素围绕它服务；泡泡与发射动作传达玩法。</p></div>
+<div><b>02 · 底色统一，主次分明</b><p>一个主色加少量强调色。淡纹样和留白提供氛围，角色、名称和进度保持醒目。</p></div>
+<div><b>03 · 加载反馈独立成区</b><p>进度条与百分比固定在下方。底部说明保持次要，上方留出移动端安全区。</p></div>
+</section>
+<section class="grid" aria-label="四版效果图">
+<article class="card"><div class="head"><span class="number">A</span><h2>活力出击</h2></div><p class="description">橙黄 × 亮蓝。斜向构图和连续泡泡，最直接传达发射的动感。</p><button class="art" data-name="A · 活力出击" aria-label="放大 A 活力出击"><img src="A-vibrant-action.png" alt="橙黄底色，蓝色毛绒熊和绿色青蛙吹出一串泡泡，下方为蓝色加载条"></button><p class="note">动效方向：泡泡沿弧线上升，角色轻轻起伏。</p></article>
+<article class="card"><div class="head"><span class="number">B</span><h2>清爽单主角</h2></div><p class="description">薄荷 × 奶油。大留白与单只小熊，清爽、亲近，毛绒质感突出。</p><button class="art" data-name="B · 清爽单主角" aria-label="放大 B 清爽单主角"><img src="B-fresh-mascot.png" alt="薄荷奶油底色，蓝色小熊抬头看一个泡泡，下方为薄荷绿加载条"></button><p class="note">动效方向：小熊眨眼，大泡泡缓慢悬浮。</p></article>
+<article class="card"><div class="head"><span class="number">C</span><h2>极简标志</h2></div><p class="description">柠檬黄 × 钴蓝。以游戏名字为主视觉，元素最少，识别最直接。</p><button class="art" data-name="C · 极简标志" aria-label="放大 C 极简标志"><img src="C-minimal-logo.png" alt="柠檬黄背景和蓝白双色泡泡小队大标题，一只小熊探出头，下方为简洁进度条"></button><p class="note">动效方向：标志轻微弹跳，三颗泡泡依次浮动。</p></article>
+<article class="card"><div class="head"><span class="number">D</span><h2>伙伴大合照</h2></div><p class="description">珊瑚粉 × 奶油。五只伙伴凑成大合照，最强调可爱与小队氛围。</p><button class="art" data-name="D · 伙伴大合照" aria-label="放大 D 伙伴大合照"><img src="D-team-portrait.png" alt="珊瑚粉底色，蓝熊、水豚、青蛙、兔子和猫组成毛绒伙伴合照，下方为青绿色加载条"></button><p class="note">动效方向：伙伴交替眨眼，背景泡泡缓缓漂浮。</p></article>
+</section>
+<p class="recommend"><b>优先建议：B。</b> 简洁与角色辨识度比较均衡；想要更活泼选 A，突出名字选 C，突出毛茸茸的小队选 D。</p>
+<p class="source">四版均为内置 image_gen 生成的设计效果图，原图已保存。<a href="prompts.json">完整提示词与文件记录</a>。动效文字为设计建议。</p>
+</main>
+<dialog id="viewer"><div class="toolbar"><b id="caption"></b><a id="download" download>下载原图</a><button id="close" aria-label="关闭大图">关闭 ✕</button></div><img id="detail" alt=""></dialog>
+<script>
+const viewer=document.getElementById('viewer'),detail=document.getElementById('detail');
+document.querySelectorAll('.art').forEach(button=>button.addEventListener('click',()=>{const image=button.querySelector('img');detail.src=image.src;detail.alt=image.alt;document.getElementById('caption').textContent=button.dataset.name;document.getElementById('download').href=image.src;viewer.showModal();}));
+document.getElementById('close').addEventListener('click',()=>viewer.close());
+viewer.addEventListener('click',e=>{if(e.target===viewer)viewer.close();});
+</script>
+</html>

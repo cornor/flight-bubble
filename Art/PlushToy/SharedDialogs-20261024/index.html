@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>弹框与主页按钮 · 实机效果</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eee8f5;color:#493167;font-family:system-ui,-apple-system,sans-serif}main{max-width:1080px;margin:auto;padding:24px}h1{font-size:24px;margin:0 0 8px}p{font-size:14px;color:#78658b;margin:0 0 18px}nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}button{border:1px solid #cdbbe0;border-radius:20px;padding:9px 16px;background:#fffaf2;color:#614388;font:inherit;cursor:pointer}button[aria-pressed=true]{background:#7151ad;color:white;border-color:#7151ad}.pair{display:grid;grid-template-columns:1fr 1fr;gap:24px}figure{margin:0;min-width:0;text-align:center}figcaption{font-size:14px;color:#78658b;margin-bottom:10px}img{display:block;max-height:76vh;max-width:100%;width:auto;margin:auto;border-radius:10px;box-shadow:0 5px 20px #45315522}a{color:inherit}@media(max-width:600px){main{padding:16px 10px}h1{font-size:20px}.pair{gap:10px}button{font-size:13px;padding:7px 11px}}
+</style>
+<main>
+<h1>弹框与主页按钮</h1>
+<p>复用历史胶囊造型，统一高光、薄底边和文字描边。以下均为游戏实机截图。</p>
+<nav aria-label="选择页面">
+<button data-page="home" aria-pressed="true">主页</button>
+<button data-page="victory" aria-pressed="false">挑战成功</button>
+<button data-page="revive" aria-pressed="false">复活</button>
+<button data-page="loss" aria-pressed="false">挑战失败</button>
+</nav>
+<div class="pair">
+<figure><figcaption>标准屏 · 540 × 960</figcaption><a id="standard-link" href="evidence/standard-home.png" target="_blank"><img id="standard" src="evidence/standard-home.png" alt="主页标准屏截图"></a></figure>
+<figure><figcaption>长屏 · 390 × 844</figcaption><a id="tall-link" href="evidence/tall-home.png" target="_blank"><img id="tall" src="evidence/tall-home.png" alt="主页长屏截图"></a></figure>
+</div>
+</main>
+<script>
+for(const button of document.querySelectorAll('button'))button.addEventListener('click',()=>{
+ for(const other of document.querySelectorAll('button'))other.setAttribute('aria-pressed',String(other===button));
+ for(const size of ['standard','tall']){
+  const src='evidence/'+size+'-'+button.dataset.page+'.png';
+  document.getElementById(size).src=src;document.getElementById(size).alt=button.textContent+'游戏截图';
+  document.getElementById(size+'-link').href=src;
+ }
+});
+</script>
+</html>

@@ -1,0 +1,63 @@
+{
+  "status": "implemented",
+  "buildTime": "2026-10-24 12:13:03",
+  "scope": [
+    "Revive and shared modal panels",
+    "Win/loss main actions",
+    "Simple pause",
+    "Home two-line level CTA"
+  ],
+  "style": "Existing historical capsules; gold/soft green; thin base; matching rounded labels; cream/lavender panels",
+  "preserved": [
+    "Action ids and gameplay logic",
+    "Existing video and square-button icons",
+    "Win and loss ribbons and plush heroes",
+    "Existing disabled streak-confirmation behavior"
+  ],
+  "assets": [
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/win/button-next.png",
+      "sha256": "a5954136dfa48819f3e79c67666cebafc92f7a4e86af8eb44494fbd0433ab50a"
+    },
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/pause-retry.png",
+      "sha256": "35d10c5fbfc298643ef495e52de1514cec1a44630ef6c78dfd5512f965cbc282"
+    },
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/pause-panel.png",
+      "sha256": "4568ad9978f47070c6ecae983d0c61d7a732fbc7a98baf0817d3dcbe80111c55"
+    },
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/pause-row.png",
+      "sha256": "b724dd6b58aa8f06aa189cb387693c93647c46ac8dd89f34945d805757551fdf"
+    },
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/video.png",
+      "sha256": "2ab3cebcc7d2f1929923dfd463bad18281508e352be4010e999a358d083b089f"
+    }
+  ],
+  "qa": {
+    "passed": true,
+    "checks": [
+      "Home gold CTA retains next-level selection and two-line level information",
+      "Current build keeps streak confirmation disabled; restart still runs directly",
+      "Revive reward flow, original video icon, +1 slot",
+      "Revive close, loss Retry and empty Share behavior",
+      "Victory Next enters the following level"
+    ],
+    "viewports": [
+      "540x960",
+      "390x844"
+    ],
+    "errors": [],
+    "scope": "Verified UI paths across two isolated runs. Natural loss after the rewarded bomb was not a required UI check; first run ended at its aiming screen.",
+    "adMode": "Existing test provider; no real video playback tested."
+  },
+  "sourceAudit": {
+    "passed": true,
+    "source": "d53a2cc5c24de9851ed5ff1462c6c94e1e64b131",
+    "checked": 783,
+    "changed": [],
+    "missingGlyphs": []
+  }
+}

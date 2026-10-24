@@ -1,0 +1,1030 @@
+{
+  "version": 1,
+  "date": "2026-10-23",
+  "status": "p4-complete",
+  "approved_reference": "P0-20261023/battle-v2.png",
+  "approval_scope": "用户确认整体方向、战斗页效果图和毛绒质感；其他页面和新母型具体造型按后续批次细化。",
+  "proposed_delivery_root": "Art/PlushToy/delivery",
+  "required_character_states": [
+    "idle",
+    "attack",
+    "spent"
+  ],
+  "planned_character_states": [
+    "idle",
+    "attack",
+    "spent",
+    "ready",
+    "blink"
+  ],
+  "optional_character_states": [
+    "cheer"
+  ],
+  "first_three": [
+    "#FF7E27",
+    "#FFC5E0",
+    "#62E18E"
+  ],
+  "first_complete_level": "sector01",
+  "sample_extra_colors": [
+    "#2982F4",
+    "#FFFFFF",
+    "#FFDF48"
+  ],
+  "character_master_canvas": [
+    448,
+    512
+  ],
+  "character_runtime_canvas": [
+    224,
+    256
+  ],
+  "character_runtime_baseline_y": 212,
+  "common_assets": [
+    {
+      "id": "S01",
+      "batch": "P1-界面",
+      "file": "scene/background.png",
+      "size": "1080×1920",
+      "label": "淡紫渐变背景",
+      "requirement": "不含角色、珠子、文字、按钮；棋盘后方保持安静。",
+      "hook": "GardenBattleBackground / background.png",
+      "status": "integrated",
+      "implementation": "scene/background.png"
+    },
+    {
+      "id": "S02",
+      "batch": "P1-界面",
+      "file": "scene/board-frame.png",
+      "size": "256×256，九宫格",
+      "label": "棋盘细圆角边框",
+      "requirement": "中间透明；四角形状固定；细边不遮珠子。",
+      "hook": "新增显示层；对应目标区域 512×396",
+      "status": "integrated",
+      "implementation": "ui/board-frame.png：柔和内凹淡紫底板，屏幕空间九宫格"
+    },
+    {
+      "id": "S03",
+      "batch": "P1-界面",
+      "file": "scene/entry-lip.png",
+      "size": "1024×32",
+      "label": "棋盘顶部入场遮边",
+      "requirement": "与棋盘同材质，柔和遮住新行出现边界。",
+      "hook": "替换 scene/ceiling 的视觉作用",
+      "status": "integrated",
+      "implementation": "移除额外顶部亮条；棋盘底板与珠子共同限定上缘"
+    },
+    {
+      "id": "S04",
+      "batch": "P1-界面",
+      "file": "scene/rail.png",
+      "size": "1024×32",
+      "label": "底部防线",
+      "requirement": "平时轻薄，告急由程序染色和脉动；保留危险语义。",
+      "hook": "scene/fence / scene/fence-red",
+      "status": "integrated",
+      "implementation": "平时隐藏额外横线，告急时保留红色防线"
+    },
+    {
+      "id": "U01",
+      "batch": "P1-界面",
+      "file": "ui/pause-base.png",
+      "size": "96×96",
+      "label": "紫色暂停圆钮底",
+      "requirement": "无文字和图标。",
+      "hook": "GardenBattleHeader / bars pause",
+      "status": "integrated",
+      "implementation": "ui/pause.png（与图标合并）"
+    },
+    {
+      "id": "U02",
+      "batch": "P1-界面",
+      "file": "ui/icon-pause.png",
+      "size": "64×64",
+      "label": "暂停图标",
+      "requirement": "白色双竖线，透明底。",
+      "hook": "暂停节点图标层",
+      "status": "integrated",
+      "implementation": "ui/pause.png（与底座合并）"
+    },
+    {
+      "id": "U03",
+      "batch": "P1-界面",
+      "file": "ui/capsule-cream.png",
+      "size": "512×96，横向九宫格",
+      "label": "奶油胶囊通用底",
+      "requirement": "关卡牌、进度外框、轻提示共享；无文字。",
+      "hook": "GardenBarArt / GardenBars / GardenBattleHeader",
+      "status": "integrated",
+      "implementation": "ui/level.png + ui/progress-frame.png"
+    },
+    {
+      "id": "U04",
+      "batch": "P1-界面",
+      "file": "ui/progress-track.png",
+      "size": "544×48",
+      "label": "进度槽",
+      "requirement": "空槽；右侧百分比由布局另留位置。",
+      "hook": "GardenBattleHeader",
+      "status": "integrated",
+      "implementation": "ui/progress-track.png"
+    },
+    {
+      "id": "U05",
+      "batch": "P1-界面",
+      "file": "ui/progress-fill.png",
+      "size": "512×40",
+      "label": "绿色进度填充",
+      "requirement": "程序裁切或调整填充；不能把 12% 画进图里。",
+      "hook": "GardenBattlePage 动态进度",
+      "status": "integrated",
+      "implementation": "ui/progress-fill.png"
+    },
+    {
+      "id": "U06",
+      "batch": "P1-界面",
+      "file": "ui/pad.png",
+      "size": "128×64",
+      "label": "开放出战底座",
+      "requirement": "浅紫扁椭圆；空位和有角色时共用。",
+      "hook": "scene/plot",
+      "status": "integrated",
+      "implementation": "ui/pad.png"
+    },
+    {
+      "id": "U07",
+      "batch": "P1-界面",
+      "file": "ui/lock-orb.png",
+      "size": "128×128",
+      "label": "锁位透明圆罩",
+      "requirement": "与底座分开；留出广告/解锁状态覆盖空间。",
+      "hook": "scene/plot-locked / scene/lock-bubble",
+      "status": "integrated",
+      "implementation": "ui/pad-locked.png（圆罩/锁/底座合并）"
+    },
+    {
+      "id": "U08",
+      "batch": "P1-界面",
+      "file": "ui/icon-lock.png",
+      "size": "64×64",
+      "label": "白色锁头",
+      "requirement": "锁头独立，解锁状态由程序控制。",
+      "hook": "锁位图标层",
+      "status": "integrated",
+      "implementation": "ui/pad-locked.png（锁头合并）"
+    },
+    {
+      "id": "U09",
+      "batch": "P1-界面",
+      "file": "ui/queue-card.png",
+      "size": "192×152，九宫格",
+      "label": "单个队列浅卡片",
+      "requirement": "每个队员一张；不把 15 张卡片画成一张背景。",
+      "hook": "DrawGarden 队列背景；需由列底改成按行绘制",
+      "status": "integrated",
+      "implementation": "ui/queue-panel.png（独立三行卡片）"
+    },
+    {
+      "id": "U10",
+      "batch": "P1-界面",
+      "file": "ui/queue-front-glow.png",
+      "size": "192×64",
+      "label": "可选队员脚下柔光",
+      "requirement": "暖奶油色、低亮度，不能盖住绒毛边缘。",
+      "hook": "QueueFootLight",
+      "status": "integrated",
+      "implementation": "复用现有程序柔光"
+    },
+    {
+      "id": "U11",
+      "batch": "P1-界面",
+      "file": "ui/ammo-pill.png",
+      "size": "128×48，横向九宫格",
+      "label": "靛紫弹量牌",
+      "requirement": "空白底牌；动态数字保持白色、居中。",
+      "hook": "GardenSkin.Creature / GardenBarArt",
+      "status": "integrated",
+      "implementation": "程序胶囊改为靛紫，运行时数字"
+    },
+    {
+      "id": "U12",
+      "batch": "P1-界面",
+      "file": "ui/button-cream.png",
+      "size": "330×132，横向九宫格",
+      "label": "重排按钮底",
+      "requirement": "奶油色；图标、文字、库存独立。",
+      "hook": "GardenBattleControls",
+      "status": "integrated",
+      "implementation": "ui/button-shuffle-blank.png"
+    },
+    {
+      "id": "U13",
+      "batch": "P1-界面",
+      "file": "ui/button-gold.png",
+      "size": "330×132，横向九宫格",
+      "label": "优先出战按钮底",
+      "requirement": "暖黄色；图标、文字、库存独立。",
+      "hook": "GardenBattleControls",
+      "status": "integrated",
+      "implementation": "ui/button-designate-blank.png"
+    },
+    {
+      "id": "U14",
+      "batch": "P1-界面",
+      "file": "ui/button-purple.png",
+      "size": "330×132，横向九宫格",
+      "label": "泡泡炸弹按钮底",
+      "requirement": "淡紫色；图标、文字、库存独立。",
+      "hook": "GardenBattleControls",
+      "status": "integrated",
+      "implementation": "ui/button-bomb-base.png"
+    },
+    {
+      "id": "U15",
+      "batch": "P1-界面",
+      "file": "ui/icon-shuffle.png",
+      "size": "80×80",
+      "label": "重排图标",
+      "requirement": "紫色交叉箭头。",
+      "hook": "重排按钮 / 对应提示条",
+      "status": "integrated",
+      "implementation": "重排按钮合并矢量图标"
+    },
+    {
+      "id": "U16",
+      "batch": "P1-界面",
+      "file": "ui/icon-priority.png",
+      "size": "80×80",
+      "label": "优先出战图标",
+      "requirement": "橙色双箭头。",
+      "hook": "优先出战按钮 / 对应提示条",
+      "status": "integrated",
+      "implementation": "优先出战按钮合并矢量图标"
+    },
+    {
+      "id": "U17",
+      "batch": "P1-界面",
+      "file": "ui/icon-bomb.png",
+      "size": "96×96",
+      "label": "彩虹泡泡炸弹图标",
+      "requirement": "按钮、提示条、瞄准提示统一使用。",
+      "hook": "ui/bar-icon-bomb",
+      "status": "integrated",
+      "implementation": "复用 ui/bar-icon-bomb"
+    },
+    {
+      "id": "U18",
+      "batch": "P1-界面",
+      "file": "ui/count-badge.png",
+      "size": "56×56",
+      "label": "道具数量角标",
+      "requirement": "紫色圆形底，空白。",
+      "hook": "scene/badge",
+      "status": "integrated",
+      "implementation": "ui/badge-count.png"
+    },
+    {
+      "id": "U19",
+      "batch": "P1-界面",
+      "file": "ui/warning-capsule.png",
+      "size": "640×96，横向九宫格",
+      "label": "告急/受限提示底",
+      "requirement": "语义明确、文字区留白；不可遮挡关键珠子。",
+      "hook": "GardenBars / 提示与预警",
+      "status": "integrated",
+      "implementation": "复用提示胶囊，紫色主题配色"
+    },
+    {
+      "id": "U20",
+      "batch": "P1-界面",
+      "file": "ui/pointer.png",
+      "size": "96×96",
+      "label": "教学手势",
+      "requirement": "手指与少量引导光，保持清晰。",
+      "hook": "ui/bar-icon-tap / 教学覆盖层",
+      "status": "integrated",
+      "implementation": "复用现有教学手势"
+    },
+    {
+      "id": "U21",
+      "batch": "P1-界面",
+      "file": "ui/tier-coin.png",
+      "size": "48×48",
+      "label": "等级小章",
+      "requirement": "Ⅰ、Ⅱ 动态绘制，数字牌位置不被挤走。",
+      "hook": "scene/tier-coin",
+      "status": "integrated",
+      "implementation": "复用 scene/tier-coin"
+    },
+    {
+      "id": "U22",
+      "batch": "P1-界面",
+      "file": "ui/crown.png",
+      "size": "64×48",
+      "label": "最高等级皇冠",
+      "requirement": "小尺寸可读；不压住头部表情。",
+      "hook": "scene/crown",
+      "status": "integrated",
+      "implementation": "复用 scene/crown"
+    }
+  ],
+  "fx_assets": [
+    {
+      "id": "dash-trail",
+      "file": "fx/dash-trail.png",
+      "width": 96,
+      "height": 256,
+      "frames": 1,
+      "use": "角色耗尽退场尾迹",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "impact-dust",
+      "file": "fx/impact-dust.png",
+      "width": 960,
+      "height": 160,
+      "frames": 6,
+      "use": "角色退场撞击",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "merge-burst",
+      "file": "fx/merge-burst.png",
+      "width": 1152,
+      "height": 192,
+      "frames": 6,
+      "use": "合成",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "beam",
+      "file": "fx/beam.png",
+      "width": 48,
+      "height": 256,
+      "frames": 1,
+      "use": "持续泡泡流",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "beam-tip",
+      "file": "fx/beam-tip.png",
+      "width": 256,
+      "height": 64,
+      "frames": 4,
+      "use": "泡泡流命中端",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "repel-gust",
+      "file": "fx/repel-gust.png",
+      "width": 1080,
+      "height": 120,
+      "frames": 1,
+      "use": "击退气浪",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "revive-wave",
+      "file": "fx/revive-wave.png",
+      "width": 1080,
+      "height": 360,
+      "frames": 1,
+      "use": "复活波",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "water-can",
+      "file": "fx/water-can.png",
+      "width": 256,
+      "height": 256,
+      "frames": 1,
+      "use": "炸弹主体",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "water-splash",
+      "file": "fx/water-splash.png",
+      "width": 2048,
+      "height": 256,
+      "frames": 8,
+      "use": "炸弹爆开",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "water-aim",
+      "file": "fx/water-aim.png",
+      "width": 256,
+      "height": 160,
+      "frames": 1,
+      "use": "炸弹瞄准范围",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "rocket-pop",
+      "file": "fx/rocket-pop.png",
+      "width": 1152,
+      "height": 192,
+      "frames": 6,
+      "use": "高阶攻击/终结爆开",
+      "status": "reuse_then_review_in_P3"
+    },
+    {
+      "id": "rescue-bubble",
+      "file": "fx/rescue-bubble.png",
+      "width": 128,
+      "height": 192,
+      "frames": 1,
+      "use": "援助清场",
+      "status": "reuse_then_review_in_P3"
+    }
+  ],
+  "later_batches": [
+    {
+      "batch": "P2",
+      "name": "神秘队员",
+      "deliverables": "1 张 224×256 透明身份遮蔽图；问号、颜色隐藏规则沿用；揭晓复用现有爆开表现。",
+      "note": "不透露真实毛发和花盆颜色。",
+      "status": "integrated",
+      "evidence": "P2-P4/acceptance.json"
+    },
+    {
+      "batch": "P3",
+      "name": "角色欢呼",
+      "deliverables": "22 色各 1 张 cheer.png，共 22 张可选状态。",
+      "note": "扩展到 132 张角色状态图；先验证图集质量。",
+      "status": "reused",
+      "evidence": "P2-P4/acceptance.json",
+      "implementation": "复用毛绒 idle / blink 和弹性动作，未增加可选 cheer，禁止旧角色回退。"
+    },
+    {
+      "batch": "P3",
+      "name": "终结演出",
+      "deliverables": "主角 ready / blow 两个姿态、决战按钮底、标题底、清场提示底；文字独立。",
+      "note": "终结主角的具体造型尚未定稿，需沿用已确认毛绒方向另做设计。",
+      "status": "integrated",
+      "evidence": "P2-P4/acceptance.json",
+      "implementation": "新毛绒皇冠蓝熊 ready / blow，嘴部坐标重校；新标题/按钮/清场底。"
+    },
+    {
+      "batch": "P4",
+      "name": "首页",
+      "deliverables": "首页背景、主视觉角色组合、开始按钮、设置与图鉴图标、加载/过场表现。",
+      "note": "角色尽量复用现有母型；首页构图尚未定稿。",
+      "status": "integrated",
+      "evidence": "P2-P4/acceptance.json"
+    },
+    {
+      "batch": "P4",
+      "name": "图鉴",
+      "deliverables": "卡片底、锁定态、解锁态、翻页/返回控件；角色缩略图复用。",
+      "note": "无需为每个格子重画完整卡片。",
+      "status": "integrated",
+      "evidence": "P2-P4/acceptance.json"
+    },
+    {
+      "batch": "P4",
+      "name": "暂停与设置",
+      "deliverables": "通用面板、主/次按钮、开关 on/off、关闭/返回图标。",
+      "note": "依据 GardenPauseDialog 真实状态复用组件。",
+      "status": "integrated",
+      "evidence": "P2-P4/acceptance.json"
+    },
+    {
+      "batch": "P4",
+      "name": "复活与结算",
+      "deliverables": "复活、胜利、失败面板与必要表情；奖励、广告、继续/重试图标。",
+      "note": "依据 BubbleLose / BubbleWin / GardenResultDialog 复用组件。",
+      "status": "integrated",
+      "evidence": "P2-P4/acceptance.json"
+    },
+    {
+      "batch": "P4",
+      "name": "教学与提示",
+      "deliverables": "向导讲解/开心/担忧/得意 4 个表情，通用对话框；按实际需要补齐 tap/pick/crosshair/warn 等图标。",
+      "note": "不重复制作已经列入 P1 的手势、炸弹和按钮图标。",
+      "status": "integrated",
+      "evidence": "P2-P4/acceptance.json"
+    },
+    {
+      "batch": "P4",
+      "name": "音效",
+      "deliverables": "按钮、出战、发射、消除、合成、炸弹、解锁、胜败等现有音效逐项复听，再决定替换。",
+      "note": "本次图像定稿不等于音效定稿；本轮不批量制作声音。",
+      "status": "retained-technically-reviewed",
+      "evidence": "P2-P4/acceptance.json",
+      "implementation": "保留之前用户确认的音效；核对解码、路由、峰值和实际播放增益。未人工复听，提供 evidence-assets/audio-review.mp3。"
+    },
+    {
+      "batch": "P5",
+      "name": "关卡图案",
+      "deliverables": "按关卡计划另列玩具主题图案。",
+      "note": "效果图的兔子珠子画不是整块战斗背景贴图，仍需用真实关卡珠子表现。",
+      "status": "planned"
+    }
+  ],
+  "characters": [
+    {
+      "hex": "#2982F4",
+      "family": "蓝色小熊",
+      "name": "蓝色小熊",
+      "pot": "蓝色盆",
+      "existingName": "小蓝",
+      "creature_id": "blue",
+      "runtime_slot_id": "morning-glory",
+      "delivery_dir": "creatures/blue/2982F4/",
+      "status": "integrated",
+      "batch": "P1-D 完整样板关补齐",
+      "files": [
+        "creatures/blue/2982F4/idle.png",
+        "creatures/blue/2982F4/attack.png",
+        "creatures/blue/2982F4/spent.png",
+        "creatures/blue/2982F4/ready.png",
+        "creatures/blue/2982F4/blink.png"
+      ],
+      "evidence": "P1/asset-audit.json"
+    },
+    {
+      "hex": "#42A9FF",
+      "family": "蓝色小熊",
+      "name": "浅蓝小熊",
+      "pot": "浅蓝盆",
+      "existingName": "小蓝",
+      "creature_id": "blue",
+      "runtime_slot_id": "morning-glory",
+      "delivery_dir": "creatures/blue/42A9FF/",
+      "status": "integrated",
+      "batch": "前5关扩展",
+      "files": [
+        "creatures/blue/42A9FF/idle.png",
+        "creatures/blue/42A9FF/attack.png",
+        "creatures/blue/42A9FF/spent.png",
+        "creatures/blue/42A9FF/ready.png",
+        "creatures/blue/42A9FF/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/FirstFive/delivery"
+    },
+    {
+      "hex": "#FF7E27",
+      "family": "水豚",
+      "name": "橙色水豚",
+      "pot": "橙色盆",
+      "existingName": "小橙",
+      "creature_id": "orange",
+      "runtime_slot_id": "carrot",
+      "delivery_dir": "creatures/orange/FF7E27/",
+      "status": "integrated",
+      "batch": "P1-A 质感样板",
+      "files": [
+        "creatures/orange/FF7E27/idle.png",
+        "creatures/orange/FF7E27/attack.png",
+        "creatures/orange/FF7E27/spent.png",
+        "creatures/orange/FF7E27/ready.png",
+        "creatures/orange/FF7E27/blink.png"
+      ],
+      "evidence": "P1/asset-audit.json"
+    },
+    {
+      "hex": "#FF9D30",
+      "family": "水豚",
+      "name": "金橙水豚",
+      "pot": "金橙盆",
+      "existingName": "小橙",
+      "creature_id": "orange",
+      "runtime_slot_id": "carrot",
+      "delivery_dir": "creatures/orange/FF9D30/",
+      "status": "integrated",
+      "batch": "前5关扩展",
+      "files": [
+        "creatures/orange/FF9D30/idle.png",
+        "creatures/orange/FF9D30/attack.png",
+        "creatures/orange/FF9D30/spent.png",
+        "creatures/orange/FF9D30/ready.png",
+        "creatures/orange/FF9D30/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/FirstFive/delivery"
+    },
+    {
+      "hex": "#62E18E",
+      "family": "青蛙",
+      "name": "草绿青蛙",
+      "pot": "草绿盆",
+      "existingName": "小绿",
+      "creature_id": "green",
+      "runtime_slot_id": "broccoli",
+      "delivery_dir": "creatures/green/62E18E/",
+      "status": "integrated",
+      "batch": "P1-A 质感样板",
+      "files": [
+        "creatures/green/62E18E/idle.png",
+        "creatures/green/62E18E/attack.png",
+        "creatures/green/62E18E/spent.png",
+        "creatures/green/62E18E/ready.png",
+        "creatures/green/62E18E/blink.png"
+      ],
+      "evidence": "P1/asset-audit.json"
+    },
+    {
+      "hex": "#BD80FF",
+      "family": "大象",
+      "name": "淡紫大象",
+      "pot": "淡紫盆",
+      "existingName": "小紫",
+      "creature_id": "purple",
+      "runtime_slot_id": "eggplant",
+      "delivery_dir": "creatures/purple/BD80FF/",
+      "status": "integrated",
+      "batch": "前5关扩展",
+      "files": [
+        "creatures/purple/BD80FF/idle.png",
+        "creatures/purple/BD80FF/attack.png",
+        "creatures/purple/BD80FF/spent.png",
+        "creatures/purple/BD80FF/ready.png",
+        "creatures/purple/BD80FF/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/FirstFive/delivery"
+    },
+    {
+      "hex": "#FFDF48",
+      "family": "小鸡",
+      "name": "黄色小鸡",
+      "pot": "黄色盆",
+      "existingName": "小黄",
+      "creature_id": "yellow",
+      "runtime_slot_id": "sunflower",
+      "delivery_dir": "creatures/yellow/FFDF48/",
+      "status": "integrated",
+      "batch": "P1-D 完整样板关补齐",
+      "files": [
+        "creatures/yellow/FFDF48/idle.png",
+        "creatures/yellow/FFDF48/attack.png",
+        "creatures/yellow/FFDF48/spent.png",
+        "creatures/yellow/FFDF48/ready.png",
+        "creatures/yellow/FFDF48/blink.png"
+      ],
+      "evidence": "P1/asset-audit.json"
+    },
+    {
+      "hex": "#FFFFFF",
+      "family": "猫",
+      "name": "奶白猫",
+      "pot": "奶白盆",
+      "existingName": "小白",
+      "creature_id": "white",
+      "runtime_slot_id": "cabbage",
+      "delivery_dir": "creatures/white/FFFFFF/",
+      "status": "integrated",
+      "batch": "P1-D 完整样板关补齐",
+      "files": [
+        "creatures/white/FFFFFF/idle.png",
+        "creatures/white/FFFFFF/attack.png",
+        "creatures/white/FFFFFF/spent.png",
+        "creatures/white/FFFFFF/ready.png",
+        "creatures/white/FFFFFF/blink.png"
+      ],
+      "evidence": "P1/asset-audit.json"
+    },
+    {
+      "hex": "#FF525B",
+      "family": "狐狸",
+      "name": "珊瑚红狐狸",
+      "pot": "珊瑚红盆",
+      "existingName": "小红",
+      "creature_id": "red",
+      "runtime_slot_id": "strawberry",
+      "delivery_dir": "creatures/red/FF525B/",
+      "status": "integrated",
+      "batch": "前5关扩展",
+      "files": [
+        "creatures/red/FF525B/idle.png",
+        "creatures/red/FF525B/attack.png",
+        "creatures/red/FF525B/spent.png",
+        "creatures/red/FF525B/ready.png",
+        "creatures/red/FF525B/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/FirstFive/delivery"
+    },
+    {
+      "hex": "#2D2D2D",
+      "family": "猫",
+      "name": "炭黑猫",
+      "pot": "炭黑盆",
+      "existingName": "小黑",
+      "creature_id": "charcoal",
+      "runtime_slot_id": "truffle",
+      "delivery_dir": "creatures/charcoal/2D2D2D/",
+      "status": "integrated",
+      "batch": "前5关扩展",
+      "files": [
+        "creatures/charcoal/2D2D2D/idle.png",
+        "creatures/charcoal/2D2D2D/attack.png",
+        "creatures/charcoal/2D2D2D/spent.png",
+        "creatures/charcoal/2D2D2D/ready.png",
+        "creatures/charcoal/2D2D2D/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/FirstFive/delivery"
+    },
+    {
+      "hex": "#696CAF",
+      "family": "蓝色小熊",
+      "name": "靛蓝小熊",
+      "pot": "靛蓝盆",
+      "existingName": "小靛",
+      "creature_id": "slate-blue",
+      "runtime_slot_id": "color-696caf",
+      "delivery_dir": "creatures/slate-blue/696CAF/",
+      "status": "integrated",
+      "batch": "P2 全颜色覆盖",
+      "files": [
+        "creatures/slate-blue/696CAF/idle.png",
+        "creatures/slate-blue/696CAF/attack.png",
+        "creatures/slate-blue/696CAF/spent.png",
+        "creatures/slate-blue/696CAF/ready.png",
+        "creatures/slate-blue/696CAF/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/P2-P4/delivery",
+      "evidence": "P2-P4/asset-audit.json"
+    },
+    {
+      "hex": "#46D9FF",
+      "family": "蓝色小熊",
+      "name": "冰蓝小熊",
+      "pot": "冰蓝盆",
+      "existingName": "小冰",
+      "creature_id": "cyan",
+      "runtime_slot_id": "color-46d9ff",
+      "delivery_dir": "creatures/cyan/46D9FF/",
+      "status": "integrated",
+      "batch": "P2 全颜色覆盖",
+      "files": [
+        "creatures/cyan/46D9FF/idle.png",
+        "creatures/cyan/46D9FF/attack.png",
+        "creatures/cyan/46D9FF/spent.png",
+        "creatures/cyan/46D9FF/ready.png",
+        "creatures/cyan/46D9FF/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/P2-P4/delivery",
+      "evidence": "P2-P4/asset-audit.json"
+    },
+    {
+      "hex": "#C8C5FF",
+      "family": "大象",
+      "name": "雾紫大象",
+      "pot": "雾紫盆",
+      "existingName": "小雾",
+      "creature_id": "lavender",
+      "runtime_slot_id": "color-c8c5ff",
+      "delivery_dir": "creatures/lavender/C8C5FF/",
+      "status": "integrated",
+      "batch": "P2 全颜色覆盖",
+      "files": [
+        "creatures/lavender/C8C5FF/idle.png",
+        "creatures/lavender/C8C5FF/attack.png",
+        "creatures/lavender/C8C5FF/spent.png",
+        "creatures/lavender/C8C5FF/ready.png",
+        "creatures/lavender/C8C5FF/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/P2-P4/delivery",
+      "evidence": "P2-P4/asset-audit.json"
+    },
+    {
+      "hex": "#9C225E",
+      "family": "兔子",
+      "name": "莓红兔子",
+      "pot": "莓红盆",
+      "existingName": "小玫",
+      "creature_id": "berry",
+      "runtime_slot_id": "color-9c225e",
+      "delivery_dir": "creatures/berry/9C225E/",
+      "status": "integrated",
+      "batch": "前5关扩展",
+      "files": [
+        "creatures/berry/9C225E/idle.png",
+        "creatures/berry/9C225E/attack.png",
+        "creatures/berry/9C225E/spent.png",
+        "creatures/berry/9C225E/ready.png",
+        "creatures/berry/9C225E/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/FirstFive/delivery"
+    },
+    {
+      "hex": "#65392D",
+      "family": "水豚",
+      "name": "棕色水豚",
+      "pot": "棕色盆",
+      "existingName": "小棕",
+      "creature_id": "brown",
+      "runtime_slot_id": "color-65392d",
+      "delivery_dir": "creatures/brown/65392D/",
+      "status": "integrated",
+      "batch": "前5关扩展",
+      "files": [
+        "creatures/brown/65392D/idle.png",
+        "creatures/brown/65392D/attack.png",
+        "creatures/brown/65392D/spent.png",
+        "creatures/brown/65392D/ready.png",
+        "creatures/brown/65392D/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/FirstFive/delivery"
+    },
+    {
+      "hex": "#B672FD",
+      "family": "大象",
+      "name": "紫罗兰大象",
+      "pot": "紫罗兰盆",
+      "existingName": "小晶",
+      "creature_id": "violet",
+      "runtime_slot_id": "color-b672fd",
+      "delivery_dir": "creatures/violet/B672FD/",
+      "status": "integrated",
+      "batch": "P2 全颜色覆盖",
+      "files": [
+        "creatures/violet/B672FD/idle.png",
+        "creatures/violet/B672FD/attack.png",
+        "creatures/violet/B672FD/spent.png",
+        "creatures/violet/B672FD/ready.png",
+        "creatures/violet/B672FD/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/P2-P4/delivery",
+      "evidence": "P2-P4/asset-audit.json"
+    },
+    {
+      "hex": "#92EF4D",
+      "family": "青蛙",
+      "name": "黄绿青蛙",
+      "pot": "黄绿盆",
+      "existingName": "小荧",
+      "creature_id": "lime",
+      "runtime_slot_id": "color-92ef4d",
+      "delivery_dir": "creatures/lime/92EF4D/",
+      "status": "integrated",
+      "batch": "P2 全颜色覆盖",
+      "files": [
+        "creatures/lime/92EF4D/idle.png",
+        "creatures/lime/92EF4D/attack.png",
+        "creatures/lime/92EF4D/spent.png",
+        "creatures/lime/92EF4D/ready.png",
+        "creatures/lime/92EF4D/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/P2-P4/delivery",
+      "evidence": "P2-P4/asset-audit.json"
+    },
+    {
+      "hex": "#30D183",
+      "family": "青蛙",
+      "name": "薄荷绿青蛙",
+      "pot": "薄荷绿盆",
+      "existingName": "小碧",
+      "creature_id": "mint",
+      "runtime_slot_id": "color-30d183",
+      "delivery_dir": "creatures/mint/30D183/",
+      "status": "integrated",
+      "batch": "P2 全颜色覆盖",
+      "files": [
+        "creatures/mint/30D183/idle.png",
+        "creatures/mint/30D183/attack.png",
+        "creatures/mint/30D183/spent.png",
+        "creatures/mint/30D183/ready.png",
+        "creatures/mint/30D183/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/P2-P4/delivery",
+      "evidence": "P2-P4/asset-audit.json"
+    },
+    {
+      "hex": "#0C7E1C",
+      "family": "青蛙",
+      "name": "深绿青蛙",
+      "pot": "深绿盆",
+      "existingName": "小翠",
+      "creature_id": "forest",
+      "runtime_slot_id": "color-0c7e1c",
+      "delivery_dir": "creatures/forest/0C7E1C/",
+      "status": "integrated",
+      "batch": "P2 全颜色覆盖",
+      "files": [
+        "creatures/forest/0C7E1C/idle.png",
+        "creatures/forest/0C7E1C/attack.png",
+        "creatures/forest/0C7E1C/spent.png",
+        "creatures/forest/0C7E1C/ready.png",
+        "creatures/forest/0C7E1C/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/P2-P4/delivery",
+      "evidence": "P2-P4/asset-audit.json"
+    },
+    {
+      "hex": "#FFC5E0",
+      "family": "兔子",
+      "name": "粉色兔子",
+      "pot": "粉色盆",
+      "existingName": "小粉",
+      "creature_id": "pink",
+      "runtime_slot_id": "color-ffc5e0",
+      "delivery_dir": "creatures/pink/FFC5E0/",
+      "status": "integrated",
+      "batch": "P1-A 质感样板",
+      "files": [
+        "creatures/pink/FFC5E0/idle.png",
+        "creatures/pink/FFC5E0/attack.png",
+        "creatures/pink/FFC5E0/spent.png",
+        "creatures/pink/FFC5E0/ready.png",
+        "creatures/pink/FFC5E0/blink.png"
+      ],
+      "evidence": "P1/asset-audit.json"
+    },
+    {
+      "hex": "#FFCAA9",
+      "family": "兔子",
+      "name": "蜜桃兔子",
+      "pot": "蜜桃盆",
+      "existingName": "小霞",
+      "creature_id": "peach",
+      "runtime_slot_id": "color-ffcaa9",
+      "delivery_dir": "creatures/peach/FFCAA9/",
+      "status": "integrated",
+      "batch": "前5关扩展",
+      "files": [
+        "creatures/peach/FFCAA9/idle.png",
+        "creatures/peach/FFCAA9/attack.png",
+        "creatures/peach/FFCAA9/spent.png",
+        "creatures/peach/FFCAA9/ready.png",
+        "creatures/peach/FFCAA9/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/FirstFive/delivery"
+    },
+    {
+      "hex": "#C5FFE4",
+      "family": "青蛙",
+      "name": "浅薄荷青蛙",
+      "pot": "浅薄荷盆",
+      "existingName": "小清",
+      "creature_id": "pale-mint",
+      "runtime_slot_id": "color-c5ffe4",
+      "delivery_dir": "creatures/pale-mint/C5FFE4/",
+      "status": "integrated",
+      "batch": "P2 全颜色覆盖",
+      "files": [
+        "creatures/pale-mint/C5FFE4/idle.png",
+        "creatures/pale-mint/C5FFE4/attack.png",
+        "creatures/pale-mint/C5FFE4/spent.png",
+        "creatures/pale-mint/C5FFE4/ready.png",
+        "creatures/pale-mint/C5FFE4/blink.png"
+      ],
+      "delivery_root": "Art/PlushToy/P2-P4/delivery",
+      "evidence": "P2-P4/asset-audit.json"
+    }
+  ],
+  "counts": {
+    "common_ui_scene_files": 26,
+    "first_three_character_files": 15,
+    "first_complete_sample_character_colors": 6,
+    "first_complete_sample_character_files": 30,
+    "remaining_character_files_after_sample": 80,
+    "all_character_files_with_ready_and_blink": 110,
+    "all_character_files_including_optional_cheer": 132,
+    "p1_planned_png_files": 56,
+    "p1_delivered_character_pngs": 30,
+    "p1_delivered_ui_pngs": 15,
+    "p1_note": "26 个计划部件采用合并图层、程序绘制与既有图标复用，实际新交付 45 张 PNG。",
+    "first_five_character_colors": 14,
+    "first_five_character_files": 70,
+    "first_five_new_character_files": 40,
+    "first_five_guide_portraits": 3,
+    "remaining_character_colors": 0,
+    "remaining_character_files": 0,
+    "delivered_character_colors": 22,
+    "delivered_character_states": 110,
+    "p2_p4_new_pngs": 84
+  },
+  "delivery_root": "Art/PlushToy/P1/delivery",
+  "sample_display_level": 3,
+  "p1_evidence": "P1/completion.json",
+  "first_five": {
+    "status": "complete",
+    "set": "A",
+    "display_levels": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "resources": [
+      "training01",
+      "training02",
+      "sector01",
+      "sector02",
+      "sector03"
+    ],
+    "delivery_root": "Art/PlushToy/FirstFive/delivery",
+    "audit": "FirstFive/asset-audit.json",
+    "evidence": "FirstFive/completion.json"
+  },
+  "p2_p4": {
+    "plan": "P2-P4/plan.json",
+    "acceptance": "P2-P4/acceptance.json",
+    "review": "P2-P4/review.html",
+    "delivery": "P2-P4/delivery",
+    "states": 110,
+    "colors": 22,
+    "newBatchPngs": 84
+  }
+}

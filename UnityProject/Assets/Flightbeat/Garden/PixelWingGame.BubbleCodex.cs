@@ -38,17 +38,18 @@ namespace Flightbeat.Game
         // ---- home: round icon buttons in the top corners (art: Art/R1/home-v1 H11/H12; program bubble until then)
         const int CodexOpenAction = 803, CodexCloseAction = 804;
         bool codexOpen;
+        public bool GardenCodexOpen => codexOpen;
+        public int GardenCodexSelection => codexSelected;
         float codexOpenedAt;
         void DrawHomeCornerButtons(PixelSurface s)
         {
             bool mapped = s.MapLayout;
             s.MapLayout = false;
-            float top = ScreenLayout.Top + 8f;
-            HomeIconButton(s, 801, ScreenLayout.Left + 12f, top, "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 45f);   // 80 % (10-17)
-            // 2026-10-17: feature entries live in the right-hand column at mid height (as in most casual games),
-            // beside the squad; settings stays in the top-left corner.
-            HomeArtView(out float k, out _, out float oy);
-            HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 70f, oy + 410f * k, "plants/home/btn-codex", "图鉴", Hex(0xFFB347));   // squad mid height (10-17)
+            float top = ScreenLayout.Top + 42f;
+            HomeIconButton(s, 801, ScreenLayout.Left + 20f, top, "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 60f);
+            // Lower-right entry, beside the start button; reserve the side columns for future features.
+            HomeArtView(out float k, out float ox, out float oy);
+            HomeIconButton(s, CodexOpenAction, ox + 445f * k, oy + 733f * k, "plants/home/btn-codex", "图鉴", Hex(0xFFB347), 80f * k);
             // 2026-10-22: hide the level picker entry for now, including its hit region.
             s.MapLayout = mapped;
         }
@@ -103,7 +104,7 @@ namespace Flightbeat.Game
             }
             // 2026-10-22 11:29 (user: the home buttons with the others): the words were 10-13 px in the old thin font;
             // now the rounded type of the other buttons, 16 px, white with a navy edge.
-            GardenBarArt.TextOutline(s, label, cx, y + size + 1f, 16f, Color.white, Hex(0x163E6D), 2.2f);
+            GardenBarArt.TextOutline(s, label, cx, y + size + 1f, size >= 80f ? 23f : 18f, Color.white, Hex(0x54318C), 2.2f);
         }
 
         // ---- codex page: cloud album; original 20-member order, unlock rules and card interactions.
@@ -113,27 +114,27 @@ namespace Flightbeat.Game
         static readonly System.Collections.Generic.Dictionary<string, string[]> CodexBlurb = new System.Collections.Generic.Dictionary<string, string[]> {
             { "小蓝", new[] { "队长", "泡泡小队的队长，挺胸一喊，大家就出发！" } },
             { "小橙", new[] { "调皮", "最爱蹦高高，总想第一个冲出去。" } },
-            { "小绿", new[] { "憨厚", "背上三个小鼓包，跑起来一颠一颠。" } },
-            { "小紫", new[] { "爱笑", "长耳朵一甩，笑声能传好远。" } },
+            { "小绿", new[] { "憨厚", "软软的青蛙脸，鼓起腮帮就想吹泡泡。" } },
+            { "小紫", new[] { "爱笑", "大耳朵轻轻扇，小鼻子吹出彩虹泡泡。" } },
             { "小黄", new[] { "机灵", "眨眨眼，就能吹出一串彩虹泡泡。" } },
-            { "小白", new[] { "认真", "圆滚滚的胶囊身材，做事一丝不苟。" } },
-            { "小红", new[] { "热情", "倒心形的小个子，刘海一翘就开心。" } },
-            { "小黑", new[] { "酷", "一身软软的小刺，其实心里最暖。" } },
-            { "小靛", new[] { "迷糊", "额头顶着软软的长角，总是半睁着眼。" } },
-            { "小冰", new[] { "好奇", "像水母一样飘来飘去，什么都想看看。" } },
-            { "小雾", new[] { "爱做梦", "云朵做的身体，走到哪儿都轻飘飘。" } },
-            { "小玫", new[] { "傲娇", "头顶一颗泡泡发髻，一挑眉就不服气。" } },
+            { "小白", new[] { "认真", "绒绒的猫耳朵，做事总是一丝不苟。" } },
+            { "小红", new[] { "热情", "狐狸耳朵竖起来，见到伙伴就开心。" } },
+            { "小黑", new[] { "酷", "一身炭黑小绒毛，其实心里最暖。" } },
+            { "小靛", new[] { "迷糊", "小熊耳朵圆圆的，总是半睁着眼。" } },
+            { "小冰", new[] { "好奇", "冰蓝色的小绒熊，什么都想看看。" } },
+            { "小雾", new[] { "爱做梦", "雾紫色的绒耳朵，常在梦里吹泡泡。" } },
+            { "小玫", new[] { "傲娇", "莓红色的兔耳朵，一挑眉就不服气。" } },
             { "小棕", new[] { "稳重", "两只小圆耳朵，笑起来憨憨的。" } },
-            { "小晶", new[] { "优雅", "像宝石一样闪闪发亮，酷酷的不爱说话。" } },
-            { "小荧", new[] { "好动", "五角星的身体，一刻也停不下来。" } },
-            { "小碧", new[] { "随和", "又宽又扁的软团子，抿嘴一笑最治愈。" } },
-            { "小翠", new[] { "勇敢", "两颗泡泡叠在一起，越危险越向前。" } },
-            { "小粉", new[] { "甜甜", "两颗泡泡小辫子，最爱黏着大家。" } },
-            { "小霞", new[] { "温和", "背上一对小翅膀，像软糖一样甜。" } },
-            { "小清", new[] { "害羞", "小小一团气，卷着尾巴躲在后面。" } },
+            { "小晶", new[] { "优雅", "紫罗兰色的小象，慢悠悠地卷起鼻子。" } },
+            { "小荧", new[] { "好动", "黄绿色的小青蛙，一刻也停不下来。" } },
+            { "小碧", new[] { "随和", "薄荷绿的毛绒脸，抿嘴一笑最治愈。" } },
+            { "小翠", new[] { "勇敢", "深绿绒毛暖乎乎，越危险越向前。" } },
+            { "小粉", new[] { "甜甜", "两只软软的兔耳朵，最爱黏着大家。" } },
+            { "小霞", new[] { "温和", "蜜桃色的软兔子，笑起来像棉花糖。" } },
+            { "小清", new[] { "害羞", "浅薄荷色的小青蛙，红着脸躲在后面。" } },
         };
         // Cloud album, 2026-10-22: the approved page concept with live collection data and original character art.
-        static readonly Color CodexInk = Hex(0x163E6D), CodexMuted = Hex(0x6482A6), CodexSilhouette = Hex(0x91A9CC);
+        static readonly Color CodexInk = Hex(0x54318C), CodexMuted = Hex(0x88739A), CodexSilhouette = Hex(0xB7A2CD);
         static void CodexRound(PixelSurface s, float x, float y, float w, float h, float radius, Color color)
             => s.GardenRoundedRect(x, y, w, h, radius, color, color);
         static void CodexLock(PixelSurface s, float cx, float cy, float size)
@@ -179,9 +180,9 @@ namespace Flightbeat.Game
             // Keep the small collection label single-pass so dense strokes stay distinct.
             GardenSkin.Text(s, "已收集 " + got + " / " + n, 270f, oy + 86f, 20f, true, CodexInk);
             CodexRound(s, 163f, oy + 110f, 214f, 19f, 9.5f, Hex(0xF5FCFF));
-            s.GardenRoundedRect(165f, oy + 112f, 210f, 15f, 7.5f, Hex(0xAFD2EA), Hex(0xC6E2F3));
+            s.GardenRoundedRect(165f, oy + 112f, 210f, 15f, 7.5f, Hex(0xD5C1E9), Hex(0xE7D9F2));
             float fill = 210f * got / Mathf.Max(1, n);
-            if (fill > 0f) s.GardenRoundedRect(165f, oy + 112f, fill, 15f, 7.5f, Hex(0x66DAFF), Hex(0x149EEB));
+            if (fill > 0f) s.GardenRoundedRect(165f, oy + 112f, fill, 15f, 7.5f, Hex(0xBDEB9B), Hex(0x6BC75F));
 
             var entry = list[codexSelected];
             bool have = CodexObtained(entry);
@@ -219,8 +220,8 @@ namespace Flightbeat.Game
             if (have)
             {
                 float tagX = nameLeft + nameWidth + 12f;
-                s.GardenRoundedRect(tagX, oy + 372f, tagWidth, 24f, 12f, Hex(0x429CD4), Hex(0x267DB6));
-                GardenBarArt.TextOutline(s, blurb[0], tagX + tagWidth * .5f, oy + 375f, 15f, Color.white, Hex(0x1C6497), .7f);
+                s.GardenRoundedRect(tagX, oy + 372f, tagWidth, 24f, 12f, Hex(0xB08ADE), Hex(0x8F65C2));
+                GardenBarArt.TextOutline(s, blurb[0], tagX + tagWidth * .5f, oy + 375f, 15f, Color.white, Hex(0x684097), .7f);
                 // At most two lines; wrap after a clause so the title and unlock note keep stable positions.
                 string story = blurb[1];
                 int split = story.LastIndexOf('，');
@@ -250,16 +251,16 @@ namespace Flightbeat.Game
                 float x = 24f + i % cols * (cw + gap), y = gy + i / cols * (ch + gap), mid = x + cw * .5f;
                 HitBox(s, CodexCardAction + i, x, y, cw, ch);
                 CodexRound(s, x, y + 2f, cw, ch, 11f, new Color(.27f, .55f, .76f, .13f));
-                CodexRound(s, x, y, cw, ch, 11f, selected ? Hex(0xFFBD34) : Hex(0xA9DFFD));
+                CodexRound(s, x, y, cw, ch, 11f, selected ? Hex(0xFFBD34) : Hex(0xCFB5EF));
                 s.GardenRoundedRect(x + 1.1f, y + 1.1f, cw - 2.2f, ch - 2.2f, 10f,
-                    selected ? Hex(0xFFFEF5) : Hex(0xFFFFFF), selected ? Hex(0xFFF5DA) : Hex(0xF0F8FF));
+                    selected ? Hex(0xFFFEF5) : Hex(0xFFFFFF), selected ? Hex(0xFFF5DA) : Hex(0xF3EAFB));
                 if (owned) Creature(s, c.tint, mid, y + 69f, 96f, 0, "", 0f, 12f, false, false, selected ? .018f : 0f, i * 1.3f);
                 else
                 {
                     CodexSilhouetteArt(s, c.tint, mid, y + 69f, 96f);
                     CodexLock(s, mid, y + 42f, 17f);
                 }
-                DialogText(s, owned ? c.name : "第" + c.level + "关", mid, y + 75f, 14f, owned ? CodexInk : Hex(0x52739B));
+                DialogText(s, owned ? c.name : "第" + c.level + "关", mid, y + 75f, 14f, owned ? CodexInk : Hex(0x8C739E));
                 if (selected)
                 {
                     float checkX = x + cw - 13f, checkY = y + 12f;

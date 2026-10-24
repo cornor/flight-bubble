@@ -15,6 +15,7 @@ namespace Flightbeat.Game
         PixelSurface gardenOverlay;
         readonly List<UiHit> gardenOverlayHits = new List<UiHit>();
         bool GardenUiActive => !InHome && Battle != null;
+        internal int GardenSelection => selection;
         void InitializeGardenUi()
         {
             var prefab = Resources.Load<GardenBattlePage>("GardenR1/UI/GardenBattlePage");
@@ -36,6 +37,7 @@ namespace Flightbeat.Game
         }
         internal void RefreshGardenUi(GardenBattlePage view)
         {
+            PlushLayout.Enabled = GardenUiActive;
             view.SetHomeMode(InHome);
             if (InHome)
             {
@@ -133,7 +135,7 @@ namespace Flightbeat.Game
         {
             id = -1;
             if (!(GardenUiActive || (InHome && settings)) || !gardenPage) return false;
-            float y = ScreenLayout.Y(logical.y);
+            float y = PlushLayout.Y(logical.y);
             for (int i = gardenOverlayHits.Count - 1; i >= 0; i--)
             {
                 UiHit h = gardenOverlayHits[i];

@@ -1,0 +1,76 @@
+{
+  "status": "complete",
+  "branch": "plush-toy",
+  "buildTime": "2026-10-23 17:28:25",
+  "buildOutput": "Builds/WebGL/GardenR1-bubble",
+  "plan": "plan.json",
+  "review": "review.html",
+  "scope": {
+    "P2": "22 colors × idle / attack / spent / ready / blink, neutral mystery bag",
+    "P3": "plush teddy finale, soft bubble feedback, no legacy pixel particle rendering, victory animation reuses plush identities",
+    "P4": "home, codex, pause/settings, tutorial portraits, revive, victory/loss, loading, audio routing review"
+  },
+  "assets": {
+    "colors": 22,
+    "states": 110,
+    "newBatchFiles": 84,
+    "atlas": [
+      4096,
+      3072
+    ],
+    "scale": 1.0,
+    "resampling": false,
+    "proof": "asset-audit.json"
+  },
+  "validation": {
+    "sourceAudit": "source-audit.json",
+    "firstFive": "evidence-first-five/result.json",
+    "full": "evidence-release/result.json",
+    "recovery": "evidence-recovery-release/result.json",
+    "layout": "Unity PlushPresentationChecks: 540×960 / 390×844 / 430×932 / 768×1024, inverse input mapping and imported texture size",
+    "audio": "audio-audit.json",
+    "firstFiveWins": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "fullChecks": [
+      "home settings / sound toggle",
+      "codex locked card / selection / close",
+      "home start into tutorial",
+      "eight bays / pause / resume",
+      "shuffle / rear-card priority / bomb",
+      "sector05 complete / merge / finale / victory",
+      "victory home / new member codex",
+      "hidden identity / front reveal",
+      "390x844 gameplay / pause / home / codex",
+      "default URL load / home"
+    ],
+    "recoveryChecks": [
+      "revive / extra slot / bomb reward",
+      "loss presentation",
+      "retry",
+      "decline revival",
+      "loss to home"
+    ],
+    "browserErrors": 0
+  },
+  "limits": [
+    "Phone layouts are simulated browser viewports; no physical-phone thermal or battery test.",
+    "Existing user-approved sound files retained. Audio review covers synthesis provenance, resource routing, decoded signal and playback gains, not a human listening signoff.",
+    "Real ad-network delivery is not exercised by the local WebGL ad callback.",
+    "P5 level-art replacement is outside this task; level gameplay/data are unchanged.",
+    "No deployment, commit or push performed."
+  ],
+  "performance": {
+    "fps": 60.003360748291016,
+    "p95ms": 18,
+    "denseFps": 60.00274658203125,
+    "denseP95ms": 18,
+    "frames": 4640,
+    "wallSeconds": 77.3290023803711,
+    "environment": "Isolated headless Chrome on this Mac, Metal backend; not physical phone performance"
+  }
+}

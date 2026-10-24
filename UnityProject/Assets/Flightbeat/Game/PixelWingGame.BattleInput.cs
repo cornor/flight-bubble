@@ -29,7 +29,7 @@ namespace Flightbeat.Game
             pointerOrigin = p;
             aimDown = true;
             aimDragged = false;
-            if (!(AimDistance(ScreenLayout.Point(p), ScreenLayout.Point(aim)) > 28f)) return;
+            if (!(AimDistance(PlushLayout.Point(p), PlushLayout.Point(aim)) > 28f)) return;
             lastTargetTap = -10f;
             aimDragged = true;
             aim.y = AimClamp(p.y, 152f, 540f);
@@ -38,7 +38,7 @@ namespace Flightbeat.Game
         public void PointerMove(Vector2 p)
         {
             if (selection != 2 || !aimDown) return;
-            if (AimDistance(ScreenLayout.Point(p), ScreenLayout.Point(pointerOrigin)) > 6f) aimDragged = true;
+            if (AimDistance(PlushLayout.Point(p), PlushLayout.Point(pointerOrigin)) > 6f) aimDragged = true;
             else if (!aimDragged) return;
             lastTargetTap = -10f;
             aim.x = AimClamp(p.x, 28f, 512f);
@@ -53,14 +53,14 @@ namespace Flightbeat.Game
         }
         private void TargetTap(Vector2 p)
         {
-            if (AimDistance(ScreenLayout.Point(p), ScreenLayout.Point(aim)) > 28f)
+            if (AimDistance(PlushLayout.Point(p), PlushLayout.Point(aim)) > 28f)
             {
                 lastTargetTap = -10f;
                 aim.x = AimClamp(p.x, 28f, 512f);
                 aim.y = AimClamp(p.y, 152f, 540f);
                 return;
             }
-            if (OriginalMath.Binary32(targetClock - lastTargetTap) <= .34f && AimDistance(ScreenLayout.Point(lastTapPoint), ScreenLayout.Point(p)) <= 28f)
+            if (OriginalMath.Binary32(targetClock - lastTargetTap) <= .34f && AimDistance(PlushLayout.Point(lastTapPoint), PlushLayout.Point(p)) <= 28f)
             { ConfirmSuperStrike(); lastTargetTap = -10f; return; }
             lastTapPoint = p;
             lastTargetTap = targetClock;
@@ -81,10 +81,15 @@ namespace Flightbeat.Game
             if (selection > 0)
             {
                 if (selection == 2) { if (p.y >= 114f && p.y <= 557f) TargetTap(p); return; }
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                if (selection == 1 && GardenQueueCell(p, out int lane, out int row))
+                {
+#else
                 if (selection == 1 && p.y >= 700f && p.y < 866f && p.x >= 44f && p.x < 496f)
                 {
                     int lane = LaneAt(p.x);
                     int row = Math.Max(0, Math.Min((int)(OriginalMath.Binary32((OriginalMath.Binary32(p.y - 700f)) / 50f)), 2));
+#endif
                     if (Battle.Reserve[lane].Count <= row) return;
                     TakeItem(1, () =>
                     {
@@ -143,6 +148,9 @@ namespace Flightbeat.Game
                     case 24: ToggleSettings(); break;
                     case 25: ConfirmStreakBreak("现在退出", ReturnToDeck, false); break;
                     case 26: tuning = true; MarkUi(60); break;
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                    case 27: SkipGardenLevelWithAd(); break;
+#endif
                 }
                 return;
             }

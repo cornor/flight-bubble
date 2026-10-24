@@ -6,7 +6,9 @@ namespace Flightbeat.Garden {
     public sealed class GardenParticleVisibility : MonoBehaviour {
         Renderer[] layers;
         void Awake() { layers = GetComponentsInChildren<Renderer>(true); }
-        void LateUpdate() { foreach (var layer in layers) layer.enabled = !GardenSkin.HideOriginalParticles; }
+        // The plush finale supplies its own soft bubbles and glints. Keep the
+        // original pixel star layer hidden without changing particle lifetimes.
+        void LateUpdate() { foreach (var layer in layers) layer.enabled = !GardenSkin.HideOriginalParticles && !Flightbeat.Game.PlushLayout.Enabled; }
     }
 }
 #endif

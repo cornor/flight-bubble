@@ -61,7 +61,7 @@ namespace Flightbeat.Garden
         public static void Beam(PixelSurface s, Vector2 from, Vector2 to, float width, Color tint, float age)
         {
             bool mapped = s.MapLayout;
-            if (mapped) { from = ScreenLayout.Point(from); to = ScreenLayout.Point(to); s.MapLayout = false; }
+            if (mapped) { from = PlushLayout.Point(from); to = PlushLayout.Point(to); s.MapLayout = false; }
             try {
                 var delta = to - from; float length = delta.magnitude;
                 if (length <= .001f) return;

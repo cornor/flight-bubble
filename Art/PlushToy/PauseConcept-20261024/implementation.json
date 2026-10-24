@@ -1,0 +1,87 @@
+{
+  "status": "implemented",
+  "buildTime": "2026-10-24 12:02:48",
+  "scope": "Pause and home settings visual style",
+  "palette": {
+    "panel": "cream with thin lavender rim",
+    "restart": "soft apple green",
+    "continue": "warm gold"
+  },
+  "unchangedIcons": [
+    "home",
+    "skip",
+    "video",
+    "close",
+    "icon-music",
+    "icon-sound",
+    "icon-light"
+  ],
+  "buttonOutlineWidth": 2.5,
+  "assets": [
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/pause-panel.png",
+      "size": [
+        360,
+        360
+      ],
+      "sha256": "4568ad9978f47070c6ecae983d0c61d7a732fbc7a98baf0817d3dcbe80111c55"
+    },
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/pause-row.png",
+      "size": [
+        320,
+        96
+      ],
+      "sha256": "b724dd6b58aa8f06aa189cb387693c93647c46ac8dd89f34945d805757551fdf"
+    },
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/dialog/pause-retry.png",
+      "size": [
+        416,
+        168
+      ],
+      "sha256": "35d10c5fbfc298643ef495e52de1514cec1a44630ef6c78dfd5512f965cbc282"
+    },
+    {
+      "path": "Art/PlushToy/P2-P4/delivery/win/button-next.png",
+      "size": [
+        416,
+        168
+      ],
+      "sha256": "a5954136dfa48819f3e79c67666cebafc92f7a4e86af8eb44494fbd0433ab50a"
+    }
+  ],
+  "qa": {
+    "passed": true,
+    "viewports": [
+      [
+        540,
+        960
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "actions": [
+      "pause",
+      "resume",
+      "home",
+      "settings",
+      "done"
+    ]
+  },
+  "sourceAudit": {
+    "passed": true,
+    "source": "d53a2cc5c24de9851ed5ff1462c6c94e1e64b131",
+    "checked": 783,
+    "changed": [],
+    "missingGlyphs": []
+  },
+  "visualChecks": [
+    "Standard and tall pause reviewed",
+    "Both main labels vertically centered",
+    "Historical capsule silhouette, highlight and thin base retained"
+  ],
+  "shapeFix": "historical-capsule/implementation.json"
+}

@@ -9,6 +9,13 @@ namespace Flightbeat.Game
 {
     public partial class PixelWingGame
     {
+        struct GardenBeadDraw { public int index; public Vector2 at; public float squash; }
+        readonly System.Collections.Generic.List<GardenBeadDraw> gardenBeadDraws = new System.Collections.Generic.List<GardenBeadDraw>(4096);
+        static readonly System.Comparison<GardenBeadDraw> GardenBeadOrder = (a, b) => {
+            int order = a.at.y.CompareTo(b.at.y);
+            if (order == 0) order = a.at.x.CompareTo(b.at.x);
+            return order != 0 ? order : a.index.CompareTo(b.index);
+        };
         Color GardenColor(int index) {
             var p = Battle.Level.palette; int i = index * 3;
             return new Color32((byte)p[i], (byte)p[i + 1], (byte)p[i + 2], 255);
@@ -31,7 +38,7 @@ namespace Flightbeat.Game
             // pads before the first deployment), right above the queue it points to; narrower so it clears the locked
             // pads' ad badges.
             // 2026-10-21 (quality pass): 8 px higher (600 -> 592) so it keeps a gap above the pad row.
-            float cy = (mapped ? ScreenLayout.Y(592f) : 592f) + Mathf.Sin(ui * 2.2f) * 2.5f;
+            float cy = (mapped ? PlushLayout.Y(592f) : 592f) + Mathf.Sin(ui * 2.2f) * 2.5f;
             s.MapLayout = false;
             try
             {
@@ -58,7 +65,7 @@ namespace Flightbeat.Game
         void DrawGardenStallHint(PixelSurface s)
         {
             bool mapped = s.MapLayout;
-            float cy = mapped ? ScreenLayout.Y(312f) : 312f;
+            float cy = mapped ? PlushLayout.Y(312f) : 312f;
             s.MapLayout = false;
             try
             {
@@ -83,7 +90,7 @@ namespace Flightbeat.Game
             string icon = null, GardenBars.Deco deco = GardenBars.Deco.None, float age = 1f)
         {
             bool mapped = s.MapLayout;
-            float cy = mapped ? ScreenLayout.Y(logicalCy) : logicalCy;
+            float cy = mapped ? PlushLayout.Y(logicalCy) : logicalCy;
             s.MapLayout = false;
             try
             {
@@ -127,7 +134,7 @@ namespace Flightbeat.Game
                 if (cy + 19f > top - 6f && cy - 19f < bottom + 6f) cy = bottom + 25f;
             }
             if (feedback != null && feedback.GardenComboVisible)
-                Avoid(GardenBars.ScreenY(s, 85f) - 25f, GardenBars.ScreenY(s, 85f) + 25f);
+                Avoid(GardenBars.ScreenY(s, 145f) - 25f, GardenBars.ScreenY(s, 145f) + 25f);
             if (selection == 2)
                 Avoid(GardenBars.ScreenY(s, 140f) - 22f, GardenBars.ScreenY(s, 140f) + 22f);
             if (lesson != null && Battle.State != Phase.Intro && Battle.State != Phase.Won && Battle.State != Phase.Lost
@@ -207,7 +214,7 @@ namespace Flightbeat.Game
                     GardenPanel(s, bx, by, bw, bh);
                 float size = 26f * k, cy = by + bh * .46f;
                 GardenBarArt.TextOutline(s, "确认使用", x + w * .5f, cy - size * .55f, size,
-                    Color.white, Hex(0x1B7A2A), 1.8f * k);
+                    Color.white, Hex(0xA55410), 1.8f * k);
             }
             finally { s.MapLayout = mapped; }
         }
@@ -247,7 +254,12 @@ namespace Flightbeat.Game
         static readonly Color GardenGrass = Hex(0x7FA85A), GardenFloor = Hex(0xC9C29A);
         void DrawGarden(PixelSurface s) {
             s.MapLayout = true;
-            // UI spec v3 2 (user decision 2026-10-15): no mosaic panel; beads sit on the background sky as in the mockup.
+            // Keep the molded rim outside the actual bead area. Map the field first:
+            // the HUD/field breakpoint otherwise compresses the top rim to < 1 px.
+            s.MapLayout = false;
+            float boardTop = PlushLayout.Y(114f) - 10f, boardBottom = PlushLayout.Y(562f) + 10f;
+            Asset9(s, "scene/plush-board", 2f, boardTop, 536f, boardBottom - boardTop, 27f, 27f, 18f, 18f, Color.white);
+            s.MapLayout = true;
             // The same original EnemyPoint and shownY interpolation keep sand/target alignment.
             int visibleBugs = 0;
             float offset = GardenFormationOffset();
@@ -261,6 +273,7 @@ namespace Flightbeat.Game
             feedback.GardenBeadSize = beadH;   // 2026-10-21: the hit pops start from the bead's own size
             float strikeShake = feedback.GardenStrikeShake;
             UpdateGardenSand(offset);   // 2026-10-21: beads fall and roll into place (PixelWingGame.GardenSand.cs)
+            gardenBeadDraws.Clear();
             for (int i = 0; i < Battle.Alive.Length; i++) {
                 if (!Battle.Alive[i] || !Battle.OnBoard(i)) continue;
                 GardenSandAt(i, out float gx, out float gy);
@@ -272,38 +285,55 @@ namespace Flightbeat.Game
                 if (at.y < 114 || at.y > 572 || at.x < 12 || at.x > 528) continue;
                 at.y += strikeShake;   // 2026-10-21: the board jolts when a bubble bomb goes off
                 visibleBugs++;
-                Color tint = GardenColor(Battle.ColorAt(i));
-                // 2026-10-16: beads inside the bomb circle light up (the original whitened them too, f54801).
-                if (selection == 2 && InBombCircle(at)) tint = Color.Lerp(tint, Color.white, .3f + .2f * Mathf.Sin(ui * 7f));
                 float squash = GardenSandSquash(i);
                 if (squash > 0f) at.y += beadH * squash * .5f;
+                gardenBeadDraws.Add(new GardenBeadDraw { index = i, at = at, squash = squash });
+            }
+            // Flow and streamed replacements reorder the board independently of cell IDs.
+            // Paint each body/highlight pair top-to-bottom so overlap never reverses at a stream boundary.
+            gardenBeadDraws.Sort(GardenBeadOrder);
+            for (int i = 0; i < gardenBeadDraws.Count; i++) {
+                GardenBeadDraw bead = gardenBeadDraws[i];
+                Vector2 at = bead.at;
+                Color tint = GardenColor(Battle.ColorAt(bead.index));
+                // 2026-10-16: beads inside the bomb circle light up (the original whitened them too, f54801).
+                if (selection == 2 && InBombCircle(at)) tint = Color.Lerp(tint, Color.white, .3f + .2f * Mathf.Sin(ui * 7f));
                 // 2026-10-21 20:45 (user): the teaching levels drew the original's shape-marked beads (dot / triangle /
                 // square / cross per colour, 21 px, point-filtered), unlike every later level. Same bead everywhere now.
-                Bug(s, tint, at, beadH * (1f - squash), false, beadW * (1f + squash));
+                Bug(s, tint, at, beadH * (1f - bead.squash), false, beadW * (1f + bead.squash));
             }
             GardenWebMetrics.Visible(visibleBugs);
-            // UI spec v3 3: foam-cloud ceiling over the mosaic's top edge; new rows appear from under it.
-            // 2026-10-21 (docs/r1/战斗页-突出泡泡板-改动清单.md 3.1): squashing the strip to 28 high made its row of
-            // small puffs read as a rope (user 17:47); back to the art's own 540x40 at y 76. The calmer look comes from
-            // redrawn art (Art/R1/ui-calm-design-20261021/顶部云带-出图需求.md): thin over the board, fuller at the ends.
-            Asset(s, "scene/ceiling", 0, 76, 540, 40, Color.white);
-            // Foam rail centered on the logical defense line y=562; it flushes red when hit.
-            DrawBubbleRail(s);   // 2026-10-18: the rail's bubble beads flow; red, faster and pulsing while the beads close in
+            // The tray provides the quiet lower edge; danger still marks the defense line.
+            DrawBubbleRail(s);
             if (feedback.Hurt > 0) s.Border(10, 92, 520, 466, A(Hex(0xE25555), feedback.Hurt), 3);
             float baySpacing = Battle.MaximumSlots >= 2 ? 456f / (Battle.MaximumSlots - 1) : 120f;
             // UI spec v3 3 (2026-10-15): muted blue-gray tray behind pads and queues, as in the mockup's lower half.
             // A painted stage (art-v3 scene/stage.png) wins; otherwise the program-drawn nine-sliced tray.
-            if (!AssetBandsFrom(s, "scene/stage", 574f)) Asset9(s, "scene/tray", 6, 576, 528, 384, 28f, 20f, Color.white);
+            // Continuous lavender studio background underneath the fabric toys.
             // UI spec v3 3: flat bubble-ring pads centered on y=647 (no pad numbers); locked pads carry a padlock bubble.
             float plotW = Mathf.Min(70f, baySpacing - 5f), plotH = plotW * .5f;
             // 2026-10-21 17:24 (改动清单 3.2, user): every open pad looks the same, empty or not; no golden swirl.
             for (int bay = 0; bay < Battle.MaximumSlots; bay++) {
                 float cx = Battle.FleetPositionX(bay);
                 if (Battle.BayOpen(bay)) {
-                    if (!Asset(s, "scene/plot", cx - plotW / 2, 647 - plotH / 2, plotW, plotH, Color.white))
-                        s.Rect(cx - plotW / 2, 647 - plotH / 2, plotW, plotH, Paper);
-                } else if (!Asset(s, "scene/plot-locked", cx - plotW / 2, 647 + plotH / 2 - plotW, plotW, plotW, Color.white))
-                    s.Rect(cx - plotW / 2, 647 - plotH / 2, plotW, plotH, Wood);
+                    bool mapped = s.MapLayout; s.MapLayout = false;
+                    float padY = PlushLayout.Y(647f) - GardenPadLift(), padH = plotW * .4f;
+                    if (!Asset(s, "scene/plot", cx - plotW / 2, padY - padH / 2, plotW, padH, Color.white))
+                        s.Rect(cx - plotW / 2, padY - padH / 2, plotW, padH, Paper);
+                    s.MapLayout = mapped;
+                } else {
+                    // Keep the current purple base; only the transparent lock comes from the Git artwork.
+                    bool mapped = s.MapLayout; s.MapLayout = false;
+                    float padY = PlushLayout.Y(647f) - GardenPadLift(), padH = plotW * .4f;
+                    Asset(s, "scene/plot", cx - plotW / 2, padY - padH / 2, plotW, padH, Color.white);
+                    float lockSize = plotW * .6f;
+                    Asset(s, "scene/plot-lock-bubble", cx - lockSize / 2, padY - plotW * .8f, lockSize, lockSize, Color.white);
+                    // A small translucent corner badge sits with the lock's soft glass treatment.
+                    float adX = cx + 13f, adY = padY - plotW * .76f + 2f;
+                    if (!PauseVideoBadge(s, adX, adY, 18f, .78f))
+                        TextOutline(s, "▶", adX, adY - 7f, 14f, A(Color.white, .78f), A(Hex(0x826CB2), .78f), 1f);
+                    s.MapLayout = mapped;
+                }
             }
             PadUnlockFx(s, plotW);   // 2026-10-21 14:18: the unlocked pad celebrates (replaces the 「已解锁出战位」 bar)
             // UI spec v3 4.3 (2026-10-15) gave empty open pads a turning golden swirl; removed 2026-10-21 17:24 (user:
@@ -315,8 +345,19 @@ namespace Flightbeat.Game
             for (int lane = 0; lane < Battle.LaneCount; lane++) {
                 float w = Mathf.Min(108f, 500f / Battle.LaneCount - 8f), qx = Battle.QueuePositionX(lane);
                 var reserve = Battle.Reserve[lane];
-                if (!Asset9(s, "scene/queue-panel", qx - w / 2, 688, w, 180, 24f, 16f, new Color(1f, 1f, 1f, .55f)))
-                    QueueGroove(s, qx, 694f, 866f, w * .86f);
+                // Three individual cards, with empty reserve cells kept visually quiet.
+                bool mapped = s.MapLayout; s.MapLayout = false;
+                float top = PlushLayout.Y(688f), bottom = PlushLayout.Y(868f), rowH = (bottom - top) / 3f;
+                for (int row = 0; row < 3; row++) {
+                    float cardY = top + row * rowH;
+                    bool selectable = row < reserve.Count && (row == 0 || selection == 1);
+                    if (selectable) {
+                        s.GardenRoundedRect(qx - w / 2 - 1f, cardY - 1f, w + 2f, rowH - 4f, 12f, Hex(0xF4D58A), Hex(0xD8B660));
+                        s.GardenRoundedRect(qx - w / 2 + 1f, cardY + 1f, w - 2f, rowH - 8f, 10f, Hex(0xC5A6E4), Hex(0xD8C1F0));
+                    } else Asset9(s, "scene/queue-panel", qx - w / 2, cardY, w, rowH - 6f, 18f, 18f, 10f, 10f,
+                        new Color(1f, 1f, 1f, row < reserve.Count ? .65f : .28f));
+                }
+                s.MapLayout = mapped;
                 if (GardenHintLane(out int hint) && hint == lane && reserve.Count > 0) {
                     // Tutorial hint (option A): warm pulsing glow behind the suggested front creature.
                     float pulse = .7f + .3f * Mathf.Sin(ui * 4f);
@@ -332,7 +373,7 @@ namespace Flightbeat.Game
         static void QueueGroove(PixelSurface s, float cx, float top, float bottom, float w)
         {
             bool mapped = s.MapLayout;
-            if (mapped) { top = ScreenLayout.Y(top); bottom = ScreenLayout.Y(bottom); }
+            if (mapped) { top = PlushLayout.Y(top); bottom = PlushLayout.Y(bottom); }
             s.MapLayout = false;
             try
             {
@@ -378,14 +419,6 @@ namespace Flightbeat.Game
             if (Battle.Level.lesson <= 0 && !settings && selection == 0) {
                 DrawRailWarning(s);   // 2026-10-18 22:21: warning tape instead of the button-like red capsule (BubbleRail)
             }
-            for (int bay = 0; bay < Battle.MaximumSlots; bay++) {
-                if (Battle.BayOpen(bay)) continue;
-                // Shared white play mark from the approved revive mockup, also used by all ad buttons.
-                // 10-22 15:36 (user): the video mark overlaps the padlock bubble a little (was beside it, x +21 / y 603).
-                float x = Battle.FleetPositionX(bay) + 15, y = 608;
-                if (!GardenBars.Icon(s, "ad", x, y, 22f))
-                    TextOutline(s, "▶", x, y - 9f, 18f, Color.white, Hex(0x176C26), 1.5f);
-            }
             // UI spec v3 3/4.2: creatures stand on the pads (feet y=640 when settled), number badge under the feet.
             float baySpacing = Battle.MaximumSlots >= 2 ? 456f / (Battle.MaximumSlots - 1) : 120f;
             float bayCanvas = GardenBayCanvas(), bayNumber = baySpacing >= 74f ? 15f : 14f;
@@ -399,20 +432,21 @@ namespace Flightbeat.Game
                 float since = Battle.Time - ship.LastFired;
                 float fire = ship.Ammo > 0 ? (since < .1f ? 1f : Mathf.Clamp01(1f - (since - .1f) / .2f)) : 0f;
                 float pulse = since >= 0f && since < .06f ? 1f - since / .06f : 0f;
-                Creature(s, GardenColor(ship.Color), at.x, at.y + 12, bayCanvas, ship.Tier, ship.Ammo.ToString(),
+                Creature(s, GardenColor(ship.Color), at.x, GardenPadFeet(ship.Id, at.y + 12f), bayCanvas, ship.Tier, ship.Ammo.ToString(),
                     0f, bayNumber, true, true, .035f, ship.Id * 1.7f, PadScale(ship), squash, 0f,
                     fire, pulse, ship.Ammo > 0 ? 1f - fire : 0f, false, 0f, PadInhale(ship, ship.Ammo > 0 && fire < .5f));
                 padMouth[ship.Id] = LastMouth;
                 float wait = PadWaitAlpha(ship);
                 // 2026-10-21 (user): no ball icon; 10:21 a quiet regular-weight note instead of bold (it only informs).
-                if (wait > .01f) GardenBars.QuietChip(s, "等待", at.x, 674f, 58f, 25f, 16f, wait);   // 10-22 11:16: 15 -> 16, darker ink
+                if (wait > .01f) GardenBars.QuietChip(s, "等待", at.x, GardenRaisedPadY(674f), 58f, 25f, 16f, wait);
             }
             float queueScale = Mathf.Min(108f, 500f / Battle.LaneCount - 8f) / 108f;
             // 2026-10-22 10:00 (user: queue members look small on phones): the queue members are drawn as big as a
             // tier-0 member on a pad (they were ~0.9 of it), so a member keeps its size when it is sent out; never wider
             // than the glass tube allows.
             // 10:30: at most 82 (the rows are 58 apart: a bigger member's number pill would cover the head below).
-            float queueCanvas = Mathf.Min(GardenBayCanvas() * PadTierScale(0), Mathf.Min(82f, Mathf.Min(108f, 500f / Battle.LaneCount - 8f)));
+            float rowHeight = (PlushLayout.Y(868f) - PlushLayout.Y(688f)) / 3f;
+            float queueCanvas = Mathf.Min(94f, Mathf.Min(rowHeight * 1.06f, (500f / Battle.LaneCount - 12f) / ArtAspect));
             GardenHintLane(out int hintLane);
             for (int lane = 0; lane < Battle.LaneCount; lane++) {
                 var reserve = Battle.Reserve[lane];
@@ -432,10 +466,11 @@ namespace Flightbeat.Game
                     bool back = row > 0;
                     float wake = QueueWake(ship.Id, back), hop = wake < .3f ? Mathf.Sin(wake / .3f * Mathf.PI) : 0f;
                     float feetY = QueueDisplayY(at.y - 6f * hop) + 12;
-                    if (row == 0 || selection == 1) QueueFootLight(s, at.x, feetY, queueScale, queueCanvas, lane + row * .7f);
-                    Creature(s, row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color), at.x, feetY, queueCanvas, ship.Tier,
+                    Color queueTint = row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color);
+                    // Queue portraits share a 100% canvas scale; cancel the old per-character size compensation.
+                    Creature(s, queueTint, at.x, feetY, queueCanvas, ship.Tier,
                         row != 0 && ship.Kind == 2 ? "" : ship.Ammo.ToString(), 0f, 14f * queueScale, false, true, row == 0 ? .03f : .02f, lane * 2.3f + row * 1.1f,
-                        0f, -.05f * hop, 9f * queueScale, -1f, 0f, 0f, false, 0f);   // 2026-10-16 22:30: number pill tucked against the feet
+                        1f / ArtScale(queueTint), -.05f * hop, 14f * queueScale, -1f, 0f, 0f, false, 0f);   // 2026-10-16 22:30: number pill tucked against the feet
                     // 2026-10-21 12:26 (user): hidden members show no number pill (was a "?" pill); the bubble art carries the "?".
                     // 2026-10-21: a hidden member reaching the front bursts out of its bubble.
                     float reveal = QueueReveal(ship, row);
@@ -505,7 +540,7 @@ namespace Flightbeat.Game
         void DrawGardenOverlay(PixelSurface s) {
             s.MapLayout = true;
             DrawWinScreen(s);   // all levels, teaching ones included (the small lesson card is no longer used)
-            DrawLoseScreen(s);  // 2026-10-17: fail page content over the prefab panel (BubbleLose)
+            DrawLoseScreen(s);  // Failure ribbon and plush illustration above the prefab shade/buttons.
             if (Battle.State == Phase.ReviveOffer) DrawGardenRevive(s);
             else if (!settings && finaleGuide) DrawBubbleFinaleGuide(s);
             if (streakPrompt) DrawGardenStreakPrompt(s);   // 2026-10-21 20:51: card dialog (PixelWingGame.GardenDialogs.cs)
@@ -528,7 +563,19 @@ namespace Flightbeat.Game
         static string GardenWords(string text) => text.Replace("战机位", "出战位").Replace("战机", "队员").Replace("机位", "出战位").Replace("敌阵", "泡泡阵").Replace("敌人", "泡泡").Replace("出击", "出战").Replace("火力", "攻击").Replace("超级炸弹", "泡泡炸弹");
         // UI spec v3 3: queue rows display at 721 / 779 / 837 instead of the logical 725 / 775 / 825.
         // Linear in y, so arrival and shift animations keep their proportions; hit areas stay on the logical rows.
-        static float QueueDisplayY(float y) => 721f + (y - 725f) * 1.16f;
+        bool GardenQueueCell(Vector2 p, out int lane, out int row)
+        {
+            lane = LaneAt(p.x); row = -1;
+            float top = PlushLayout.Y(688f), bottom = PlushLayout.Y(868f), y = PlushLayout.Y(p.y);
+            if (p.x < 20f || p.x >= 520f || y < top || y >= bottom) return false;
+            row = Mathf.Clamp(Mathf.FloorToInt((y - top) * 3f / (bottom - top)), 0, 2);
+            return true;
+        }
+        static float QueueDisplayY(float y)
+        {
+            float top = PlushLayout.Y(688f), rowHeight = (PlushLayout.Y(868f) - top) / 3f;
+            return PlushLayout.InverseY(top + ((y - 725f) / 50f + 1f) * rowHeight - 12f) - 12f;
+        }
         // 2026-10-17: light titles: large white lettering with a navy outline, a small bubble pair either side and a
         // short fading gold underline; `halo` adds a soft dark glow for titles over busy art.
         void GardenTitle(PixelSurface s, string title, float cx, float y, float size, bool halo) {
@@ -548,10 +595,11 @@ namespace Flightbeat.Game
         void DrawGardenTutorial(PixelSurface s) {
             int topic = narration == null ? 0 : (int)narration.Topic;
             string face = lesson.Complete || topic == 2 ? "ui/guide-happy" : topic == 3 || topic == 6 ? "ui/guide-worried" : "ui/guide-explain";
-            DrawGardenDialogue(s, face, Narration(topic), 180f);   // 2026-10-21: 6 px higher, a gap above the board
+            // Keep both teaching rows below the header and above the small training formation.
+            DrawGardenDialogue(s, face, Narration(topic), 194f, compact: true);
             if (!lesson.Complete) {
                 // 2026-10-20 (UI redesign 27); 14:24 (user): no target icon on every step's goal, just the words.
-                HintCapsule(s, Goal(lesson.Step), 104f, 300f, 40f, 18f, GardenBars.Sky, GardenBars.Navy, 1f, 1f, null, GardenBars.Deco.One, BarAge(3));
+                HintCapsule(s, Goal(lesson.Step), 140f, 320f, 26f, 16f, GardenBars.Sky, GardenBars.Navy, 1f, 1f, null, GardenBars.Deco.One, BarAge(3));
                 // 2026-10-21 (user): the practice-step 「提示」 button is gone. It only skipped the wait: the same glow and
                 // arrow on the suggested member still come by themselves (FlightLesson.HintLevel, from 6 s in practice).
                 if (lesson.SuggestedLane >= 0 && lesson.HintLevel > 0) {
@@ -566,7 +614,7 @@ namespace Flightbeat.Game
             // 2026-10-20 (UI redesign 29): a small gold tag with the shield.
             float tagW = GardenBars.Width("课堂保护中", 14f, 28f, "shield");
             bool tagMapped = s.MapLayout;
-            float tagY = tagMapped ? ScreenLayout.Y(538f) : 538f;
+            float tagY = tagMapped ? PlushLayout.Y(538f) : 538f;
             s.MapLayout = false;
             GardenBars.Bar(s, Mathf.Min(466f, 528f - tagW * .5f), tagY, tagW, 28f, GardenBars.Gold, "shield", "课堂保护中", 14f, GardenBars.Brown);
             s.MapLayout = tagMapped;

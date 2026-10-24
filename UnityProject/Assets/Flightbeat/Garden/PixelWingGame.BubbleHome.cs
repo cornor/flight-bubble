@@ -46,7 +46,7 @@ namespace Flightbeat.Game
         static readonly bool[] HomeFloating = { true, true, false, false, false };
         const float HomeSquadScale = .93f;                  // clears the 150 px side bands (user decision 17:58)
         const float HomePivotX = 270f, HomePivotY = 600f;   // scale about the front cloud line
-        bool HomeArtReady => Has("plants/home/squad-blue");
+        bool HomeArtReady => Has("plants/plush-home/blue/idle") || Has("plants/home/squad-blue");
 
         // One mapping for the background texture and the layers drawn over it. The source is 540x1170 logical
         // (core picture at y 105-1065). It covers the screen at scale k >= 1; the core stays vertically centred
@@ -61,29 +61,22 @@ namespace Flightbeat.Game
             return new Rect(left / 540f, 1f - (top + vh) / 1170f, vw / 540f, vh / 1170f);   // texture uvRect
         }
 
-        // 2026-10-17: the start button reads only 「第  N  关」 (two spaces either side since 11:10), large.
+        // Two-line home CTA uses the dialog gold capsule in a slimmer home-only footprint.
         int homeLabelLevel = -1;
         string homeLabel = "";
-        void HomeStartButton(PixelSurface s, float y)
+        void HomeStartButton(PixelSurface s, float y, float scale = 1f, float centre = 270f)
         {
             int level = NextBubbleLevel() + 1;
-            if (level != homeLabelLevel) { homeLabelLevel = level; homeLabel = "第  " + level + "  关"; }
-            // 2026-10-21 18:11 (user): the victory page's green jelly button (3-sliced) with rounded white type, breathing
-            // gently to invite a tap; the blue primary button until the art is there.
-            // 21:14 (user): blue (plants/win/button-next-blue, the green art turned to blue by the atlas script), with a
-            // deep blue edge on the words; the green one if the blue slot is missing.
-            bool blue = Has("plants/win/button-next-blue");
-            if (blue || Has("plants/win/button-next"))
-            {
-                HitBox(s, 800, 100, y, 340, 76);
-                float k = 1f + .025f * Mathf.Sin(ui * 2.6f), w = 340f * k, h = 80f * k, x0 = 270f - w * .5f, y0 = y + 38f - h * .45f;
-                Asset9(s, blue ? "plants/win/button-next-blue" : "plants/win/button-next", x0, y0, w, h, 64f, 0f, h * 64f / 126f, 0f, Color.white);
-                // 10-22 11:27: base thinned (face centre .42 -> .46 of the art), words 32 -> 36.
-                GardenBarArt.TextOutline(s, homeLabel, 270f, y0 + h * .46f - 36f * k * .55f, 36f * k, Color.white, Hex(blue ? 0x0A46C8 : 0x1B7A2A), 3f * k);   // 12:14: edge in the 重排 blue
-                return;
-            }
-            GardenButton(s, 800, 100, y, 340, 76, "");
-            TextOutline(s, homeLabel, 270f, y + (76f - 32f) * .5f - 2f, 32f, Cream, Outline, 2.4f);
+            if (level != homeLabelLevel) { homeLabelLevel = level; homeLabel = "第 " + level + " 关"; }
+            float width = 240f * scale, height = 88f * scale;
+            HitBox(s, 800, centre - width * .5f, y, width, height);
+            float k = scale * (1f - PressPulse(800) * .04f);
+            float w = 240f * k, h = 88f * k, x0 = centre - w * .5f, y0 = y + (height - h) * .5f;
+            if (!Asset9(s, "plants/win/button-next", x0, y0, w, h, 64f, 0f, h * 64f / 126f, 0f, Color.white))
+                GardenButton(s, 800, x0, y0, w, h, "");
+            Asset(s, "plants/home/level-plate", centre - 55f * k, y0 + 50f * k, 110f * k, 24f * k, Color.white);
+            GardenBarArt.TextOutline(s, "开始游戏", centre, y0 + 10f * k, 30f * k, Color.white, Hex(0xA55410), 2.5f * k);
+            GardenBarArt.TextOutline(s, homeLabel, centre, y0 + 51f * k, 19f * k, Color.white, Hex(0xA55410), 1.5f * k);
         }
 
         // ---- squad liveliness (2026-10-17)
@@ -197,6 +190,7 @@ namespace Flightbeat.Game
         {
             // The album is a page of its own; home layers must not show through its pale cloud background.
             if (codexOpen) { DrawBubbleCodex(s); return; }
+            if (Has("plants/plush-home/blue/idle")) { DrawPlushHome(s); return; }
             if (!HomeArtReady)
             {
                 // Logo (H10) arrived before the squad layers: it replaces the program title on the old page.
@@ -257,6 +251,50 @@ namespace Flightbeat.Game
             DrawHomeNextMember(s, 846f);
             DrawHomeCornerButtons(s);
             DrawBubbleCodex(s);
+            DrawLevelPick(s);
+        }
+
+        // The same plush identities as battle, registered from the high-resolution
+        // masters. Screen-space composition keeps the toys round on tall phones.
+        void DrawPlushHome(PixelSurface s)
+        {
+            s.MapLayout = false;
+            HomeArtView(out float k, out float ox, out float oy);
+            float centre = ox + 270f * k;
+            GardenBarArt.TextOutline(s, "泡泡小队", centre, oy + 130f * k, 62f * k, Hex(0xFFF8E8), Hex(0x7751BD), 5f * k);
+            GardenBarArt.TextOutline(s, "毛绒伙伴 · 一起出发", centre, oy + 210f * k, 22f * k, Hex(0x5B398C), Hex(0xF6EFFF), 1f * k);
+            // Two rear partners and a wider three-member front arc, clear of the lower codex entry.
+            float[] xs = { 176f, 364f, 112f, 428f, 270f };
+            float[] feet = { 443f, 455f, 637f, 637f, 677f };
+            float[] heights = { 224f, 216f, 228f, 228f, 270f };
+            GardenSkin.Clock = ui;
+            int turn = Mathf.FloorToInt(ui / HomeHopEvery);
+            for (int i = 0; i < HomeSquad.Length; i++)
+            {
+                float phase = HomePhase[i], age = ui - homePokeAt[i];
+                if (!(age >= 0f && age < 2.5f) && HomeHopOrder[((turn % 5) + 5) % 5] == i) age = ui - turn * HomeHopEvery;
+                bool blow = age >= 0f && age < 2.5f;
+                string pose = blow && age < .6f ? "attack" : (ui + phase) % 4.1f < .13f ? "blink" : "idle";
+                float breathe = 1f + .012f * Mathf.Sin(ui * 2.2f + phase);
+                float h = heights[i] * k * breathe, w = heights[i] * ArtAspect * k / breathe;
+                float cx = ox + xs[i] * k, fy = oy + feet[i] * k;
+                s.Glow(cx, fy + 3f * k, w * .75f, 22f * k, new Color(.37f,.23f,.57f,.19f),0f);
+                Asset(s, "plants/plush-home/" + HomeSquad[i] + "/" + pose, cx - w * .5f, fy - h * FeetLine, w, h, Color.white);
+                HitBox(s, HomeMemberAction + i, cx - w * .44f, fy - h * .77f, w * .88f, h * .8f);
+                if (blow)
+                {
+                    Vector2 m = MouthCanvas(Hex(HomeSquadColor[i]));
+                    Vector2 mouth = new Vector2(cx + w * (m.x / 224f - .5f), fy - h * (FeetLine - m.y / 256f));
+                    float grown = Mathf.Clamp01(age / .6f), drift = Mathf.Max(0f, age - .6f);
+                    float size = (24f + i * 2f) * k * grown;
+                    Vector2 at = mouth + new Vector2(Mathf.Sin(drift * 2f + i) * drift * 9f * k, -size * .55f - drift * 65f * k);
+                    SoapBubble(s, at, size, Color.white, Mathf.Clamp01((2.5f - age) / .3f) * .8f, i);
+                }
+            }
+            HomeStartButton(s, oy + 730f * k, k, centre);
+            s.MapLayout = true;
+            DrawHomeNextMember(s, 846f);
+            DrawHomeCornerButtons(s);
             DrawLevelPick(s);
         }
     }

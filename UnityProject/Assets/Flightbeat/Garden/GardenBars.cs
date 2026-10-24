@@ -12,18 +12,18 @@ namespace Flightbeat.Garden
     public static class GardenBars
     {
         // Edge colours by kind, and the inks.
-        public static readonly Color Sky = GardenSkin.Hex(0x4CB8F0), Coral = GardenSkin.Hex(0xF08A6C), Ice = GardenSkin.Hex(0x4FD8EE),
+        public static readonly Color Sky = GardenSkin.Hex(0xB58DEB), Coral = GardenSkin.Hex(0xF08A6C), Ice = GardenSkin.Hex(0x4FD8EE),
             Amber = GardenSkin.Hex(0xF5B731), Mint = GardenSkin.Hex(0x4FD6A0), Gold = GardenSkin.Hex(0xF7C23A), Purple = GardenSkin.Hex(0xA660F0);
-        public static readonly Color Navy = GardenSkin.Hex(0x163E6D), Brown = GardenSkin.Hex(0x7A4A00), DeepPurple = GardenSkin.Hex(0x4A1F86),
+        public static readonly Color Navy = GardenSkin.Hex(0x422580), Brown = GardenSkin.Hex(0x7A4A00), DeepPurple = GardenSkin.Hex(0x4A1F86),
             DeepCoral = GardenSkin.Hex(0xB0302A);
         public enum Deco { None, One, Many }
-        public static readonly Color Quiet = GardenSkin.Hex(0x91ABCA);
+        public static readonly Color Quiet = GardenSkin.Hex(0xB29ACF);
 
         static Color Al(Color c, float a) { c.a *= a; return c; }
 
         // Screen y of a logical y under the surface's current mapping (the capsule is drawn in 1 px rows, so callers
         // switch MapLayout off and map the centre themselves, as the battle hints do).
-        public static float ScreenY(PixelSurface s, float logicalY) => s.MapLayout ? Flightbeat.Game.ScreenLayout.Y(logicalY) : logicalY;
+        public static float ScreenY(PixelSurface s, float logicalY) => s.MapLayout ? Flightbeat.Game.PlushLayout.Y(logicalY) : logicalY;
 
         public static void Chip(PixelSurface s, string text, float cx, float cy, float w, float h,
             Color edge, Color ink, string icon = null, float size = 14f, float alpha = 1f)   // 2026-10-21: default 13 -> 14

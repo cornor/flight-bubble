@@ -17,6 +17,23 @@ namespace Flightbeat.Game
             return Mathf.Min(118f, baySpacing * 1.45f);
         }
 
+        // The locked 160x160 sprite contains the same 160x64 pad at y=96.
+        // Match its rendered base, not its full-image center, on every viewport.
+        float GardenPadLift()
+        {
+            if (!PlushLayout.Enabled) return 0f;
+            float spacing = Battle.MaximumSlots >= 2 ? 456f / (Battle.MaximumSlots - 1) : 120f;
+            float width = Mathf.Min(70f, spacing - 5f);
+            return PlushLayout.Y(647f) - (PlushLayout.Y(647f - width * .25f) + width * .3f);
+        }
+        float GardenRaisedPadY(float y, float progress = 1f) =>
+            PlushLayout.InverseY(PlushLayout.Y(y) - GardenPadLift() * progress);
+        float GardenPadFeet(int fighterId, float feet)
+        {
+            float progress = feedback.GardenLaunch(fighterId, out float age, out _) ? Mathf.Clamp01(age / LaunchTime) : 1f;
+            return GardenRaisedPadY(feet, progress);
+        }
+
         // 2026-10-16 (user item 5): a smaller start and wider steps so each upgrade reads; tier 3 keeps the old size.
         // 16:51 (user: a merge did not visibly grow the member): steps widened again (+21 %, +16 %, +12 %; MAX stays
         // about the old 1.18 so neighbours on 7 pads do not overlap).
@@ -66,14 +83,14 @@ namespace Flightbeat.Game
             float t = age - LaunchTime;
             if (t >= LandTime + .2f) return 0f;
             float feet = 640f;
-            if (t < .3f) s.Glow(padX, 647f, 90f, 40f, new Color(1f, .95f, .75f, (1f - t / .3f) * .55f), 0f);
-            GardenFx.Burst(s, "impact-dust", new Vector2(padX, feet - 6f), 78f, t, .45f);
+            if (t < .3f) s.Glow(padX, GardenRaisedPadY(647f), 90f, 40f, new Color(1f, .95f, .75f, (1f - t / .3f) * .55f), 0f);
+            GardenFx.Burst(s, "impact-dust", new Vector2(padX, GardenRaisedPadY(feet - 6f)), 78f, t, .45f);
             for (int k = 0; k < 6; k++)
             {
                 float u = t / .4f;
                 if (u >= 1f) break;
                 float side = k % 2 == 0 ? -1f : 1f, speed = 55f + k * 9f;
-                Vector2 p = new Vector2(padX + side * speed * t, feet - 6f - 70f * t + 240f * t * t);
+                Vector2 p = new Vector2(padX + side * speed * t, GardenRaisedPadY(feet - 6f - 70f * t + 240f * t * t));
                 GardenSkin.Shot(s, tint, p, 6f * (1f - u * .5f), 1f - u);
             }
             if (t >= LandTime) return 0f;
@@ -93,7 +110,8 @@ namespace Flightbeat.Game
                 Color tint = GardenColor(fleet[i].Color);
                 float ah = GardenBayCanvas() * PadScale(fleet[i]) * ArtScale(tint);
                 Vector2 m = MouthCanvas(tint);
-                return new Vector2(at.x + ah * ArtAspect * (m.x / 224f - .5f), at.y + 12f - ah * (FeetLine - m.y / 256f));
+                float mouthY = PlushLayout.Y(GardenPadFeet(fighterId, at.y + 12f)) - ah * (FeetLine - m.y / 256f);
+                return new Vector2(at.x + ah * ArtAspect * (m.x / 224f - .5f), PlushLayout.InverseY(mouthY));
             }
             return new Vector2(float.NaN, float.NaN);
         }
@@ -128,6 +146,7 @@ namespace Flightbeat.Game
         float BombRadius => (aimMissile ? 150f : 120f) * (Battle.Loadout.bombRadius + 1f);
         bool InBombCircle(Vector2 mapPoint)
         {
+            // Collision still uses the original screen-space radius. Project its outline only for display.
             Vector2 a = ScreenLayout.Point(aim), p = ScreenLayout.Point(mapPoint);
             return (p - a).sqrMagnitude <= BombRadius * BombRadius;
         }
@@ -135,16 +154,19 @@ namespace Flightbeat.Game
         {
             bool mapped = s.MapLayout;
             s.MapLayout = false;
-            Vector2 c = ScreenLayout.Point(aim);
+            Vector2 c = PlushLayout.Point(aim);
             float pulse = Mathf.Sin(ui * 5f) * .5f + .5f, r = BombRadius * (1f + .015f * pulse);
-            s.Glow(c.x, c.y, r * 2.2f, r * 2.2f, new Color(1f, .45f, .3f, .28f + .1f * pulse), 0f);
+            Vector2 Rim(float angle, float radius) => PlushLayout.Point(aim + new Vector2(Mathf.Cos(angle) * radius,
+                Mathf.Sin(angle) * radius / ScreenLayout.Stretch));
+            float glowH = Mathf.Abs(Rim(Mathf.PI * .5f, r).y - Rim(-Mathf.PI * .5f, r).y) * 1.1f;
+            s.Glow(c.x, c.y, r * 2.2f, glowH, new Color(1f, .45f, .3f, .28f + .1f * pulse), 0f);
             for (int pass = 0; pass < 2; pass++)
             {
-                Vector2 prev = c + new Vector2(r, 0f);
+                Vector2 prev = Rim(0f, r);
                 for (int i = 1; i <= 64; i++)
                 {
                     float a = i / 64f * Mathf.PI * 2f;
-                    Vector2 next = c + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r;
+                    Vector2 next = Rim(a, r);
                     s.Segment(prev, next, pass == 0 ? 7f : 3.5f, pass == 0 ? new Color(.1f, .2f, .4f, .85f) : Color.white);
                     prev = next;
                 }
@@ -152,11 +174,11 @@ namespace Flightbeat.Game
             for (int i = 0; i < 12; i++)
             {
                 float start = ui * .9f + i * Mathf.PI / 6f;
-                Vector2 prev = c + new Vector2(Mathf.Cos(start), Mathf.Sin(start)) * (r + 7f);
+                Vector2 prev = Rim(start, r + 7f);
                 for (int j = 1; j <= 3; j++)
                 {
                     float a = start + j * .1f;
-                    Vector2 next = c + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * (r + 7f);
+                    Vector2 next = Rim(a, r + 7f);
                     s.Segment(prev, next, 3f, new Color(1f, .82f, .3f, .9f));
                     prev = next;
                 }
@@ -300,8 +322,8 @@ namespace Flightbeat.Game
                 if (t < .6f)
                 {
                     float q = t / .6f, e = 1f - (1f - q) * (1f - q);
-                    s.Glow(cx, 647f, plotW * (1f + 1.8f * e), plotW * (.5f + .9f * e), new Color(mint.r, mint.g, mint.b, .65f * (1f - q)), 0f);
-                    s.Glow(cx, 647f, plotW * 1.2f, plotW * .6f, new Color(1f, 1f, 1f, .5f * (1f - q)), 0f);
+                    s.Glow(cx, GardenRaisedPadY(647f), plotW * (1f + 1.8f * e), plotW * (.5f + .9f * e), new Color(mint.r, mint.g, mint.b, .65f * (1f - q)), 0f);
+                    s.Glow(cx, GardenRaisedPadY(647f), plotW * 1.2f, plotW * .6f, new Color(1f, 1f, 1f, .5f * (1f - q)), 0f);
                 }
                 for (int k = 0; k < 6; k++)
                 {
@@ -317,7 +339,7 @@ namespace Flightbeat.Game
                 if (t > .4f)
                 {
                     float pulse = Mathf.Abs(Mathf.Sin((t - .4f) / 1f * Mathf.PI * 3f)) * (1f - (t - .4f) / 1f);
-                    s.Glow(cx, 645f, plotW * 1.4f, plotW * .75f, new Color(mint.r, mint.g, mint.b, .5f * pulse), 0f);
+                    s.Glow(cx, GardenRaisedPadY(645f), plotW * 1.4f, plotW * .75f, new Color(mint.r, mint.g, mint.b, .5f * pulse), 0f);
                 }
             }
         }

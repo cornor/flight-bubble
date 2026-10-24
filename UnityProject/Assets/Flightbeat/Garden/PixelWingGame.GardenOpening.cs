@@ -18,6 +18,7 @@ namespace Flightbeat.Game
     public partial class PixelWingGame
     {
         const float ChipHold = 1.5f, ChipFly = .5f, ChipStagger = .12f, ChipBurst = .45f;
+        const float OpeningReadyY = 412f, DebutRowOffset = 80f;
         Flightbeat.Model.Battle debutBattle;
         float debutStart = -1f;
         int[] debutLanes = new int[0];
@@ -38,7 +39,7 @@ namespace Flightbeat.Game
                 // glass bar with a gold star that settles from a little larger.
                 float h = size * 2f;
                 bool mapped = s.MapLayout;
-                float cy = GardenBars.ScreenY(s, 412f);
+                float cy = GardenBars.ScreenY(s, OpeningReadyY);
                 s.MapLayout = false;
                 GardenBars.Bar(s, 270f, cy, GardenBars.Width("准备出战", size, h, "star"), h, GardenBars.Sky, "star", "准备出战", size,
                     GardenBars.Navy, alpha, 1f, GardenBars.Deco.One, e);
@@ -87,7 +88,7 @@ namespace Flightbeat.Game
         void DebutCapsule(PixelSurface s, float cx, float logicalCy, float w, float h, float alpha, int k)
         {
             bool mapped = s.MapLayout;
-            float cy = mapped ? ScreenLayout.Y(logicalCy) : logicalCy;
+            float cy = mapped ? PlushLayout.Y(logicalCy) : logicalCy;
             s.MapLayout = false;
             try
             {
@@ -115,14 +116,20 @@ namespace Flightbeat.Game
             if (n == 0 || age > ChipHold + ChipFly + ChipStagger * n + ChipBurst) return;
             if (debutLanes.Length != n) debutLanes = new int[n];
             if (age < ChipHold) for (int k = 0; k < n; k++) debutLanes[k] = DebutLane(debut[k]);   // fixed once flying
-            const float tagW = 80f, chipW = 96f, h = 36f, gap = 8f, y = 446f;
+            const float tagW = 80f, h = 36f;
+            float chipW = n >= 4 ? 92f : 96f, gap = n >= 4 ? 12f : 16f;
+            // Capsules and portraits keep their pixel size when the board is compressed.
+            // Reserve the title's entrance overshoot plus avatar/glint clearance in that same space.
+            float rowY = s.MapLayout
+                ? PlushLayout.InverseY(PlushLayout.Y(OpeningReadyY) + DebutRowOffset)
+                : OpeningReadyY + DebutRowOffset;
             float rowX = 270f - (tagW + n * (chipW + gap)) * .5f;
             float tagAlpha = Clamp01(age * 5f) * (1f - Clamp01((age - ChipHold) / .3f));
             if (tagAlpha > 0f)
             {
                 // 2026-10-20 (UI redesign 11): the tag is a gold-edged glass capsule with brown ink, like the chips.
                 bool tagMapped = s.MapLayout;
-                float tagCy = GardenBars.ScreenY(s, y + h * .5f);
+                float tagCy = GardenBars.ScreenY(s, rowY);
                 s.MapLayout = false;
                 GardenBars.Capsule(s, rowX + tagW * .5f, tagCy, tagW, h - 6f, GardenBars.Gold, tagAlpha);
                 GardenBarArt.Text(s, "初次登场", rowX + tagW * .5f, tagCy - 8.5f, 15f, true, A(GardenBars.Brown, tagAlpha));
@@ -131,7 +138,7 @@ namespace Flightbeat.Game
             for (int k = 0; k < n; k++)
             {
                 Color tint = new Color32((byte)(debut[k] >> 16), (byte)(debut[k] >> 8), (byte)debut[k], 255);
-                Vector2 home = new Vector2(rowX + tagW + gap + k * (chipW + gap) + chipW * .5f, y + h * .5f);
+                Vector2 home = new Vector2(rowX + tagW + gap + k * (chipW + gap) + chipW * .5f, rowY);
                 // 2026-10-17: the member dives to the BOTTOM of its glass tube and vanishes with a whoosh (stretched,
                 // shrinking, with a short streak); only a faint glow in its color is left, no burst.
                 Vector2 mouth = new Vector2(Battle.QueuePositionX(debutLanes[k]), 852f);

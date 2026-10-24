@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+"""Reproducible vector-style UI for the approved plush battle theme; no baked labels.
+
+Characters are ImageGen artwork. These scalable capsules/cards use code geometry so
+their borders stay clean at all device sizes and texts remain runtime/localizable.
+"""
+from pathlib import Path
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter
+from build_plush_controls import queue_card, platform, locked_platform, round_control, button_mold
+
+ROOT = Path(__file__).resolve().parents[2]
+OUT = ROOT / 'Art/PlushToy/P1/delivery'
+
+def save(im, name):
+    p = OUT / name
+    p.parent.mkdir(parents=True, exist_ok=True)
+    im.save(p)
+
+def capsule(w, h, top, bottom, radius=None, margin=5, edge=(160, 123, 225), ellipse=False):
+    r = radius or (h - margin * 2) / 2
+    box = (margin, margin, w - margin - 1, h - margin - 6)
+    def shape(draw, bounds, radius, **kw):
+        if ellipse: draw.ellipse(bounds, **kw)
+        else: draw.rounded_rectangle(bounds, radius, **kw)
+    mask = Image.new('L', (w, h)); shape(ImageDraw.Draw(mask), box, r, fill=255)
+    yy = np.linspace(0, 1, h)[:, None, None]
+    rgb = np.broadcast_to(np.array(top)[None,None,:]*(1-yy)+np.array(bottom)[None,None,:]*yy,(h,w,3)).astype('uint8')
+    face = Image.fromarray(rgb, 'RGB').convert('RGBA'); face.putalpha(mask)
+    shadow = Image.new('RGBA', (w,h), (95,54,155,0))
+    sh = Image.new('L',(w,h)); shape(ImageDraw.Draw(sh),(margin,margin+5,w-margin-1,h-margin-1),r,fill=75)
+    shadow.putalpha(sh.filter(ImageFilter.GaussianBlur(3)))
+    shadow.alpha_composite(face)
+    d = ImageDraw.Draw(shadow)
+    shape(d,box,r,outline=(*edge,255),width=2)
+    shape(d,(margin+3,margin+3,w-margin-4,h-margin-10),max(2,r-3),outline=(255,255,255,180),width=2)
+    return shadow
+
+def board_tray():
+    """Soft molded lavender rim, with a recessed face and no white wire outline."""
+    w = h = 256
+    def mask(box, radius):
+        im = Image.new('L', (w, h))
+        ImageDraw.Draw(im).rounded_rectangle(box, radius, fill=255)
+        return im
+    def gradient(top, bottom, alpha):
+        yy = np.linspace(0, 1, h)[:, None, None]
+        rgb = np.broadcast_to(np.array(top)[None,None,:]*(1-yy)+np.array(bottom)[None,None,:]*yy,(h,w,3)).astype('uint8')
+        im = Image.fromarray(rgb, 'RGB').convert('RGBA'); im.putalpha(alpha)
+        return im
+    outer = mask((6, 5, 249, 248), 29)
+    shadow = Image.new('RGBA', (w,h), (115,78,176,0))
+    shadow.putalpha(mask((6, 9, 249, 252),29).filter(ImageFilter.GaussianBlur(2)).point(lambda a: round(a*.25)))
+    shadow.alpha_composite(gradient((220,202,249),(166,134,219),outer))
+    # Broad rounded bevel: a muted inner shadow blends into the purple inset.
+    shadow.alpha_composite(gradient((157,124,211),(206,182,242),mask((13,12,242,240),23)))
+    shadow.alpha_composite(gradient((181,151,226),(187,159,230),mask((17,16,238,236),19)))
+    return shadow
+
+def prop_button(name, colors):
+    m = button_mold(330, 132, *colors)
+    mask = Image.new('L', m.im.size); d = ImageDraw.Draw(mask); k = m.SCALE
+    def line(points, width):
+        d.line([(x*k,y*k) for x,y in points],fill=255,width=width*k,joint='curve')
+        for x,y in points:
+            r=width/2;d.ellipse(((x-r)*k,(y-r)*k,(x+r)*k,(y+r)*k),fill=255)
+    if 'shuffle' in name:
+        for pts in [[(48,40),(64,40),(91,83),(103,83)],[(48,83),(64,83),(91,40),(103,40)]]:
+            line(pts,9);px,py=pts[-1]
+            d.polygon([(px*k,(py-12)*k),((px+14)*k,py*k),(px*k,(py+12)*k)],fill=255)
+        m.symbol(mask,(131,92,198),(78,44,154))
+    elif 'designate' in name:
+        for px in [51,76]:line([(px,41),(px+14,62),(px,83)],10)
+        m.symbol(mask,(227,116,29),(177,65,12))
+    return m.finish()
+
+def count_badge():
+    # Flat, circular cream badge; no specular rim or thick coin-like edge.
+    scale = 4
+    im = Image.new('RGBA', (64 * scale, 64 * scale))
+    d = ImageDraw.Draw(im)
+    d.ellipse((2*scale, 2*scale, 62*scale, 62*scale), fill=(255,248,235,255), outline=(165,131,197,255), width=2*scale)
+    return im.resize((64,64), Image.Resampling.LANCZOS)
+
+def main():
+    cream=((255,252,245),(236,218,210)); purple=((211,191,255),(153,112,237)); gold=((255,248,146),(255,184,41))
+    # A quiet lavender studio backdrop, continuous behind the board and fabric toys.
+    y,x=np.mgrid[0:1920,0:1080]; t=y/1920
+    glow=np.exp(-(((x-510)/720)**2+((y-1000)/1150)**2))
+    bg=np.zeros((1920,1080,3))
+    for i,(a,b) in enumerate(zip((192,170,232),(207,188,242))): bg[:,:,i]=a*(1-t)+b*t+glow*10
+    save(Image.fromarray(np.clip(bg,0,255).astype('uint8'),'RGB'),'scene/background.png')
+    save(board_tray(),'ui/board-frame.png')
+    save(queue_card(),'ui/queue-panel.png')
+    for name,w,h,colors in [('level',512,96,cream),('progress-frame',720,96,cream),('progress-fill',512,48,((150,248,106),(74,200,66))),('progress-track',512,48,((220,202,205),(236,220,218)))]:
+        save(capsule(w,h,*colors,edge=(190,159,184) if name=='progress-track' else (194,166,224)),f'ui/{name}.png')
+    for name,colors in [('button-shuffle-blank',cream),('button-designate-blank',gold),('button-bomb-base',purple)]:
+        save(prop_button(name,colors),f'ui/{name}.png')
+    save(round_control('pause',112),'ui/pause.png')
+    save(count_badge(),'ui/badge-count.png')
+    save(capsule(128,48,(142,114,255),(79,69,239),edge=(201,181,255)),'ui/badge-ammo.png')
+    save(platform(),'ui/pad.png')
+    save(locked_platform(),'ui/pad-locked.png')
+    print(f'Plush UI: {OUT}')
+
+if __name__ == '__main__': main()

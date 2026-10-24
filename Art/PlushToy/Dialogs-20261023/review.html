@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>毛绒玩具 UI · 设置与复活</title>
+<style>
+:root{font-family:system-ui,-apple-system,"PingFang SC",sans-serif;color:#342953;background:#f5f1ff}*{box-sizing:border-box}body{margin:0}main{max-width:1240px;margin:auto;padding:36px 24px 64px}h1{font-size:30px;margin:0 0 12px}h2{font-size:23px;margin:36px 0 10px}p{line-height:1.8;margin:10px 0;color:#645779}a{color:#6541b8;text-underline-offset:3px}.links{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}.links a{padding:11px 18px;border:1px solid #d5c5f0;border-radius:14px;background:white;text-decoration:none}.links a:first-child{background:#6943b9;color:white;border-color:#6943b9}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:18px}figure{margin:0;background:white;border:1px solid #e3d9f1;border-radius:18px;padding:12px;align-self:start}figure img{display:block;width:100%;height:auto;border-radius:10px}figcaption{font-size:14px;line-height:1.65;padding:12px 4px 2px;color:#655978}figcaption b{display:block;color:#342953}.note{padding:18px 20px;background:#eae2fa;border-radius:16px;margin:22px 0}.small{font-size:13px}footer{margin-top:35px;border-top:1px solid #dfd4ed;padding-top:14px}@media(max-width:760px){main{padding:24px 14px}.grid{grid-template-columns:1fr 1fr;gap:12px}.grid figure:first-child{grid-column:1/-1;max-width:380px;justify-self:center}h1{font-size:25px}}@media(max-width:450px){.grid{grid-template-columns:1fr}.grid figure{max-width:380px;justify-self:center}}
+</style>
+<main>
+<h1>设置与复活 · 参考图落地</h1>
+<p>浅奶油面板、青色窄边框、圆角设置行与彩色操作按钮。标题保持简洁文字，按钮保留轻薄底边和贴近底部的投影。</p>
+<div class="links"><a href="http://127.0.0.1:8792/?set=A&amp;level=3&amp;v=20261023195220" target="_blank" rel="noopener">试玩第 3 关</a><a href="acceptance.json">验收记录</a><a href="evidence-final/result.json">最终构建检查</a></div>
+<h2>设置与暂停</h2>
+<p>设置项纵向排列，主页与重新开始放在面板下方，继续游戏单独居中。主页设置页使用“完成”收起弹框。</p>
+<div class="grid">
+<figure><img src="references/settings.jpg" alt="用户提供的暂停页参考图"><figcaption><b>参考图</b>参照面板、按钮和布局，标题保持当前简洁样式。</figcaption></figure>
+<figure><img src="evidence-final/standard-pause.png" alt="540乘960游戏暂停页实机浏览器截图"><figcaption><b>游戏内暂停 · 540 × 960</b>音乐、音效和光效开关；主页、重新开始和继续游戏。</figcaption></figure>
+<figure><img src="evidence-final/tall-settings.png" alt="390乘844主页设置页浏览器截图"><figcaption><b>主页设置 · 390 × 844</b>设置图标已放大，关闭按钮与完成按钮均可操作。</figcaption></figure>
+</div>
+<h2>复活</h2>
+<p>中心爱心改为细短绒玩具，搭配奶白色软翅膀与金色光环。奖励文案对应现有游戏：增加 1 个出战位、获得 1 枚泡泡炸弹，并清除前排泡泡、将泡泡推回。</p>
+<div class="grid">
+<figure><img src="references/revive.jpg" alt="用户提供的复活页参考图"><figcaption><b>参考图</b>参照中心插画、收益说明、绿色主按钮与粉色关闭按钮的位置。</figcaption></figure>
+<figure><img src="evidence-final/revive.png" alt="540乘960复活页浏览器截图"><figcaption><b>复活 · 540 × 960</b>简洁标题、毛绒爱心与轻薄按钮。</figcaption></figure>
+<figure><img src="evidence-final/revive-tall.png" alt="390乘844复活页浏览器截图"><figcaption><b>复活 · 390 × 844</b>长屏布局及复活后出战位、炸弹奖励已验证。</figcaption></figure>
+</div>
+<h2>关卡下方按钮</h2>
+<div class="grid">
+<figure><img src="evidence-final/standard-battle.png" alt="最新游戏界面及下方轻薄按钮"><figcaption><b>最新游戏界面</b>重排、优先出战和泡泡炸弹同步保留收薄后的底边与投影。</figcaption></figure>
+<figure><img src="../ButtonRefine-20261023/comparison.png" alt="按钮收薄前后对比"><figcaption><b>按钮厚度调整</b>减少实心底边、阴影范围与高光层的厚重感。</figcaption></figure>
+<figure><img src="../P2-P4/delivery/dialog/revive-heart.png" alt="透明背景毛绒复活爱心素材"><figcaption><b>毛绒爱心素材</b>使用内置 ImageGen 生成。<a href="../P2-P4/delivery/dialog/revive-heart.png">素材</a> · <a href="imagegen.json">完整提示词与生成记录</a></figcaption></figure>
+</div>
+<div class="note">已通过 540 × 960、390 × 844 浏览器视口检查；设置开关、关闭、继续、重新开始、返回主页及复活流程均通过。最终构建补齐复活标题并放大图标后，已重新检查两种比例与复活奖励。未进行实体手机测试。</div>
+<footer><p class="small">本地构建：2026-10-23 19:52:20（Asia/Shanghai） · 分支 plush-toy · <a href="asset-audit.json">12 项弹框素材校验</a> · <a href="evidence-controls/result.json">完整按钮检查</a> · <a href="evidence-recovery/result.json">复活与失败流程检查</a></p></footer>
+</main>
+</html>

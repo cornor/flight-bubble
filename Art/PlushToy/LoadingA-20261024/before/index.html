@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>泡泡小队</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0b2238;color:#fff;font:13px system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
+    main{height:100%;display:flex;align-items:center;justify-content:center}
+    #stage{height:100%;max-height:100dvh;aspect-ratio:9/16;position:relative;max-width:100vw;--u:1px}
+    canvas{display:block;width:100%;height:100%;background:#000;outline:none}
+    #broadcast-status{display:none}
+    /* loading page (2026-10-17 15:45): Xiao Lan blows bubbles from the mouth like on the home page; a progress bar
+       in the game's own HUD art shows the download. */
+    #loading{position:absolute;inset:0;z-index:3;overflow:hidden;background:#fff;transition:opacity .45s ease}
+    #loading.out{opacity:0;pointer-events:none}
+    /* 21:42 (user): the three members 6 % higher (hero 30 -> 24 %, orange 44 -> 38 %, purple 43 -> 37 %).
+       21:39 (user): plain white page, no background picture (and so no veil); dark text, light tip pill. */
+    .lg-hero{position:absolute;transform:translateX(-50%)}
+    #lg-hero{left:50%;top:24%;width:56%;aspect-ratio:448/512;z-index:3}
+    #lg-orange{left:18%;top:38%;width:34%;aspect-ratio:448/512;z-index:2}
+    #lg-purple{left:79%;top:37%;width:37%;aspect-ratio:448/512;z-index:2}
+    .lg-hero>img.body{position:absolute;inset:0;width:100%;height:100%;transform-origin:50% 92%;animation:lg-breathe 2.6s ease-in-out infinite}
+    .lg-hero>img.body.blow{animation:lg-puff .55s ease-in-out}
+    .lg-bub{position:absolute;pointer-events:none;will-change:transform,opacity}
+    .lg-bub img{display:block;width:100%;height:100%;animation:lg-wob 1.6s ease-in-out infinite}
+    #lg-bar-wrap{position:absolute;left:50%;top:77%;width:78%;transform:translateX(-50%)}
+    #lg-text{text-align:center;font-weight:800;font-size:calc(var(--u)*26);letter-spacing:.05em;margin-bottom:calc(var(--u)*10);color:#54318C}
+    /* 2026-10-21 20:51 (user): the battle HUD's progress bar: glass capsule frame, pale frosted groove, cyan-blue
+       glass fill with a rounded head (3-sliced via border-image) and a soft pulsing spark on the head.
+       21:19 (user: frame + groove looked heavy): one layer, the frosted groove 552x34 with the fill inset 3 px. */
+    #lg-bar{position:relative;width:100%;aspect-ratio:552/34;background:url(TemplateData/loading-bar-track.png) center/100% 100% no-repeat;filter:drop-shadow(0 calc(var(--u)*2) calc(var(--u)*3) rgba(16,50,96,.25))}
+    #lg-fill{position:absolute;left:.54%;top:8.82%;width:0;height:82.35%;visibility:hidden;border-style:solid;border-color:transparent;border-width:0 var(--cap,16px);border-image:url(TemplateData/loading-bar-fill.png) 0 62 fill/0 var(--cap,16px) stretch}
+    #lg-spark{position:absolute;top:50%;width:5.4%;aspect-ratio:30/32;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,255,255,.45) 45%,rgba(255,255,255,0));opacity:0;pointer-events:none}
+    #lg-bar.done{animation:lg-flash .4s ease-out}
+    #lg-tip{position:absolute;left:8%;right:8%;bottom:5%;padding:calc(var(--u)*10) calc(var(--u)*18);border-radius:calc(var(--u)*24);background:#F3EAFB;text-align:center;font-size:calc(var(--u)*19);line-height:1.45;color:#796582;transition:opacity .35s}
+    #lg-tip.fade{opacity:0}
+    .lg-mini{position:absolute;bottom:-12%;opacity:.85;animation:lg-rise linear infinite}
+    @keyframes lg-breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.012,.988)}}
+    @keyframes lg-puff{0%{transform:scale(1,1)}35%{transform:scale(1.05,.95)}100%{transform:scale(1,1)}}
+    @keyframes lg-wob{0%,100%{transform:scale(1,1)}25%{transform:scale(1.05,.95)}50%{transform:scale(.97,1.03)}75%{transform:scale(1.03,.97)}}
+    @keyframes lg-flash{0%{filter:brightness(1.6)}100%{filter:brightness(1)}}
+    @keyframes lg-rise{from{transform:translateY(0)}to{transform:translateY(-130vh)}}
+  </style>
+</head>
+<body>
+  <main><div id="stage"><canvas id="unity-canvas" tabindex="-1" aria-label="泡泡小队游戏画面"></canvas><div id="loading" role="status" aria-label="加载中"><div class="lg-hero" id="lg-orange"><img class="body" src="TemplateData/loading-orange.webp" alt=""></div><div class="lg-hero" id="lg-purple"><img class="body" src="TemplateData/loading-purple.webp" alt=""></div><div class="lg-hero" id="lg-hero"><img class="body" src="TemplateData/loading-hero.webp" alt=""></div><div id="lg-bar-wrap"><div id="lg-text">加载中… 0%</div><div id="lg-bar"><div id="lg-fill"></div><div id="lg-spark"></div></div></div><div id="lg-tip"></div></div></div></main>
+  <span id="broadcast-status" hidden aria-hidden="true"></span>
+  <script src="TemplateData/loading-anchor.js"></script>
+  <script>
+    const canvas=document.getElementById('unity-canvas');
+    const stage=document.getElementById('stage'),loading=document.getElementById('loading');
+    const bar=document.getElementById('lg-bar'),fill=document.getElementById('lg-fill');
+    const tipBub=document.getElementById('lg-spark'),text=document.getElementById('lg-text'),tip=document.getElementById('lg-tip');
+    let target=0,shown=0,done=false,finished=false,failed=false;
+    function unit(){stage.style.setProperty('--u',stage.clientWidth/540+'px');fill.style.setProperty('--cap',bar.clientWidth*28/552*1.1+'px');}
+    unit();addEventListener('resize',unit);
+    // Each member blows a bubble from its mouth now and then (blue more often): it swells at the lips (cheeks
+    // puff), drifts out to the side clear of the face, rises and fades.
+    const A=window.LOADING_ANCHOR||{x:.536,y:.493,dir:.3};
+    const crew=[{el:document.getElementById('lg-hero'),x:A.x,y:A.y,every:1500,first:0,side:1},
+      {el:document.getElementById('lg-orange'),x:A.orange?.x??.557,y:A.orange?.y??.527,every:2600,first:700,side:-1},
+      {el:document.getElementById('lg-purple'),x:A.purple?.x??.536,y:A.purple?.y??.49,every:2600,first:1900,side:1}];
+    function blow(m){
+      if(failed||finished)return;
+      const body=m.el.querySelector('img.body');body.classList.remove('blow');void body.offsetWidth;body.classList.add('blow');
+      const el=document.createElement('div');el.className='lg-bub';const im=document.createElement('img');im.src='TemplateData/loading-bubble.webp';el.appendChild(im);m.el.appendChild(el);
+      const side=m.side;m.side=m.el.id==='lg-hero'?-m.side:m.side;
+      const size=.17+Math.random()*.1,dx=.9*side,dy=-.44,drift=(A.dir+Math.random()*.25)*side;
+      const t0=performance.now();
+      (function step(now){
+        const t=(now-t0)/1000;let s,x=m.x,y=m.y,o=1;
+        if(t<.55){const g=t/.55;s=size*(1-(1-g)*(1-g));x+=dx*s*.6;y+=dy*s*.6;}
+        else{const u=t-.55;s=size*(1+u*.06);
+          x+=dx*size*.6+Math.sign(dx)*.42*(1-Math.exp(-1.8*u))+drift*u*.05+Math.sin(u*3)*.015;y+=dy*size*.6-u*.12-u*u*.07;if(u>2)o=Math.max(0,1-(u-2)/.35);}
+        el.style.width=el.style.height=s*100+'%';el.style.left=(x-s/2)*100+'%';el.style.top=(y-s/2)*100+'%';el.style.opacity=o;
+        if(o>0&&t<4)requestAnimationFrame(step);else el.remove();
+      })(t0);
+    }
+    const blowTimers=crew.map(m=>{setTimeout(()=>blow(m),m.first);return setInterval(()=>blow(m),m.every);});
+    function frame(){
+      if(failed)return;
+      shown+=(target-shown)*.12;if(target-shown<.003)shown=target;
+      const p=Math.min(shown,1);
+      fill.style.width=(p*98.91)+'%';fill.style.visibility=p>.003?'visible':'hidden';tipBub.style.left=(.54+p*98.91)+'%';tipBub.style.opacity=p>.005&&p<.995?.55+.3*Math.sin(performance.now()/200):0;
+      if(!finished)text.textContent='加载中… '+Math.round(p*100)+'%';
+      if(done&&shown>=.997&&!finished){
+        finished=true;blowTimers.forEach(clearInterval);text.textContent='加载完成，出发！';bar.classList.add('done');
+        setTimeout(()=>{loading.classList.add('out');canvas.focus();setTimeout(()=>loading.remove(),500);},450);
+        return;
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    for(let i=0;i<6;i++){const m=document.createElement('img');m.src='TemplateData/loading-bubble.webp';m.className='lg-mini';m.alt='';
+      m.style.width=(4+((i*37)%7))+'%';m.style.left=(6+i*15+((i*13)%9))+'%';m.style.animationDuration=(9+((i*7)%6))+'s';m.style.animationDelay=(-i*1.7)+'s';
+      loading.insertBefore(m,loading.firstChild);}
+    const tips=['三个同色同级的伙伴会自动合成升级','出战位满了？用泡泡炸弹清开最下排','每关都可能有「初次登场」的新伙伴','在主页点一点伙伴，它会吹个泡泡给你看','收集到的伙伴都会记在泡泡图鉴里'];
+    let ti=Math.floor(Math.random()*tips.length);tip.textContent=tips[ti];
+    const tipTimer=setInterval(()=>{tip.classList.add('fade');setTimeout(()=>{ti=(ti+1)%tips.length;tip.textContent=tips[ti];tip.classList.remove('fade');},350);},3200);
+    function fail(){failed=true;clearInterval(tipTimer);blowTimers.forEach(clearInterval);text.textContent='加载失败，请刷新重试';}
+    // 2026-10-22 11:12 (user: text looked soft on phones): render up to 2x device pixels (was 1.5x from the original;
+    // a 3x phone drew at half resolution and the browser scaled it up).
+    const config={dataUrl:'Build/{{{ DATA_FILENAME }}}',frameworkUrl:'Build/{{{ FRAMEWORK_FILENAME }}}',codeUrl:'Build/{{{ CODE_FILENAME }}}',streamingAssetsUrl:'StreamingAssets',companyName:"BubbleSquad",productName:"FlightBubble",productVersion:"0.11.0",devicePixelRatio:Math.min(window.devicePixelRatio||1,2)};
+    const loader=document.createElement('script');loader.src='Build/{{{ LOADER_FILENAME }}}';
+    loader.onload=()=>createUnityInstance(canvas,config,p=>{target=Math.max(target,Math.min(p,1)*.96);}).then(instance=>{
+      clearInterval(tipTimer);target=1;done=true;
+    }).catch(error=>{console.error(error);fail();});
+    loader.onerror=fail;document.body.appendChild(loader);
+  </script>
+</body>
+</html>

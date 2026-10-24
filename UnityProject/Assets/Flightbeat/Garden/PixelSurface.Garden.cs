@@ -31,7 +31,7 @@ namespace Flightbeat.Rendering
         // while the quad stays flat. Rigid like other sprites: keeps its height and follows the mapped center.
         public void GardenQuadUv(float x, float y, float w, float h, Vector2 bl, Vector2 br, Vector2 tr, Vector2 tl, Color tint, int atlas = 0) {
             PrepareGardenMaterial();
-            if (MapLayout) y = ScreenLayout.Y(y + h * .5f) - h * .5f;
+            if (MapLayout) y = PlushLayout.Y(y + h * .5f) - h * .5f;
             float bottom = ScreenLayout.Height - y - h, top = ScreenLayout.Height - y;
             var v = UIVertex.simpleVert;
             v.color = VertexColor(tint); v.uv1 = new Vector4(atlas == 1 ? 22f : 20f, 0, 0, 0);

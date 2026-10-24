@@ -52,8 +52,8 @@
             }
         },
         {
-            "name": "bars-pause",
-            "slot": "bars/pause",
+            "name": "scene-pause",
+            "slot": "scene/pause",
             "crop": {
                 "serializedVersion": "2",
                 "x": 0.0,
@@ -69,8 +69,8 @@
             }
         },
         {
-            "name": "bars-capsule-sliced",
-            "slot": "bars/capsule",
+            "name": "scene-level-sliced",
+            "slot": "scene/level",
             "crop": {
                 "serializedVersion": "2",
                 "x": 0.0,
@@ -79,10 +79,61 @@
                 "height": 1.0
             },
             "border": {
-                "x": 158.40000915527345,
+                "x": 32.0,
+                "y": 32.0,
+                "z": 32.0,
+                "w": 32.0
+            }
+        },
+        {
+            "name": "scene-progress-frame-sliced",
+            "slot": "scene/progress-frame",
+            "crop": {
+                "serializedVersion": "2",
+                "x": 0.0,
                 "y": 0.0,
-                "z": 158.40000915527345,
-                "w": 0.0
+                "width": 1.0,
+                "height": 1.0
+            },
+            "border": {
+                "x": 32.0,
+                "y": 32.0,
+                "z": 32.0,
+                "w": 32.0
+            }
+        },
+        {
+            "name": "scene-progress-track-sliced",
+            "slot": "scene/progress-track",
+            "crop": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+            },
+            "border": {
+                "x": 16.0,
+                "y": 16.0,
+                "z": 16.0,
+                "w": 16.0
+            }
+        },
+        {
+            "name": "scene-progress-fill-sliced",
+            "slot": "scene/progress-fill",
+            "crop": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+            },
+            "border": {
+                "x": 16.0,
+                "y": 16.0,
+                "z": 16.0,
+                "w": 16.0
             }
         },
         {
@@ -205,8 +256,8 @@
             }
         },
         {
-            "name": "plants-ui-panel-card-sliced",
-            "slot": "plants/ui/panel-card",
+            "name": "plants-dialog-pause-panel-sliced",
+            "slot": "plants/dialog/pause-panel",
             "crop": {
                 "serializedVersion": "2",
                 "x": 0.0,
@@ -239,8 +290,25 @@
             }
         },
         {
-            "name": "plants-ui-icon-music",
-            "slot": "plants/ui/icon-music",
+            "name": "plants-dialog-pause-row-sliced",
+            "slot": "plants/dialog/pause-row",
+            "crop": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+            },
+            "border": {
+                "x": 18.0,
+                "y": 18.0,
+                "z": 18.0,
+                "w": 18.0
+            }
+        },
+        {
+            "name": "plants-dialog-icon-music",
+            "slot": "plants/dialog/icon-music",
             "crop": {
                 "serializedVersion": "2",
                 "x": 0.0,
@@ -273,8 +341,8 @@
             }
         },
         {
-            "name": "plants-ui-icon-sound",
-            "slot": "plants/ui/icon-sound",
+            "name": "plants-dialog-icon-sound",
+            "slot": "plants/dialog/icon-sound",
             "crop": {
                 "serializedVersion": "2",
                 "x": 0.0,
@@ -290,8 +358,8 @@
             }
         },
         {
-            "name": "plants-ui-icon-light",
-            "slot": "plants/ui/icon-light",
+            "name": "plants-dialog-icon-light",
+            "slot": "plants/dialog/icon-light",
             "crop": {
                 "serializedVersion": "2",
                 "x": 0.0,
@@ -307,8 +375,8 @@
             }
         },
         {
-            "name": "plants-ui-icon-pattern",
-            "slot": "plants/ui/icon-pattern",
+            "name": "plants-dialog-icon-pattern",
+            "slot": "plants/dialog/icon-pattern",
             "crop": {
                 "serializedVersion": "2",
                 "x": 0.0,
@@ -324,8 +392,8 @@
             }
         },
         {
-            "name": "plants-win-button-home",
-            "slot": "plants/win/button-home",
+            "name": "plants-dialog-home",
+            "slot": "plants/dialog/home",
             "crop": {
                 "serializedVersion": "2",
                 "x": 0.0,
@@ -341,8 +409,110 @@
             }
         },
         {
-            "name": "plants-win-button-next",
+            "name": "plants-dialog-pause-retry-sliced",
+            "slot": "plants/dialog/pause-retry",
+            "crop": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+            },
+            "border": {
+                "x": 64.0,
+                "y": 0.0,
+                "z": 64.0,
+                "w": 0.0
+            }
+        },
+        {
+            "name": "plants-dialog-skip",
+            "slot": "plants/dialog/skip",
+            "crop": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+            },
+            "border": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.0
+            }
+        },
+        {
+            "name": "plants-win-button-next-sliced",
             "slot": "plants/win/button-next",
+            "crop": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+            },
+            "border": {
+                "x": 64.0,
+                "y": 0.0,
+                "z": 64.0,
+                "w": 0.0
+            }
+        },
+        {
+            "name": "plants-dialog-close",
+            "slot": "plants/dialog/close",
+            "crop": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+            },
+            "border": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.0
+            }
+        },
+        {
+            "name": "plants-ui-panel-card-sliced",
+            "slot": "plants/ui/panel-card",
+            "crop": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+            },
+            "border": {
+                "x": 36.0,
+                "y": 36.0,
+                "z": 36.0,
+                "w": 36.0
+            }
+        },
+        {
+            "name": "ui-guide-happy",
+            "slot": "ui/guide-happy",
+            "crop": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+            },
+            "border": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.0
+            }
+        },
+        {
+            "name": "plants-lose-button-share",
+            "slot": "plants/lose/button-share",
             "crop": {
                 "serializedVersion": "2",
                 "x": 0.0,
@@ -360,23 +530,6 @@
         {
             "name": "plants-win-button-replay",
             "slot": "plants/win/button-replay",
-            "crop": {
-                "serializedVersion": "2",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 1.0,
-                "height": 1.0
-            },
-            "border": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0,
-                "w": 0.0
-            }
-        },
-        {
-            "name": "ui-guide-happy",
-            "slot": "ui/guide-happy",
             "crop": {
                 "serializedVersion": "2",
                 "x": 0.0,

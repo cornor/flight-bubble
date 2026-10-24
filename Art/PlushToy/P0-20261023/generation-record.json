@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-23",
+  "mode": "built-in image_gen",
+  "status": "approved",
+  "final_image": "battle-v2.png",
+  "dimensions": [
+    941,
+    1672
+  ],
+  "sha256": "1bf5c990aa7c976d7d398494d66f47cfda35687ca4ecfeaec756a0f5b99ed658",
+  "reference": "reference.png",
+  "initial_prompt": "imagegen-prompt.txt",
+  "correction_prompt": "imagegen-correction-prompt.txt",
+  "initial_draft": "draft-01.png",
+  "checks": [
+    "8 deployment stations visible: 6 characters and 2 locked stations",
+    "5 columns by 3 queue rows visible",
+    "Frog pots green; elephant pots purple; white cat pots white",
+    "Chinese controls and independent ammo badges visually checked",
+    "22 game colors mapped exactly once in design-spec.json",
+    "Reference-matched plush-fur refinement visually reviewed across active and queue characters"
+  ],
+  "limits": [
+    "Concept image, not a runtime screenshot",
+    "Layout coordinates are design targets, not implemented bounds",
+    "Generated colors are visual approximations; exact game colors are preserved in design-spec.json"
+  ],
+  "scope": "P0 steps 1-3 only; no asset breakdown or game integration",
+  "fur_refinement_prompt": "imagegen-fur-prompt.txt",
+  "previous_version": "battle-v1.png",
+  "approval_date": "2026-10-23"
+}

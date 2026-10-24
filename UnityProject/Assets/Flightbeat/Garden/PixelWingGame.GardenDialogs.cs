@@ -14,12 +14,12 @@ namespace Flightbeat.Game
     public partial class PixelWingGame
     {
         static readonly Color DialogShade = new Color(.055f, .078f, .2f, .8f);
-        static readonly Color DialogTitleInk = Hex(0x163E6D), DialogLinkInk = Hex(0x496384), DialogSoftInk = Hex(0x56698A);
+        static readonly Color DialogTitleInk = Hex(0x54318C), DialogLinkInk = Hex(0x72568E), DialogSoftInk = Hex(0x796582);
 
         // Shade, card and title. Leaves MapLayout off and returns the vertical offset of the 960-high frame; callers
         // restore MapLayout when done. `y` / `height` are in the 540 x 960 frame.
         float GardenModal(PixelSurface s, string title, float y, float height,
-            float titleOffset = 38f, float titleSize = GardenTitleArt.Size, float shadeAlpha = .8f)
+            float titleOffset = 38f, float titleSize = GardenTitleArt.Size, float shadeAlpha = .8f, string panelSlot = null)
         {
             HitBlock(s);
             s.MapLayout = false;
@@ -27,10 +27,23 @@ namespace Flightbeat.Game
             Color shade = DialogShade; shade.a = shadeAlpha;
             s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, shade);
             // 2026-10-22: revive uses the same border and background as all other dialogs.
-            if (!Asset9(s, "plants/ui/panel-card", 50f, oy + y, 440f, height, 36f, 24f, Color.white))
+            if (!Asset9(s, panelSlot ?? "plants/dialog/pause-panel", panelSlot == null ? 50f : 58f, oy + y, panelSlot == null ? 440f : 424f, height, 36f, 24f, Color.white))
                 GardenPanel(s, 50f, oy + y, 440f, height);
             GardenTitleArt.Draw(s, title, 270f, oy + y + titleOffset, titleSize);
             return oy;
+        }
+
+        void DialogReferenceButton(PixelSurface s, int id, float x, float y, float w, float h, string word, bool ad)
+        {
+            HitBox(s, id, x, y, w, h);
+            float k = 1f - PressPulse(id) * .04f, bw = w * k, bh = h * k;
+            float bx = x + (w - bw) * .5f, by = y + (h - bh) * .5f, cy = by + bh * .47f;
+            Asset9(s, "plants/dialog/pause-retry", bx, by, bw, bh, 64f, 0f, bh * 64f / 126f, 0f, Color.white);
+            float size = 32f * k, mark = ad ? 48f * k : 0f, gap = ad ? 10f * k : 0f;
+            float textW = GardenBarArt.TextWidth(word, size), left = x + (w - mark - gap - textW) * .5f;
+            if (ad) Asset(s, "plants/dialog/video", left, cy - 20f * k, mark, 40f * k, Color.white);
+            GardenBarArt.TextOutline(s, word, left + mark + gap + textW * .5f, cy - size * .55f, size,
+                Color.white, Hex(0x537D2F), 2.5f * k);
         }
 
         // The victory / pause green jelly button (3-sliced), rounded white word with a deep green edge; `ad` puts the
@@ -48,8 +61,8 @@ namespace Flightbeat.Game
             float mark = ad ? size * 1.08f : 0f, gap = ad ? size * .4f : 0f, tw = GardenBarArt.TextWidth(word, size);
             float left = x + w * .5f - (mark + gap + tw) * .5f;
             if (ad && !GardenBars.Icon(s, "ad", left + mark * .5f, centre, mark))
-                GardenBarArt.TextOutline(s, "▶", left + mark * .5f, centre - mark * .55f, mark, Hex(0xFFE27A), Hex(0x1B7A2A), 2f);
-            GardenBarArt.TextOutline(s, word, left + mark + gap + tw * .5f, centre - size * .55f, size, Color.white, Hex(0x1B7A2A), outlineWidth * k);
+                GardenBarArt.TextOutline(s, "▶", left + mark * .5f, centre - mark * .55f, mark, Hex(0xFFE27A), Hex(0xA55410), 2f);
+            GardenBarArt.TextOutline(s, word, left + mark + gap + tw * .5f, centre - size * .55f, size, Color.white, Hex(0xA55410), outlineWidth * k);
         }
 
         // Small links use the same single-pass plain atlas as the codex descriptions, with a generous hit area.
@@ -77,11 +90,11 @@ namespace Flightbeat.Game
             bool mapped = s.MapLayout;
             try
             {
-                float oy = GardenModal(s, "连胜中断", 300f, 340f);
+                float oy = GardenModal(s, "连胜中断", 300f, 340f, panelSlot: "plants/dialog/pause-panel");
                 if (!GardenBars.Icon(s, "broken-link", 270f, oy + 400f, 46f)) DialogText(s, "!", 270f, oy + 382f, 30f, dialogueKey);
                 GardenSkin.Text(s, streakWhat + "将中断连胜", 270f, oy + 432f, 19f, true, GardenBars.Navy);
                 if (Economy != null && Economy.Streak > 0) GardenSkin.Text(s, "当前 " + Economy.Streak + " 连胜", 270f, oy + 460f, 17f, true, DialogSoftInk);
-                DialogGreenButton(s, 511, 140f, oy + 494f, 260f, 84f, streakRevive ? "复活继续" : "继续挑战", streakRevive);
+                DialogReferenceButton(s, 511, 140f, oy + 494f, 260f, 78f, streakRevive ? "复活继续" : "继续挑战", streakRevive);
                 DialogLink(s, 510, 270f, oy + 596f, "确认中断连胜");
             }
             finally { s.MapLayout = mapped; }

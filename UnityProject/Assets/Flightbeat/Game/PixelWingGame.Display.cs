@@ -39,7 +39,7 @@ namespace Flightbeat.Game
         private Vector2 ScreenLogical(Vector2 point)
         {
             DisplayRuntime.ScreenPointToLocalPointInRectangle(canvasRect, point, gameCamera, out Vector2 local);
-            local.y = ScreenLayout.InverseY(OriginalMath.Binary32(ScreenLayout.Height - local.y));
+            local.y = PlushLayout.InverseY(OriginalMath.Binary32(ScreenLayout.Height - local.y));
 #if UNITY_EDITOR
             FrameProjectionObserver?.Invoke(point, local);
 #endif

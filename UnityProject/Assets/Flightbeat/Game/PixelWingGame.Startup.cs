@@ -124,7 +124,11 @@ namespace Flightbeat.Game
             hud.Paint = DrawHUD;
 
             audioChip = gameObject.AddComponent<ChipAudio>();
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            effects = new PixelEffectPool(transform, canvasRect, new Flightbeat.Garden.PlushEffectPoolRuntime());
+#else
             effects = new PixelEffectPool(transform, canvasRect);
+#endif
             effects.Prewarm();
             Shader.WarmupAllShaders();
 

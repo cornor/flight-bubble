@@ -1,0 +1,32 @@
+{
+  "status": "complete",
+  "branch": "plush-toy",
+  "buildTime": "2026-10-23 19:20:49",
+  "review": "review.html",
+  "assets": "asset-audit.json",
+  "controls": 22,
+  "scope": [
+    "Popup frames and primary/secondary actions",
+    "Shuffle, priority and bubble-bomb buttons",
+    "Home, restart, next level, finale and settings entries",
+    "Settings on/off switches and row icons"
+  ],
+  "validation": {
+    "fullFlow": {
+      "buildTime": "2026-10-23 19:16:39",
+      "report": "evidence-full/result.json"
+    },
+    "reviveLoss": {
+      "buildTime": "2026-10-23 19:16:39",
+      "report": "evidence-recovery/result.json"
+    },
+    "finalControls": {
+      "buildTime": "2026-10-23 19:20:49",
+      "report": "evidence-final/result.json"
+    },
+    "finalDelta": "Only home/replay glyph spacing changed after full flow and recovery checks; final standard/tall pause, home and settings were rechecked.",
+    "sourceChecks": 783,
+    "browserErrors": 0
+  },
+  "deployed": false
+}

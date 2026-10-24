@@ -150,6 +150,15 @@ namespace Flightbeat.Game
             if (Battle == null || InHome || Battle.Level.lesson > 0 || evidenceControlled
                 || Battle.State == Phase.Won || Battle.State == Phase.Lost || Economy.Streak <= 0)
             { action(); return; }
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            // Bubble UI: perform the requested action directly, preserving the confirmed-break rules.
+            if (GardenUiActive)
+            {
+                Economy.BreakStreak();
+                action();
+                return;
+            }
+#endif
             streakRevive = revive;
             streakWhat = what;
             streakAction = action;

@@ -8,20 +8,22 @@ namespace Flightbeat.Game
     public partial class PixelWingGame
     {
         // Teaching and the finale guide share the same painted panel and rigid text/portrait layout.
-        void DrawGardenDialogue(PixelSurface s, string face, string[] lines, float logicalCy, float alpha = 1f)
+        void DrawGardenDialogue(PixelSurface s, string face, string[] lines, float logicalCy, float alpha = 1f, bool compact = false)
         {
             bool mapped = s.MapLayout;
             float cy = GardenBars.ScreenY(s, logicalCy); s.MapLayout = false;
             try
             {
-                GardenBarArt.Art(s, "speech", 303f, cy, 414f, 104f, alpha);
-                GardenSkin.Asset(s, face, 14f, cy - 48f, 96f, 96f, new Color(1f, 1f, 1f, alpha));
+                float panelHeight = compact ? 66f : 104f, portrait = compact ? 72f : 96f;
+                GardenSkin.Asset9(s, "scene/level", 99f, cy - panelHeight * .5f, 411f, panelHeight,
+                    24f, 18f, new Color(1f, 1f, 1f, alpha));
+                GardenSkin.Asset(s, face, 14f, cy - portrait * .5f, portrait, portrait, new Color(1f, 1f, 1f, alpha));
                 // 2026-10-21 20:45 (user): the "小蓝" name tag is gone from every line (the portrait says who speaks).
                 // 2026-10-21 14:24 (user: the words sat too far left, were small and hard to read). Centred in the bubble
                 // body (x 121-506 of the art, centre 315), size 18 (16 before), 28 px apart, below the name tag; words in
                 // {braces} are key words: coloured (blue for 蓝色..., orange otherwise). Use plain text throughout
                 // so small counters stay open; colour supplies the emphasis without offset bold overdraw.
-                float lineGap = 28f, first = cy + 2f - (lines.Length - 1) * lineGap * .5f;   // 20:45: centred (no name tag above)
+                float lineGap = compact ? 24f : 28f, first = cy + 2f - (lines.Length - 1) * lineGap * .5f;
                 for (int i = 0; i < lines.Length; i++)
                     DialogueLine(s, lines[i], 315f, first + i * lineGap, alpha);
             }

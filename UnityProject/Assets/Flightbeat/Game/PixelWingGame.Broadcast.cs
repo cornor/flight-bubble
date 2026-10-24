@@ -20,7 +20,7 @@ namespace Flightbeat.Game
             foreach (UiHit hit in uiHits)
             {
                 if (hit.id != id) continue;
-                float y = ScreenLayout.InverseY(hit.y + hit.h * .5f);
+                float y = PlushLayout.InverseY(hit.y + hit.h * .5f);
                 Tap(new Vector2(hit.x + hit.w * .5f, y)); return true;
             }
             return false;

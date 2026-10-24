@@ -30,12 +30,12 @@ namespace Flightbeat.Rendering
                 if (rigid || mode == 1f)
                 {
                     float half = OriginalMath.Binary32(h * 0.5f);
-                    y = OriginalMath.Binary32(ScreenLayout.Y(OriginalMath.Binary32(half + y)) - half);
+                    y = OriginalMath.Binary32(PlushLayout.Y(OriginalMath.Binary32(half + y)) - half);
                 }
                 else
                 {
-                    float bottom = ScreenLayout.Y(OriginalMath.Binary32(y + h));
-                    y = ScreenLayout.Y(y);
+                    float bottom = PlushLayout.Y(OriginalMath.Binary32(y + h));
+                    y = PlushLayout.Y(y);
                     h = OriginalMath.Binary32(bottom - y);
                 }
             }
@@ -130,7 +130,7 @@ namespace Flightbeat.Rendering
             using var drawScope = Flightbeat.Rendering.DrawObservation.Enter(54410);
 #endif
             bool mapped = MapLayout;
-            if (mapped) { from = ScreenLayout.Point(from); to = ScreenLayout.Point(to); MapLayout = false; }
+            if (mapped) { from = PlushLayout.Point(from); to = PlushLayout.Point(to); MapLayout = false; }
             float dx = OriginalMath.Binary32(from.x - to.x), dy = OriginalMath.Binary32(from.y - to.y);
             float length = OriginalMath.Binary32((float)Math.Sqrt(OriginalMath.Binary32(OriginalMath.Binary32(dx * dx) + OriginalMath.Binary32(dy * dy))));
             Quad(OriginalMath.Binary32(OriginalMath.Binary32((OriginalMath.Binary32(from.x + to.x)) * 0.5f) - OriginalMath.Binary32(width * 0.5f)), OriginalMath.Binary32(OriginalMath.Binary32((OriginalMath.Binary32(from.y + to.y)) * 0.5f) - OriginalMath.Binary32(length * 0.5f)),
@@ -176,7 +176,7 @@ namespace Flightbeat.Rendering
             using var drawScope = Flightbeat.Rendering.DrawObservation.Enter(54413);
 #endif
             bool mapped = MapLayout;
-            if (mapped) { from = ScreenLayout.Point(from); to = ScreenLayout.Point(to); MapLayout = false; }
+            if (mapped) { from = PlushLayout.Point(from); to = PlushLayout.Point(to); MapLayout = false; }
             if (Lighting)
             {
                 float dx = OriginalMath.Binary32(from.x - to.x), dy = OriginalMath.Binary32(from.y - to.y);

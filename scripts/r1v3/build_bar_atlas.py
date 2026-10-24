@@ -13,7 +13,7 @@ OUT = ROOT / 'UnityProject/Assets/Flightbeat/Resources/GardenR1'
 FONT = ROOT / 'Art/fonts/ChillRoundF/ChillRoundFBold.ttf'
 SIZE, FONT_SIZE, CELL = 2048, 48, 56
 TITLE_SIZE, TITLE_CELL, TITLE_STROKE = 96, 108, 1
-TITLES = ('设置', '暂停一下', '休息一下', '泡泡全打光啦！', '失败了', '泡泡碰到护栏啦', '连胜中断', '体力', '泡泡图鉴')
+TITLES = ('设置', '暂停一下', '休息一下', '泡泡全打光啦！', '失败了', '泡泡碰到护栏啦', '复活', '连胜中断', '体力', '泡泡图鉴')
 
 
 def build(out=OUT):

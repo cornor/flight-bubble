@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "branch": "plush-toy",
+  "buildTime": "2026-10-23 23:48:51 Asia/Shanghai",
+  "behavior": "Battle pause only: rewarded skip success wins the current level and opens the existing victory dialog; Next remains a separate action.",
+  "adIntegration": "Existing AdService.Show test provider immediately returns success. Real video playback is not integrated or tested.",
+  "reports": [
+    "evidence-final/result.json",
+    "evidence/result.json",
+    "evidence-teaching/result.json",
+    "model-checks.json",
+    "source-checks.json"
+  ],
+  "viewports": [
+    [
+      540,
+      960
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "playTestedLevels": [
+    1,
+    3,
+    4
+  ],
+  "progressionSaved": true,
+  "duplicateSettlementPrevented": true,
+  "homeSettingsSkipVisible": false,
+  "atlas": {
+    "slots": 304,
+    "creatureScale": 1.0,
+    "placeholders": 0
+  },
+  "plushAssets": "22 colors / 110 states passed",
+  "deployed": false,
+  "finalChanges": [
+    "Clear cached finale visuals when rewarded skip succeeds"
+  ],
+  "finalChecks": [
+    "540x960: pause-only skip / resume unchanged / ready and playing skip / one ad reward and one win / next level unlocked",
+    "540x960: home settings has no skip / win and level unlock survive reload",
+    "390x844: pause-only skip / resume unchanged / ready and playing skip / one ad reward and one win / next level unlocked",
+    "390x844: home settings has no skip / win and level unlock survive reload",
+    "Teaching level: rewarded skip opens the normal victory dialog, waits for Next, then enters level 2"
+  ]
+}

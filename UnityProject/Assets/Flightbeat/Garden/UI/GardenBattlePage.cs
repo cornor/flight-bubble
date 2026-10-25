@@ -316,6 +316,7 @@ namespace Flightbeat.Garden.UI
         // shown only on the home page. The source is 1080x2340 with the 9:16 core picture at y 210-2130; the
         // core stays vertically centred on screen and taller screens reveal the extra sky and cloud sea.
         RawImage homeBackground;
+        GardenHomeArtwork homeArtwork;
         Texture2D homeBackgroundTexture, codexBackgroundTexture;
         bool homeBackgroundChecked;
         public bool ShowHomeBackground(bool show, bool album = false)
@@ -332,6 +333,10 @@ namespace Flightbeat.Garden.UI
                     rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = rect.offsetMax = Vector2.zero;
                     homeBackground = go.GetComponent<RawImage>();
                     homeBackground.texture = texture; homeBackground.raycastTarget = false;
+                    var art = new GameObject("Waving bear home artwork", typeof(RectTransform), typeof(GardenHomeArtwork));
+                    var ar = (RectTransform)art.transform; ar.SetParent(rect, false);
+                    ar.anchorMin = Vector2.zero; ar.anchorMax = Vector2.one; ar.offsetMin = ar.offsetMax = Vector2.zero;
+                    homeArtwork = art.GetComponent<GardenHomeArtwork>();
                 }
             }
             if (!homeBackground) return false;
@@ -340,9 +345,9 @@ namespace Flightbeat.Garden.UI
             {
                 if (album && !codexBackgroundTexture) codexBackgroundTexture = Resources.Load<Texture2D>("GardenR1/codex-background");
                 homeBackground.texture = album && codexBackgroundTexture ? codexBackgroundTexture : homeBackgroundTexture;
-                // The HUD root is 540 units wide even on tablets. Extend only the album plate to the screen edges.
-                homeBackground.rectTransform.offsetMin = new Vector2(album ? ScreenLayout.Left : 0f, 0f);
-                homeBackground.rectTransform.offsetMax = new Vector2(album ? -ScreenLayout.Left : 0f, 0f);
+                // Both plates cover wider viewports; the home toys retain their own fitted composition.
+                homeBackground.rectTransform.offsetMin = new Vector2(ScreenLayout.Left, 0f);
+                homeBackground.rectTransform.offsetMax = new Vector2(-ScreenLayout.Left, 0f);
                 if (album && codexBackgroundTexture)
                 {
                     // Cover the whole viewport without distorting clouds; content keeps its centred 540×960 frame.
@@ -350,8 +355,14 @@ namespace Flightbeat.Garden.UI
                     float uw = ScreenLayout.Width / (540f * scale), uh = ScreenLayout.Height / (960f * scale);
                     homeBackground.uvRect = new Rect((1f - uw) * .5f, (1f - uh) * .5f, uw, uh);
                 }
-                else homeBackground.uvRect = PixelWingGame.HomeArtView(out _, out _, out _);
+                else
+                {
+                    float scale = Mathf.Max(ScreenLayout.Width / 540f, ScreenLayout.Height / 1026f);
+                    float uw = ScreenLayout.Width / (540f * scale), uh = ScreenLayout.Height / (1026f * scale);
+                    homeBackground.uvRect = new Rect((1f - uw) * .5f, (1f - uh) * .5f, uw, uh);
+                }
             }
+            if (homeArtwork) homeArtwork.Present(owner, show && !album);
             return true;
         }
         void LateUpdate()

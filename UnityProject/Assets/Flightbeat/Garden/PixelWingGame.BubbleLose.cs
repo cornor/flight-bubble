@@ -22,8 +22,8 @@ namespace Flightbeat.Game
                 float oy = GardenModal(s, "复活", 220f, 540f, 33f, 32f, .8f, "plants/dialog/pause-panel");
                 float bob = Mathf.Sin(ui * 2.6f) * 2f;
                 Asset(s, "plants/dialog/revive-heart", 130f, oy + 300f + bob, 280f, 224f, Color.white);
-                ReviveBenefitIcons(s, oy + 538f);
-                ReviveEffectHint(s, oy + 628f);
+                ReviveBenefitIcons(s, oy + 518f);
+                ReviveEffectHint(s, oy + 608f);
                 DialogReferenceButton(s, 30, 148f, oy + 662f, 244f, 78f, "复活", true);
                 HitBox(s, 31, 457f, oy + 207f, 50f, 50f);
                 Asset(s, "plants/dialog/close", 457f, oy + 207f, 50f, 50f, Color.white);
@@ -71,8 +71,8 @@ namespace Flightbeat.Game
             {
                 float t = ui - loseShownAt, fade = Clamp01(t / .3f), ribbonTop = ScreenLayout.Height * .15f;
                 float ribbonY = ribbonTop - 12f * (1f - Mathf.SmoothStep(0f, 1f, Clamp01(t / .35f)));
-                Asset(s, "plants/lose/ribbon", 60f, ribbonY, 420f, 135f, A(Color.white, fade));
-                GardenBarArt.TextOutline(s, "挑战失败", 270f, ribbonY + 35f, 44f,
+                Asset(s, "plants/lose/ribbon", 60f, ribbonY, 420f, 117.6f, A(Color.white, fade));
+                GardenBarArt.TextOutline(s, "挑战失败", 270f, ribbonY + 18f, 44f,
                     A(Color.white, fade), A(Hex(0x45516B), fade), 2.7f);
                 float fullSize = Mathf.Min(408f, ScreenLayout.Height * .4f);
                 float pop = Mathf.SmoothStep(.94f, 1f, Clamp01(t / .4f)), size = fullSize * pop;

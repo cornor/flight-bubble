@@ -83,13 +83,13 @@ namespace Flightbeat.Game
             float a = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((railRed - .5f) / .2f));
             if (a <= .01f) return;
             float beat = .72f + .28f * railPulse;
-            const float h = 26f;
+            const float top = 509f, h = 28f;
             bool mapped = s.MapLayout;
-            float cy = PlushLayout.Y(574f) + 20f;
+            float cy = GardenBars.ScreenY(s, top + h * .5f);
             s.MapLayout = false;
             try
             {
-                GardenBarArt.Plate(s, "danger", 270f, cy, 348f, h, Color.white, a * beat);
+                GardenBarArt.Plate(s, "danger", 270f, cy, 524f, h, Color.white, a * beat);
                 Color ink = new Color(1f, 1f, 1f, a), edge = new Color(.6f, .03f, .08f, a);
                 GardenBarArt.TextOutline(s, "泡泡快压到护栏了！", 270f, cy - 9f, 17f, ink, edge, .7f);
                 if (!GardenBars.Icon(s, "warn", 126f, cy, 20f, a * beat)) WarnSign(s, 126f, cy, a * beat);

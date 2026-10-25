@@ -92,10 +92,23 @@ namespace Flightbeat.Editor
             Set(game, "Economy", new FleetEconomy(profile, () => 1800000000L, _ => { }, n => 0));
             profile = ((FleetEconomy)Get(game, "Economy")).Data; // Constructor refresh publishes a normalized clone.
             Set(game, "ui", 10f);
+            foreach (var size in new[] { new Vector2Int(1080, 1920), new Vector2Int(1080, 2340), new Vector2Int(1080, 1440) })
+            {
+                Capture("home-wave-" + size.x + "x" + size.y, size.x, size.y);
+                Rect start = PixelWingGame.HomeWaveRect(105f, 736f, 330f, 110f);
+                Rect album = PixelWingGame.HomeWaveRect(448f, 745f, 70f, 70f);
+                Rect preview = PixelWingGame.HomeWaveRect(86f, 865f, 427f, 140f);
+                Check(start.yMax < preview.y && start.xMax < album.x, "Start, album and partner preview remain separate at " + size);
+                Check(Hit(start.center.x, start.center.y) == 800 && Hit(start.center.x, start.yMax - 12f) == 800, "Both start label and level badge start a game at " + size);
+                Check(Hit(album.center.x, album.center.y) == 803 && Hit(preview.center.x, preview.center.y) == 803, "Album and partner preview retain their real input targets at " + size);
+                Check(preview.yMax < ScreenLayout.SafeBottom, "Partner preview fits above the safe bottom at " + size);
+                Check(Hit(ScreenLayout.Left + 50f, ScreenLayout.Top + 46f) == 801, "Settings stays in the top safe area at " + size);
+                Check((string)Get(game, "homeNextName") == "小霞", "Level-five preview uses the actual next partner at " + size);
+            }
             Capture("home-before", 1080, 1920);
-            PixelWingGame.HomeArtView(out float homeScale, out float homeX, out float homeY);
+            PixelWingGame.HomeWaveView(out float homeScale, out float homeX, out float homeY);
             Check(Hit(ScreenLayout.Right - 42f, homeY + 410f * homeScale + 120f) != 806, "Hidden level picker has no home hit region");
-            Click(homeX + 485f * homeScale, homeY + 773f * homeScale);
+            Click(homeX + 483f * homeScale, homeY + 780f * homeScale);
             Check((bool)Get(game, "codexOpen"), "Home entry opens album through normal input routing");
             string saved = JsonUtility.ToJson(profile);
             var list = (IList)typeof(PixelWingGame).GetProperty("Codex", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
@@ -133,11 +146,16 @@ namespace Flightbeat.Editor
                 Capture("album-frog-bounce-" + height, 1080, height);
             Click(500f, ScreenLayout.Top + 44f); Check(!(bool)Get(game, "codexOpen") && game.InHome, "Close returns to home through normal input");
             Capture("home-after-close", 1080, 1920);
+            Check((string)Get(game, "homeNextLine") == "小队伙伴已集齐", "A complete collection fills the same partner area with the assembled-squad state");
+            profile.cleared.Clear();
+            Capture("home-empty-profile", 1080, 2340);
+            Check((string)Get(game, "homeNextName") == "小蓝", "A fresh profile previews its first real partner");
+            Capture("home-restored-standard", 1080, 1920);
             var background = (RawImage)Get(game.gardenPage, "homeBackground");
             Check(background.texture.name == "home-background", "Closing restores original home texture");
             Check(background.rectTransform.offsetMin == Vector2.zero && background.rectTransform.offsetMax == Vector2.zero, "Closing restores original home bounds");
             int selectedSet = PixelWingGame.LevelSetCurrent;
-            Click(50f, ScreenLayout.Top + 72f);
+            Click(50f, ScreenLayout.Top + 46f);
             Check((bool)Get(game, "settings"), "Home settings still opens via its existing button");
             Capture("home-settings-hidden-levels", 1080, 1920);
             var newLevels = (GameObject)Get(game.gardenPage, "levelSetRow");

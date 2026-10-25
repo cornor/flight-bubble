@@ -78,7 +78,11 @@ namespace Flightbeat.Game
                     streakAction = null;
                     streakPrompt = false;
                     if (streakRevive && Battle != null && Battle.State == Phase.ReviveOffer)
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                        ShowAd("revive", RescueGarden);
+#else
                         ShowAd("revive", Rescue);
+#endif
                     return true;
                 case 510:
                     streakPrompt = false;

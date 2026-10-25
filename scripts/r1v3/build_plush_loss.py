@@ -1,41 +1,13 @@
 #!/usr/bin/env python3
 """Loss screen: editable gray ribbon/share control, plus registered plush artwork."""
 from pathlib import Path
-import numpy as np
 from PIL import Image, ImageDraw
-from build_plush_controls import Mold, button_mold
+from build_plush_controls import button_mold
+from build_plush_result_ribbons import ribbon
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'Art/PlushToy/P2-P4/delivery/lose'
 MASTER = ROOT / 'Art/PlushToy/Loss-20261024/masters/hero-v2.png'
-
-
-def polygon(m, points):
-    distance = np.full_like(m.x, np.inf)
-    inside = np.zeros_like(m.x, dtype=bool)
-    for (ax, ay), (bx, by) in zip(points, points[1:] + points[:1]):
-        dx, dy = bx - ax, by - ay
-        t = np.clip(((m.x - ax) * dx + (m.y - ay) * dy) / (dx * dx + dy * dy), 0, 1)
-        distance = np.minimum(distance, np.hypot(m.x - ax - t * dx, m.y - ay - t * dy))
-        if dy:
-            inside ^= ((ay > m.y) != (by > m.y)) & (m.x < ax + (m.y - ay) * dx / dy)
-    return np.where(inside, distance, -distance)
-
-
-def ribbon():
-    m = Mold(840, 270)
-    tail = [(164, 77), (31, 99), (14, 123), (63, 172), (36, 246), (196, 211), (211, 120)]
-    for points in (tail, [(840 - x, y) for x, y in tail]):
-        shape = polygon(m, points)
-        m.shadow(shape, .26, 2.5, (0, 4))
-        m.surface(shape, (143, 154, 174), (109, 122, 148), 5, 1.8, shine=.025)
-    for points in ([(118, 153), (207, 210), (206, 151)], [(722, 153), (633, 210), (634, 151)]):
-        m.surface(polygon(m, points), (88, 101, 127), (80, 94, 120), 2, .6, shine=0)
-    face = m.rect((116, 22, 724, 194), 24)
-    m.shadow(face, .3, 2, (0, 4))
-    m.surface(m.rect((116, 27, 724, 199), 24), (112, 126, 151), (97, 111, 138), 4, 1, shine=.01)
-    m.surface(face, (179, 187, 201), (147, 159, 180), 5, 1.5, shine=.03, bounds=(22, 194))
-    return m.finish()
 
 
 def share():

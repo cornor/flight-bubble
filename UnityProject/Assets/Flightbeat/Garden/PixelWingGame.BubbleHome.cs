@@ -254,49 +254,8 @@ namespace Flightbeat.Game
             DrawLevelPick(s);
         }
 
-        // The same plush identities as battle, registered from the high-resolution
-        // masters. Screen-space composition keeps the toys round on tall phones.
-        void DrawPlushHome(PixelSurface s)
-        {
-            s.MapLayout = false;
-            HomeArtView(out float k, out float ox, out float oy);
-            float centre = ox + 270f * k;
-            GardenBarArt.TextOutline(s, "泡泡小队", centre, oy + 130f * k, 62f * k, Hex(0xFFF8E8), Hex(0x7751BD), 5f * k);
-            GardenBarArt.TextOutline(s, "毛绒伙伴 · 一起出发", centre, oy + 210f * k, 22f * k, Hex(0x5B398C), Hex(0xF6EFFF), 1f * k);
-            // Two rear partners and a wider three-member front arc, clear of the lower codex entry.
-            float[] xs = { 176f, 364f, 112f, 428f, 270f };
-            float[] feet = { 443f, 455f, 637f, 637f, 677f };
-            float[] heights = { 224f, 216f, 228f, 228f, 270f };
-            GardenSkin.Clock = ui;
-            int turn = Mathf.FloorToInt(ui / HomeHopEvery);
-            for (int i = 0; i < HomeSquad.Length; i++)
-            {
-                float phase = HomePhase[i], age = ui - homePokeAt[i];
-                if (!(age >= 0f && age < 2.5f) && HomeHopOrder[((turn % 5) + 5) % 5] == i) age = ui - turn * HomeHopEvery;
-                bool blow = age >= 0f && age < 2.5f;
-                string pose = blow && age < .6f ? "attack" : (ui + phase) % 4.1f < .13f ? "blink" : "idle";
-                float breathe = 1f + .012f * Mathf.Sin(ui * 2.2f + phase);
-                float h = heights[i] * k * breathe, w = heights[i] * ArtAspect * k / breathe;
-                float cx = ox + xs[i] * k, fy = oy + feet[i] * k;
-                s.Glow(cx, fy + 3f * k, w * .75f, 22f * k, new Color(.37f,.23f,.57f,.19f),0f);
-                Asset(s, "plants/plush-home/" + HomeSquad[i] + "/" + pose, cx - w * .5f, fy - h * FeetLine, w, h, Color.white);
-                HitBox(s, HomeMemberAction + i, cx - w * .44f, fy - h * .77f, w * .88f, h * .8f);
-                if (blow)
-                {
-                    Vector2 m = MouthCanvas(Hex(HomeSquadColor[i]));
-                    Vector2 mouth = new Vector2(cx + w * (m.x / 224f - .5f), fy - h * (FeetLine - m.y / 256f));
-                    float grown = Mathf.Clamp01(age / .6f), drift = Mathf.Max(0f, age - .6f);
-                    float size = (24f + i * 2f) * k * grown;
-                    Vector2 at = mouth + new Vector2(Mathf.Sin(drift * 2f + i) * drift * 9f * k, -size * .55f - drift * 65f * k);
-                    SoapBubble(s, at, size, Color.white, Mathf.Clamp01((2.5f - age) / .3f) * .8f, i);
-                }
-            }
-            HomeStartButton(s, oy + 730f * k, k, centre);
-            s.MapLayout = true;
-            DrawHomeNextMember(s, 846f);
-            DrawHomeCornerButtons(s);
-            DrawLevelPick(s);
-        }
+        // Approved reference: large waving bear, four companions and unboxed partner preview.
+        void DrawPlushHome(PixelSurface s) => DrawWaveHome(s);
     }
 }
 #endif

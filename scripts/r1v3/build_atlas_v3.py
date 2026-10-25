@@ -39,6 +39,7 @@ PLUSH = ROOT / 'Art/PlushToy/P1/delivery'
 PLUSH_FIRST_FIVE = ROOT / 'Art/PlushToy/FirstFive/delivery'
 PLUSH_FULL = ROOT / 'Art/PlushToy/P2-P4/delivery'
 LOADING_ART = ROOT / 'Art/PlushToy/LoadingB-20261025/masters'
+HOME_WAVE_ART = ROOT / 'Art/PlushToy/HomeWave-20261025/masters'
 PLUSH_ROOTS = (PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
 
 def art_path(rel):
@@ -55,7 +56,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, LOADING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, LOADING_ART, HOME_WAVE_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     for p in sorted(set(files)):
@@ -669,6 +670,7 @@ background.resize(BG_SIZE, Image.LANCZOS).save(OUT / 'background.png')
 # Home background (H2): its own texture, 1080x2340 stored at 0.75 (core 9:16 picture at y 210-2130 of the source).
 _home_bg = DEL / '../../home-v1/delivery/background.png'
 if (PLUSH_FULL / 'home/background.png').exists(): _home_bg = PLUSH_FULL / 'home/background.png'
+if (HOME_WAVE_ART / 'background.png').exists(): _home_bg = HOME_WAVE_ART / 'background.png'
 if _home_bg.exists():
     Image.open(_home_bg).convert('RGB').resize((810, 1755), Image.LANCZOS).save(OUT / 'home-background.png')
     delivered.append('home-v1/background.png')
@@ -678,6 +680,21 @@ if _home_bg.exists():
         _src = (OUT / 'background.png.meta').read_text(encoding='utf-8')
         _guid = hashlib.md5(b'GardenR1/home-background').hexdigest()
         _meta.write_text(re.sub(r'guid: [0-9a-f]{32}', 'guid: ' + _guid, _src, count=1), encoding='utf-8')
+# Separate high-resolution home layers keep the full creature atlas unchanged.
+for _name in ('title', 'bear-idle', 'bear-blink'):
+    _source = HOME_WAVE_ART / f'{_name}.png'
+    if not _source.exists(): continue
+    _image = Image.open(_source).convert('RGBA')
+    _image.thumbnail((1200, 1200), Image.Resampling.LANCZOS)
+    _target = OUT / f'home-wave-{_name}.png'
+    _image.save(_target)
+    _meta = _target.with_suffix('.png.meta')
+    if not _meta.exists():
+        import re
+        _settings = (OUT / 'home-background.png.meta').read_text()
+        _guid = hashlib.md5(f'GardenR1/home-wave-{_name}'.encode()).hexdigest()
+        _settings = re.sub(r'guid: [0-9a-f]{32}', 'guid: ' + _guid, _settings, count=1)
+        _meta.write_text(_settings.replace('alphaUsage: 0', 'alphaUsage: 1').replace('alphaIsTransparency: 0', 'alphaIsTransparency: 1'))
 if (PLUSH_FULL / 'home/codex-background.png').exists():
     Image.open(PLUSH_FULL / 'home/codex-background.png').convert('RGB').resize((810,1755),Image.Resampling.LANCZOS).save(OUT / 'codex-background.png')
 # 2026-10-17 loading page (WebGL template, shown before the game downloads, so kept small: ~300 KB in all).

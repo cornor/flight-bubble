@@ -206,16 +206,16 @@ namespace Flightbeat.Game
                 s.Rect(x + inset, y + h - i - hRow, w - inset * 2f, hRow, c);
             }
         }
-        // The ribbon: painted art when delivered (win/ribbon.png, words drawn here), else a coral glass bar.
+        // Original arched silhouette, with softer highlights and fold shadows.
         bool WinRibbon(PixelSurface s, float cx, float cy, float p, string title, float a)
         {
             if (p <= .01f) return false;
             bool art = Has("plants/win/ribbon");
             if (art) Asset(s, "plants/win/ribbon", cx - 200f * p, cy - 56f * p, 400f * p, 112f * p, new Color(1f, 1f, 1f, a));
             else GardenBars.Capsule(s, cx, cy, 360f * p, 64f * p, Hex(0xF0644C), a);
-            // The original arched ribbon's front face sits above its folds and tails.
             float size = 42f * p;
-            GardenBarArt.TextOutline(s, title, cx, cy - 16f * p - size * .55f, size, new Color(1f, 1f, 1f, a), A(winRibbonInk, a), 3.6f * p);
+            float titleY = cy - (art ? 16f * p : 0f) - size * .55f;
+            GardenBarArt.TextOutline(s, title, cx, titleY, size, new Color(1f, 1f, 1f, a), A(winRibbonInk, a), 2.6f * p);
             return true;
         }
         // Warm award plaques belong to the victory page, with no queue-ammo frame or glass hint-bar styling.

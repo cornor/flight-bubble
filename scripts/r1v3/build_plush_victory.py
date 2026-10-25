@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Victory-only native UI: restored red ribbon, warm award cards and pink replay."""
-import math, shutil
+"""Victory native UI: shared result ribbon, warm award cards and pink replay."""
+import math
 from pathlib import Path
 import numpy as np
 from build_plush_controls import Mold, button_mold
+from build_plush_result_ribbons import ribbon
 
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'Art/PlushToy/P2-P4/delivery/win'
@@ -37,11 +38,10 @@ def replay():
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
-    # Use the previously approved red ribbon byte-for-byte, including folds and tails.
-    shutil.copyfile(ROOT/'Art/R1/art-v3/delivery/win/ribbon.png',OUT/'ribbon.png')
+    ribbon(victory=True).save(OUT/'ribbon.png')
     replay().save(OUT/'button-replay.png')
     for name,w,h,gold in [('badge-mvp',240,80,True),('badge-partner',320,80,False),('stat-card',384,128,False)]:
         award(w,h,gold).save(OUT/(name+'.png'))
-    print('Victory assets: original red ribbon, pink replay and three warm award panels')
+    print('Victory assets: soft red result ribbon, pink replay and three warm award panels')
 
 if __name__=='__main__': main()

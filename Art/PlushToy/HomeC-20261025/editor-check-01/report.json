@@ -1,0 +1,18 @@
+{
+    "passed": false,
+    "evidence": "Unity Editor camera rendering and real input routing with isolated staged profiles; not device gameplay",
+    "error": "System.InvalidOperationException: Reserved side entry lane has no invisible action: 48/412.8\n  at Flightbeat.Editor.GardenCodexUiChecks.Check (System.Boolean ok, System.String message) [0x0001a] in /Users/yangdage/aitools/flight/flight-bubble/UnityProject/Assets/Flightbeat/Editor/GardenCodexUiChecks.cs:204 \n  at Flightbeat.Editor.GardenCodexUiChecks+<Checks>d__16.MoveNext () [0x003f4] in /Users/yangdage/aitools/flight/flight-bubble/UnityProject/Assets/Flightbeat/Editor/GardenCodexUiChecks.cs:106 \n  at Flightbeat.Editor.GardenCodexUiChecks.Tick () [0x0003e] in /Users/yangdage/aitools/flight/flight-bubble/UnityProject/Assets/Flightbeat/Editor/GardenCodexUiChecks.cs:66 ",
+    "checks": [
+        "Real game and packaged UI loaded",
+        "Save isolation active before actions",
+        "Layered plush title and cream dock loaded: (1080, 1920)",
+        "Partial collection shows the next partner: (1080, 1920)",
+        "Both CTA text and level badge remain clickable: (1080, 1920)",
+        "Next-partner strip opens the collection: (1080, 1920)"
+    ],
+    "screenshots": [
+        "home-before.png",
+        "home-next-partner-1080x1920.png"
+    ],
+    "runtimeErrors": []
+}

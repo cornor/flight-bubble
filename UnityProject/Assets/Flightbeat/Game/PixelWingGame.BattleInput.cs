@@ -163,7 +163,11 @@ namespace Flightbeat.Game
             {
                 case 8: StartFinale(); break;
                 case 9: ConfirmSuperStrike(); break;
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                case 30: ShowAd("revive", RescueGarden); break;
+#else
                 case 30: ShowAd("revive", Rescue); break;
+#endif
                 case 31: ConfirmStreakBreak("放弃复活", () => Battle.DeclineRevive(), true); break;
                 case 40: if (Battle.State == Phase.Won) NextLevel(); else Restart(); break;
                 case 41: ReturnToDeck(); break;

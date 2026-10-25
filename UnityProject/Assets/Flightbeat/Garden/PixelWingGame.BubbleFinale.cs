@@ -78,7 +78,7 @@ namespace Flightbeat.Game
                 for (int k = 0; k < 3; k++)
                 {
                     float uk = Clamp01(u * 1.15f - k * .08f);
-                    s.Ring(new Vector2(cx, cy), 60f + 230f * uk, A(finaleRainbow[k * 2 % 7], (1f - uk) * .8f), 6f * (1f - uk) + 1.5f, 40, 0f, 360f);
+                    FinaleScreenRing(s, new Vector2(cx, cy), 60f + 230f * uk, A(finaleRainbow[k * 2 % 7], (1f - uk) * .8f), 6f * (1f - uk) + 1.5f);
                 }
                 for (int k = 0; k < 12; k++)
                 {
@@ -447,7 +447,23 @@ namespace Flightbeat.Game
             s.MapLayout = mapped;
         }
 
+        void FinaleScreenRing(PixelSurface s, Vector2 center, float radius, Color color, float thickness)
+        {
+            bool mapped = s.MapLayout;
+            if (mapped) center = PlushLayout.Point(center);
+            s.MapLayout = false;
+            try { s.Ring(center, radius, color, thickness, 64, 0f, 360f); }
+            finally { s.MapLayout = mapped; }
+        }
         void DrawBubbleFinaleRelease(PixelSurface s, float age, float after, Vector2 mouth)
+        {
+            bool mapped = s.MapLayout;
+            if (mapped) mouth = PlushLayout.Point(mouth);
+            s.MapLayout = false;
+            try { DrawBubbleFinaleReleaseScreen(s, age, after, mouth); }
+            finally { s.MapLayout = mapped; }
+        }
+        void DrawBubbleFinaleReleaseScreen(PixelSurface s, float age, float after, Vector2 mouth)
         {
             float fade = 1f - Clamp01(after / .6f);
             if (fade <= 0f) return;

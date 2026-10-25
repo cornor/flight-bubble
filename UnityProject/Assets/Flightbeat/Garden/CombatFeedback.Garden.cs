@@ -717,8 +717,7 @@ namespace Flightbeat.Feedback
             // digit column still only widens (smoothly) while shown, so the count never shifts left and right; the
             // right edge stays at 520.
             float size = 32f * (1f + punch * .25f + milestone * .3f);
-            // 11:51 (user: 「×」 got covered by the digits): the column is reserved for the largest punch, so the digits
-            // grow inside it and never reach the label.
+            // Reserve room for the largest punch; the label follows the actual digit edge below.
             float need = GardenBarArt.TextWidth(text, 32f * 1.55f) + 10f;
             if (need > gardenComboSlotTarget) gardenComboSlotTarget = need;
             float step = gardenComboClock < 0f ? 0f : Mathf.Max(0f, time - gardenComboClock);
@@ -735,8 +734,8 @@ namespace Flightbeat.Feedback
                 float life = Mathf.Clamp01(battle.ComboLife), warn = life < .3f ? (1f - life / .3f) : 0f;
                 float a = fade * (1f - .35f * warn * (.5f + .5f * Mathf.Sin(time * 18f)));
                 const float labelSize = 24f;
-                float labelW = GardenBarArt.TextWidth("连击 ×", labelSize), right = digitX - digitSlot * .5f;
-                DrawComboHudText(s, "连击 ×", right - 3f - labelW * .5f, badgeY + 1f, labelSize, hi, lo, a);
+                float labelW = GardenBarArt.TextWidth("连击 ×", labelSize), digitLeft = digitX - GardenBarArt.TextWidth(text, size) * .5f;
+                DrawComboHudText(s, "连击 ×", digitLeft - 5f - labelW * .5f, badgeY + 1f, labelSize, hi, lo, a);
                 DrawComboHudText(s, text, digitX, badgeY - 2f, size, hi, lo, a);
             }
             finally { s.MapLayout = badgeMapped; }

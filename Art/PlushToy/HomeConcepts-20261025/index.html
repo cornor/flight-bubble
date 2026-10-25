@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>泡泡小队 · 四版主页设计</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f8f5fc;color:#332342;font:16px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}main{max-width:1800px;margin:auto;padding:30px 36px 24px}.eyebrow{color:#8c6ca7;font-size:12px;font-weight:700;letter-spacing:2px}header{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:25px}h1{font-size:32px;line-height:1.25;margin:8px 0}header p{margin:0;color:#786787;font-size:14px}.note{background:#efe7f9;border-radius:12px;padding:10px 15px;font-size:13px;color:#6a4d85;white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}.card{background:white;border-radius:20px;padding:12px;box-shadow:0 7px 22px #5133710a;min-width:0}.label{display:flex;align-items:center;gap:9px;margin:4px 3px 11px}.letter{display:grid;place-items:center;background:#7852aa;color:white;border-radius:9px;width:31px;height:31px;font-weight:800}.label h2{font-size:18px;margin:0}.rec{margin-left:auto;font-size:11px;padding:3px 8px;background:#fff1bf;color:#816012;border-radius:6px}.art{border:0;padding:0;border-radius:11px;overflow:hidden;display:block;background:#ece0f9;cursor:zoom-in;width:100%}.art img{display:block;width:100%;height:auto}.description{font-size:13px;color:#786787;margin:11px 4px 3px}.reference{font-size:11px;color:#a08fac;margin:4px}footer{font-size:12px;color:#8c7b9b;margin-top:20px;display:flex;justify-content:space-between;gap:15px}a{color:#7953a2}dialog{border:0;background:#f8f5fc;border-radius:18px;padding:14px;max-width:95vw;max-height:95vh}dialog::backdrop{background:#1d1224d9}.viewer{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:9px}.viewer button{cursor:pointer;background:#e9dff3;color:#49315e;border:0;border-radius:8px;padding:8px 13px;font:inherit}#detail{display:block;max-height:calc(95vh - 90px);max-width:calc(95vw - 28px);width:auto;margin:auto}#detailName{font-weight:700}button:focus-visible,a:focus-visible{outline:3px solid #edb43b;outline-offset:3px}@media(max-width:1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:24px 20px}header{align-items:start;flex-direction:column}.note{white-space:normal}}@media(max-width:500px){.grid{grid-template-columns:1fr}h1{font-size:27px}footer{flex-direction:column}}
+</style>
+<main>
+<header><div><div class="eyebrow">泡泡小队 / HOMEPAGE CONCEPTS</div><h1>四种首页，四种第一印象</h1><p>相同的毛绒伙伴与核心入口，不同的场景、构图和视觉重心。点击图片可放大。</p></div><div class="note">设置靠上 · 开始突出 · 图鉴清晰 · 新伙伴预告</div></header>
+<section class="grid" aria-label="四版主页视觉稿" id="grid"></section>
+<footer><span>这是供选择的视觉稿。选定后再制作对应的正式主页。直接在聊天中回复 A / B / C / D 即可。</span><a href="prompts.json">生成提示词与参考说明</a></footer>
+</main>
+<dialog id="viewer"><div class="viewer"><button id="prev" aria-label="上一版">←</button><span id="detailName"></span><button id="next" aria-label="下一版">→</button><button id="close">关闭</button></div><img id="detail" alt="主页方案大图"></dialog>
+<script>
+const concepts=[
+{id:'A',name:'主角极简',file:'A-主角极简.png',description:'一只大蓝熊成为主视觉，留白多，进入游戏的路径最直接。',reference:'构图参考：示意图 2 · 单主角与清晰主按钮'},
+{id:'B',name:'毛绒小屋',file:'B-毛绒小屋.png',description:'把伙伴放进温暖的小屋，用场景营造陪伴与收藏感。',reference:'构图参考：示意图 1 · 立体房间与底部主按钮'},
+{id:'C',name:'小队集结',file:'C-小队集结.png',description:'大毛绒标题、五位伙伴和统一底部操作区，最贴近现有气质。',reference:'构图参考：示意图 3 · 强标题与集中主视觉',recommended:true},
+{id:'D',name:'泡泡游乐场',file:'D-泡泡游乐场.png',description:'珠阵爱心与泡泡轨迹成为焦点，一眼看出泡泡游戏的玩法。',reference:'构图参考：示意图 3 · 玩法物件成为主视觉'}
+];
+const grid=document.getElementById('grid'),viewer=document.getElementById('viewer');let current=0;
+for(const [i,c]of concepts.entries()){
+const article=document.createElement('article');article.className='card';
+article.innerHTML=`<div class="label"><span class="letter">${c.id}</span><h2>${c.name}</h2>${c.recommended?'<span class="rec">推荐</span>':''}</div><button class="art" aria-label="放大 ${c.id} ${c.name}"><img src="${c.file}" alt="${c.id} ${c.name}主页视觉稿"></button><p class="description">${c.description}</p><p class="reference">${c.reference}</p>`;
+article.querySelector('button').onclick=()=>{show(i);viewer.showModal()};grid.append(article);
+}
+function show(i){current=(i+concepts.length)%concepts.length;const c=concepts[current];document.getElementById('detail').src=c.file;document.getElementById('detailName').textContent=c.id+' · '+c.name}
+document.getElementById('prev').onclick=()=>show(current-1);document.getElementById('next').onclick=()=>show(current+1);document.getElementById('close').onclick=()=>viewer.close();
+viewer.addEventListener('click',e=>{if(e.target===viewer)viewer.close()});document.addEventListener('keydown',e=>{if(!viewer.open)return;if(e.key==='ArrowLeft')show(current-1);if(e.key==='ArrowRight')show(current+1)});
+</script>
+</html>

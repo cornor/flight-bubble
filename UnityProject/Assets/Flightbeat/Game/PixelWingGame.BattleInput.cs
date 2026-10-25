@@ -143,6 +143,10 @@ namespace Flightbeat.Game
                         hud.Lighting = effects.Enabled;
                         surface.Lighting = effects.Enabled;
                         if (before) effects.Clear();
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                        PlayerPrefs.SetInt("pw.light-enabled", effects.Enabled ? 1 : 0);
+                        PlayerPrefs.Save();
+#endif
                         break;
                     case 23: ConfirmStreakBreak("重新开始", () => { settings = false; Restart(); }, false); break;
                     case 24: ToggleSettings(); break;

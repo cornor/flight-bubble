@@ -65,8 +65,8 @@ def prop_button(name, colors):
         for x,y in points:
             r=width/2;d.ellipse(((x-r)*k,(y-r)*k,(x+r)*k,(y+r)*k),fill=255)
     if 'shuffle' in name:
-        # Two curved, right-pointing arrows. A small crossing gap keeps them readable
-        # as separate paths instead of the old straight X with arrowheads.
+        # Continuous curved arrows: the lighter front path separates the crossing
+        # without cutting a cream-coloured hole through the back path.
         def arrow(y0, y1):
             shape = Image.new('L', m.im.size); pen = ImageDraw.Draw(shape)
             points = []
@@ -80,7 +80,6 @@ def prop_button(name, colors):
             pen.polygon([(104*k,(y1-15)*k),(124*k,y1*k),(104*k,(y1+15)*k)], fill=255)
             return shape.filter(ImageFilter.GaussianBlur(.45*k))
         back = arrow(42,84)
-        ImageDraw.Draw(back).ellipse((66*k,53*k,86*k,73*k), fill=0)
         m.symbol(back,(161,113,223),(99,58,164))
         m.symbol(arrow(84,42),(184,133,242),(112,65,185))
     elif 'designate' in name:

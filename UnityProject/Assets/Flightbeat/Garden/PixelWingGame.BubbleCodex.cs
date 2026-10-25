@@ -45,7 +45,7 @@ namespace Flightbeat.Game
         {
             bool mapped = s.MapLayout;
             s.MapLayout = false;
-            float top = ScreenLayout.Top + 42f;
+            float top = ScreenLayout.Top + 16f;
             HomeIconButton(s, 801, ScreenLayout.Left + 20f, top, "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 60f);
             // Lower-right entry, beside the start button; reserve the side columns for future features.
             HomeArtView(out float k, out float ox, out float oy);
@@ -162,14 +162,16 @@ namespace Flightbeat.Game
             for (int i = 0; i < n; i++) if (CodexObtained(list[i])) { got++; latest = i; }
             if (codexSelected < 0 || codexSelected >= n) codexSelected = latest;
             float oy = (ScreenLayout.Height - 960f) * .5f;
+            // The album body stays centred; its header belongs to the top safe area on long phones.
+            float headerY = ScreenLayout.Top;
             float enter = Clamp01((ui - codexOpenedAt) / .3f), slide = (1f - OutCubic(enter)) * 10f;
             HitBlock(s);
             // The opaque cloud plate is rendered by GardenBattlePage; BubbleHome skips its home foreground.
-            GardenTitleArt.Draw(s, "泡泡图鉴", 270f, oy + 43f - slide, 42f);
-            SoapBubble(s, new Vector2(150f, oy + 50f), 26f, Color.white, .7f, 2);
-            SoapBubble(s, new Vector2(389f, oy + 40f), 17f, Color.white, .65f, 4);
-            HitBox(s, CodexCloseAction, 470f, oy + 14f, 60f, 60f);
-            float close = 42f * (1f - PressPulse(CodexCloseAction) * .1f), cy = oy + 44f;
+            GardenTitleArt.Draw(s, "泡泡图鉴", 270f, headerY + 43f - slide, 42f);
+            SoapBubble(s, new Vector2(150f, headerY + 50f), 26f, Color.white, .7f, 2);
+            SoapBubble(s, new Vector2(389f, headerY + 40f), 17f, Color.white, .65f, 4);
+            HitBox(s, CodexCloseAction, 470f, headerY + 14f, 60f, 60f);
+            float close = 42f * (1f - PressPulse(CodexCloseAction) * .1f), cy = headerY + 44f;
             CodexRound(s, 500f - close * .5f, cy - close * .5f + 2f, close, close, close * .5f, A(Hex(0xD6544C), .2f));
             CodexRound(s, 500f - close * .5f, cy - close * .5f, close, close, close * .5f, Hex(0xF06B61));
             s.GardenRoundedRect(501.2f - close * .5f, cy - close * .5f + 1.2f, close - 2.4f, close - 2.4f, close * .5f,
@@ -178,11 +180,11 @@ namespace Flightbeat.Game
             s.Segment(new Vector2(500f - cross, cy - cross), new Vector2(500f + cross, cy + cross), 4f, Color.white);
             s.Segment(new Vector2(500f + cross, cy - cross), new Vector2(500f - cross, cy + cross), 4f, Color.white);
             // Keep the small collection label single-pass so dense strokes stay distinct.
-            GardenSkin.Text(s, "已收集 " + got + " / " + n, 270f, oy + 86f, 20f, true, CodexInk);
-            CodexRound(s, 163f, oy + 110f, 214f, 19f, 9.5f, Hex(0xF5FCFF));
-            s.GardenRoundedRect(165f, oy + 112f, 210f, 15f, 7.5f, Hex(0xD5C1E9), Hex(0xE7D9F2));
+            GardenSkin.Text(s, "已收集 " + got + " / " + n, 270f, headerY + 86f, 20f, true, CodexInk);
+            CodexRound(s, 163f, headerY + 110f, 214f, 19f, 9.5f, Hex(0xF5FCFF));
+            s.GardenRoundedRect(165f, headerY + 112f, 210f, 15f, 7.5f, Hex(0xD5C1E9), Hex(0xE7D9F2));
             float fill = 210f * got / Mathf.Max(1, n);
-            if (fill > 0f) s.GardenRoundedRect(165f, oy + 112f, fill, 15f, 7.5f, Hex(0xBDEB9B), Hex(0x6BC75F));
+            if (fill > 0f) s.GardenRoundedRect(165f, headerY + 112f, fill, 15f, 7.5f, Hex(0xBDEB9B), Hex(0x6BC75F));
 
             var entry = list[codexSelected];
             bool have = CodexObtained(entry);
@@ -190,6 +192,9 @@ namespace Flightbeat.Game
             float pop = pick < .45f ? 1f + .1f * Mathf.Sin(pick / .45f * Mathf.PI) * (1f - pick / .45f) : 1f;
             const float cx = 270f;
             float feet = oy + 331f;
+            // Reserve a gap below the meter, including the selection bounce and the largest breathing pose.
+            float headSpan = ArtScale(entry.tint) * Mathf.Max(.1f, FeetLine - HeadTop(entry.tint)) * 1.1f;
+            float heroHeight = Mathf.Min(282f, Mathf.Max(80f, feet - headerY - 143f) / headSpan);
             s.Glow(cx, oy + 253f, 330f, 320f, new Color(.85f, .99f, 1f, .85f), 0f);
             s.Glow(cx, feet + 7f, 242f, 45f, new Color(.33f, .65f, .88f, .3f), 0f);
             Asset(s, "scene/plot", cx - 113f, feet - 19f, 226f, 43f, Color.white);
@@ -203,12 +208,12 @@ namespace Flightbeat.Game
             {
                 bool before = GardenSkin.Celebrate;
                 GardenSkin.Celebrate = pick < .9f;
-                Creature(s, entry.tint, cx, feet, 282f * pop, 0, "", 0f, 12f, false, false, .018f, codexSelected * 1.3f);
+                Creature(s, entry.tint, cx, feet, heroHeight * pop, 0, "", 0f, 12f, false, false, .018f, codexSelected * 1.3f);
                 GardenSkin.Celebrate = before;
             }
             else
             {
-                CodexSilhouetteArt(s, entry.tint, cx, feet, 282f * pop);
+                CodexSilhouetteArt(s, entry.tint, cx, feet, heroHeight * pop);
                 CodexLock(s, cx, oy + 265f, 34f);
             }
             string[] blurb = CodexBlurb.TryGetValue(entry.name, out var b) ? b : new[] { "", "" };

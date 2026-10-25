@@ -18,6 +18,7 @@ namespace Flightbeat.Game
         internal int GardenSelection => selection;
         void InitializeGardenUi()
         {
+            InitializeGardenBoard();
             var prefab = Resources.Load<GardenBattlePage>("GardenR1/UI/GardenBattlePage");
             if (!prefab) throw new InvalidOperationException("Missing GardenR1/UI/GardenBattlePage prefab");
             gardenPage = Instantiate(prefab, hudRect, false);
@@ -38,6 +39,7 @@ namespace Flightbeat.Game
         internal void RefreshGardenUi(GardenBattlePage view)
         {
             PlushLayout.Enabled = GardenUiActive;
+            RefreshGardenBoard();
             view.SetHomeMode(InHome);
             if (InHome)
             {

@@ -66,6 +66,13 @@ namespace Flightbeat.Audio
         public void UnPause(AudioSource source) { Observe(54197, source); source.UnPause(); }
         public bool SourcesEqual(AudioSource a, AudioSource b) => a == b;
         public bool SourcesNotEqual(AudioSource a, AudioSource b) => a != b;
-        public void SaveInt(string key, int value) => PlayerPrefs.SetInt(key, value);
+        public void SaveInt(string key, int value)
+        {
+            PlayerPrefs.SetInt(key, value);
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            // WebGL pages may close without a quit callback: flush each settings change.
+            PlayerPrefs.Save();
+#endif
+        }
     }
 }

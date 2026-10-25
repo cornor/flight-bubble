@@ -1,0 +1,47 @@
+{
+  "updatedAt": "2026-10-25 11:52:23",
+  "version": "20261025115223",
+  "sourceArtwork": "Art/PlushToy/LoadingConcepts-20261024/B-fresh-mascot.png",
+  "asset": "TemplateData/loading-B-fresh.webp",
+  "imageSize": [
+    854,
+    1842
+  ],
+  "imageSha256": "3275b2495fda047bd2a3af9081e78e99977529bc797e3325b3c238fc1482a357",
+  "originalPixelsPreserved": true,
+  "ui": "Mint native progress and full health advisory replace baked concept sample UI below the mascot.",
+  "engineUnchanged": true,
+  "engineFiles": {
+    "GardenR1-bubble.loader.js": "d7a3ee7acf704a81c53418d29e8d58d9b34f9674e01c1bdb44bcbdf6406d7bfa",
+    "GardenR1-bubble.wasm.unityweb": "ea020eda0430361392ae5323455a9567f1a488b044c7d8987b4a2d5ac9d570cf",
+    "GardenR1-bubble.data.unityweb": "26625dd12bbda2873bce8e92cb3a4bbeed995ef93e443d6b29445c5f7de73219",
+    "GardenR1-bubble.framework.js.unityweb": "6b118dee822bbf7931533452733d8aaf28b32f638b52cb2ec3d8d02987d6a192"
+  },
+  "unityBuildTime": "2026-10-25 11:36:25",
+  "published": false,
+  "acceptance": {
+    "passed": true,
+    "checks": [
+      "All five viewports use the selected asset; loading matches the game canvas exactly, with no additional inner margins or viewport-wide expansion; health text does not overlap",
+      "Actual Unity download gives monotonic progress; loading disappears after successful startup",
+      "Desktop loading and the running game have identical bounds",
+      "Failed loader shows refresh message while artwork and health advisory remain visible"
+    ],
+    "screens": [
+      "540x960",
+      "390x844",
+      "320x568",
+      "430x932",
+      "1280x960"
+    ],
+    "visualReview": "Darker mint outline and subtle inset track are visible at 320px and 390px, including 0% and actual partial progress.",
+    "unexpectedErrors": 0,
+    "evidence": "evidence-bar-contrast/result.json"
+  },
+  "progressBar": {
+    "border": "#579783",
+    "minimumBorderPx": 1.5,
+    "track": "sage recessed gradient",
+    "heightUnchanged": true
+  }
+}

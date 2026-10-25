@@ -6,6 +6,10 @@ namespace Flightbeat.Game
 {
     public partial class PixelWingGame
     {
+        // The plush board has its own vertical projection; keep a screen-space bomb circular in model space too.
+        float SuperAimStretch => PlushLayout.Enabled
+            ? (PlushLayout.Y(562f) - PlushLayout.Y(114f)) / (562f - 114f)
+            : ScreenLayout.Stretch;
         // src: UpdateSuperAim f54797. Its named entry adds targetClock + dt;
         // original Update f54783 separately inlines dt + targetClock. Retain
         // both source operand orders, the suspended guard and the f32 store.
@@ -57,7 +61,7 @@ namespace Flightbeat.Game
             float size = aimMissile ? 150f : 120f;
             float factor = Battle != null ? OriginalMath.Binary32(Battle.Loadout.bombRadius + 1f) : 1f;
             float rx = OriginalMath.Binary32(OriginalMath.Binary32(size * factor) / ScreenLayout.EnemyScaleX);
-            float ry = OriginalMath.Binary32(OriginalMath.Binary32(size * factor) / (OriginalMath.Binary32(ScreenLayout.Stretch * 1.31f)));
+            float ry = OriginalMath.Binary32(OriginalMath.Binary32(size * factor) / (OriginalMath.Binary32(SuperAimStretch * 1.31f)));
             SetPaused(false);
             if (!Battle.LaunchSuperStrike(x, y, rx, ry, aimMissile))
             {
@@ -109,7 +113,7 @@ namespace Flightbeat.Game
                     float size = aimMissile ? 150f : 120f;
                     factor = Battle != null ? OriginalMath.Binary32(Battle.Loadout.bombRadius + 1f) : 1f;
                     int count = Battle.StrikeTargets(modelX, modelY, OriginalMath.Binary32(OriginalMath.Binary32(size * factor) / ScreenLayout.EnemyScaleX),
-                        OriginalMath.Binary32(OriginalMath.Binary32(size * factor) / (OriginalMath.Binary32(ScreenLayout.Stretch * 1.31f))));
+                        OriginalMath.Binary32(OriginalMath.Binary32(size * factor) / (OriginalMath.Binary32(SuperAimStretch * 1.31f))));
                     radius = OriginalMath.Binary32((aimMissile ? 150f : 120f) * (Battle != null ? OriginalMath.Binary32(Battle.Loadout.bombRadius + 1f) : 1f));
                     float score = OriginalMath.Binary32((OriginalMath.Binary32(OriginalMath.Binary32((OriginalMath.Binary32(delta + (OriginalMath.Binary32(radius + radius)))) * .004f) + 1f)) * OriginalMath.Binary32((float)count));
                     if (score > best) { best = score; result = new Vector2(logicalX, logicalY); }

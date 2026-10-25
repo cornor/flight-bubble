@@ -125,7 +125,9 @@ namespace Flightbeat.Game
 
             audioChip = gameObject.AddComponent<ChipAudio>();
 #if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            audioChip.RestoreGardenPreferences();
             effects = new PixelEffectPool(transform, canvasRect, new Flightbeat.Garden.PlushEffectPoolRuntime());
+            effects.Enabled = PlayerPrefs.GetInt("pw.light-enabled", 1) != 0;
 #else
             effects = new PixelEffectPool(transform, canvasRect);
 #endif

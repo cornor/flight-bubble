@@ -248,14 +248,15 @@ namespace Flightbeat.Editor
                 GardenUiText word = RoundLabel("Word", art.rectTransform, words[i], wordLeft, 37f - wordSize * .5f, wordWidth, wordSize, Color.white);
                 if (i == 2) word.alternateText = "取消";
                 word.color = i == 2 ? Color.white : i == 0 ? GardenSkin.Hex(0x4E2BA0) : GardenSkin.Hex(0xA9470B);
-                word.outlineWidth = i == 2 ? 1.5f : .7f; word.outlineColor = i == 2 ? inks[i] : Color.white;
-                // Small circular inset badge, consistent for counts, refill and cancel.
-                Art("Count badge", button, "scene/badge", 126, 5, 24, 24);
-                var amount = RoundLabel("Amount", button, "{0}", 126, 5, 24, 16, GardenSkin.Hex(0x57338F));
+                word.outlineWidth = i == 0 ? 0f : i == 2 ? 1.5f : .7f; word.outlineColor = i == 2 ? inks[i] : Color.white;
+                // Centre the round badge on the button's top edge, half outside the face.
+                Art("Count badge", button, "scene/badge", 130, -10, 24, 24);
+                var amount = RoundLabel("Amount", button, "{0}", 130, -10, 24, 16, GardenSkin.Hex(0x57338F));
                 amount.rectTransform.sizeDelta = new Vector2(24, 24);
                 amount.middle = true;
-                // The visible × extends above the prop rectangle. Give it a full target only while aiming.
-                if (i == 2) Action("Cancel badge hit", button, 12, 116, 0, 40, 32).GetComponent<GardenUiAction>().interactable = false;
+                // The outer half remains tappable, including refill (+) and aiming cancel (×).
+                Action("Count badge hit", button, i + 10, 124, -16, 36, 36);
+                if (i == 2) Action("Cancel badge hit", button, 12, 120, -18, 40, 40).GetComponent<GardenUiAction>().interactable = false;
                 RoundLabel("Cancel hint", button, "取消选择", 0, -22, 156, 15, GardenBars.Navy).gameObject.SetActive(false);
             }
             tutorial.gameObject.SetActive(false);

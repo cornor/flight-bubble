@@ -1,0 +1,585 @@
+{
+  "passed": true,
+  "checks": [
+    "All five viewports use the selected asset; loading matches the game canvas exactly, with no additional inner margins or viewport-wide expansion; health text does not overlap",
+    "Actual Unity download gives monotonic progress; loading disappears after successful startup",
+    "Desktop loading and the running game have identical bounds",
+    "Failed loader shows refresh message while artwork and health advisory remain visible"
+  ],
+  "layouts": [
+    {
+      "name": "standard-loading",
+      "viewport": {
+        "width": 540,
+        "height": 960
+      },
+      "stage": {
+        "x": 0,
+        "y": 0,
+        "width": 540,
+        "height": 960,
+        "right": 540,
+        "bottom": 960
+      },
+      "canvas": {
+        "x": 0,
+        "y": 0,
+        "width": 540,
+        "height": 960,
+        "right": 540,
+        "bottom": 960
+      },
+      "loading": {
+        "x": 0,
+        "y": 0,
+        "width": 540,
+        "height": 960,
+        "right": 540,
+        "bottom": 960
+      },
+      "art": {
+        "x": 0,
+        "y": 0,
+        "width": 540,
+        "height": 960,
+        "right": 540,
+        "bottom": 960
+      },
+      "scene": {
+        "x": 0,
+        "y": 0,
+        "width": 540,
+        "height": 960,
+        "right": 540,
+        "bottom": 960
+      },
+      "bar": {
+        "x": 99.34375,
+        "y": 831.1875,
+        "width": 341.296875,
+        "height": 26,
+        "right": 440.640625,
+        "bottom": 857.1875
+      },
+      "footer": {
+        "x": 0,
+        "y": 777.59375,
+        "width": 540,
+        "height": 182.40625,
+        "right": 540,
+        "bottom": 960
+      },
+      "label": {
+        "x": 99.34375,
+        "y": 793.59375,
+        "width": 341.296875,
+        "height": 27.59375,
+        "right": 440.640625,
+        "bottom": 821.1875
+      },
+      "health": {
+        "x": 21.59375,
+        "y": 894.90625,
+        "width": 496.8125,
+        "height": 57,
+        "right": 518.40625,
+        "bottom": 951.90625
+      },
+      "healthTitle": "《健康游戏忠告》",
+      "healthLines": [
+        "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。",
+        "适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。"
+      ],
+      "image": "http://127.0.0.1:8804/TemplateData/loading-B-mascot-v2.webp?v=20261025120954",
+      "imageSize": [
+        854,
+        1842
+      ],
+      "imageSha256": "eedd6f35faafc183f37d93e0f3fd2153dc50c50e5f55e9cd97d659609d2c5440",
+      "progress": "0"
+    },
+    {
+      "name": "tall-loading",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "stage": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844
+      },
+      "canvas": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844
+      },
+      "loading": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844
+      },
+      "art": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844
+      },
+      "scene": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844
+      },
+      "bar": {
+        "x": 71.75,
+        "y": 722.3125,
+        "width": 246.5,
+        "height": 18.765625,
+        "right": 318.25,
+        "bottom": 741.078125
+      },
+      "footer": {
+        "x": 0,
+        "y": 683.625,
+        "width": 390,
+        "height": 160.375,
+        "right": 390,
+        "bottom": 844
+      },
+      "label": {
+        "x": 71.75,
+        "y": 695.171875,
+        "width": 246.5,
+        "height": 19.921875,
+        "right": 318.25,
+        "bottom": 715.09375
+      },
+      "health": {
+        "x": 15.59375,
+        "y": 797.046875,
+        "width": 358.8125,
+        "height": 41.109375,
+        "right": 374.40625,
+        "bottom": 838.15625
+      },
+      "healthTitle": "《健康游戏忠告》",
+      "healthLines": [
+        "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。",
+        "适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。"
+      ],
+      "image": "http://127.0.0.1:8804/TemplateData/loading-B-mascot-v2.webp?v=20261025120954",
+      "imageSize": [
+        854,
+        1842
+      ],
+      "imageSha256": "eedd6f35faafc183f37d93e0f3fd2153dc50c50e5f55e9cd97d659609d2c5440",
+      "progress": "0"
+    },
+    {
+      "name": "small-loading",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "stage": {
+        "x": 0.25,
+        "y": 0,
+        "width": 319.5,
+        "height": 568,
+        "right": 319.75,
+        "bottom": 568
+      },
+      "canvas": {
+        "x": 0.25,
+        "y": 0,
+        "width": 319.5,
+        "height": 568,
+        "right": 319.75,
+        "bottom": 568
+      },
+      "loading": {
+        "x": 0.25,
+        "y": 0,
+        "width": 319.5,
+        "height": 568,
+        "right": 319.75,
+        "bottom": 568
+      },
+      "art": {
+        "x": 0.25,
+        "y": 0,
+        "width": 319.5,
+        "height": 568,
+        "right": 319.75,
+        "bottom": 568
+      },
+      "scene": {
+        "x": 0.25,
+        "y": 0,
+        "width": 319.5,
+        "height": 568,
+        "right": 319.75,
+        "bottom": 568
+      },
+      "bar": {
+        "x": 59.015625,
+        "y": 491.8125,
+        "width": 201.953125,
+        "height": 15.40625,
+        "right": 260.96875,
+        "bottom": 507.21875
+      },
+      "footer": {
+        "x": 0.25,
+        "y": 460.078125,
+        "width": 319.5,
+        "height": 107.921875,
+        "right": 319.75,
+        "bottom": 568
+      },
+      "label": {
+        "x": 59.015625,
+        "y": 469.546875,
+        "width": 201.953125,
+        "height": 16.34375,
+        "right": 260.96875,
+        "bottom": 485.890625
+      },
+      "health": {
+        "x": 13.015625,
+        "y": 526.359375,
+        "width": 293.96875,
+        "height": 36.859375,
+        "right": 306.984375,
+        "bottom": 563.21875
+      },
+      "healthTitle": "《健康游戏忠告》",
+      "healthLines": [
+        "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。",
+        "适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。"
+      ],
+      "image": "http://127.0.0.1:8804/TemplateData/loading-B-mascot-v2.webp?v=20261025120954",
+      "imageSize": [
+        854,
+        1842
+      ],
+      "imageSha256": "eedd6f35faafc183f37d93e0f3fd2153dc50c50e5f55e9cd97d659609d2c5440",
+      "progress": "0"
+    },
+    {
+      "name": "large-phone-loading",
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "stage": {
+        "x": 0,
+        "y": 0,
+        "width": 430,
+        "height": 932,
+        "right": 430,
+        "bottom": 932
+      },
+      "canvas": {
+        "x": 0,
+        "y": 0,
+        "width": 430,
+        "height": 932,
+        "right": 430,
+        "bottom": 932
+      },
+      "loading": {
+        "x": 0,
+        "y": 0,
+        "width": 430,
+        "height": 932,
+        "right": 430,
+        "bottom": 932
+      },
+      "art": {
+        "x": 0,
+        "y": 0,
+        "width": 430,
+        "height": 932,
+        "right": 430,
+        "bottom": 932
+      },
+      "scene": {
+        "x": 0,
+        "y": 0,
+        "width": 430,
+        "height": 932,
+        "right": 430,
+        "bottom": 932
+      },
+      "bar": {
+        "x": 79.109375,
+        "y": 797.5625,
+        "width": 271.78125,
+        "height": 20.703125,
+        "right": 350.890625,
+        "bottom": 818.265625
+      },
+      "footer": {
+        "x": 0,
+        "y": 754.90625,
+        "width": 430,
+        "height": 177.09375,
+        "right": 430,
+        "bottom": 932
+      },
+      "label": {
+        "x": 79.109375,
+        "y": 767.640625,
+        "width": 271.78125,
+        "height": 21.96875,
+        "right": 350.890625,
+        "bottom": 789.609375
+      },
+      "health": {
+        "x": 17.1875,
+        "y": 880.234375,
+        "width": 395.625,
+        "height": 45.328125,
+        "right": 412.8125,
+        "bottom": 925.5625
+      },
+      "healthTitle": "《健康游戏忠告》",
+      "healthLines": [
+        "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。",
+        "适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。"
+      ],
+      "image": "http://127.0.0.1:8804/TemplateData/loading-B-mascot-v2.webp?v=20261025120954",
+      "imageSize": [
+        854,
+        1842
+      ],
+      "imageSha256": "eedd6f35faafc183f37d93e0f3fd2153dc50c50e5f55e9cd97d659609d2c5440",
+      "progress": "0"
+    },
+    {
+      "name": "desktop-loading",
+      "viewport": {
+        "width": 1280,
+        "height": 960
+      },
+      "stage": {
+        "x": 370,
+        "y": 0,
+        "width": 540,
+        "height": 960,
+        "right": 910,
+        "bottom": 960
+      },
+      "canvas": {
+        "x": 370,
+        "y": 0,
+        "width": 540,
+        "height": 960,
+        "right": 910,
+        "bottom": 960
+      },
+      "loading": {
+        "x": 370,
+        "y": 0,
+        "width": 540,
+        "height": 960,
+        "right": 910,
+        "bottom": 960
+      },
+      "art": {
+        "x": 370,
+        "y": 0,
+        "width": 540,
+        "height": 960,
+        "right": 910,
+        "bottom": 960
+      },
+      "scene": {
+        "x": 370,
+        "y": 0,
+        "width": 540,
+        "height": 960,
+        "right": 910,
+        "bottom": 960
+      },
+      "bar": {
+        "x": 469.34375,
+        "y": 831.1875,
+        "width": 341.296875,
+        "height": 26,
+        "right": 810.640625,
+        "bottom": 857.1875
+      },
+      "footer": {
+        "x": 370,
+        "y": 777.59375,
+        "width": 540,
+        "height": 182.40625,
+        "right": 910,
+        "bottom": 960
+      },
+      "label": {
+        "x": 469.34375,
+        "y": 793.59375,
+        "width": 341.296875,
+        "height": 27.59375,
+        "right": 810.640625,
+        "bottom": 821.1875
+      },
+      "health": {
+        "x": 391.59375,
+        "y": 894.90625,
+        "width": 496.8125,
+        "height": 57,
+        "right": 888.40625,
+        "bottom": 951.90625
+      },
+      "healthTitle": "《健康游戏忠告》",
+      "healthLines": [
+        "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。",
+        "适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。"
+      ],
+      "image": "http://127.0.0.1:8804/TemplateData/loading-B-mascot-v2.webp?v=20261025120954",
+      "imageSize": [
+        854,
+        1842
+      ],
+      "imageSha256": "eedd6f35faafc183f37d93e0f3fd2153dc50c50e5f55e9cd97d659609d2c5440",
+      "progress": "0"
+    },
+    {
+      "name": "load-failure",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "stage": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844
+      },
+      "canvas": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844
+      },
+      "loading": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844
+      },
+      "art": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844
+      },
+      "scene": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844
+      },
+      "bar": {
+        "x": 71.75,
+        "y": 719.703125,
+        "width": 246.5,
+        "height": 18.765625,
+        "right": 318.25,
+        "bottom": 738.46875
+      },
+      "footer": {
+        "x": 0,
+        "y": 683.625,
+        "width": 390,
+        "height": 160.375,
+        "right": 390,
+        "bottom": 844
+      },
+      "label": {
+        "x": 71.75,
+        "y": 695.171875,
+        "width": 246.5,
+        "height": 17.3125,
+        "right": 318.25,
+        "bottom": 712.484375
+      },
+      "health": {
+        "x": 15.59375,
+        "y": 797.046875,
+        "width": 358.8125,
+        "height": 41.109375,
+        "right": 374.40625,
+        "bottom": 838.15625
+      },
+      "healthTitle": "《健康游戏忠告》",
+      "healthLines": [
+        "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。",
+        "适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。"
+      ],
+      "image": "http://127.0.0.1:8804/TemplateData/loading-B-mascot-v2.webp?v=20261025120954",
+      "imageSize": [
+        854,
+        1842
+      ],
+      "imageSha256": "eedd6f35faafc183f37d93e0f3fd2153dc50c50e5f55e9cd97d659609d2c5440",
+      "progress": "0"
+    }
+  ],
+  "progress": [
+    0,
+    28,
+    70,
+    76,
+    78,
+    79,
+    80,
+    81,
+    82,
+    82,
+    83,
+    84,
+    85,
+    85,
+    86,
+    88,
+    97,
+    99,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+  ],
+  "expectedFailures": 1,
+  "errors": []
+}

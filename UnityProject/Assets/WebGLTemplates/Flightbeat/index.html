@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>泡泡小队</title>
-  <link rel="preload" as="image" href="TemplateData/loading-D1-selected.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="TemplateData/loading-B-mascot-v2.webp" fetchpriority="high">
   <style>
     *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0b2238;color:#fff;font:13px system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
     main{height:100%;display:flex;align-items:center;justify-content:center}
@@ -13,30 +13,27 @@
     #broadcast-status{display:none}
     /* Fill the same stage as the game canvas, including on wide browser windows.
        Use the selected artwork without a second, narrower portrait container. */
-    #loading{position:absolute;inset:0;z-index:3;overflow:hidden;background:#46bff5;color:#07346e;transition:opacity .45s ease}
+    #loading{position:absolute;inset:0;z-index:3;overflow:hidden;background:#eff8eb;color:#12535a;transition:opacity .45s ease}
     #loading.out{opacity:0;pointer-events:none}
-    #lg-scene{position:relative;width:100%;height:100%;overflow:hidden;background:#46bff5}
+    #lg-scene{position:relative;width:100%;height:100%;overflow:hidden;background:#eff8eb}
     #lg-art,#lg-art img{position:absolute;inset:0;display:block;width:100%;height:100%}
     #lg-art img{object-fit:fill}
-    #lg-bottom{position:absolute;left:4%;right:4%;bottom:max(1.5%,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*10);z-index:2}
-    #lg-bar-wrap{width:82.61%}
-    #lg-text{text-align:center;font-weight:900;font-size:calc(var(--u)*30);line-height:1.2;letter-spacing:.015em;margin-bottom:calc(var(--u)*9);white-space:nowrap;text-shadow:0 calc(var(--u)*1) 0 #fff5}
-    #lg-bar{height:calc(var(--u)*36);padding:calc(var(--u)*3);border:calc(var(--u)*3.5) solid #20aef5;border-radius:999px;background:#f9fdff;box-shadow:0 calc(var(--u)*1) calc(var(--u)*3) #116fba12}
-    #lg-track{height:100%;overflow:hidden;border-radius:999px;background:#f2fbff}
-    #lg-fill{position:relative;width:0;height:100%;border-radius:999px;background:linear-gradient(#10c6f5,#08b3f0);box-shadow:inset 0 calc(var(--u)*1) 0 #bcefff}
-    #lg-fill:before{content:"";position:absolute;left:7%;right:7%;top:10%;height:12%;border-radius:999px;background:#efffffaf}
-    #lg-health{text-align:center;width:100%;font-size:max(9px,calc(var(--u)*14));line-height:1.25;color:#36588b;text-shadow:0 1px 0 #fff4}
+    /* Live progress and health advisory stay independent of the illustration.
+       The footer starts below the pot and blends into the mint field. */
+    #lg-bottom{position:absolute;left:0;right:0;top:81%;bottom:0;padding:calc(var(--u)*16) 4% max(1.5%,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:calc(var(--u)*10);z-index:2;background:linear-gradient(100deg,#edf7e9,#f5faef)}
+    #lg-bottom:before{content:"";position:absolute;left:0;right:0;bottom:100%;height:calc(var(--u)*18);background:linear-gradient(0deg,#f0f8ec,transparent);pointer-events:none}
+    #lg-bar-wrap{width:68.7%}
+    #lg-text{text-align:center;font-weight:700;font-size:calc(var(--u)*23);line-height:1.2;letter-spacing:.015em;margin-bottom:calc(var(--u)*10);white-space:nowrap;text-shadow:0 calc(var(--u)*1) 0 #fff9}
+    #lg-bar{height:calc(var(--u)*26);padding:calc(var(--u)*1);border:max(1.5px,calc(var(--u)*2)) solid #579783;border-radius:999px;background:#fffdf0;box-shadow:0 calc(var(--u)*1) calc(var(--u)*2) #416f5d20}
+    #lg-track{height:100%;overflow:hidden;border-radius:999px;background:linear-gradient(#e0ebd9,#f3f6e6);box-shadow:inset 0 calc(var(--u)*1) calc(var(--u)*2) #416f5d26}
+    #lg-fill{position:relative;width:0;height:100%;border-radius:999px;background:linear-gradient(#8be8bd,#6eddb1)}
+    #lg-health{text-align:center;width:100%;font-size:max(9px,calc(var(--u)*14));line-height:1.25;color:#466c68;text-shadow:0 1px 0 #fff4}
     #lg-health h2{margin:0 0 calc(var(--u)*4);font-size:max(10px,calc(var(--u)*15));font-weight:800;line-height:1.2}
     #lg-health p{margin:0}
-    #loading.failed #lg-text{font-size:calc(var(--u)*25);color:#853e17}
+    #loading.failed #lg-text{font-size:calc(var(--u)*20);color:#853e17}
     #lg-bar.done{animation:lg-flash .4s ease-out}
-    .lg-mini{position:absolute;pointer-events:none;width:6%;opacity:0;z-index:1;animation:lg-rise 8s ease-in infinite}
-    .lg-mini:nth-of-type(1){left:90%;top:73%;animation-delay:-2s}
-    .lg-mini:nth-of-type(2){left:4%;top:67%;width:4%;animation-delay:-6s}
-    .lg-mini:nth-of-type(3){left:83%;top:48%;width:3.5%;animation-delay:-4s}
-    @keyframes lg-rise{0%{transform:translate(0,0) scale(.65);opacity:0}15%,65%{opacity:.65}100%{transform:translate(calc(var(--u)*14),calc(var(--u)*-300)) scale(1.15);opacity:0}}
     @keyframes lg-flash{0%{filter:brightness(1.4)}100%{filter:brightness(1)}}
-    @media(prefers-reduced-motion:reduce){.lg-mini{display:none}#lg-bar.done{animation:none}#loading{transition:none}}
+    @media(prefers-reduced-motion:reduce){#lg-bar.done{animation:none}#loading{transition:none}}
   </style>
 </head>
 <body>
@@ -46,11 +43,8 @@
       <div id="loading" aria-label="泡泡小队加载页">
         <div id="lg-scene">
         <picture id="lg-art">
-          <img src="TemplateData/loading-D1-selected.webp" alt="泡泡小队：蓝熊、水豚、青蛙、兔子和小猫的毛绒伙伴大合照" fetchpriority="high" decoding="async">
+          <img src="TemplateData/loading-B-mascot-v2.webp" alt="泡泡小队：毛绒蓝熊在蓝色云朵花盆中微笑，抬手追逐泡泡" fetchpriority="high" decoding="async">
         </picture>
-        <img class="lg-mini" src="TemplateData/loading-bubble.webp" alt="">
-        <img class="lg-mini" src="TemplateData/loading-bubble.webp" alt="">
-        <img class="lg-mini" src="TemplateData/loading-bubble.webp" alt="">
         <div id="lg-bottom">
           <div id="lg-bar-wrap">
             <div id="lg-text" role="status" aria-live="polite">加载中… 0%</div>

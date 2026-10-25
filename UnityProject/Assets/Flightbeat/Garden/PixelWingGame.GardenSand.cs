@@ -23,6 +23,7 @@ namespace Flightbeat.Game
         float[] sandX, sandY, sandVy, sandLandAt, sandLandK;
         bool[] sandSeen;
         float sandAt, sandTime;
+        bool sandSquashing;
 
         float SandColumnX(int i)
         {
@@ -33,13 +34,16 @@ namespace Flightbeat.Game
             return origin + pitch * (sandPosition[i] % level.columns);
         }
 
-        // Called once per frame by DrawGarden with the drawn formation offset.
-        void UpdateGardenSand(float offset)
+        // Called before canvas rebuilds. Report actual display changes so a settled
+        // board can keep its mesh while characters, hints and effects animate.
+        bool UpdateGardenSand(float offset)
         {
             int n = Battle.Alive.Length;
             float dt = Mathf.Clamp(ui - sandAt, 0f, .05f);
             sandAt = ui;
             bool reset = sandBattle != Battle || sandY == null || sandY.Length != n || Battle.Time < sandTime;
+            bool changed = reset || sandSquashing;
+            sandSquashing = false;
             sandTime = Battle.Time;
             if (reset)
             {
@@ -56,18 +60,27 @@ namespace Flightbeat.Game
             bool snap = reset || Battle.State == Phase.Intro;
             for (int i = 0; i < n; i++)
             {
-                if (!Battle.Alive[i] || !Battle.OnBoard(i)) { sandSeen[i] = false; continue; }
+                if (!Battle.Alive[i] || !Battle.OnBoard(i)) {
+                    changed |= sandSeen[i]; sandSeen[i] = false; continue;
+                }
                 float ty = Battle.GridY(i), tx = SandColumnX(i);
                 if (snap)
                 {
+                    changed = true;
                     sandSeen[i] = true; sandX[i] = tx; sandY[i] = ty; sandVy[i] = 0f; sandLandAt[i] = -9f;
                     continue;
                 }
                 if (!sandSeen[i])
                 {
+                    changed = true;
                     sandSeen[i] = true; sandX[i] = tx; sandY[i] = Mathf.Min(ty - pitch, ceiling);
                     sandVy[i] = pitch * 4f; sandLandAt[i] = -9f;
                 }
+                float age = ui - sandLandAt[i];
+                sandSquashing |= age >= 0f && age <= .16f;
+                // Exact equality: do not truncate a slow fall or a landing animation.
+                if (sandX[i] == tx && sandY[i] == ty && sandVy[i] == 0f) continue;
+                float oldX = sandX[i], oldY = sandY[i];
                 float dy = ty - sandY[i], dx = tx - sandX[i];
                 if (Mathf.Abs(dx) > pitchX * 3f) { sandX[i] = tx; dx = 0f; }
                 if (dy > .001f)
@@ -80,7 +93,7 @@ namespace Flightbeat.Game
                     if (fall >= dy)
                     {
                         sandY[i] = ty; sandX[i] = tx; sandVy[i] = 0f;
-                        if (v > pitch * 10f) { sandLandAt[i] = ui; sandLandK[i] = Mathf.Clamp01(v / fastest); }
+                        if (v > pitch * 10f) { sandLandAt[i] = ui; sandLandK[i] = Mathf.Clamp01(v / fastest); sandSquashing = true; }
                     }
                     else sandVy[i] = v;
                 }
@@ -91,7 +104,9 @@ namespace Flightbeat.Game
                     else sandY[i] = Mathf.MoveTowards(sandY[i], ty, Mathf.Max(-dy * 14f, pitch * 6f) * dt);
                     sandX[i] = Mathf.MoveTowards(sandX[i], tx, Mathf.Max(Mathf.Abs(dx) * 16f, pitchX * 5f) * dt);
                 }
+                changed |= oldX != sandX[i] || oldY != sandY[i];
             }
+            return changed || sandSquashing;
         }
 
         // Drawn grid position of a bead (before the formation offset); false when the display has no state for it.

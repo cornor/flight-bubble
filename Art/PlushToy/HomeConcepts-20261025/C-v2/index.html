@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>泡泡小队 · C 方案扩展与伙伴状态</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f8f5fc;color:#352248;font:16px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}main{max-width:1050px;padding:26px;margin:auto}header{margin-bottom:20px}h1{font-size:28px;margin:0 0 8px}p{margin:4px 0;color:#756185}.note{padding:12px 16px;background:#efe6f9;border-radius:12px;margin-top:14px;font-size:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}article{background:white;border-radius:20px;padding:14px}h2{font-size:19px;margin:0 0 8px}article p{font-size:13px;margin:0 0 12px}img{display:block;width:100%;height:auto;border-radius:12px}a{color:#7850a5}footer{font-size:13px;padding-top:20px}a:focus-visible{outline:3px solid #c99e40;outline-offset:4px}@media(max-width:650px){main{padding:18px}.grid{grid-template-columns:1fr}}
+</style>
+<main>
+<header><h1>C 方案：为后续功能留位置</h1><p>标题与伙伴收小一档，两侧各留 2 个入口；开始按钮固定在底部。</p><div class="note">侧栏的签到、排行、活动、任务仅用于演示未来按钮容量。实际没有功能时保持留白，超过 4 个入口时用“更多”收纳低频功能。</div></header>
+<section class="grid">
+<article><h2>有待解锁的新伙伴</h2><p>显示下一位伙伴和解锁条件，点击进入图鉴。点击图片看原图。</p><a href="01-有新伙伴.png"><img src="01-有新伙伴.png" alt="C 方案，两侧预留四个功能入口，底部显示新伙伴小霞"></a></article>
+<article><h2>当前伙伴已全部集齐</h2><p>同一位置切换为集齐状态，点击进入图鉴；开始按钮不移动。</p><a href="02-伙伴已集齐.png"><img src="02-伙伴已集齐.png" alt="C 方案全收集状态：全员集结，小队伙伴已集齐"></a></article>
+</section>
+<footer><p>后续新增伙伴时，信息条恢复显示新伙伴与解锁条件。两张图的关卡数字均为排版示例。</p><p>本页为内置 imagegen 制作的设计提案，尚未替换游戏主页。 <a href="prompts.json">查看完整提示词与设计规则</a> · <a href="../">返回原四版对比</a></p></footer>
+</main></html>

@@ -15,6 +15,13 @@ namespace Flightbeat.Audio
         bool gardenMusicLoaded;
         int gardenMusicScene = -1;   // 0 home, 1 level
 
+        public void RestoreGardenPreferences()
+        {
+            MusicMuted = PlayerPrefs.GetInt("pw.music-muted", 0) != 0;
+            EffectsMuted = PlayerPrefs.GetInt("pw.sfx-muted", 0) != 0;
+            ApplyMute();
+        }
+
         void GardenPickMusic()
         {
             var game = GetComponent<Flightbeat.Game.PixelWingGame>();

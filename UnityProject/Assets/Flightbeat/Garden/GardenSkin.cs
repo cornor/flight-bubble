@@ -414,9 +414,9 @@ namespace Flightbeat.Garden
             if (showTier && tier >= 3) {
                 // 2026-10-21 10:39 (user): back to the earlier crown + gold MAX (the glass chip did not suit it).
                 // 2026-10-24: keep a modest lift over the original; the 1.5x mark dominated the plush bodies.
-                const float markScale = 1.2f;
-                Asset(s, "scene/crown", centerX - 12f * markScale, top - 32f * markScale, 24f * markScale, 18f * markScale, Color.white);
-                TextOutline(s, "MAX", centerX, top - 19f * markScale, 14f * markScale, Gold, Outline, 1.5f * markScale);
+                const float markScale = 1.2f, markDrop = 4f;
+                Asset(s, "scene/crown", centerX - 12f * markScale, top - 32f * markScale + markDrop, 24f * markScale, 18f * markScale, Color.white);
+                TextOutline(s, "MAX", centerX, top - 19f * markScale + markDrop, 14f * markScale, Gold, Outline, 1.5f * markScale);
             } else if (showTier && tier > 0 && !badge) TextOutline(s, tier == 1 ? "Ⅰ" : "Ⅱ", centerX + aw * .3f, top, 15f, Gold, Outline, 1.5f);   // 2026-10-21: earlier style
             } finally {
                 if (plushMapped) { LastMouth.y = PlushLayout.InverseY(LastMouth.y); s.MapLayout = true; }

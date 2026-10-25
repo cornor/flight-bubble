@@ -254,55 +254,8 @@ namespace Flightbeat.Game
         static readonly Color GardenGrass = Hex(0x7FA85A), GardenFloor = Hex(0xC9C29A);
         void DrawGarden(PixelSurface s) {
             s.MapLayout = true;
-            // Keep the molded rim outside the actual bead area. Map the field first:
-            // the HUD/field breakpoint otherwise compresses the top rim to < 1 px.
-            s.MapLayout = false;
-            float boardTop = PlushLayout.Y(114f) - 10f, boardBottom = PlushLayout.Y(562f) + 10f;
-            Asset9(s, "scene/plush-board", 2f, boardTop, 536f, boardBottom - boardTop, 27f, 27f, 18f, 18f, Color.white);
-            s.MapLayout = true;
-            // The same original EnemyPoint and shownY interpolation keep sand/target alignment.
-            int visibleBugs = 0;
-            float offset = GardenFormationOffset();
-            feedback.GardenOffsetDelta = offset - Battle.Offset;   // shots aim at where the beads are drawn
-            // 2026-10-16: bead size follows the level's own column/row pitch so neighbouring beads touch and the
-            // level picture reads as one image (the fixed 7.6 px left ~2.5 px gaps between columns). The bead art
-            // fills 94% of its quad; columns overlap slightly, rows a little more (each row covers the one above).
-            float pitchX = (Battle.Level.pitchX > 0f ? Battle.Level.pitchX : 10.5f) * ScreenLayout.EnemyScaleX;
-            float pitchY = Battle.PitchY * ScreenLayout.EnemyScaleY;
-            float beadW = pitchX * 1.05f / .94f, beadH = Mathf.Min(beadW, pitchY * 1.3f / .94f);
-            feedback.GardenBeadSize = beadH;   // 2026-10-21: the hit pops start from the bead's own size
-            float strikeShake = feedback.GardenStrikeShake;
-            UpdateGardenSand(offset);   // 2026-10-21: beads fall and roll into place (PixelWingGame.GardenSand.cs)
-            gardenBeadDraws.Clear();
-            for (int i = 0; i < Battle.Alive.Length; i++) {
-                if (!Battle.Alive[i] || !Battle.OnBoard(i)) continue;
-                GardenSandAt(i, out float gx, out float gy);
-                Vector2 target = ScreenLayout.EnemyPoint(gx, gy + offset), at = target;
-                if (Battle.State == Phase.Intro) {
-                    if (FleetOpening.Progress(i, Battle.IntroTime, target) <= 0) continue;
-                    at = FleetOpening.EnemyPosition(i, Battle.IntroTime, target);
-                }
-                if (at.y < 114 || at.y > 572 || at.x < 12 || at.x > 528) continue;
-                at.y += strikeShake;   // 2026-10-21: the board jolts when a bubble bomb goes off
-                visibleBugs++;
-                float squash = GardenSandSquash(i);
-                if (squash > 0f) at.y += beadH * squash * .5f;
-                gardenBeadDraws.Add(new GardenBeadDraw { index = i, at = at, squash = squash });
-            }
-            // Flow and streamed replacements reorder the board independently of cell IDs.
-            // Paint each body/highlight pair top-to-bottom so overlap never reverses at a stream boundary.
-            gardenBeadDraws.Sort(GardenBeadOrder);
-            for (int i = 0; i < gardenBeadDraws.Count; i++) {
-                GardenBeadDraw bead = gardenBeadDraws[i];
-                Vector2 at = bead.at;
-                Color tint = GardenColor(Battle.ColorAt(bead.index));
-                // 2026-10-16: beads inside the bomb circle light up (the original whitened them too, f54801).
-                if (selection == 2 && InBombCircle(at)) tint = Color.Lerp(tint, Color.white, .3f + .2f * Mathf.Sin(ui * 7f));
-                // 2026-10-21 20:45 (user): the teaching levels drew the original's shape-marked beads (dot / triangle /
-                // square / cross per colour, 21 px, point-filtered), unlike every later level. Same bead everywhere now.
-                Bug(s, tint, at, beadH * (1f - bead.squash), false, beadW * (1f + bead.squash));
-            }
-            GardenWebMetrics.Visible(visibleBugs);
+            if (!gardenBoard) { PrepareGardenBoard(true); DrawGardenBoard(s); }
+            GardenWebMetrics.Visible(gardenBeadDraws.Count);
             // The tray provides the quiet lower edge; danger still marks the defense line.
             DrawBubbleRail(s);
             if (feedback.Hurt > 0) s.Border(10, 92, 520, 466, A(Hex(0xE25555), feedback.Hurt), 3);
@@ -326,10 +279,10 @@ namespace Flightbeat.Game
                     bool mapped = s.MapLayout; s.MapLayout = false;
                     float padY = PlushLayout.Y(647f) - GardenPadLift(), padH = plotW * .4f;
                     Asset(s, "scene/plot", cx - plotW / 2, padY - padH / 2, plotW, padH, Color.white);
-                    float lockSize = plotW * .6f;
-                    Asset(s, "scene/plot-lock-bubble", cx - lockSize / 2, padY - plotW * .8f, lockSize, lockSize, Color.white);
+                    float lockSize = plotW * .75f, lockTop = padY - lockSize - 4f;
+                    Asset(s, "scene/plot-lock-bubble", cx - lockSize / 2, lockTop, lockSize, lockSize, Color.white);
                     // A small translucent corner badge sits with the lock's soft glass treatment.
-                    float adX = cx + 13f, adY = padY - plotW * .76f + 2f;
+                    float adX = cx + lockSize * .38f, adY = lockTop + 4f;
                     if (!PauseVideoBadge(s, adX, adY, 18f, .78f))
                         TextOutline(s, "▶", adX, adY - 7f, 14f, A(Color.white, .78f), A(Hex(0x826CB2), .78f), 1f);
                     s.MapLayout = mapped;

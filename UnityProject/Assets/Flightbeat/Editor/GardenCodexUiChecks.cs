@@ -93,9 +93,9 @@ namespace Flightbeat.Editor
             profile = ((FleetEconomy)Get(game, "Economy")).Data; // Constructor refresh publishes a normalized clone.
             Set(game, "ui", 10f);
             Capture("home-before", 1080, 1920);
-            PixelWingGame.HomeArtView(out float homeScale, out _, out float homeY);
+            PixelWingGame.HomeArtView(out float homeScale, out float homeX, out float homeY);
             Check(Hit(ScreenLayout.Right - 42f, homeY + 410f * homeScale + 120f) != 806, "Hidden level picker has no home hit region");
-            Click(ScreenLayout.Right - 42f, homeY + 410f * homeScale + 28f);
+            Click(homeX + 485f * homeScale, homeY + 773f * homeScale);
             Check((bool)Get(game, "codexOpen"), "Home entry opens album through normal input routing");
             string saved = JsonUtility.ToJson(profile);
             var list = (IList)typeof(PixelWingGame).GetProperty("Codex", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
@@ -105,7 +105,7 @@ namespace Flightbeat.Editor
                 Set(game, "ui", 12f); Set(game, "codexSelected", 0); Set(game, "codexPickedAt", 9f);
                 Capture("album-8-" + viewport.x + "x" + viewport.y, viewport.x, viewport.y);
                 float oy = (ScreenLayout.Height - 960f) * .5f;
-                Check(Hit(500f, oy + 44f) == 804, "Close hit visible at " + viewport);
+                Check(Hit(500f, ScreenLayout.Top + 44f) == 804, "Close hit stays at the top safe area at " + viewport);
                 Check(Hit(270f, oy + 460f) == 0 && Hit(15f, oy + 800f) == 0, "Album blocks underlying home controls at " + viewport);
                 for (int i = 0; i < 20; i++)
                 {
@@ -126,19 +126,24 @@ namespace Flightbeat.Editor
             profile.cleared = Enumerable.Range(1, 19).ToList(); Set(game, "codexSelected", 0);
             Color full = Capture("album-complete", 1080, 1920);
             Check(list.Cast<object>().All(e => (bool)Call("CodexObtained", e)), "Complete profile unlocks all 20 members");
-            Check(empty.r > full.r + .18f && full.b > full.r + .3f, "Actual rendered meter changes from empty to full blue at the right end");
-            Click(500f, 44f); Check(!(bool)Get(game, "codexOpen") && game.InHome, "Close returns to home through normal input");
+            Check(empty.r > full.r + .18f && full.g > full.r + .15f && full.g > full.b + .15f,
+                "Actual rendered meter changes from empty to full green at the right end");
+            Set(game, "codexSelected", 18); Set(game, "codexPickedAt", 13.85f);
+            foreach (int height in new[] { 1920, 2100, 2340 })
+                Capture("album-frog-bounce-" + height, 1080, height);
+            Click(500f, ScreenLayout.Top + 44f); Check(!(bool)Get(game, "codexOpen") && game.InHome, "Close returns to home through normal input");
             Capture("home-after-close", 1080, 1920);
             var background = (RawImage)Get(game.gardenPage, "homeBackground");
             Check(background.texture.name == "home-background", "Closing restores original home texture");
             Check(background.rectTransform.offsetMin == Vector2.zero && background.rectTransform.offsetMax == Vector2.zero, "Closing restores original home bounds");
             int selectedSet = PixelWingGame.LevelSetCurrent;
-            Click(34f, 35f);
+            Click(50f, ScreenLayout.Top + 72f);
             Check((bool)Get(game, "settings"), "Home settings still opens via its existing button");
             Capture("home-settings-hidden-levels", 1080, 1920);
             var newLevels = (GameObject)Get(game.gardenPage, "levelSetRow");
             Check(newLevels && !newLevels.activeInHierarchy, "New-level setting is hidden");
-            Check(!((GameObject)Get(game.gardenPage, "levelSetDivider")).activeInHierarchy, "Hidden setting leaves no trailing divider");
+            var divider = (GameObject)Get(game.gardenPage, "levelSetDivider");
+            Check(!divider || !divider.activeInHierarchy, "Hidden setting leaves no trailing divider");
             foreach (var action in game.gardenPage.pauseDialog.GetComponentsInChildren<Flightbeat.Garden.UI.GardenUiAction>(true).Where(a => a.actionId == 805))
                 Check(!action.gameObject.activeInHierarchy, "New-level setting has no active hit target");
             Check(selectedSet == PixelWingGame.LevelSetCurrent, "Hiding settings preserves the selected level set");
@@ -164,8 +169,7 @@ namespace Flightbeat.Editor
                     Color leftEdge = image.GetPixel(2, height / 2), rightEdge = image.GetPixel(width - 3, height / 2);
                     Check(leftEdge.b > .5f && rightEdge.b > .5f, "Cloud background covers both viewport edges: " + name);
                 }
-                float oy = (ScreenLayout.Height - 960f) * .5f;
-                return image.GetPixel(Mathf.RoundToInt((370f - ScreenLayout.Left) * ScreenLayout.Scale), Mathf.RoundToInt(height - (oy + 119f) * ScreenLayout.Scale));
+                return image.GetPixel(Mathf.RoundToInt((370f - ScreenLayout.Left) * ScreenLayout.Scale), Mathf.RoundToInt(height - (ScreenLayout.Top + 119f) * ScreenLayout.Scale));
             } finally {
                 camera.targetTexture = previous; RenderTexture.active = active;
                 UnityEngine.Object.DestroyImmediate(image); rt.Release(); UnityEngine.Object.DestroyImmediate(rt);

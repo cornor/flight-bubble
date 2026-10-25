@@ -146,8 +146,7 @@ namespace Flightbeat.Game
         float BombRadius => (aimMissile ? 150f : 120f) * (Battle.Loadout.bombRadius + 1f);
         bool InBombCircle(Vector2 mapPoint)
         {
-            // Collision still uses the original screen-space radius. Project its outline only for display.
-            Vector2 a = ScreenLayout.Point(aim), p = ScreenLayout.Point(mapPoint);
+            Vector2 a = PlushLayout.Point(aim), p = PlushLayout.Point(mapPoint);
             return (p - a).sqrMagnitude <= BombRadius * BombRadius;
         }
         void DrawBombAim(PixelSurface s)
@@ -156,10 +155,8 @@ namespace Flightbeat.Game
             s.MapLayout = false;
             Vector2 c = PlushLayout.Point(aim);
             float pulse = Mathf.Sin(ui * 5f) * .5f + .5f, r = BombRadius * (1f + .015f * pulse);
-            Vector2 Rim(float angle, float radius) => PlushLayout.Point(aim + new Vector2(Mathf.Cos(angle) * radius,
-                Mathf.Sin(angle) * radius / ScreenLayout.Stretch));
-            float glowH = Mathf.Abs(Rim(Mathf.PI * .5f, r).y - Rim(-Mathf.PI * .5f, r).y) * 1.1f;
-            s.Glow(c.x, c.y, r * 2.2f, glowH, new Color(1f, .45f, .3f, .28f + .1f * pulse), 0f);
+            Vector2 Rim(float angle, float radius) => c + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+            s.Glow(c.x, c.y, r * 2.2f, r * 2.2f, new Color(1f, .45f, .3f, .28f + .1f * pulse), 0f);
             for (int pass = 0; pass < 2; pass++)
             {
                 Vector2 prev = Rim(0f, r);

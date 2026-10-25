@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta name="build-time" content="2026-10-25 11:36:25">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>泡泡小队 · R1 试玩版</title>
+  <link rel="preload" as="image" href="TemplateData/loading-D1-selected.webp?v=20261025113625" fetchpriority="high">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0b2238;color:#fff;font:13px system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
+    main{height:100%;display:flex;align-items:center;justify-content:center}
+    #stage{height:100%;max-height:100dvh;aspect-ratio:9/16;position:relative;max-width:100vw;--u:1px}
+    canvas{display:block;width:100%;height:100%;background:#000;outline:none}
+    #broadcast-status{display:none}
+    /* Fill the same stage as the game canvas, including on wide browser windows.
+       Use the selected artwork without a second, narrower portrait container. */
+    #loading{position:absolute;inset:0;z-index:3;overflow:hidden;background:#46bff5;color:#07346e;transition:opacity .45s ease}
+    #loading.out{opacity:0;pointer-events:none}
+    #lg-scene{position:relative;width:100%;height:100%;overflow:hidden;background:#46bff5}
+    #lg-art,#lg-art img{position:absolute;inset:0;display:block;width:100%;height:100%}
+    #lg-art img{object-fit:fill}
+    #lg-bottom{position:absolute;left:4%;right:4%;bottom:max(1.5%,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*10);z-index:2}
+    #lg-bar-wrap{width:82.61%}
+    #lg-text{text-align:center;font-weight:900;font-size:calc(var(--u)*30);line-height:1.2;letter-spacing:.015em;margin-bottom:calc(var(--u)*9);white-space:nowrap;text-shadow:0 calc(var(--u)*1) 0 #fff5}
+    #lg-bar{height:calc(var(--u)*36);padding:calc(var(--u)*3);border:calc(var(--u)*3.5) solid #20aef5;border-radius:999px;background:#f9fdff;box-shadow:0 calc(var(--u)*1) calc(var(--u)*3) #116fba12}
+    #lg-track{height:100%;overflow:hidden;border-radius:999px;background:#f2fbff}
+    #lg-fill{position:relative;width:0;height:100%;border-radius:999px;background:linear-gradient(#10c6f5,#08b3f0);box-shadow:inset 0 calc(var(--u)*1) 0 #bcefff}
+    #lg-fill:before{content:"";position:absolute;left:7%;right:7%;top:10%;height:12%;border-radius:999px;background:#efffffaf}
+    #lg-health{text-align:center;width:100%;font-size:max(9px,calc(var(--u)*14));line-height:1.25;color:#36588b;text-shadow:0 1px 0 #fff4}
+    #lg-health h2{margin:0 0 calc(var(--u)*4);font-size:max(10px,calc(var(--u)*15));font-weight:800;line-height:1.2}
+    #lg-health p{margin:0}
+    #loading.failed #lg-text{font-size:calc(var(--u)*25);color:#853e17}
+    #lg-bar.done{animation:lg-flash .4s ease-out}
+    .lg-mini{position:absolute;pointer-events:none;width:6%;opacity:0;z-index:1;animation:lg-rise 8s ease-in infinite}
+    .lg-mini:nth-of-type(1){left:90%;top:73%;animation-delay:-2s}
+    .lg-mini:nth-of-type(2){left:4%;top:67%;width:4%;animation-delay:-6s}
+    .lg-mini:nth-of-type(3){left:83%;top:48%;width:3.5%;animation-delay:-4s}
+    @keyframes lg-rise{0%{transform:translate(0,0) scale(.65);opacity:0}15%,65%{opacity:.65}100%{transform:translate(calc(var(--u)*14),calc(var(--u)*-300)) scale(1.15);opacity:0}}
+    @keyframes lg-flash{0%{filter:brightness(1.4)}100%{filter:brightness(1)}}
+    @media(prefers-reduced-motion:reduce){.lg-mini{display:none}#lg-bar.done{animation:none}#loading{transition:none}}
+  </style>
+<link rel="icon" href="data:,">
+</head>
+<body>
+  <main>
+    <div id="stage">
+      <canvas id="unity-canvas" tabindex="-1" aria-label="泡泡小队游戏画面"></canvas>
+      <div id="loading" aria-label="泡泡小队加载页">
+        <div id="lg-scene">
+        <picture id="lg-art">
+          <img src="TemplateData/loading-D1-selected.webp?v=20261025113625" alt="泡泡小队：蓝熊、水豚、青蛙、兔子和小猫的毛绒伙伴大合照" fetchpriority="high" decoding="async">
+        </picture>
+        <img class="lg-mini" src="TemplateData/loading-bubble.webp?v=20261025113625" alt="">
+        <img class="lg-mini" src="TemplateData/loading-bubble.webp?v=20261025113625" alt="">
+        <img class="lg-mini" src="TemplateData/loading-bubble.webp?v=20261025113625" alt="">
+        <div id="lg-bottom">
+          <div id="lg-bar-wrap">
+            <div id="lg-text" role="status" aria-live="polite">加载中… 0%</div>
+            <div id="lg-bar" role="progressbar" aria-label="游戏加载进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="lg-track"><div id="lg-fill"></div></div>
+            </div>
+          </div>
+          <section id="lg-health" aria-label="健康游戏忠告">
+            <h2>《健康游戏忠告》</h2>
+            <p>抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。</p>
+            <p>适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。</p>
+          </section>
+        </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <span id="broadcast-status" hidden aria-hidden="true"></span>
+  <script>
+    const canvas=document.getElementById('unity-canvas');
+    const stage=document.getElementById('stage'),scene=document.getElementById('lg-scene'),loading=document.getElementById('loading');
+    const bar=document.getElementById('lg-bar'),fill=document.getElementById('lg-fill'),text=document.getElementById('lg-text');
+    let target=0,shown=0,done=false,finished=false,failed=false,lastPercent=-1;
+    function unit(){scene.style.setProperty('--u',scene.clientWidth/540+'px');}
+    unit();addEventListener('resize',unit);
+    const sizeObserver=new ResizeObserver(unit);sizeObserver.observe(scene);
+    function frame(){
+      if(failed)return;
+      shown+=(target-shown)*.12;if(target-shown<.003)shown=target;
+      const p=Math.min(shown,1),percent=Math.round(p*100);
+      fill.style.width=p*100+'%';
+      if(percent!==lastPercent){
+        text.textContent='加载中… '+percent+'%';
+        bar.setAttribute('aria-valuenow',String(percent));lastPercent=percent;
+      }
+      // Unity's download callback reaches at most 96%; 100% requires successful engine startup.
+      if(done&&shown>=.997&&!finished){
+        finished=true;text.textContent='加载完成，出发！';bar.classList.add('done');
+        setTimeout(()=>{
+          loading.classList.add('out');canvas.focus();
+          setTimeout(()=>{loading.remove();sizeObserver.disconnect();removeEventListener('resize',unit);},500);
+        },450);
+        return;
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    function fail(){
+      failed=true;loading.classList.add('failed');
+      text.textContent='加载失败，请刷新重试';bar.setAttribute('aria-valuetext','加载失败');
+    }
+    // 2026-10-22 11:12 (user: text looked soft on phones): render up to 2x device pixels (was 1.5x from the original;
+    // a 3x phone drew at half resolution and the browser scaled it up).
+    const config={dataUrl:'Build/GardenR1-bubble.data.unityweb?v=20261025113625',frameworkUrl:'Build/GardenR1-bubble.framework.js.unityweb?v=20261025113625',codeUrl:'Build/GardenR1-bubble.wasm.unityweb?v=20261025113625',streamingAssetsUrl:'StreamingAssets',companyName:"BubbleSquad",productName:"FlightBubble",productVersion:"0.11.0",devicePixelRatio:Math.min(window.devicePixelRatio||1,2)};
+    const loader=document.createElement('script');loader.src='Build/GardenR1-bubble.loader.js?v=20261025113625';
+    loader.onload=()=>createUnityInstance(canvas,config,p=>{target=Math.max(target,Math.min(p,1)*.96);}).then(instance=>{
+      target=1;done=true;
+    }).catch(error=>{console.error(error);fail();});
+    loader.onerror=fail;document.body.appendChild(loader);
+  </script>
+<script src="r1-perf.js"></script>
+  <script>console.log("泡泡小队 构建时间 2026-10-25 11:36:25")</script>
+</body>
+</html>

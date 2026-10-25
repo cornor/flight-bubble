@@ -38,7 +38,7 @@ DEL, FXDEL, OUT, GEN, CODE, FONT = map(Path, (args.delivery, args.fx_delivery, a
 PLUSH = ROOT / 'Art/PlushToy/P1/delivery'
 PLUSH_FIRST_FIVE = ROOT / 'Art/PlushToy/FirstFive/delivery'
 PLUSH_FULL = ROOT / 'Art/PlushToy/P2-P4/delivery'
-LOADING_ART = ROOT / 'Art/PlushToy/LoadingD1-20261024/masters'
+LOADING_ART = ROOT / 'Art/PlushToy/LoadingB-20261025/masters'
 PLUSH_ROOTS = (PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
 
 def art_path(rel):
@@ -687,19 +687,12 @@ def export_loading():
     import json as _json
     tpl = ROOT / 'UnityProject/Assets/WebGLTemplates/Flightbeat/TemplateData'
     tpl.mkdir(parents=True, exist_ok=True)
-    if (LOADING_ART / 'selected.png').exists():
-        # User-selected attachment: no white stitches along the pot rims. Every screen
-        # uses this same image; lossless encoding preserves the supplied pixels.
-        Image.open(LOADING_ART / 'selected.png').convert('RGB').save(
-            tpl / 'loading-D1-selected.webp', lossless=True, method=6)
-        for stale in ('loading-D1-long.webp', 'loading-D1-short.webp'):
-            for path in (tpl / stale, tpl / (stale + '.meta')):
-                path.unlink(missing_ok=True)
-        bub = DEL / '../../home-v1/generated/soap-bubble-halo.png'
-        Image.open(bub).convert('RGBA').resize((240, 240), Image.Resampling.LANCZOS).save(
-            tpl / 'loading-bubble.webp', quality=90, method=6)
-        return sum((tpl / name).stat().st_size for name in
-                   ('loading-D1-selected.webp', 'loading-bubble.webp'))
+    if (LOADING_ART / 'mascot-v2.png').exists():
+        # B layout with the user's reference mascot: smiling, raised paw, refined blue pot.
+        # The HTML footer supplies live progress and the health advisory independently.
+        Image.open(LOADING_ART / 'mascot-v2.png').convert('RGB').save(
+            tpl / 'loading-B-mascot-v2.webp', lossless=True, method=6)
+        return (tpl / 'loading-B-mascot-v2.webp').stat().st_size
     if (PLUSH_FULL / 'home/blue/attack.png').exists():
         from build_plush_ui import capsule as plush_capsule
         for cid,name in [('blue','hero'),('orange','orange'),('purple','purple')]:

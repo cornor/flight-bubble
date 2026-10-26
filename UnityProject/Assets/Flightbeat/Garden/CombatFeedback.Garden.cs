@@ -74,19 +74,23 @@ namespace Flightbeat.Feedback
         // Ordinary tiers and MAX's splash attack share one visual admission path.
         // Copy values at impact: the model releases/reuses Shot immediately afterwards.
         const float GardenAttackPopLife = .4f;
-        const float GardenAttackPopMergeWindow = .12f;
+        // 120 ms / 1.2: dense hits can start 20% more clips per second.
+        const float GardenAttackPopMergeWindow = .1f;
         const int GardenAttackPopLimit = 32;
-        struct GardenAttackPop { public Vector2 at; public float born, size; }
+        struct GardenAttackPop { public Vector2 at; public float born, size; public int tier; }
         readonly System.Collections.Generic.List<GardenAttackPop> gardenAttackPops =
             new System.Collections.Generic.List<GardenAttackPop>(GardenAttackPopLimit);
-        static float GardenAttackPopSize(int tier) => tier >= 3 ? 120f : tier == 2 ? 60f : tier == 1 ? 40f : 25f;
+        static float GardenAttackPopSize(int tier) => tier >= 3 ? 120f : tier == 2 ? 84f : tier == 1 ? 60f : 40f;
+        // Keep the original neighborhoods independent of the larger visual sizes.
+        static float GardenAttackPopMergeRadius(int tier) => tier >= 3 ? 60f : tier == 2 ? 30f : 24f;
         void GardenOnImpact(Shot shot)
         {
             // MAX's main shot retains its small bead feedback; only its splash gets the large clip.
             if (!shot.Rocket && shot.Tier >= 3) return;
             Vector2 at = shot.Rocket ? ScreenLayout.EnemyPoint(shot.TargetX, shot.TargetY)
                 : EnemyShown(shot.TargetIndex, ShownPoint(shot.TargetX, shot.TargetY));
-            float size = GardenAttackPopSize(shot.Rocket ? 3 : shot.Tier);
+            int tier = shot.Rocket ? 3 : shot.Tier;
+            float size = GardenAttackPopSize(tier);
             Vector2 shown = PlushLayout.Point(at);
             for (int i = gardenAttackPops.Count - 1; i >= 0; i--)
             {
@@ -95,15 +99,16 @@ namespace Flightbeat.Feedback
                 if (age < 0f || age >= GardenAttackPopLife) { gardenAttackPops.RemoveAt(i); continue; }
                 if (age >= GardenAttackPopMergeWindow) continue;
                 // Group adjacent beads, with a wider neighborhood for large bursts.
-                float radius = Mathf.Max(24f, Mathf.Min(size, pop.size) * .5f);
+                float radius = Mathf.Min(GardenAttackPopMergeRadius(tier), GardenAttackPopMergeRadius(pop.tier));
                 if ((shown - PlushLayout.Point(pop.at)).sqrMagnitude > radius * radius) continue;
                 // A stronger impact can take over the clip, without restarting or moving it.
                 pop.size = Mathf.Max(size, pop.size);
+                pop.tier = Mathf.Max(tier, pop.tier);
                 gardenAttackPops[i] = pop;
                 TrimGardenAttackPops();
                 return;
             }
-            gardenAttackPops.Add(new GardenAttackPop { at = at, born = time, size = size });
+            gardenAttackPops.Add(new GardenAttackPop { at = at, born = time, size = size, tier = tier });
             TrimGardenAttackPops();
         }
         void TrimGardenAttackPops()

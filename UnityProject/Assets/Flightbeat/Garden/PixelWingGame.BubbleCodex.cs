@@ -26,9 +26,8 @@ namespace Flightbeat.Game
                     {
                         string name = GardenColorCatalog.Name(rgb);
                         if (!seen.Add(name)) continue;
-                        // The opening levels use the lighter blue/orange variants; the codex shows the main colors.
-                        int art = rgb == 0x42A9FF ? 0x2982F4 : rgb == 0xFF9D30 ? 0xFF7E27 : rgb;
-                        codex.Add(new CodexEntry { name = name, tint = Hex(art), level = level + 1 });
+                        // Every palette color owns its animal, including the two tutorial colors.
+                        codex.Add(new CodexEntry { name = name, tint = Hex(rgb), level = level + 1 });
                     }
                 return codex;
             }
@@ -107,31 +106,33 @@ namespace Flightbeat.Game
             GardenBarArt.TextOutline(s, label, cx, y + size + 1f, size >= 80f ? 23f : 18f, Color.white, Hex(0x54318C), 2.2f);
         }
 
-        // ---- codex page: cloud album; original 20-member order, unlock rules and card interactions.
+        // ---- codex page: cloud album; all 22 independent colors, in their actual debut order.
         const int CodexCardAction = 810;   // 810 + index
         int codexSelected = -1;
         float codexPickedAt = -9f;
         static readonly System.Collections.Generic.Dictionary<string, string[]> CodexBlurb = new System.Collections.Generic.Dictionary<string, string[]> {
             { "小蓝", new[] { "队长", "泡泡小队的队长，挺胸一喊，大家就出发！" } },
+            { "小天", new[] { "悠闲", "考拉的大耳朵软乎乎，慢慢来，也能吹出好泡泡。" } },
             { "小橙", new[] { "调皮", "最爱蹦高高，总想第一个冲出去。" } },
+            { "小金", new[] { "神气", "小狮子的鬃毛蓬松松，一声招呼，伙伴都来啦！" } },
             { "小绿", new[] { "憨厚", "软软的青蛙脸，鼓起腮帮就想吹泡泡。" } },
             { "小紫", new[] { "爱笑", "大耳朵轻轻扇，小鼻子吹出彩虹泡泡。" } },
             { "小黄", new[] { "机灵", "眨眨眼，就能吹出一串彩虹泡泡。" } },
             { "小白", new[] { "认真", "绒绒的猫耳朵，做事总是一丝不苟。" } },
             { "小红", new[] { "热情", "狐狸耳朵竖起来，见到伙伴就开心。" } },
-            { "小黑", new[] { "酷", "一身炭黑小绒毛，其实心里最暖。" } },
-            { "小靛", new[] { "迷糊", "小熊耳朵圆圆的，总是半睁着眼。" } },
-            { "小冰", new[] { "好奇", "冰蓝色的小绒熊，什么都想看看。" } },
-            { "小雾", new[] { "爱做梦", "雾紫色的绒耳朵，常在梦里吹泡泡。" } },
-            { "小玫", new[] { "傲娇", "莓红色的兔耳朵，一挑眉就不服气。" } },
-            { "小棕", new[] { "稳重", "两只小圆耳朵，笑起来憨憨的。" } },
-            { "小晶", new[] { "优雅", "紫罗兰色的小象，慢悠悠地卷起鼻子。" } },
-            { "小荧", new[] { "好动", "黄绿色的小青蛙，一刻也停不下来。" } },
-            { "小碧", new[] { "随和", "薄荷绿的毛绒脸，抿嘴一笑最治愈。" } },
-            { "小翠", new[] { "勇敢", "深绿绒毛暖乎乎，越危险越向前。" } },
+            { "小黑", new[] { "酷", "小企鹅拍拍软翅膀，黑白绒毛里藏着暖暖的心。" } },
+            { "小靛", new[] { "机敏", "小浣熊戴着绒绒眼罩，总能找到泡泡的空隙。" } },
+            { "小冰", new[] { "好奇", "小海豹晃晃圆脑袋，胡须一动，泡泡就来啦。" } },
+            { "小雾", new[] { "爱做梦", "小河马打个软软的哈欠，梦里也在吹泡泡。" } },
+            { "小玫", new[] { "傲娇", "小鹿晃晃软绒角，抬起头来，从不服输。" } },
+            { "小棕", new[] { "活泼", "小猴子的圆耳朵动一动，好点子又冒出来啦。" } },
+            { "小晶", new[] { "聪明", "猫头鹰睁着圆圆的大眼睛，每一发都想得仔细。" } },
+            { "小荧", new[] { "好动", "小刺猬的绒刺软软的，精神满满，随时出发。" } },
+            { "小碧", new[] { "稳当", "小乌龟背着软软的壳，一步一步，也能赢。" } },
+            { "小翠", new[] { "勇敢", "小鳄鱼露出两颗软牙，长长嘴巴也能吹圆泡泡。" } },
             { "小粉", new[] { "甜甜", "两只软软的兔耳朵，最爱黏着大家。" } },
-            { "小霞", new[] { "温和", "蜜桃色的软兔子，笑起来像棉花糖。" } },
-            { "小清", new[] { "害羞", "浅薄荷色的小青蛙，红着脸躲在后面。" } },
+            { "小霞", new[] { "温和", "蜜桃色的小猪拱拱圆鼻子，笑起来像棉花糖。" } },
+            { "小清", new[] { "害羞", "小绵羊裹着软软的卷毛，轻轻一吹，就是泡泡。" } },
         };
         // Cloud album, 2026-10-22: the approved page concept with live collection data and original character art.
         static readonly Color CodexInk = Hex(0x54318C), CodexMuted = Hex(0x88739A), CodexSilhouette = Hex(0xB7A2CD);
@@ -246,23 +247,23 @@ namespace Flightbeat.Game
             }
             GardenBarArt.Text(s, "伙伴一览", 24f, oy + 472f, 23f, false, CodexInk);
             GardenBarArt.Text(s, "点击卡片查看", 516f - GardenBarArt.TextWidth("点击卡片查看", 13f), oy + 481f, 13f, false, CodexMuted);
-            const int cols = 5;
-            const float cw = 92f, ch = 94f, gap = 8f;
+            const int cols = 6;
+            const float cw = 77f, ch = 94f, columnGap = 6f, rowGap = 8f;
             float gy = oy + 507f + slide;
             for (int i = 0; i < n; i++)
             {
                 var c = list[i];
                 bool owned = CodexObtained(c), selected = i == codexSelected;
-                float x = 24f + i % cols * (cw + gap), y = gy + i / cols * (ch + gap), mid = x + cw * .5f;
+                float x = 24f + i % cols * (cw + columnGap), y = gy + i / cols * (ch + rowGap), mid = x + cw * .5f;
                 HitBox(s, CodexCardAction + i, x, y, cw, ch);
                 CodexRound(s, x, y + 2f, cw, ch, 11f, new Color(.27f, .55f, .76f, .13f));
                 CodexRound(s, x, y, cw, ch, 11f, selected ? Hex(0xFFBD34) : Hex(0xCFB5EF));
                 s.GardenRoundedRect(x + 1.1f, y + 1.1f, cw - 2.2f, ch - 2.2f, 10f,
                     selected ? Hex(0xFFFEF5) : Hex(0xFFFFFF), selected ? Hex(0xFFF5DA) : Hex(0xF3EAFB));
-                if (owned) Creature(s, c.tint, mid, y + 69f, 96f, 0, "", 0f, 12f, false, false, selected ? .018f : 0f, i * 1.3f);
+                if (owned) Creature(s, c.tint, mid, y + 69f, 88f, 0, "", 0f, 12f, false, false, selected ? .018f : 0f, i * 1.3f);
                 else
                 {
-                    CodexSilhouetteArt(s, c.tint, mid, y + 69f, 96f);
+                    CodexSilhouetteArt(s, c.tint, mid, y + 69f, 88f);
                     CodexLock(s, mid, y + 42f, 17f);
                 }
                 DialogText(s, owned ? c.name : "第" + c.level + "关", mid, y + 75f, 14f, owned ? CodexInk : Hex(0x8C739E));

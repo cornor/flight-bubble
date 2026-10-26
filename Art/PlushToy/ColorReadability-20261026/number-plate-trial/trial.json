@@ -1,0 +1,26 @@
+{
+  "status": "reverted",
+  "scope": "Only ammo number plates and digit contrast; no bubble icons, character recolors, card changes or gameplay changes.",
+  "buildStamp": "20261026112930",
+  "preview": "http://127.0.0.1:8792/?v=20261026112930",
+  "sources": [
+    "UnityProject/Assets/Flightbeat/Garden/GardenSkin.cs",
+    "UnityProject/Assets/Flightbeat/Garden/GardenBarArt.cs",
+    "UnityProject/Assets/Flightbeat/Garden/PixelSurface.Garden.cs",
+    "UnityProject/Assets/Flightbeat/Resources/GardenR1/GardenSurface.shader"
+  ],
+  "verification": "webgl-neutral-evidence/result.json",
+  "visualReview": [
+    "webgl-neutral-evidence/level-3-battle-540x960.png",
+    "webgl-neutral-evidence/level-13-battle-390x844.png"
+  ],
+  "notes": "The number-plate-only shader mode neutralizes the original cyan texture before applying the palette color. Existing glass, other UI rendering modes and character art remain unchanged. Verified with local Chrome, not a physical phone.",
+  "revertedAt": "2026-10-26T11:35:00+08:00",
+  "reason": "User rejected the color-coded number plates; restore the previous blue plates and white digits.",
+  "revertVerification": {
+    "buildStamp": "20261026113556",
+    "evidence": "webgl-reverted-evidence/result.json",
+    "sourceRestoredExactly": true,
+    "visualReview": "webgl-reverted-evidence/level-13-battle-540x960.png"
+  }
+}

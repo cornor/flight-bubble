@@ -38,9 +38,10 @@ DEL, FXDEL, OUT, GEN, CODE, FONT = map(Path, (args.delivery, args.fx_delivery, a
 PLUSH = ROOT / 'Art/PlushToy/P1/delivery'
 PLUSH_FIRST_FIVE = ROOT / 'Art/PlushToy/FirstFive/delivery'
 PLUSH_FULL = ROOT / 'Art/PlushToy/P2-P4/delivery'
+PLUSH_UNIQUE = ROOT / 'Art/PlushToy/UniqueAnimals-20261026/delivery'
 LOADING_ART = ROOT / 'Art/PlushToy/LoadingB-20261025/masters'
 HOME_WAVE_ART = ROOT / 'Art/PlushToy/HomeWave-20261025/masters'
-PLUSH_ROOTS = (PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
+PLUSH_ROOTS = (PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
 
 def art_path(rel):
     # User-restored Git glass lock must not be replaced by the plush pad override.
@@ -130,7 +131,7 @@ color_file = ROOT / 'Art/skin-colors.json'
 color_data = json.loads(color_file.read_text())
 for entry in color_data['colors']:
     h, cid, internal = entry['hex'].lstrip('#').upper(), entry['creatureId'], entry['slotId']
-    entry['status'] = 'art' if all((DEL / f'creatures/{cid}/{h}/{st}.png').is_file() for st in ['idle','attack','spent']) else 'placeholder'
+    entry['status'] = 'art' if all(art_path(f'creatures/{cid}/{h}/{st}.png').is_file() for st in ['idle','attack','spent']) else 'placeholder'
     for st in ['idle', 'attack', 'spent']:
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE,
                       lambda x=h, state=st: P.round_creature(x, state)))
@@ -473,7 +474,7 @@ SLOTS += [('finale/button-plate', 'finale/button-plate.png', UI, None),
 color_file.write_text(json.dumps(color_data, ensure_ascii=False, indent=2) + '\n')
 lookup = ['#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR', 'namespace Flightbeat.Garden {',
           '    public static class GardenColorCatalog {']
-for method, field in [('Key', 'slotId'), ('Name', 'displayName')]:
+for method, field in [('Key', 'slotId'), ('Name', 'displayName'), ('Animal', 'animalName')]:
     lookup += [f'        public static string {method}(int rgb) {{', '            switch (rgb) {']
     for e in color_data['colors']:
         lookup.append('                case 0x%s: return %s;' % (e['hex'][1:], json.dumps(e[field], ensure_ascii=False)))

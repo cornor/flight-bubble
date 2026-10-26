@@ -5,7 +5,7 @@ from pathlib import Path
 from PIL import Image
 ROOT=Path(__file__).resolve().parents[2]
 BATCH=ROOT/'Art/PlushToy/P2-P4'
-roots=[BATCH/'delivery',ROOT/'Art/PlushToy/FirstFive/delivery',ROOT/'Art/PlushToy/P1/delivery']
+roots=[ROOT/'Art/PlushToy/UniqueAnimals-20261026/delivery',BATCH/'delivery',ROOT/'Art/PlushToy/FirstFive/delivery',ROOT/'Art/PlushToy/P1/delivery']
 res=ROOT/'UnityProject/Assets/Flightbeat/Resources/GardenR1'
 atlas=json.loads((res/'atlas.json').read_text());slots={s['id']:s for s in atlas['slots']}
 sources=json.loads((ROOT/'Art/R1/art-v3/generated/atlas-sources.json').read_text())
@@ -33,7 +33,7 @@ for c in catalog:
     dest=BATCH/'metadata'/f'{hx}.json';dest.parent.mkdir(exist_ok=True);dest.write_text(json.dumps(metadata,indent=2)+'\n')
 assert len(rows)==110,len(rows)
 for sid,rel in [('plants/mystery-bubble','creatures/mystery/bubble.png'),('plants/finale/king-ready','finale/king-ready.png'),('plants/finale/king-blow','finale/king-blow.png')]:
-    assert sources[sid]==hashlib.sha256((roots[0]/rel).read_bytes()).hexdigest(),sid
+    assert sources[sid]==hashlib.sha256(next(r/rel for r in roots if (r/rel).exists()).read_bytes()).hexdigest(),sid
 for face in ('explain','happy','worried','proud'):
     sid='ui/guide-'+face
     assert sid in slots,sid

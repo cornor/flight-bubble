@@ -101,7 +101,7 @@ namespace Flightbeat.Editor
                     float modelTime = battle.Time;
                     Require(Draw("DrawGardenAttackPops") == 4, "Impact emits one authored sprite");
                     var bounds = Bounds();
-                    float expected = new[] { 25f, 40f, 60f, 120f }[tier];
+                    float expected = new[] { 40f, 60f, 84f, 120f }[tier];
                     Require(Mathf.Abs(bounds.width - expected) < .002f && Mathf.Abs(bounds.height - expected) < .002f,
                         "Wrong rendered impact size at " + viewport + ", tier " + tier);
                     Require((bounds.center - new Vector2(123f, PlushLayout.Y(333f))).sqrMagnitude < .001f,
@@ -112,14 +112,14 @@ namespace Flightbeat.Editor
                     Set(feedback, "time", .06f);
                     impactAt.x += 12f; Impact(tier == 3);
                     Require(pops.Count == 1 && Draw("DrawGardenAttackPops") == 4,
-                        "Adjacent impacts within 0.12 seconds must share one clip");
+                        "Adjacent impacts within 0.10 seconds must share one clip");
                     Require((float)Get(pops[0], "born") == 0f && (Bounds().center - bounds.center).sqrMagnitude < .001f,
                         "Merged hits must not restart or move the clip");
                     impactAt.x = 350f; Impact(tier == 3);
                     Require(pops.Count == 2 && Draw("DrawGardenAttackPops") == 8,
                         "Distant simultaneous impacts must retain their own feedback");
-                    impactAt.x = 123f; Set(feedback, "time", .121f); Impact(tier == 3);
-                    Require(pops.Count == 3, "The original location must admit another burst after 0.12 seconds");
+                    impactAt.x = 123f; Set(feedback, "time", .101f); Impact(tier == 3);
+                    Require(pops.Count == 3, "The original location must admit another burst after 0.10 seconds");
                     Set(feedback, "time", .4f);
                     Require(Draw("DrawGardenAttackPops") == 8 && pops.Count == 2,
                         "The first clip must expire on its original schedule despite merged hits");
@@ -149,9 +149,23 @@ namespace Flightbeat.Editor
                     Require(pops.Count == 1, "Even an isolated MAX main shot must not add a duplicate large burst");
                     Set(feedback, "time", 3f);
                     Require(Draw("DrawGardenAttackPops") == 0 && pops.Count == 0, "Promoted effects must expire");
+                    impactAt = new Vector2(123f, 333f); Impact(tier == 3);
+                    impactAt.x += new[] { 26f, 26f, 32f, 62f }[tier]; Impact(tier == 3);
+                    Require(pops.Count == 2, "Larger artwork must not merge hits outside the original neighborhood, tier " + tier);
+                    Set(feedback, "time", 4f); Draw("DrawGardenAttackPops");
+                    impactAt = new Vector2(123f, 333f);
+                    int clips = 0; float latestBorn = -1f;
+                    for (int tick = 0; tick < 600; tick++)
+                    {
+                        Set(feedback, "time", 5f + tick * .001f); Impact(tier == 3);
+                        float born = (float)Get(pops[pops.Count - 1], "born");
+                        if (born == latestBorn) continue;
+                        latestBorn = born; clips++;
+                    }
+                    Require(clips == 6, "600 ms of dense impacts must produce six clips instead of the previous five (+20%), tier " + tier);
                     pool.Dispose();
                 }
-                Debug.Log("GARDEN_ATTACK_POP_CHECKS_PASSED: four sizes, two viewports, MAX splash only, spatial merging, 0.12s admission, mixed-tier priority, pooled shots, pause/expiry, visual budgets, unchanged gameplay");
+                Debug.Log("GARDEN_ATTACK_POP_CHECKS_PASSED: 40/60/84/120 sizes, two viewports, MAX splash only, preserved spatial merging, 0.10s admission, dense frequency +20%, mixed-tier priority, pooled shots, pause/expiry, visual budgets, unchanged gameplay");
             }
             finally
             {

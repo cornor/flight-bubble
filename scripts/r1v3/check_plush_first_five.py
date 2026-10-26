@@ -6,7 +6,7 @@ from PIL import Image
 
 ROOT=Path(__file__).resolve().parents[2]
 BATCH=ROOT/'Art/PlushToy/FirstFive'
-DELIVERIES=[BATCH/'delivery',ROOT/'Art/PlushToy/P1/delivery']
+DELIVERIES=[ROOT/'Art/PlushToy/UniqueAnimals-20261026/delivery',ROOT/'Art/PlushToy/P2-P4/delivery',BATCH/'delivery',ROOT/'Art/PlushToy/P1/delivery']
 RESOURCES=ROOT/'UnityProject/Assets/Flightbeat/Resources'
 STATES=('idle','attack','spent','ready','blink')
 catalog={c['hex'].lstrip('#'):c for c in json.loads((ROOT/'Art/skin-colors.json').read_text())['colors']}

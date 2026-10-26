@@ -62,24 +62,25 @@ namespace Flightbeat.Game
         // 2026-10-19 11:07 (user picked C): the stalled-fleet hint uses the same glass capsule, with a coral edge, a warning
         // sign and the problem line in red; the second line (what to do) stays navy. Not red all over: red is the rail's
         // danger colour, and being stuck is not yet danger.
+        const float StallHintY = 312f, StallHintHeight = 96f;
         void DrawGardenStallHint(PixelSurface s)
         {
             bool mapped = s.MapLayout;
-            float cy = mapped ? PlushLayout.Y(312f) : 312f;
+            float cy = mapped ? PlushLayout.Y(StallHintY) : StallHintY;
             s.MapLayout = false;
             try
             {
-                const float cx = 270f, w = 420f, h = 72f;
-                GardenBars.Capsule(s, cx, cy, w, h, GardenBars.Coral);
-                if (!GardenBars.Icon(s, "warn", cx - w * .5f + 45f, cy, h * .82f)) WarnSign(s, cx - w * .5f + 34f, cy, 1f);
+                const float cx = 270f, w = 500f;
+                GardenBars.Capsule(s, cx, cy, w, StallHintHeight, GardenBars.Coral);
+                if (!GardenBars.Icon(s, "warn", cx - w * .5f + 45f, cy, 56f)) WarnSign(s, cx - w * .5f + 34f, cy, 1f);
                 const float textCenter = cx + 32f;
-                GardenBarArt.Text(s, "出战位满了，同色泡泡被挡住啦", textCenter, cy - 23f, 19f, true, GardenBars.DeepCoral);
+                GardenBarArt.Text(s, "出战位满了，同色泡泡被挡住啦", textCenter, cy - 31f, 25f, true, GardenBars.DeepCoral);
                 const string second = "试试泡泡炸弹，清开最下排";
-                float lineW = GardenBarArt.TextWidth(second, 17f), bomb = 27f;
+                float lineW = GardenBarArt.TextWidth(second, 24f), bomb = 34f;
                 bool hasBomb = GardenBars.HasIcon("bomb");
-                float start = textCenter - (lineW + (hasBomb ? bomb + 5f : 0f)) * .5f;
-                if (hasBomb) GardenBars.Icon(s, "bomb", start + bomb * .5f, cy + 13f, bomb);
-                GardenBarArt.Text(s, second, start + (hasBomb ? bomb + 5f : 0f), cy + 6f, 17f, false, GardenBars.Navy);
+                float start = textCenter - (lineW + (hasBomb ? bomb + 8f : 0f)) * .5f;
+                if (hasBomb) GardenBars.Icon(s, "bomb", start + bomb * .5f, cy + 20f, bomb);
+                GardenBarArt.Text(s, second, start + (hasBomb ? bomb + 8f : 0f), cy + 8f, 24f, false, GardenBars.Navy);
             }
             finally { s.MapLayout = mapped; }
         }
@@ -144,7 +145,7 @@ namespace Flightbeat.Game
             if (Battle != null && Battle.AdvanceHeld > 0f && selection == 0)
                 Avoid(GardenBars.ScreenY(s, 240f) - 34f, GardenBars.ScreenY(s, 240f) + 34f);
             if (Battle != null && Battle.Stalled && selection == 0 && !settings && Battle.State == Phase.Playing)
-                Avoid(GardenBars.ScreenY(s, 312f) - 36f, GardenBars.ScreenY(s, 312f) + 36f);
+                Avoid(GardenBars.ScreenY(s, StallHintY) - StallHintHeight * .5f, GardenBars.ScreenY(s, StallHintY) + StallHintHeight * .5f);
             s.MapLayout = false;
             try { HintCapsule(s, text, cy, w, 38f, size, edge, ink, alpha, 1f, icon, GardenBars.Deco.None, age); }
             finally { s.MapLayout = mapped; }

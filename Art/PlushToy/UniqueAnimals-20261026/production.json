@@ -1,0 +1,491 @@
+{
+  "status": "complete",
+  "tool": "built-in image_gen",
+  "scope": "22 palette colors / 22 distinct animal identities; retain 8, replace 14",
+  "steps": [
+    "Generate and inspect 14 five-state sheets",
+    "Register sprites and calibrate mouth positions",
+    "Split color identities and update codex",
+    "Build, audit coverage, and visually verify game"
+  ],
+  "jobs": [
+    {
+      "id": "koala",
+      "creatureId": "koala",
+      "hex": "42A9FF",
+      "displayName": "小天",
+      "animal": "考拉",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: light sky blue #42A9FF koala, enormous fluffy round tufted ears with cream inner ears, large tall charcoal oval nose, cream chin, no bear muzzle; sky-blue felt pot with pale cloud appliques.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-9f59517d-202f-40f0-bba3-c84e12a815d7.png",
+      "previousSources": [
+        "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-fa2f3733-c69a-42de-afd2-e1efe683843b.png"
+      ],
+      "repairPrompt": "Edit this sprite sheet to correct sprite spacing ONLY. Preserve this exact blue koala, all five expressions, colors, fluffy texture, refined felt pots, clean rims and true transparency. Keep exact 1536x1024 canvas and 3 columns by 2 rows. Scale EACH complete toy down to 72% of its current width and height so each one has WIDE transparent padding and NEVER touches or crosses its 512x512 cell. Toy centers at x=256,768,1280 in first row and x=256,768 in second row. Pot bottom y=440 for top row and y=952 for bottom row. Exactly FIVE complete toys: idle / open O mouth attack / tired on top; puffed cheeks / eyes closed at bottom. Entire bottom-right cell empty transparent. No backdrop, shadows or glows. Do not crop any ear or fur. Fill margins with true alpha zero.",
+      "mouthCanvas": [
+        103,
+        109
+      ]
+    },
+    {
+      "id": "lion",
+      "creatureId": "lion",
+      "hex": "FF9D30",
+      "displayName": "小金",
+      "animal": "狮子",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: golden orange #FF9D30 lion cub, round soft scalloped golden amber mane clearly surrounding entire face, small rounded ears above mane, ivory paired muzzle, brown triangle nose; golden orange felt pot with small ivory sun appliques.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-0a2d4fb5-d56e-48b6-b64c-019d29a17163.png",
+      "mouthCanvas": [
+        95,
+        103
+      ]
+    },
+    {
+      "id": "charcoal",
+      "creatureId": "charcoal",
+      "hex": "2D2D2D",
+      "displayName": "小黑",
+      "animal": "企鹅",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: charcoal #2D2D2D baby penguin, short downy dark fur, white two-lobed face and chest, tiny golden rounded beak, short flipper wings resting beside the green leaves; charcoal felt pot with pale snowflake appliques.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-3b7fb62a-4d03-4e60-be61-a6e68ec9858f.png",
+      "mouthCanvas": [
+        109,
+        85
+      ]
+    },
+    {
+      "id": "slate-blue",
+      "creatureId": "slate-blue",
+      "hex": "696CAF",
+      "displayName": "小靛",
+      "animal": "浣熊",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: indigo #696CAF raccoon, dark indigo eye mask, cream muzzle and eyebrow rims, small pointed tufted ears, tiny charcoal nose; indigo felt pot with light-blue star appliques; no fox ears or bear muzzle.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-b72545e4-2488-4c64-9a38-a765ed38221b.png",
+      "mouthCanvas": [
+        101,
+        106
+      ]
+    },
+    {
+      "id": "cyan",
+      "creatureId": "cyan",
+      "hex": "46D9FF",
+      "displayName": "小冰",
+      "animal": "海豹",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: icy cyan #46D9FF baby seal, smooth rounded furry head silhouette with NO external ears, cream round whisker pads with a few short tidy whiskers, small dark nose, two tiny plush flippers above pot rim; cyan felt pot with pale wave appliques.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-0762af7d-a13a-4ac8-b2df-4fd7ad99b22c.png",
+      "mouthCanvas": [
+        99,
+        88
+      ]
+    },
+    {
+      "id": "lavender",
+      "creatureId": "lavender",
+      "hex": "C8C5FF",
+      "displayName": "小雾",
+      "animal": "河马",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: pale lavender #C8C5FF baby hippopotamus, wide broad rectangular-rounded snout, two big nostrils on upper snout, small round ears on top, two tiny ivory lower teeth; lavender felt pot with cream flower appliques; face and pot clearly pale lavender.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-efdd1f04-538b-49ac-af28-25608c46aa73.png",
+      "mouthCanvas": [
+        93,
+        105
+      ]
+    },
+    {
+      "id": "berry",
+      "creatureId": "berry",
+      "hex": "9C225E",
+      "displayName": "小玫",
+      "animal": "小鹿",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: berry burgundy #9C225E baby deer, two small soft two-pronged antlers fully inside frame, long pointed soft deer ears, cream muzzle and small ivory cheek spots, round dark nose; berry felt pot with cream leaf appliques.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-e6a274b6-f105-497b-a4fb-232537fc24c8.png",
+      "mouthCanvas": [
+        101,
+        113
+      ]
+    },
+    {
+      "id": "brown",
+      "creatureId": "brown",
+      "hex": "65392D",
+      "displayName": "小棕",
+      "animal": "猴子",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: warm brown #65392D baby monkey, very large round ears sticking sideways, cream heart-shaped face mask and muzzle, small top tuft of hair, tiny nose; brown felt pot with cream banana appliques.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-5d54c53d-e3ad-4f86-bec5-b09c6b527fdc.png",
+      "mouthCanvas": [
+        110,
+        110
+      ]
+    },
+    {
+      "id": "violet",
+      "creatureId": "violet",
+      "hex": "B672FD",
+      "displayName": "小晶",
+      "animal": "猫头鹰",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: vivid violet #B672FD baby owl, dense short fluffy feather-like fur, two small ear tufts, enormous paired circular cream facial disks, tiny golden beak at center, small rounded wings above pot rim; violet felt pot with pale crescent moon appliques.\nCritical sprite layout: each complete toy occupies AT MOST 380 pixels wide by 390 pixels high in its 512x512 cell. Keep at least 60px completely empty transparent gutter around EVERY toy. This sheet is for slicing, not a full-bleed illustration. Small toys with generous clear gutters.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-cbe59ea8-83bc-40a4-b917-b855ee2d66dd.png",
+      "mouthCanvas": [
+        110,
+        91
+      ]
+    },
+    {
+      "id": "lime",
+      "creatureId": "lime",
+      "hex": "92EF4D",
+      "displayName": "小荧",
+      "animal": "刺猬",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: lime yellow-green #92EF4D baby hedgehog, very soft short plush spines as a fluffy spiky halo behind rounded cream face, short tapered snout with tiny dark nose, small round ears, regular close-set toy eyes; lime felt pot with cream apple appliques; no hard sharp spines.\nCritical sprite layout: each complete toy occupies AT MOST 380 pixels wide by 390 pixels high in its 512x512 cell. Keep at least 60px completely empty transparent gutter around EVERY toy. This sheet is for slicing, not a full-bleed illustration. Small toys with generous clear gutters.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-1b577bb9-1d35-4f1a-b912-8604bc1156d9.png",
+      "mouthCanvas": [
+        122,
+        105
+      ]
+    },
+    {
+      "id": "mint",
+      "creatureId": "mint",
+      "hex": "30D183",
+      "displayName": "小碧",
+      "animal": "乌龟",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: mint green #30D183 baby turtle, rounded oval head with normal non-protruding toy eyes, broad friendly small muzzle, clearly visible quilted plush turtle shell rising behind both shoulders with large softly embossed hexagonal scutes, small rounded foreflippers on pot rim; mint felt pot with pale water-drop appliques; unmistakably turtle, not frog.\nCritical sprite layout: each complete toy occupies AT MOST 380 pixels wide by 390 pixels high in its 512x512 cell. Keep at least 60px completely empty transparent gutter around EVERY toy. This sheet is for slicing, not a full-bleed illustration. Small toys with generous clear gutters.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-e589021f-7250-4895-bf4c-d2b986cfb25d.png",
+      "mouthCanvas": [
+        130,
+        73
+      ]
+    },
+    {
+      "id": "forest",
+      "creatureId": "forest",
+      "hex": "0C7E1C",
+      "displayName": "小翠",
+      "animal": "鳄鱼",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: deep forest green #0C7E1C baby crocodile, long wide rounded horizontal snout pointing slightly to viewer's left, two tiny ivory felt teeth and small nostrils, small soft triangular plush head crest, emerald fiber highlights on deep dark green fur; dark green felt pot with pale leaf appliques; unmistakable long crocodile muzzle, not frog.\nCritical sprite layout: each complete toy occupies AT MOST 380 pixels wide by 390 pixels high in its 512x512 cell. Keep at least 60px completely empty transparent gutter around EVERY toy. This sheet is for slicing, not a full-bleed illustration. Small toys with generous clear gutters.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-1dd27556-0c58-480c-aa8b-2156db42f750.png",
+      "mouthCanvas": [
+        94,
+        101
+      ]
+    },
+    {
+      "id": "peach",
+      "creatureId": "peach",
+      "hex": "FFCAA9",
+      "displayName": "小霞",
+      "animal": "小猪",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: peach #FFCAA9 baby pig, two floppy triangular ears, round peach-pink snout with two clear nostrils, plump peach fuzzy cheeks, curly top forelock; peach felt pot with ivory flower appliques; no rabbit ears.\nCritical sprite layout: each complete toy occupies AT MOST 380 pixels wide by 390 pixels high in its 512x512 cell. Keep at least 60px completely empty transparent gutter around EVERY toy. This sheet is for slicing, not a full-bleed illustration. Small toys with generous clear gutters.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-0a3a5f45-480f-44e1-8ff1-7d3fe3e962b7.png",
+      "mouthCanvas": [
+        95,
+        100
+      ],
+      "previousSources": [
+        "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-4d548dfc-d44e-4143-9733-2e3d4e1f258c.png"
+      ],
+      "edits": [
+        "masters/peach/edit-no-curl.json"
+      ]
+    },
+    {
+      "id": "pale-mint",
+      "creatureId": "pale-mint",
+      "hex": "C5FFE4",
+      "displayName": "小清",
+      "animal": "绵羊",
+      "grid": [
+        3,
+        2
+      ],
+      "states": [
+        "idle",
+        "attack",
+        "spent",
+        "ready",
+        "blink"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production transparent game character animation sprite sheet.\nCreate ONE new plush animal identity inspired ONLY by the tactile rendering, potted composition and quality of the two reference images; do NOT copy their species.\nOutput landscape 1536x1024, an exact THREE-COLUMN TWO-ROW regular grid of equal 512x512 cells. Exactly FIVE complete sprites of the SAME animal. Top row left to right: IDLE (eyes open, relaxed small smile), ATTACK (small unmistakable open O mouth blowing upward, no bubble or projectile), SPENT (tired droopy half-closed eyes and slack mouth). Bottom row left to right: READY (puffed cheeks, pursed closed mouth), BLINK (both eyes completely closed and small relaxed smile), EMPTY transparent cell. For beaked animals, open the beak for attack.\nEvery sprite has the SAME front-facing slightly three-quarter pose, camera, head size, pot size, colors and soft upper-left light. ONLY facial expressions change. Animal is a large fuzzy head with small upper body emerging from two soft green leaves in a short polished felt flowerpot. No standing legs or full body. Maintain same pot bottom alignment in every cell at 86% of cell height; at least 12% clear transparent margin on all four cell edges including ears and horns. Each animal fits entirely in its cell. No clipping or cell overlap.\nMaterials: densely packed fine soft fur with visible fibers and fluffy edges, premium stuffed toy, glossy brown-black toy pupils in expressive eyes. Pot is tidy dense felt with continuous perfectly clean rolled rim, shallow refined decorative appliques; NO exposed seam line on pot rim, no stitching, no loose thread, no frayed fibers on pot edges. Soft dimensional lighting but no heavy dark shading. Preserve bright readable palette and an easily identifiable animal silhouette at 80px.\nTrue transparent alpha background. No labels, numbers, text, grid lines, shadows on background, scenery, UI, balls, weapons or other objects.\nSubject: very pale mint #C5FFE4 baby lamb, soft short curly fleece forming scalloped wool crown around face, two sideways drooping ears, cream-mint oval face, little dark nose; pale mint felt pot with cream clover appliques; no frog eyes.\nCritical sprite layout: each complete toy occupies AT MOST 380 pixels wide by 390 pixels high in its 512x512 cell. Keep at least 60px completely empty transparent gutter around EVERY toy. This sheet is for slicing, not a full-bleed illustration. Small toys with generous clear gutters.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/blue/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/masters/green/idle.png"
+      ],
+      "status": "integrated_and_verified",
+      "source": "/Users/yangdage/.codex/generated_images/01a166b7-b65e-7562-a514-4470ab63517a/exec-1f4e967c-3b00-412d-845b-0d94b77b8fe4.png",
+      "mouthCanvas": [
+        126,
+        96
+      ]
+    }
+  ],
+  "completedAt": "2026-10-26T10:55:08+08:00",
+  "verification": {
+    "build": "Builds/WebGL/GardenR1-bubble",
+    "buildStamp": "20261026102738",
+    "assetAudit": "asset-audit.json",
+    "nativeUi": "native-evidence/report.json",
+    "nativeChecks": 198,
+    "nativeViewports": [
+      [
+        1080,
+        1920
+      ],
+      [
+        1080,
+        2340
+      ],
+      [
+        1080,
+        1440
+      ]
+    ],
+    "webgl": "webgl-evidence/result.json",
+    "webglLevels": [
+      1,
+      2,
+      5,
+      13
+    ],
+    "webglViewports": [
+      [
+        540,
+        960
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "visualReview": [
+      "roster-overview.png",
+      "native-evidence/album-complete.png",
+      "native-evidence/album-10-1080x1440.png",
+      "webgl-evidence/level-2-battle-540x960.png",
+      "webgl-evidence/level-5-battle-540x960.png",
+      "webgl-evidence/level-13-battle-390x844.png"
+    ],
+    "limits": "Native checks use an isolated Unity camera; WebGL smoke uses local Chrome with real pointer input. Not physical-device testing or a full level-clear regression.",
+    "sourceWhitespace": "Changed source files pass git diff --check. Existing Unity prefab serialization trailing whitespace retained."
+  },
+  "followupVerification": {
+    "pigNoCurl": {
+      "buildStamp": "20261026105257",
+      "nativeUi": "pig-no-curl-native/report.json",
+      "webgl": "pig-no-curl-webgl/result.json",
+      "assetAudit": "asset-audit.json",
+      "unchangedOtherNewAnimalStates": 65,
+      "mouthCanvas": [
+        95,
+        100
+      ]
+    }
+  }
+}

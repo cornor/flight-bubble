@@ -112,24 +112,27 @@ namespace Flightbeat.Editor
             Check((bool)Get(game, "codexOpen"), "Home entry opens album through normal input routing");
             string saved = JsonUtility.ToJson(profile);
             var list = (IList)typeof(PixelWingGame).GetProperty("Codex", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
-            Check(list.Count == 20 && list.Cast<object>().Count(e => (bool)Call("CodexObtained", e)) == 8, "First four clears unlock exactly 8 of 20 members");
+            Check(list.Count == 22 && list.Cast<object>().Count(e => (bool)Call("CodexObtained", e)) == 10, "First four clears unlock exactly 10 of 22 distinct animals");
+            var colors = list.Cast<object>().Select(e => GardenSkin.HexKey((Color)e.GetType().GetField("tint").GetValue(e))).ToArray();
+            Check(colors.Distinct().Count() == 22 && colors[0] == "42A9FF" && colors.Contains("2982F4") && colors.Contains("FF9D30") && colors.Contains("FF7E27"),
+                "Album retains every palette color instead of aliasing tutorial colors to the bear and capybara");
             foreach (var viewport in new[] { new Vector2Int(1080, 1920), new Vector2Int(1080, 2340), new Vector2Int(1080, 1440) })
             {
                 Set(game, "ui", 12f); Set(game, "codexSelected", 0); Set(game, "codexPickedAt", 9f);
-                Capture("album-8-" + viewport.x + "x" + viewport.y, viewport.x, viewport.y);
+                Capture("album-10-" + viewport.x + "x" + viewport.y, viewport.x, viewport.y);
                 float oy = (ScreenLayout.Height - 960f) * .5f;
                 Check(Hit(500f, ScreenLayout.Top + 44f) == 804, "Close hit stays at the top safe area at " + viewport);
                 Check(Hit(270f, oy + 460f) == 0 && Hit(15f, oy + 800f) == 0, "Album blocks underlying home controls at " + viewport);
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 22; i++)
                 {
-                    float x = 70f + i % 5 * 100f, y = oy + 554f + i / 5 * 102f;
+                    float x = 62.5f + i % 6 * 83f, y = oy + 554f + i / 6 * 102f;
                     Check(Hit(x, y) == 810 + i, "Card " + i + " hit aligns at " + viewport);
                     Click(x, y);
                     Check((int)Get(game, "codexSelected") == i, "Card " + i + " selects via real input at " + viewport);
                 }
                 Check((bool)Get(game, "codexOpen") && game.InHome, "Locked cards stay in album at " + viewport);
             }
-            Set(game, "ui", 14f); Capture("album-locked-19", 1080, 1920);
+            Set(game, "ui", 14f); Capture("album-locked-21", 1080, 1920);
             Check(saved == JsonUtility.ToJson(((FleetEconomy)Get(game, "Economy")).Data), "Opening and selecting every card never changes saved collection data");
             profile.cleared.Clear(); Set(game, "codexSelected", -1);
             Color empty = Capture("album-empty", 1080, 1920);
@@ -138,18 +141,18 @@ namespace Flightbeat.Editor
             Check(list.Cast<object>().Count(e => (bool)Call("CodexObtained", e)) == 4, "Only clearing level 5 unlocks its four debut members, without unlocking earlier members");
             profile.cleared = Enumerable.Range(1, 19).ToList(); Set(game, "codexSelected", 0);
             Color full = Capture("album-complete", 1080, 1920);
-            Check(list.Cast<object>().All(e => (bool)Call("CodexObtained", e)), "Complete profile unlocks all 20 members");
+            Check(list.Cast<object>().All(e => (bool)Call("CodexObtained", e)), "Complete profile unlocks all 22 members");
             Check(empty.r > full.r + .18f && full.g > full.r + .15f && full.g > full.b + .15f,
                 "Actual rendered meter changes from empty to full green at the right end");
-            Set(game, "codexSelected", 18); Set(game, "codexPickedAt", 13.85f);
+            Set(game, "codexSelected", 20); Set(game, "codexPickedAt", 13.85f);
             foreach (int height in new[] { 1920, 2100, 2340 })
-                Capture("album-frog-bounce-" + height, 1080, height);
+                Capture("album-crocodile-bounce-" + height, 1080, height);
             Click(500f, ScreenLayout.Top + 44f); Check(!(bool)Get(game, "codexOpen") && game.InHome, "Close returns to home through normal input");
             Capture("home-after-close", 1080, 1920);
             Check((string)Get(game, "homeNextLine") == "小队伙伴已集齐", "A complete collection fills the same partner area with the assembled-squad state");
             profile.cleared.Clear();
             Capture("home-empty-profile", 1080, 2340);
-            Check((string)Get(game, "homeNextName") == "小蓝", "A fresh profile previews its first real partner");
+            Check((string)Get(game, "homeNextName") == "小天", "A fresh profile previews the tutorial koala");
             Capture("home-restored-standard", 1080, 1920);
             var background = (RawImage)Get(game.gardenPage, "homeBackground");
             Check(background.texture.name == "home-background", "Closing restores original home texture");

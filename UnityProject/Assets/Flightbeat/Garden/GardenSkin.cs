@@ -251,19 +251,9 @@ namespace Flightbeat.Garden
         public static bool Celebrate;
         // `breath` > 0 adds a gentle idle squash-and-stretch (amplitude) with its own `phase`; `attack` (0..1, decays over
         // .18 s after a real shot) squashes the body and lets it spring back. Feet stay on the same line.
-        // 2026-10-20 14:07 (user: 小翠 looks clearly smaller). Every tier scales all colours alike (1 + .06 per tier), but
-        // three members are drawn thinner on the shared 224x256 canvas: visible body area against the median of the 23
-        // members is 小翠 67-78 % (narrowest, 117 wide vs ~160), 小清 77-81 %, 小玫 77-84 % depending on the pose.
-        // They are drawn larger by these factors (about the square root of the area gap; 小翠 kept a little lower because
-        // it is already of average height). Applies wherever a member's art is drawn: pads, queue, finale, codex, opening.
-        public static float ArtScale(Color tint) {
-            Color32 c = tint;
-            switch ((c.r << 16) | (c.g << 8) | c.b) {
-                case 0x0C7E1C: return 1.12f;   // 小翠
-                case 0xC5FFE4: return 1.10f;   // 小清
-                default: return 1f;
-            }
-        }
+        // All 22 animals now use the same visible-bounds registration. The old
+        // narrow frog variants no longer need enlargement after becoming a crocodile and lamb.
+        public static float ArtScale(Color tint) => 1f;
         // 2026-10-21 10:12 (user: the shots cover the face; they still leave from the mouth, small at first, for every
         // member). Mouth centre of each attack pose on the 224x256 canvas, measured on the delivered art (mouth interior
         // and tongue). They range from x 84 (berry, its head sits on the left) to 130, and from y 110 (forest, mint,
@@ -271,26 +261,26 @@ namespace Flightbeat.Garden
         public static Vector2 MouthCanvas(Color tint) {
             Color32 c = tint;
             switch ((c.r << 16) | (c.g << 8) | c.b) {
-                case 0x9C225E: return new Vector2(134f, 101f);   // plush berry rabbit
+                case 0x9C225E: return new Vector2(101f, 113f);   // 小鹿
                 case 0x2982F4: return new Vector2(73f, 102f);
-                case 0x42A9FF: return new Vector2(72f, 105f);    // plush light blue bear
-                case 0x65392D: return new Vector2(58f, 105f);    // plush brown capybara
-                case 0x2D2D2D: return new Vector2(116f, 101f);   // plush charcoal cat
-                case 0x46D9FF: return new Vector2(74f, 105f);   // plush cyan bear
-                case 0x0C7E1C: return new Vector2(113f, 81f);   // plush forest frog
+                case 0x42A9FF: return new Vector2(103f, 109f);   // 考拉
+                case 0x65392D: return new Vector2(110f, 110f);   // 猴子
+                case 0x2D2D2D: return new Vector2(109f, 85f);   // 企鹅
+                case 0x46D9FF: return new Vector2(99f, 88f);   // 海豹
+                case 0x0C7E1C: return new Vector2(94f, 101f);   // 鳄鱼
                 case 0x62E18E: return new Vector2(115f, 76f);   // green
-                case 0xC8C5FF: return new Vector2(185f, 98f);   // plush lavender trunk tip
-                case 0x92EF4D: return new Vector2(113f, 84f);   // plush lime frog
-                case 0x30D183: return new Vector2(113f, 81f);   // plush mint frog
+                case 0xC8C5FF: return new Vector2(93f, 105f);   // 河马
+                case 0x92EF4D: return new Vector2(122f, 105f);   // 刺猬
+                case 0x30D183: return new Vector2(130f, 73f);   // 乌龟
                 case 0xFF7E27: return new Vector2(56f, 106f);   // orange
-                case 0xFF9D30: return new Vector2(56f, 110f);    // plush golden capybara
-                case 0xC5FFE4: return new Vector2(113f, 82f);   // plush pale mint frog
-                case 0xFFCAA9: return new Vector2(131f, 107f);   // plush peach rabbit
+                case 0xFF9D30: return new Vector2(95f, 103f);   // 狮子
+                case 0xC5FFE4: return new Vector2(126f, 96f);   // 绵羊
+                case 0xFFCAA9: return new Vector2(95f, 100f);   // 小猪
                 case 0xFFC5E0: return new Vector2(136f, 106f);   // pink
                 case 0xBD80FF: return new Vector2(185f, 96f);    // plush elephant trunk tip
                 case 0xFF525B: return new Vector2(114f, 108f);   // plush coral fox
-                case 0x696CAF: return new Vector2(73f, 103f);   // plush slate blue bear
-                case 0xB672FD: return new Vector2(185f, 97f);   // plush violet trunk tip
+                case 0x696CAF: return new Vector2(101f, 106f);   // 浣熊
+                case 0xB672FD: return new Vector2(110f, 91f);   // 猫头鹰
                 case 0xFFFFFF: return new Vector2(117f, 103f);   // white
                 case 0xFFDF48: return new Vector2(136f, 90f);   // yellow
                 default: return new Vector2(119f, 135f);

@@ -41,6 +41,7 @@ PLUSH_FULL = ROOT / 'Art/PlushToy/P2-P4/delivery'
 PLUSH_UNIQUE = ROOT / 'Art/PlushToy/UniqueAnimals-20261026/delivery'
 LOADING_ART = ROOT / 'Art/PlushToy/LoadingB-20261025/masters'
 HOME_WAVE_ART = ROOT / 'Art/PlushToy/HomeWave-20261025/masters'
+FINALE_KING_ART = ROOT / 'Art/PlushToy/FinaleKing-20261026/masters'
 PLUSH_ROOTS = (PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
 
 def art_path(rel):
@@ -57,7 +58,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, LOADING_ART, HOME_WAVE_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     for p in sorted(set(files)):
@@ -424,8 +425,8 @@ for _name in ('settings', 'codex'):
     SLOTS.append((f'plants/home/btn-{_name}', _rel, 0.5, None))
 if not (PLUSH_FULL / 'home/blue/idle.png').exists():
     SLOTS.append(('plants/home/logo', f'{HOME_REL}logo.png', 0.8, None))
-SLOTS += [('plants/finale/king-ready', 'finale/king-ready.png', UI, None),
-          ('plants/finale/king-blow', 'finale/king-blow.png', UI, None),
+SLOTS += [('plants/finale/king-ready', str(FINALE_KING_ART / 'king-ready.png'), 384 / 1254, None),
+          ('plants/finale/king-blow', str(FINALE_KING_ART / 'king-blow.png'), 384 / 1254, None),
           ('finale/button', 'finale/button.png', UI, None)]
 # 2026-10-20 (docs/r1/提示条UI-切图与改动清单.md): hint-bar icons (128 px deliveries, shown at 22-40 logical px, stored
 # at 64 px) and the finale's blank plates (button 340x86, title 520x100, clear 520x110 logical). Optional: the code

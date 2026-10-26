@@ -17,8 +17,9 @@ namespace Flightbeat.Game
     {
         const string KingReady = "plants/finale/king-ready", KingBlow = "plants/finale/king-blow", FinaleButtonArt = "finale/button";
         const float KingSize = 250f;            // same logical size as the original giant plane
-        // Registered plush king-blow mouth at (225,227) on the 512-square master.
-        const float KingMouthX = 225f / 512f - .5f, KingMouthY = 227f / 512f - .5f;
+        // Registered on the new 1254-square furry toy frames, before body-only deformation.
+        static readonly Vector2 KingReadyMouth = new Vector2(625f / 1254f, 499f / 1254f);
+        static readonly Vector2 KingBlowMouth = new Vector2(633f / 1254f, 478f / 1254f);
         static readonly Color FinaleInk = Hex(0x7A3A00);
         bool BubbleFinaleArt => GardenSkin.Has(KingReady) && GardenSkin.Has(FinaleButtonArt);
         // 2026-10-20 (UI redesign 31/33/34): blank plates from the art AI; the words are written here. Each is optional.
@@ -243,7 +244,6 @@ namespace Flightbeat.Game
             DrawBubbleFinaleHold(s, age, after);
             DrawBubbleFinaleTitle(s, age);
             Vector2 mouth = KingMouthAt(finale, age, after);
-            if (age >= 1.65f) DrawBubbleFan(s, finale, age, after, mouth);
             // Kill pops: the original 320-record window and .5 s life.
             for (int i = Math.Max(0, finaleBlasts.Count - 120); i < finaleBlasts.Count; i++)   // newest 120 (was 320)
             {
@@ -266,6 +266,9 @@ namespace Flightbeat.Game
                 Creature(s, tint, at.x, at.y + canvas * .42f, canvas, ship.tier, "", t > .2f && t < .8f ? .6f : 0f, 10f, false, false);
             }
             DrawBubbleKing(s, finale, age, after, mouth);
+            // Keep the original fan in front of the enlarged toy so its first
+            // bubbles emerge from the registered mouth, rather than the crown.
+            if (age >= 1.65f) DrawBubbleFan(s, finale, age, after, mouth);
             DrawBubbleFinaleBursts(s, age, after);
             DrawBubbleFinaleRelease(s, age, after, mouth);
             DrawBubbleFinaleEnd(s, finale, age, after, mouth);
@@ -343,24 +346,36 @@ namespace Flightbeat.Game
             return 1f - .15f * Clamp01((age - 1.95f) / 1.35f);
         }
 
-        // The king stands where the giant plane assembled: centre (270, 694 - lift), shaking while sweeping.
-        Vector2 KingMouthAt(Finale finale, float age, float after)
+        // Keep the old inhale/release clock and wobble, but magnify the body only.
+        // Normal = .7 on that clock; the last breath reaches ~1.75x height / 1.4x width.
+        void KingBodyPose(Finale finale, float age, out Vector2 body, out float shake)
         {
             float scale = KingScale(age, out float wide, out float tremble);
-            float lift = FinaleLift(age, after), shake = finale.Sweeping ? Mathf.Sin(clock * 70f) * 1.6f : Mathf.Sin(clock * 83f) * tremble;
             bool blowing = age >= 1.65f && age < 3.3f;
             float squash = wide * (blowing ? 1f + Mathf.Sin(clock * 30f) * .015f : 1f);
-            return new Vector2(270f + shake + KingMouthX * KingSize * scale * squash,
-                PlushLayout.InverseY(PlushLayout.Y(694f - lift) + KingMouthY * KingSize * scale / squash));
+            float grow = Clamp01((scale - .7f) / .45f), entrance = Mathf.Min(1f, scale / .7f);
+            body = new Vector2(entrance * (1f + .34f * grow) * (1f + (squash - 1f) * .4f),
+                entrance * (1f + .8f * grow) / (1f + (squash - 1f) * .2f));
+            shake = finale.Sweeping ? Mathf.Sin(clock * 70f) * 1.6f : Mathf.Sin(clock * 83f) * tremble;
+        }
+
+        // The base follows the existing shared lift but never grows or shakes.
+        Vector2 KingMouthAt(Finale finale, float age, float after)
+        {
+            KingBodyPose(finale, age, out Vector2 body, out float shake);
+            bool blowing = age >= 1.65f && age < 3.3f;
+            var center = new Vector2(270f, PlushLayout.Y(694f - FinaleLift(age, after)));
+            Vector2 mouth = GardenSkin.FinaleKingPoint(blowing ? KingBlowMouth : KingReadyMouth, center, KingSize, body, shake);
+            return new Vector2(mouth.x, PlushLayout.InverseY(mouth.y));
         }
         void DrawBubbleKing(PixelSurface s, Finale finale, float age, float after, Vector2 mouth)
         {
             float assemble = Clamp01((age - .5f) / .65f);
             if (assemble <= 0f) return;
             float alpha = (1f - Clamp01(after / 1.1f)) * Clamp01(assemble / .35f);
-            float scale = KingScale(age, out float wide, out float tremble);
-            float shake = finale.Sweeping ? Mathf.Sin(clock * 70f) * 1.6f : Mathf.Sin(clock * 83f) * tremble;
-            float x = 270f + shake, y = 694f - FinaleLift(age, after);
+            float scale = KingScale(age, out _, out _);
+            KingBodyPose(finale, age, out Vector2 body, out float shake);
+            float x = 270f, y = 694f - FinaleLift(age, after);
             for (int i = 0; i < 7; i++)
             {
                 float angle = clock * 1.2f + finaleOrbitPhases[i];
@@ -370,14 +385,9 @@ namespace Flightbeat.Game
             float size = KingSize * scale;
             bool blowing = age >= 1.65f && age < 3.3f;
             string art = blowing && GardenSkin.Has(KingBlow) ? KingBlow : KingReady;
-            float squash = wide * (blowing ? 1f + Mathf.Sin(clock * 30f) * .015f : 1f);
             if (age >= 1.15f && age < 1.65f)   // charging glow grows with the swell
                 s.Glow(x, y, size * 1.5f, size * 1.5f, new Color(1f, .92f, .6f, alpha * .35f * (age - 1.15f) / .5f), 0f);
-            bool mapped = s.MapLayout;
-            float screenY = mapped ? PlushLayout.Y(y) : y;
-            s.MapLayout = false;
-            Asset(s, art, x - size * .5f * squash, screenY - size * .5f / squash, size * squash, size / squash, new Color(1f, 1f, 1f, alpha));
-            s.MapLayout = mapped;
+            GardenSkin.FinaleKing(s, art, KingReady, new Vector2(x, y), KingSize, body, shake, new Color(1f, 1f, 1f, alpha));
             if (assemble < 1f) s.Glow(x, y, size * 1.2f, size * 1.2f, new Color(1f, 1f, 1f, (1f - assemble) * .5f * alpha), 0f);
             // Charging: rainbow bubbles drawn in towards the mouth.
             if (age >= 1.15f && age < 1.65f)

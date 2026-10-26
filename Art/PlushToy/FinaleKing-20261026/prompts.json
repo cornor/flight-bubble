@@ -1,0 +1,53 @@
+{
+  "mode": "built-in image_gen",
+  "selection": "Blue furry plush king, cute fierce baby-bear expression; fixed base and existing inhale/release animation",
+  "iterations": [
+    {
+      "prompt": "Use case: stylized-concept\nAsset type: Production transparent game character sprite, square canvas 1024x1024, READY pose.\nPrimary request: Create the new finale \"Rainbow Bubble King\" for this plush animal flowerpot game, combining reference 1's plush blue bear identity and purple flowerpot with reference 2's inflated round rainbow bubble creature. This is an actual game asset, not a concept board.\nInput images: Image 1 is the current game's plush bear king and exact pot/material reference. Image 2 is the original rainbow bubble king, reference for round spherical volume and pearlescent rainbow identity.\nSubject: one single chubby spherical rainbow-bodied plush bear king in the same purple felt flowerpot. Recognizable small vivid blue round bear ears, large expressive brown eyes, cream fluffy puffed cheeks, brown little nose, tiny closed puckered mouth, short blue furry arms opening to either side as the chest puffs with a deep inhalation. A small soft golden crown with colorful felt gems. The body is a broad round inflated orb with gentle pearlescent pastel pink/yellow/mint/cyan/lavender gradients, subtle soft velvety micro-fibers, cream cheek details, satisfying clean bubble-like round volume. Do not put a separate bubble in front of it. The entire upper body is the rainbow bubble. Determined but friendly.\nFixed base: purple plush cylindrical pot with the same felt rainbow applique and little clouds as reference 1, two green felt leaves at the top, body emerging directly behind the rim. The base stays small compared with the body.\nComposition is crucial for mesh animation: frontal symmetric view, centered x=512. Full sprite including crown and pot inside x=80..944, y=70..950. Pot x=285..739, rim is a HORIZONTAL ellipse centered at y=752, pot bottom at y=940. All purple pot pixels are below y=730. Leaves may rise to y=680. Upper body including ears occupies about x=160..864, y=180..750. Tiny crown above. The neck/body lower contour joins the pot at y=750. Keep clear transparent margins around the whole silhouette. Short arms at midbody y=530..620. Ready face mouth approximately x=512, y=425.\nMaterials: premium 3D-rendered cute plush/felt game art, fine visible fur on ears and cheeks, smooth round pearly soft rainbow torso, soft studio lighting, colorful and clean at small screen size. Keep body as a simple powerful orb rather than a humanoid torso.\nConstraints: one sprite only, genuinely transparent alpha background, no floor, ground shadow, outer glow, effects, bubbles, rays, scenery, captions, labels, watermark or checkerboard. No additional characters. No stream from mouth yet. Preserve the flowerpot design and readable small crown.",
+      "references": [
+        "Art/PlushToy/P2-P4/delivery/finale/king-ready.png",
+        "Art/R1/art-v3/delivery/finale/king-ready.png"
+      ],
+      "output": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-a31ac245-b629-4de9-8a94-09b5e53294fa.png",
+      "status": "superseded by user's furry-toy correction"
+    },
+    {
+      "prompt": "Use case: precise-object-edit\nAsset type: transparent production game character sprite, inhale/READY pose.\nEdit target: image 1 is the new spherical rainbow-body king. Supporting reference: image 2 is the original blue plush bear king.\nUser correction: the entire character must remain a FURRY BLUE PLUSH TOY. Replace ALL of the shiny iridescent rainbow body material with fluffy saturated blue fur matching image 2. This is an inflated strong cuddly bear, not a bubble wearing a face, not a rainbow suit, not a pearl or rubber orb. Do not keep any rainbow gradient or soap highlights on the torso. All upper body surfaces should have visible soft blue plush fibers, except the existing cream fluffy cheeks/inner ears and little brown nose.\nKeep the exact canvas, silhouette registration, crown, ears, puffed cheeks, tiny closed puckered inhale mouth, two short arms, green leaves and purple flowerpot from image 1. Its very broad chest/belly is puffed with a deep breath, with natural plush volume and slightly defined shoulders. Soft sculptural body contour, friendly determined expression. Preserve the exact position, dimensions and design of the flowerpot and green leaves, and retain the rainbow FELT APPLIQUE on the pot only.\nComposition: same full square canvas and same full-body position as image 1, no zoom or crop. True transparent background, clean fur cutout, no ground, shadow, glow, text, effects, rays or extra objects. Premium soft 3D plush game style, soft studio light. Only change the BODY MATERIAL from rainbow bubble to furry blue toy; every other piece stays registered.",
+      "references": [
+        "exec-a31ac245-b629-4de9-8a94-09b5e53294fa.png",
+        "Art/PlushToy/P2-P4/delivery/finale/king-ready.png"
+      ],
+      "output": "expressions-before/king-ready.png",
+      "source": "exec-b97d1753-3f01-4214-971c-9d4b67dcfc4b.png",
+      "status": "previous expression"
+    },
+    {
+      "prompt": "Use case: precise-object-edit\nAsset type: transparent production game sprite, BLOW pose paired to the attached READY frame.\nEdit target: the attached blue FURRY PLUSH bear king in its purple rainbow-applique flowerpot.\nChange only the face to the blowing pose: puffed cream cheeks, eyes turned upward, head tipped back, one large round open O mouth showing a dark interior with a small tongue, the mouth faces upward as it expels one enormous breath. Center the mouth on the face midline approximately x=50%,y=34% of the canvas. Nose shifts upward with the upward head tilt. Determined but cute.\nKeep the ENTIRE upper body as BLUE FUZZY PLUSH with visible soft fibers, same furry material as reference. No iridescent body, bubble suit, translucent skin or glossy balloon surface. Preserve exact crown/ear/body/arm silhouettes, scale and canvas registration. Keep every part below y=63% (green leaves, base of belly, purple flowerpot) EXACTLY identical to the input, with the same position and size. No zoom, crop, re-centering or padding changes.\nNo breath stream, projectile, bubble, light rays or glow: the game draws these separately. No extra objects, ground, shadow, labels, text or watermark. Genuinely transparent alpha background. Same square image dimensions as reference.",
+      "references": [
+        "masters/king-ready.png"
+      ],
+      "output": "expressions-before/king-blow.png",
+      "source": "exec-a64d5295-0816-4492-876d-9692ac3f89f1.png",
+      "status": "previous expression"
+    },
+    {
+      "prompt": "Use case: precise-object-edit\nAsset type: registered transparent game sprite, READY / deep-inhale expression.\nEdit target: the attached blue furry plush bear king. The user likes this exact design and wants ONLY the facial expression changed to 奶凶奶凶: an adorable stubborn baby bear trying very hard to look fierce.\nChange the face noticeably while keeping it cute: angle the soft BLUE furry eyebrows downward toward the nose into a confident little scowl; lower the upper eyelids slightly over the big glossy brown eyes to make a playful determined glare. Keep the eyes large, round, warm and sparkling, never sinister. Puff the cream cheeks into soft round dumplings with a very subtle warm pink blush at the outer cheek edges. The tiny closed puckered mouth remains in precisely the same place, as if sulking and holding a huge breath. Give it an expressive \"hmph, watch me!\" baby-toy attitude.\nDO NOT alter anything outside the inner face: exact original body silhouette, blue fur, crown, ears, short arms, chest shape, pose, proportions, leaf shapes, purple felt flowerpot and its rainbow applique all remain unchanged. Keep the body entirely furry BLUE plush, never glossy, translucent or rainbow-colored.\nRegistration invariants: same 1254x1254 transparent canvas and same subject placement as input. Closed mouth stays centered at approximately (625,499), brown nose stays in the same place. No shift, zoom, crop or new padding. All pixels below y=790 (leaves and pot) remain identical. Preserve genuine transparent alpha and clean fine-fur edges.\nNo exposed teeth, fangs, wrinkles, muscles, flames, angry symbols, tears, separate bubbles or effects. No text, background, floor, shadow, watermark or checkerboard.",
+      "references": [
+        "expressions-before/king-ready.png"
+      ],
+      "output": "masters/king-ready.png",
+      "source": "exec-d8a46bc8-bedb-4f2e-910d-1e29b07f9c78.png",
+      "status": "selected cute-fierce expression"
+    },
+    {
+      "prompt": "Use case: precise-object-edit\nAsset type: registered transparent game sprite, BLOW expression.\nInput images: Image 1 is the edit target, the existing blowing plush king. Image 2 is the approved new \"奶凶奶凶\" ready expression; use it solely to match the eyebrows, playful fierce eyes and subtle rosy cheeks.\nUser request: this blue furry plush toy should look like an adorable baby bear trying to be fierce, even while blowing.\nChange ONLY the face in image 1. Match image 2's clearly downward-slanting soft blue furry eyebrows and slightly narrowed upper eyelids over large glossy warm brown eyes. A stubborn confident little glare, determined cheeks, soft warm pink blush at the outer cream cheek edges. Keep the look funny and adorable, with lots of baby roundness.\nKeep image 1's ORIGINAL large open O-shaped blowing mouth at exactly its existing position and size (center approximately x=635,y=433 on the 1254-square canvas), including dark interior and little rounded tongue. Do not close it into the ready pout. Keep its nose and muzzle pose consistent with the upward blow.\nExact registration: same 1254x1254 full transparent canvas, no zoom, shift, crop or padding. Preserve image 1's full outer silhouette, blue fur, crown, ears, arm positions, torso shape and proportions. Preserve ALL pixels below y=790, leaves and purple rainbow-applique pot. Do not change any other body detail or color. Entire body stays a furry blue plush toy.\nNo teeth, fangs, harsh wrinkles, tears, angry symbols, bubble suit, gloss, gradients on body, special effects, rays, scenery, text, ground, shadow, watermark or checkerboard. Preserve genuine transparent alpha.",
+      "references": [
+        "expressions-before/king-blow.png",
+        "masters/king-ready.png"
+      ],
+      "output": "masters/king-blow.png",
+      "source": "exec-c4a9b5a5-6085-467d-a9df-05f5c0756272.png",
+      "status": "selected cute-fierce expression"
+    }
+  ]
+}

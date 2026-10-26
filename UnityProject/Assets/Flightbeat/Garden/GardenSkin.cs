@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Flightbeat.Garden
 {
     // R1 presentation only. Colors are supplied directly from the current LevelData palette.
-    public static class GardenSkin
+    public static partial class GardenSkin
     {
         // v3 bubble squad (UI spec v3): navy ink, glass-white paper, sky transition, #8C919C mosaic panel.
         public static readonly Color Ink = Hex(0x2A3B55), Paper = Hex(0xF6FAFF), Soil = Hex(0x9FD4FF), Wood = Hex(0x5A80B8), Leaf = Hex(0x86A67E), Field = Hex(0x8C919C);

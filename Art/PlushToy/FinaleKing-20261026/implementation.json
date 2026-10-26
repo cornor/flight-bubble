@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-26",
+  "approvedDirection": "Fixed flowerpot; plush body grows strongly through the existing inhale, release and recoil sequence",
+  "latestUserCorrection": "Cute fierce baby-bear expression (奶凶奶凶); preserve the accepted furry body and animation",
+  "frames": {
+    "ready": {
+      "path": "masters/king-ready.png",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "sha256": "0b83591efed8f498898b0cb255d6a23c985a5f78d56d63e5706b2ec0528d247b"
+    },
+    "blow": {
+      "path": "masters/king-blow.png",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "sha256": "d08d2e6f7cdcea26d3bb1b9e038550501198aeb5b398473c23d825a55b8eb942"
+    }
+  },
+  "animation": {
+    "canvasSize": 250,
+    "fixedLowerFrameFraction": 0.37,
+    "bodyStripCount": 24,
+    "maximumInhaleHeight": 1.75,
+    "maximumInhaleWidth": 1.42,
+    "baseScale": 1,
+    "mouthAnchors": {
+      "ready": [
+        625,
+        499
+      ],
+      "blow": [
+        633,
+        478
+      ]
+    },
+    "fanLayer": "In front of enlarged toy; original colors, sizes, spread, timing and audio unchanged"
+  },
+  "validation": {
+    "geometry": "FINALE_KING_CHECKS_PASSED with cute-fierce frames: fixed pot vertices/UV and registered mouth at standard/tall viewports",
+    "firstBrowser": "evidence/result.json",
+    "buildTime": "2026-10-26 14:22:35",
+    "sourceAudit": "Builds/WebGL/GardenR1-bubble.source.json",
+    "firstPassNote": "Moved original rainbow fan in front after screenshot review showed the enlarged head occluded its origin",
+    "sourceAuditPassed": true,
+    "previousBrowser": "evidence-final/result.json",
+    "previousBrowserResult": {
+      "passed": true,
+      "remaining": 0,
+      "fps": 60.00583267211914,
+      "runtimeErrors": 0
+    },
+    "finalBrowser": "evidence-fierce/result.json",
+    "finalBrowserResult": {
+      "passed": true,
+      "remaining": 0,
+      "fps": 60.002994537353516,
+      "runtimeErrors": 0
+    }
+  },
+  "preview": "http://127.0.0.1:8793/FinaleKing-20261026/",
+  "playable": "http://127.0.0.1:8792/?v=20261026142235",
+  "imageGeneration": "built-in image_gen; exact prompts and selected outputs in prompts.json",
+  "expressionRevision": {
+    "ready": "downward soft eyebrows, focused big eyes, puffed cheeks and a tiny pout",
+    "blow": "matching fierce-cute eyes, slightly rosy cream cheeks, open O-shaped mouth",
+    "sourceBefore": "expressions-before/",
+    "mode": "built-in image_gen",
+    "prompts": "prompts.json"
+  }
+}

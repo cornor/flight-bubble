@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>前 5 关 · 毛绒战斗动作</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2eefb;color:#352953;font:15px/1.6 system-ui,sans-serif}main{max-width:920px;margin:32px auto;padding:0 20px 60px}h1{font-size:28px;margin:0 0 6px}p{color:#75668c;margin:6px 0 20px}.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:20px 0}select,button,a.link{padding:9px 14px;background:white;color:#473361;border:1px solid #d8c9ef;border-radius:12px;font:inherit;cursor:pointer}button.active{background:#6945a8;color:white}section{background:#fff;border:1px solid #e6ddf4;border-radius:20px;padding:20px;margin-top:20px;overflow:auto}h2{font-size:17px;margin:0 0 12px}.caption{font-size:13px;color:#8a7c9c}.phone{display:block;width:390px;max-width:none;border-radius:14px;background:#d2bcf3;margin:auto}#detail{max-width:100%;height:auto}.tags{display:flex;gap:8px;flex-wrap:wrap}.tags button{font-size:13px;padding:5px 10px}a{color:#6945a8}.badge{font-size:12px;color:#7d6a99;background:#ece3f9;padding:3px 8px;border-radius:6px}#status{min-height:20px;font-size:13px;color:#7d6a99}
+</style><main>
+<span class="badge">本地动作试做 · 14 个角色</span>
+<h1>吸一口气，卖力吹出去</h1><p>花盆固定，身体探出，吹完软软回弹。先在实际卡槽大小下看动作。</p>
+<div class="controls"><label>角色 <select id="character"></select></label><button id="play">暂停</button><label>速度 <select id="speed"><option value="1">正常</option><option value="0.35">慢放 0.35×</option></select></label><label><input id="fx" type="checkbox">嘴边泡泡</label><a class="link" href="http://127.0.0.1:8792/?set=A&level=1&v=pad-combat-20261027" target="_blank">进入第 1 关</a></div>
+<div id="status">正在读取动作素材…</div>
+<section><h2>同一个角色 · 实际大小对比</h2><canvas id="compare" class="phone" width="780" height="340"></canvas><div class="caption">左：执行前的动作　右：吸气 → 发力吹气 → 回弹。按 390 px 宽手机显示比例。</div></section>
+<section><h2>8 个卡槽 · 同时攻击</h2><canvas id="fleet" class="phone" width="780" height="320"></canvas><div class="caption">最低等级，角色错开节奏。移动端请保持网页 100% 缩放。</div></section>
+<section><h2>姿势细节</h2><canvas id="detail" width="840" height="330"></canvas><div class="caption">放大查看：吸气 / 吹气 / 回弹；实际体验以上方的小尺寸为准。</div></section>
+<section><h2>前 5 关出现的角色</h2><div id="tags" class="tags"></div></section>
+</main><script type="module">
+const data=await fetch('registration.json').then(r=>r.json()),chars=data.characters;
+const $=id=>document.getElementById(id),smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)},lerp=(a,b,t)=>a+(b-a)*t;
+const image=src=>new Promise((resolve,reject)=>{const im=new Image;im.onload=async()=>{try{await im.decode();resolve(im)}catch(e){reject(e)}};im.onerror=()=>reject(Error(src));im.src=src});
+await Promise.all(chars.map(async c=>{[c.stripImage,c.idle,c.attack,c.ready]=await Promise.all([image(c.strip),image(c.source),image(c.source.replace('idle.png','attack.png')),image(c.source.replace('idle.png','ready.png'))]);}));
+chars.find(c=>c.hex==='42A9FF').beforeReach=await image('../../PadReach-20261027/delivery/creatures/koala/42A9FF/reach.png');
+for(const [i,c] of chars.entries()){$('character').add(new Option(c.name,i));const b=document.createElement('button');b.textContent=c.name;b.onclick=()=>{$('character').value=i;render(time)};$('tags').append(b)}
+$('character').value=chars.findIndex(c=>c.hex==='42A9FF');
+function sample(seconds,side=1){const t=((seconds%.83)+.83)%.83,p={from:0,to:0,blend:0,lift:0,sway:0,ring:-1};if(t<.2){p.from=2;p.to=0;p.blend=smooth(t/.08);p.lift=7*Math.sin(t/.2*Math.PI*.5);p.sway=-3*Math.sin(t/.2*Math.PI*.5)}else if(t<.28){const q=(t-.2)/.08;p.from=0;p.to=1;p.blend=smooth(q);p.lift=lerp(7,-7,q);p.sway=lerp(-3,4,q);p.ring=q*.3}else if(t<.68){const q=(t-.28)/.4;p.from=p.to=1;p.blend=1;p.lift=-7*Math.exp(-q*8)+2*Math.sin(q*Math.PI*4);p.sway=4*Math.exp(-q*8);p.ring=q<.35?.3+q*2:-1}else{const q=(t-.68)/.15;p.from=1;p.to=2;p.blend=smooth(q/.45);p.lift=5*Math.sin(q*Math.PI);p.sway=-3*Math.sin(q*Math.PI)}p.sway*=side;return p}
+function toy(ctx,c,cx,feet,ah,p,fx=false){const aw=ah*224/256,ax=cx-aw/2,ay=feet-ah*212/256,u=aw/224,by=ay-44*ah/256;ctx.drawImage(c.idle,0,124,224,132,ax,ay+ah*124/256,aw,ah*132/256);
+const selected=p.blend<.5?p.from:p.to,active=c.frames[selected];const pt=(x,y)=>{const w=smooth((190-y)/100);return[ax+(x+p.sway*w)*u,by+(y-p.lift*w)*u]};
+function layer(i,opacity){if(opacity<=.001)return;const f=c.frames[i];ctx.globalAlpha=opacity;const bands=60;for(let j=0;j<bands;j++){const ya=j*224/bands,yb=(j+1)*224/bands,a=Math.max(ya,f.y),b=Math.min(yb,f.y+f.h);if(b<=a)continue;const l=pt(f.x,a),r=pt(f.x,b),sy=f.sy+(a-f.y)/f.h*f.sh,sh=(b-a)/f.h*f.sh;ctx.drawImage(c.stripImage,f.sx,sy,f.sw,sh,l[0],l[1],f.w*u,r[1]-l[1]+.10)}ctx.globalAlpha=1}
+layer(selected,1);const m=pt(active.mouthX,active.mouthY);if(fx&&p.ring>=0){const r=ah*(.025+.08*p.ring);ctx.strokeStyle=`rgba(255,255,255,${1-p.ring})`;ctx.lineWidth=1;ctx.beginPath();ctx.arc(m[0],m[1]-ah*.15*p.ring,r,0,Math.PI*2);ctx.stroke()}return m}
+function old(ctx,c,cx,feet,ah,t){let sy=1-.09-.05*(1-(t%.07)/.07),sx=1+.08+.035*(1-(t%.07)/.07);const aw=ah*224/256*sx,hh=ah*sy;let im=c.attack;if(c.hex==='42A9FF'){im=t%1.25>.92?c.ready:c.beforeReach}const extra=hh*(im.height/256-1);ctx.drawImage(im,cx-aw/2,feet-hh*212/256-extra,aw,hh+extra)}
+function pad(ctx,x,y){ctx.fillStyle='#f0defb';ctx.strokeStyle='#ac89d2';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(x,y,19,7,0,0,Math.PI*2);ctx.fill();ctx.stroke()}
+function base(id){const canvas=$(id),ctx=canvas.getContext('2d');ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,canvas.width/2,canvas.height/2);ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillStyle='#62487e';return ctx}
+function render(t){const c=chars[+$('character').value],fx=$('fx').checked;let ctx=base('compare');ctx.fillText('执行前',98,25);ctx.fillText('新版',292,25);pad(ctx,98,119);pad(ctx,292,119);old(ctx,c,98,117,58,t);toy(ctx,c,292,117,58,sample(t),fx);ctx.fillStyle='#765b91';ctx.fillText(['吸气','吹气','回弹'][sample(t).to],292,150);ctx=base('fleet');for(let i=0;i<8;i++){const ch=chars[(+$('character').value+i)%chars.length],x=25+i*48.5;pad(ctx,x,112);toy(ctx,ch,x,110,58,sample(t+i*.105,i%2?-1:1),fx);ctx.fillStyle='#765b91';ctx.font='10px system-ui';ctx.fillText(ch.name,x,143)}ctx=$('detail').getContext('2d');ctx.clearRect(0,0,840,330);for(let i=0;i<3;i++){toy(ctx,c,140+i*280,265,228,{from:i,to:i,blend:1,lift:0,sway:0,ring:-1});ctx.font='16px system-ui';ctx.textAlign='center';ctx.fillStyle='#765b91';ctx.fillText(['吸气 · 露出胸口','吹气 · 撑盆前探','回弹 · 耳朵跟随'][i],140+i*280,310)}}
+let time=0,playing=true,last=performance.now();$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'暂停':'播放'};$('character').onchange=()=>render(time);$('fx').onchange=()=>render(time);
+function tick(now){if(playing)time+=(now-last)/1000*+$('speed').value;last=now;render(time);requestAnimationFrame(tick)}requestAnimationFrame(tick);
+$('status').textContent=`已载入 ${chars.length} 个角色、${chars.length*3} 个关键姿势。动作循环约 0.83 秒。`;
+window.combatPreview={characters:chars.map(({hex,name,frames})=>({hex,name,frames})),renderAt(t){playing=false;time=t;render(t)},select(hex){$('character').value=chars.findIndex(c=>c.hex===hex);render(time)},sample};
+</script></html>

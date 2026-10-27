@@ -288,11 +288,90 @@ namespace Flightbeat.Garden
         }
         // Mouth of the member last drawn by Creature() (screen point); the pads keep it per member for the shots.
         public static Vector2 LastMouth;
+        // 2026-10-26 (user: more punch on the pads, like the plants of PvZ). One-shot bend for the next Creature() call,
+        // set by the pads while a member fires and cleared by the draw: the head and body above the pot rim (canvas
+        // y 150 of 256 on every plush toy) are drawn as warped strips while the pot stays rigid. `BendStretch` scales
+        // the upper part about the rim (negative = pressed down and wider, positive = thrust up and narrower),
+        // `BendShear` pushes the head sideways (fraction of the body height at the head top, + = right), `BendDrop`
+        // presses the whole toy into the pad by that many pixels (the number pill stays put). Drawing only.
+        public static float BendStretch, BendShear, BendDrop;
+        // 2026-10-27 (user: try turning round to face the target). `BendMirror` draws the member mirrored left-right
+        // (mouth, crown and pot centre follow), `BendTurn` is the width during a turn (1 = none, ~0 edge-on at the
+        // flip), `BendHop` lifts it off the pad during the turn (pixels). One-shot like the bend.
+        public static bool BendMirror;
+        public static float BendTurn = 1f, BendHop;
+        // 2026-10-27 10:19 (user: puff and lean back before firing, lean forward and blow while firing, body apart from
+        // the pot). `BendActive`: the pads drive the pose, so the whole-image fire/ready squash and the old outward
+        // lean are off and the pot stays still. `BendRotate`: the body turns about the pot rim by this many degrees
+        // (+ = head to the right), through a soft neck in the lowest third of the body. `BendLift`: the body rises
+        // out of the pot by this fraction of the canvas height (negative sinks it).
+        public static bool BendActive;
+        public static float BendRotate, BendLift;
+        // 10-27 10:29: `BendInhale` shows the puffed-cheek frame instead of the blowing one (taking a breath between
+        // two blows while the shots go on).
+        public static bool BendInhale;
+        // 10-27 10:32 (user: reach forward, not up). `BendGrow`: the body leans towards the camera, so the head grows
+        // by this fraction about the pot rim (width fully, height at .6 of it, foreshortened); BendLift then
+        // stretches the body out of the pot (10-27 10:34, user: a longer body reaching forward).
+        public static float BendGrow;
+        // 10-27 10:47 (user: a stalk between body and pot, like the PvZ sunflower's stem; hidden at rest, the body
+        // reaches out on it when attacking). `BendExtend` (fraction of the canvas height) cuts the art at the pot rim
+        // (StemCut): the body part (with its leaves) is pushed up on a stalk drawn from inside the pot, grown by
+        // BendGrow about its base (towards the camera), its bottom edge fading while it is out; the pot stays drawn
+        // in front, unmoved. Negative values sink the body a little into the pot. The face is never stretched.
+        public static float BendExtend;
+        // 10-27 11:15 (user: back to the clean version, then try one hand-drawn pose before making them all). Optional
+        // pose frames per member (Art/PlushToy/PadReach-20261027): `reach` (bending forward towards the camera,
+        // blowing) and `lean` (leaning back, cheeks puffed). `BendPose` 1 shows reach instead of the blowing frame,
+        // 2 shows lean instead of the idle/puffed/blowing frame; ignored when that frame is not delivered.
+        public static int BendPose;
+        // 10-27 11:55 (user: the members have no body, so a pose cannot read): the reach frame shows the member
+        // leaning out of the pot with its chest and both paws on the rim, so it may be TALLER than 224x256: same
+        // width, the extra height added on top (pot and feet line keep their place, 44 px under the feet). Mouth of
+        // each reach frame in its own canvas pixels, measured on the delivered art; zero = not measured yet (the
+        // blowing frame's mouth is used, moved by the extra height).
+        static Vector2 ReachMouth(Color tint) {
+            Color32 c = tint;
+            switch ((c.r << 16) | (c.g << 8) | c.b) {
+                case 0x42A9FF: return new Vector2(112f, 133f);   // 考拉 reach v2 (224x300), 10-27 12:27
+                default: return Vector2.zero;
+            }
+        }
+        const float StemCut = 148f / 256f;
+        // Placeholder stalk until the plush stem texture arrives (Art/PlushToy/PadStalk-20261027/README.md): felt green,
+        // shaded across its width with the light from the upper right.
+        static void Stem(PixelSurface s, float cx, float top, float bottom, float width) {
+            if (bottom - top < .5f || width < 1f) return;
+            const int bands = 9;
+            Color baseC = new Color(.34f, .59f, .24f, 1f);
+            for (int i = 0; i < bands; i++) {
+                float a = (i + .5f) / bands * 2f - 1f;                                    // -1 left .. 1 right
+                float shade = .58f + .42f * Mathf.Cos(Mathf.Clamp(a - .3f, -1.7f, 1.7f));
+                float edge = Mathf.Clamp01((1f - Mathf.Abs(a)) * 5f);
+                s.Rect(cx - width * .5f + width * i / bands, top, width / bands + .5f, bottom - top,
+                    new Color(baseC.r * shade, baseC.g * shade, baseC.b * shade, .55f + .45f * edge));
+            }
+        }
+        // Art drawn facing left (snout/face to the left); every other member looks up and to the right.
+        public static bool FacesLeft(Color tint) {
+            Color32 c = tint; int k = (c.r << 16) | (c.g << 8) | c.b;
+            return k == 0x0C7E1C || k == 0xFF7E27 || k == 0xC8C5FF;   // 鳄鱼, 水豚, 河马
+        }
+        const float NeckLine = 150f / 256f;
         public static void Creature(PixelSurface s, Color tint, float centerX, float feet, float canvasHeight, int tier, string ammo,
             float attack = 0f, float numberSize = 14f, bool showTier = true, bool badge = true, float breath = 0f, float phase = 0f,
             float sizeScale = 0f, float squash = 0f, float numberLift = 0f, float fire = -1f, float pulse = 0f, float ready = 0f, bool sleep = false, float outline = 0f, float inhale = -1f) {
             bool plushMapped = PlushLayout.Enabled && s.MapLayout;
             if (plushMapped) { feet = PlushLayout.Y(feet); s.MapLayout = false; }
+            float bStretch = BendStretch, bShear = BendShear, bDrop = BendDrop, bTurn = BendTurn, bHop = BendHop;
+            bool bMirror = BendMirror, bActive = BendActive, bInhale = BendInhale;
+            var combat = PadCombat; PadCombat = default;
+            bool combatActive = combat.enabled && ammo != "0" && HasPadCombat(tint);
+            if (combatActive) bActive = true;
+            int bPose = BendPose;
+            BendInhale = false; BendPose = 0;
+            float bRot = BendRotate, bLift = BendLift, bGrow = BendGrow, bExtend = BendExtend;
+            BendStretch = BendShear = BendDrop = BendHop = BendRotate = BendLift = BendGrow = BendExtend = 0f; BendTurn = 1f; BendMirror = BendActive = false;
             try {
             float scale = (sizeScale > 0f ? sizeScale : 1f + Mathf.Min(tier, 3) * .06f) * ArtScale(tint);
             if (Celebrate) breath *= 2.2f;                                                  // happy bounce on a win
@@ -321,24 +400,77 @@ namespace Flightbeat.Garden
                 sy = 1f + breath * wave * calm - .09f * fire - .05f * pulse + .045f * readyK;
                 sx = 1f - breath * .7f * wave * calm + .08f * fire + .035f * pulse - .035f * readyK;
             }
+            if (bActive) { sy = 1f; sx = 1f; }                                              // pads: the pot stays still
             if (sleep && !Celebrate) { sy *= .98f; sx *= 1.015f; }                         // dozing: sunk a little
             if (ammo == "0") { sy = 1f + breath * .4f * wave; sx = 1f; }                    // spent: only a tired slow sway
             sy *= 1f - squash; sx *= 1f + squash;                                           // landing/stretch (feet stay put)
             float ah = canvasHeight * scale * sy, aw = canvasHeight * scale * ArtAspect * sx;
             float bodySize = canvasHeight * scale, lean = 0f, bodyFeet = feet;
-            if (fire >= 0f && ammo != "0") {
+            if (fire >= 0f && ammo != "0" && !bActive) {
                 float lk = Mathf.Max(0f, readyK);
                 bodyFeet += bodySize * (.018f * pulse * fire + .011f * lk);
                 lean = 3.5f * lk * Mathf.Clamp((centerX - 270f) / 120f, -1f, 1f);
             }
+            if (ammo != "0") bodyFeet += bDrop;
+            bodyFeet -= bHop;
             float ay = bodyFeet - ah * FeetLine, ax = centerX - aw / 2;
             string state = ammo == "0" ? "spent" : attack > .1f || fire > .1f ? "attack" : "idle";
             Vector2 mouth = MouthCanvas(tint);
-            LastMouth = new Vector2(ax + aw * mouth.x / 224f, ay + ah * mouth.y / 256f);
+            bool bent = ammo != "0" && (Mathf.Abs(bStretch) > .002f || Mathf.Abs(bShear) > .002f || Mathf.Abs(bRot) > .05f || Mathf.Abs(bLift) > .001f || Mathf.Abs(bGrow) > .002f);
+            float pivotX = centerX;   // the pot's measured centre (mirrored with the art)
+            if (slots.TryGetValue(PlantSlot(tint, "idle"), out var pivotSlot)) pivotX += aw * (bMirror ? .5f - pivotSlot.potCenterX : pivotSlot.potCenterX - .5f);
+            bool warped = bent || bMirror || bTurn < .999f;
+            float turnW = Mathf.Max(.06f, bTurn);
+            float topV = Mathf.Min(HeadTop(tint), NeckLine - .1f), leanR = lean * Mathf.Deg2Rad, leanC = Mathf.Cos(leanR), leanS = Mathf.Sin(leanR);
+            // A canvas point (u, v as fractions of the 224x256 frame) after the bend and the lean about the feet.
+            Vector2 Warp(float u, float v) {
+                float x = ax + aw * u, y = ay + ah * v;
+                if (bent && v < NeckLine) {
+                    float neckY = ay + ah * NeckLine, k = Mathf.Min(1.25f, (NeckLine - v) / (NeckLine - topV));
+                    y = neckY - (neckY - y) * (1f + bStretch);
+                    x = centerX + (x - centerX) * (1f - .55f * bStretch * Mathf.Min(1f, k * 1.6f));
+                    x += bShear * ah * Mathf.Pow(k, 1.4f);
+                    // Rise and turn about the rim; the lowest half of the body is a soft neck so the seam stays closed
+                    // (10-27 10:29: half, was a third, for the bigger rise).
+                    float w = Mathf.Clamp01(k / .5f); w = w * w * (3f - 2f * w);
+                    if (Mathf.Abs(bGrow) > .002f) {
+                        float g = bGrow * w;
+                        x = pivotX + (x - pivotX) * (1f + g);
+                        y = neckY - (neckY - y) * (1f + g * .6f);
+                    }
+                    y -= bLift * ah * w;
+                    if (Mathf.Abs(bRot) > .05f) {
+                        float r = bRot * w * Mathf.Deg2Rad, rc = Mathf.Cos(r), rs = Mathf.Sin(r), rx = x - pivotX, ry = y - neckY;
+                        x = pivotX + rx * rc - ry * rs; y = neckY + rx * rs + ry * rc;
+                    }
+                }
+                if (turnW < .999f) x = centerX + (x - centerX) * turnW;
+                if (Mathf.Abs(lean) > .05f) {
+                    float dx = x - centerX, dy = y - bodyFeet;
+                    x = centerX + dx * leanC - dy * leanS; y = bodyFeet + dx * leanS + dy * leanC;
+                }
+                return new Vector2(x, y);
+            }
+            // The stalk mode: the body part is moved rigidly (no bend), so it takes over from Warp.
+            bool stalk = bActive && ammo != "0" && (Mathf.Abs(bExtend) > .001f || Mathf.Abs(bGrow) > .002f);
+            float cutY = ay + ah * StemCut, ext = bExtend * ah;
+            Vector2 OnStalk(float u, float v) {
+                float x = ax + aw * u, y = ay + ah * v;
+                if (v >= StemCut) return new Vector2(x, y);
+                return new Vector2(pivotX + (x - pivotX) * (1f + bGrow), cutY - (cutY - y) * (1f + bGrow * .6f) - ext);
+            }
+            float mouthU = bMirror ? 1f - mouth.x / 224f : mouth.x / 224f;
+            LastMouth = stalk ? OnStalk(mouth.x / 224f, mouth.y / 256f)
+                : warped ? Warp(mouthU, mouth.y / 256f) : new Vector2(ax + aw * mouth.x / 224f, ay + ah * mouth.y / 256f);
             // Optional art (art-v3 items 58/59): cheer on a win, and a short random blink while idle.
             if (Celebrate && Has(PlantSlot(tint, "cheer"))) state = "cheer";
             else if (state == "idle" && (inhale >= 0f && inhale < 1f ? inhale > .5f : ready > .5f) && Has(PlantSlot(tint, "ready"))) state = "ready";   // puffed cheeks (when delivered)
             else if (state == "idle" && sleep && Has(PlantSlot(tint, "blink"))) state = "blink";          // asleep: the eyes-closed frame
+            else if (state == "attack" && bInhale && Has(PlantSlot(tint, "ready"))) state = "ready";      // a breath between blows
+            if (!Celebrate && ammo != "0") {
+                if (bPose == 1 && state == "attack" && Has(PlantSlot(tint, "reach"))) state = "reach";
+                else if (bPose == 2 && state != "blink" && Has(PlantSlot(tint, "lean"))) state = "lean";
+            }
             else if (state == "idle" && breath > 0f) {
                 float cycle = 3.1f + Mathf.Abs(phase) % 1.9f;
                 if ((Clock + phase * 1.37f) % cycle < .13f && Has(PlantSlot(tint, "blink"))) state = "blink";
@@ -346,16 +478,77 @@ namespace Flightbeat.Garden
             // 2026-10-21 (user): hidden members show the rainbow question-mark bubble when delivered; `outline` (alpha)
             // draws the white silhouette grown by 8 canvas px behind the member (front-row members you can tap).
             Color32 mk = tint; bool mystery = ((mk.r << 16) | (mk.g << 8) | mk.b) == 0x8C919C && Has("plants/mystery-bubble");
+            // A taller reach frame grows upwards from the same feet line (fy/fhh: where its full frame is drawn).
+            float fy = ay, fhh = ah, reachTop = -1f;
+            if (state == "reach" && !mystery && slots.TryGetValue(PlantSlot(tint, "reach"), out var reachSlot) && reachSlot.fw > 0f && reachSlot.fh > 0f) {
+                float tall = reachSlot.fh / reachSlot.fw / (256f / 224f);
+                if (tall > 1.001f) { fy = ay - ah * (tall - 1f); fhh = ah * tall; }
+                Vector2 rm = ReachMouth(tint);
+                float canvasH = 224f * reachSlot.fh / reachSlot.fw;
+                if (rm.x > 0f) LastMouth = new Vector2(ax + aw * rm.x / 224f, fy + fhh * rm.y / canvasH);   // else: the blowing frame's mouth
+                reachTop = fy + fhh * reachSlot.oy / reachSlot.fh;
+            }
             bool tilted = false;
-            if (Mathf.Abs(lean) > .05f) {
+            if (combatActive) {
+                tilted = DrawPadCombat(s, tint, combat, ax, ay, aw, ah, out reachTop);
+            }
+            else if (stalk && slots.TryGetValue(mystery ? "plants/mystery-bubble" : PlantSlot(tint, state), out var stalkSlot)) {
+                Rect uv = Uv(stalkSlot, Data.size);
+                float fw = stalkSlot.fw > 0f ? stalkSlot.fw : stalkSlot.w, fh = stalkSlot.fh > 0f ? stalkSlot.fh : stalkSlot.h;
+                float u0 = stalkSlot.ox / fw, u1 = (stalkSlot.ox + stalkSlot.w) / fw, v0 = stalkSlot.oy / fh, v1 = (stalkSlot.oy + stalkSlot.h) / fh;
+                float cut = Mathf.Clamp(StemCut, v0, v1), fadeTop = Mathf.Max(v0, cut - 9f / 256f);
+                Rect Rows(float a, float b) {
+                    float ta = (a - v0) / (v1 - v0), tb = (b - v0) / (v1 - v0);
+                    return new Rect(uv.x, uv.y + uv.height * (1f - tb), uv.width, uv.height * (tb - ta));
+                }
+                // 1. the stalk, from inside the pot up into the body (its top hides behind the leaves)
+                if (ext > .5f) Stem(s, pivotX, cutY - ext + ah * .03f, cutY + ah * .05f, aw * .14f * (1f + bGrow * .5f));
+                // 2. the body part, its last 9 canvas rows fading out as it leaves the pot
+                if (fadeTop > v0)
+                    s.GardenQuadCorners(OnStalk(u0, v0), OnStalk(u1, v0), OnStalk(u1, fadeTop), OnStalk(u0, fadeTop), Rows(v0, fadeTop), Color.white, stalkSlot.atlas);
+                if (cut > fadeTop) {
+                    Color low = new Color(1f, 1f, 1f, 1f - Mathf.Clamp01(ext / (ah * .03f)));
+                    s.GardenQuadCornersColors(OnStalk(u0, fadeTop), OnStalk(u1, fadeTop), OnStalk(u1, cut - 1e-4f), OnStalk(u0, cut - 1e-4f),
+                        Rows(fadeTop, cut), Color.white, Color.white, low, low, stalkSlot.atlas);
+                }
+                // 3. the pot, unmoved and in front
+                if (v1 > cut)
+                    s.GardenQuadCorners(new Vector2(ax + aw * u0, cutY), new Vector2(ax + aw * u1, cutY),
+                        new Vector2(ax + aw * u1, ay + ah * v1), new Vector2(ax + aw * u0, ay + ah * v1), Rows(cut, v1), Color.white, stalkSlot.atlas);
+                tilted = true;
+            }
+            else if (warped && slots.TryGetValue(mystery ? "plants/mystery-bubble" : PlantSlot(tint, state), out var bentSlot)) {
+                // Strips from the top of the trimmed art down to the pot rim (10), then the pot as one rigid strip.
+                Rect uv = Uv(bentSlot, Data.size);
+                float fw = bentSlot.fw > 0f ? bentSlot.fw : bentSlot.w, fh = bentSlot.fh > 0f ? bentSlot.fh : bentSlot.h;
+                float u0 = bentSlot.ox / fw, u1 = (bentSlot.ox + bentSlot.w) / fw, v0 = bentSlot.oy / fh, v1 = (bentSlot.oy + bentSlot.h) / fh;
+                // Mirrored: the texture's left edge goes to the mirrored frame position (the shader draws both windings).
+                if (bMirror) { u0 = 1f - u0; u1 = 1f - u1; }
+                float neck = Mathf.Clamp(NeckLine, v0, v1), prevV = v0;
+                Vector2 prevL = Warp(u0, v0), prevR = Warp(u1, v0);
+                for (int i = 1; i <= 11; i++) {
+                    float v = i <= 10 ? Mathf.Lerp(v0, neck, i / 10f) : v1;
+                    if (v - prevV <= 1e-5f) continue;
+                    Vector2 l = Warp(u0, v), r = Warp(u1, v);
+                    float ta = (prevV - v0) / (v1 - v0), tb = (v - v0) / (v1 - v0);
+                    bool map = s.MapLayout;   // never true on the plush pads (Creature unmaps); kept like AssetRotated
+                    s.GardenQuadCorners(map ? PlushLayout.Point(prevL) : prevL, map ? PlushLayout.Point(prevR) : prevR,
+                        map ? PlushLayout.Point(r) : r, map ? PlushLayout.Point(l) : l, new Rect(uv.x, uv.y + uv.height * (1f - tb), uv.width, uv.height * (tb - ta)), Color.white, bentSlot.atlas);
+                    prevL = l; prevR = r; prevV = v;
+                }
+                tilted = true;
+            }
+            else if (Mathf.Abs(lean) > .05f) {
                 // Tilted about the feet: the art centre turns round the foot point, then the art is drawn rotated there.
                 float r = lean * Mathf.Deg2Rad, c = Mathf.Cos(r), n = Mathf.Sin(r), dy = ay + ah * .5f - bodyFeet;
                 Vector2 mid = new Vector2(centerX - dy * n, bodyFeet + dy * c);
                 if (outline > 0f) AssetRotated(s, mystery ? "plants/mystery-bubble/outline" : PlantSlot(tint, "outline"), mid, aw, ah, lean, new Color(1f, 1f, 1f, outline));
-                tilted = AssetRotated(s, mystery ? "plants/mystery-bubble" : PlantSlot(tint, state), mid, aw, ah, lean, Color.white);
+                float fdy = fy + fhh * .5f - bodyFeet;   // a taller reach frame turns about the same feet
+                Vector2 fmid = new Vector2(centerX - fdy * n, bodyFeet + fdy * c);
+                tilted = AssetRotated(s, mystery ? "plants/mystery-bubble" : PlantSlot(tint, state), fmid, aw, fhh, lean, Color.white);
             }
             if (!tilted && outline > 0f) Asset(s, mystery ? "plants/mystery-bubble/outline" : PlantSlot(tint, "outline"), ax, ay, aw, ah, new Color(1f, 1f, 1f, outline));
-            if (!tilted && !Asset(s, mystery ? "plants/mystery-bubble" : PlantSlot(tint, state), ax, ay, aw, ah, Color.white)) {
+            if (!tilted && !Asset(s, mystery ? "plants/mystery-bubble" : PlantSlot(tint, state), ax, fy, aw, fhh, Color.white)) {
                 float w = aw * .55f, h = ah * .5f;
                 s.Rect(centerX - w / 2 - 1, feet - h - 1, w + 2, h + 2, Ink);
                 s.Rect(centerX - w / 2, feet - h, w, h, tint);
@@ -364,7 +557,10 @@ namespace Flightbeat.Garden
             // Use the shared silhouette bound, including breathing and outward tilt.
             float headTop = HeadTop(tint);
             float angle = lean * Mathf.Deg2Rad;
-            float top = bodyFeet + ah * (headTop - FeetLine) * Mathf.Cos(angle) - aw * .5f * Mathf.Abs(Mathf.Sin(angle));
+            float top = bodyFeet + ah * (headTop - FeetLine) * Mathf.Cos(angle) - aw * .5f * Mathf.Abs(Mathf.Sin(angle)), crownX = centerX;
+            if (reachTop >= 0f) top = Mathf.Min(top, reachTop);
+            if (stalk) { Vector2 head = OnStalk(.5f, headTop); top = head.y; crownX = head.x; }
+            else if (warped) { Vector2 head = Warp(.5f, headTop); top = head.y; crownX = head.x; }
             float numberTop = feet + 2f - numberLift;
             if (ammo.Length > 0) {
                 if (badge) {
@@ -376,7 +572,7 @@ namespace Flightbeat.Garden
                     float cx = centerX;
                     // Use the idle pot's measured centre, stable across breathing, blink and firing poses.
                     if (PlushLayout.Enabled && slots.TryGetValue(PlantSlot(tint, "idle"), out var potSlot))
-                        cx += bodySize * ArtAspect * (potSlot.potCenterX - .5f);
+                        cx += bodySize * ArtAspect * (bMirror ? .5f - potSlot.potCenterX : potSlot.potCenterX - .5f);
                     float size = Mathf.Min(numberSize, (bw - 14f) / Mathf.Max(.01f, GardenBarArt.TextWidth(ammo, 1f)));   // 2026-10-21: 7 px each side
                     bool mapped = s.MapLayout;
                     float cy = GardenBars.ScreenY(s, numberTop + bh * .5f); s.MapLayout = false;
@@ -405,8 +601,8 @@ namespace Flightbeat.Garden
                 // 2026-10-21 10:39 (user): back to the earlier crown + gold MAX (the glass chip did not suit it).
                 // 2026-10-24: keep a modest lift over the original; the 1.5x mark dominated the plush bodies.
                 const float markScale = 1.2f, markDrop = 4f;
-                Asset(s, "scene/crown", centerX - 12f * markScale, top - 32f * markScale + markDrop, 24f * markScale, 18f * markScale, Color.white);
-                TextOutline(s, "MAX", centerX, top - 19f * markScale + markDrop, 14f * markScale, Gold, Outline, 1.5f * markScale);
+                Asset(s, "scene/crown", crownX - 12f * markScale, top - 32f * markScale + markDrop, 24f * markScale, 18f * markScale, Color.white);
+                TextOutline(s, "MAX", crownX, top - 19f * markScale + markDrop, 14f * markScale, Gold, Outline, 1.5f * markScale);
             } else if (showTier && tier > 0 && !badge) TextOutline(s, tier == 1 ? "Ⅰ" : "Ⅱ", centerX + aw * .3f, top, 15f, Gold, Outline, 1.5f);   // 2026-10-21: earlier style
             } finally {
                 if (plushMapped) { LastMouth.y = PlushLayout.InverseY(LastMouth.y); s.MapLayout = true; }

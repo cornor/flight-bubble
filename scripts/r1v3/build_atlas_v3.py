@@ -42,7 +42,10 @@ PLUSH_UNIQUE = ROOT / 'Art/PlushToy/UniqueAnimals-20261026/delivery'
 LOADING_ART = ROOT / 'Art/PlushToy/LoadingB-20261025/masters'
 HOME_WAVE_ART = ROOT / 'Art/PlushToy/HomeWave-20261025/masters'
 FINALE_KING_ART = ROOT / 'Art/PlushToy/FinaleKing-20261026/masters'
-PLUSH_ROOTS = (PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
+# 2026-10-27: hand-drawn pad poses on trial (reach: bending forward and blowing; lean: leaning back, puffed).
+PLUSH_REACH = ROOT / 'Art/PlushToy/PadReach-20261027/delivery'
+PAD_COMBAT_ART = ROOT / 'Art/PlushToy/PadCombat-20261027'
+PLUSH_ROOTS = (PLUSH_REACH, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
 
 def art_path(rel):
     # User-restored Git glass lock must not be replaced by the plush pad override.
@@ -58,9 +61,10 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, PAD_COMBAT_ART / 'masters', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
+    files += [p for p in (PAD_COMBAT_ART / 'mouths.json', PAD_COMBAT_ART / 'coverage.json') if p.exists()]
     for p in sorted(set(files)):
         st = p.stat(); h.update(f'{p}|{st.st_size}|{st.st_mtime_ns}\n'.encode())
     for p in sorted(CODE.rglob('*.cs')):
@@ -86,7 +90,7 @@ UI = 0.75
 # Full 224x256 battle canvases and 448x512 home portraits keep visible plush fibers.
 # The separate 4096x3072 atlas fits all 22 colors and high-resolution home/finale art.
 # Its importer preserves NPOT dimensions. A full atlas now fails instead of shrinking.
-CREATURE_W, CREATURE_H, CREATURE_MIN = 4096, 3072, 1.0
+CREATURE_W, CREATURE_H, CREATURE_MIN = 4096, 4096, 1.0
 CREATURE = float(os.environ.get('R1_CREATURE_SCALE', 1.0))
 
 # ---- (slot id, delivery file, scale, placeholder factory)
@@ -136,7 +140,7 @@ for entry in color_data['colors']:
     for st in ['idle', 'attack', 'spent']:
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE,
                       lambda x=h, state=st: P.round_creature(x, state)))
-    for st in ['blink', 'cheer', 'ready']:   # ready: puffed cheeks before firing (2026-10-21, optional)
+    for st in ['blink', 'cheer', 'ready', 'reach', 'lean']:   # ready: puffed cheeks before firing (2026-10-21); reach/lean: pad poses (2026-10-27); all optional
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE, None))
 # Mystery reserves reveal neither their palette nor their optional animation.
 # Art item 76 delivers only idle: a mystery member never attacks while hidden, so the other states reuse it.
@@ -599,7 +603,7 @@ for entry in SLOTS:
     p = art_path(rel)
     # A plush member must never blink or cheer back into the older jelly character.
     if rel.startswith('creatures/') and any((root / Path(rel).parent / 'idle.png').exists() for root in PLUSH_ROOTS) and not any((root / rel).exists() for root in PLUSH_ROOTS):
-        if Path(rel).stem in ('blink', 'cheer', 'ready'): continue
+        if Path(rel).stem in ('blink', 'cheer', 'ready', 'reach', 'lean'): continue
     if p.exists():
         im = Image.open(p).convert('RGBA'); src = hashlib.sha256(p.read_bytes()).hexdigest(); delivered.append(rel)
     else:
@@ -624,6 +628,8 @@ for entry in SLOTS:
     im = im.resize((max(1, round(im.width * sc)), max(1, round(im.height * sc))), Image.LANCZOS)
     tiles.append((sid, im, src))
 for sid, im in GENERATED.items(): tiles.append((sid, im, 'generated'))
+from pad_combat_art import load as load_pad_combat
+tiles.extend(load_pad_combat(ROOT, OUT))
 # 2026-10-21 (user: a white outline on the front-row members you can tap): each idle silhouette (and the mystery
 # bubble) grown by 4 canvas px (12:22, was 8), softened, as a white image drawn behind the member.
 for _sid, _im, _src in list(tiles):

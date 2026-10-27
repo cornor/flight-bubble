@@ -53,6 +53,19 @@ namespace Flightbeat.Rendering
             v.color = VertexColor(tl); v.position = new Vector3(x, hgt - y, 0); v.uv0 = new Vector4(uv.xMin, uv.yMax, 0, 0); quad[3] = v;
             mesh.AddUIVertexQuad(quad);
         }
+        // 2026-10-27: free corners with one colour per corner (screen y-down, MapLayout ignored), for the pad members'
+        // body on its stalk, whose bottom edge fades out while it is pushed out of the pot.
+        public void GardenQuadCornersColors(Vector2 tl, Vector2 tr, Vector2 br, Vector2 bl, Rect uv, Color ctl, Color ctr, Color cbr, Color cbl, int atlas = 0) {
+            PrepareGardenMaterial();
+            float hgt = ScreenLayout.Height;
+            var v = UIVertex.simpleVert;
+            v.uv1 = new Vector4(atlas == 1 ? 22f : 20f, 0, 0, 0);
+            v.color = VertexColor(cbl); v.position = new Vector3(bl.x, hgt - bl.y, 0); v.uv0 = new Vector4(uv.xMin, uv.yMin, 0, 0); quad[0] = v;
+            v.color = VertexColor(cbr); v.position = new Vector3(br.x, hgt - br.y, 0); v.uv0 = new Vector4(uv.xMax, uv.yMin, 0, 0); quad[1] = v;
+            v.color = VertexColor(ctr); v.position = new Vector3(tr.x, hgt - tr.y, 0); v.uv0 = new Vector4(uv.xMax, uv.yMax, 0, 0); quad[2] = v;
+            v.color = VertexColor(ctl); v.position = new Vector3(tl.x, hgt - tl.y, 0); v.uv0 = new Vector4(uv.xMin, uv.yMax, 0, 0); quad[3] = v;
+            mesh.AddUIVertexQuad(quad);
+        }
         // 2026-10-17: a textured quad with free corners (screen y-down, MapLayout ignored), for rotating art.
         public void GardenQuadCorners(Vector2 tl, Vector2 tr, Vector2 br, Vector2 bl, Rect uv, Color tint, int atlas = 0) {
             PrepareGardenMaterial();

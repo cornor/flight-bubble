@@ -1,0 +1,179 @@
+{
+  "mode": "built-in image_gen",
+  "subject": "koala 42A9FF (trial; v1 kept in v1/; batch the others only after the user approves)",
+  "references": {
+    "image1": "references/koala-attack.png  (identity, fur, colours, lighting, the pot; current blowing frame)",
+    "image2": "layout-guide.png  (224x256 canvas, pot rim y=148, feet line y=212, pot area locked)",
+    "image3": "references/koala-ready.png  (puffed cheeks, for lean.png only)",
+    "image4": "references/koala-idle.png (exact locked pot pixels for compositing)"
+  },
+  "assets": [
+    {
+      "id": "reach_v2",
+      "file": "delivery/creatures/koala/42A9FF/reach.png",
+      "required": true,
+      "transparent": true,
+      "canvas": "224x300",
+      "prompt": "Use case: precise-character-pose-edit for a live mobile game sprite. Image 1 is the exact approved plush koala toy whose body is hidden inside its felt flower pot (only the head shows). Image 2 is the locked layout guide of the new TALLER 224x300 canvas (44 px added on top; the pot keeps its exact pixels, rim at y=192, feet line at y=256). Image 3 shows the same plush style with an arm coming out of a pot. Draw the koala LEANING OUT OF THE POT TOWARDS THE VIEWER to blow a bubble, like a child leaning out over a window sill: its upper body has come up out of the pot so the plush chest and shoulders are visible above the rim, BOTH SMALL PLUSH PAWS GRIP THE FRONT OF THE POT RIM, and the torso bends forward over the rim towards the camera; shoulders hunched forward, head pushed forward and slightly down, about 15-20 % larger than the ghost head in Image 2 because it is closer to the camera, top of the head and ears a little more visible. Mouth: a clearly puckered round 'O', lips pushed forward, cheeks a little puffed, blowing hard; focused determined eyes looking forward and slightly up, brows lowered a touch (not timid). Keep the exact same character: same blue and cream plush fur, nose, ears and eye style, soft studio light from the upper right, photoreal plush toy render as Image 1. The leaves stay at the rim on both sides of the body (partly covered by the arms is fine). The POT must stay pixel-identical (everything below the red line in Image 2; composite pot-plate-224x300.png), except where the paws and chest pass in front of the rim. Transparent background, nothing above y=6, clean anti-aliased edges, no background shadow, no text, no bubbles, no motion lines.",
+      "generations": [
+        {
+          "prompt": "Use case: precise-character-pose-edit for a live mobile game sprite. Image 1 is the exact approved plush koala toy whose body is hidden inside its felt flower pot (only the head shows). Image 2 is the locked layout guide of the new TALLER 224x300 canvas (44 px added on top; the pot keeps its exact pixels, rim at y=192, feet line at y=256). Image 3 shows the same plush style with an arm coming out of a pot. Draw the koala LEANING OUT OF THE POT TOWARDS THE VIEWER to blow a bubble, like a child leaning out over a window sill: its upper body has come up out of the pot so the plush chest and shoulders are visible above the rim, BOTH SMALL PLUSH PAWS GRIP THE FRONT OF THE POT RIM, and the torso bends forward over the rim towards the camera; shoulders hunched forward, head pushed forward and slightly down, about 15-20 % larger than the ghost head in Image 2 because it is closer to the camera, top of the head and ears a little more visible. Mouth: a clearly puckered round 'O', lips pushed forward, cheeks a little puffed, blowing hard; focused determined eyes looking forward and slightly up, brows lowered a touch (not timid). Keep the exact same character: same blue and cream plush fur, nose, ears and eye style, soft studio light from the upper right, photoreal plush toy render as Image 1. The leaves stay at the rim on both sides of the body (partly covered by the arms is fine). The POT must stay pixel-identical (everything below the red line in Image 2; composite pot-plate-224x300.png), except where the paws and chest pass in front of the rim. Transparent background, nothing above y=6, clean anti-aliased edges, no background shadow, no text, no bubbles, no motion lines.\n\nAdditional reference roles: Image 4 is the reviewed first version, only for the head's forward/downward tilt; its missing torso MUST be corrected. Image 5 is the exact pot plate, the immutable pot and its exact placement. The bear in Image 3 is ONLY an arm/plush-construction reference, do not change the koala's elongated charcoal nose to a teddy bear nose. CRITICAL pose readability: show a substantial upper torso with two distinct shoulders and a visible plush chest between the chin and the pot rim. Two short plush arms angle down from the shoulders, ending in two clearly separate small paws hooked over the FRONT rim at left and right. The chin must not conceal all of the chest. A compact but clearly articulated waist-to-shoulder bend, leaning out toward camera with the hands braced on the rim. Focused blowing expression, not a surprised open mouth and not raised worried brows. Entire character including ears and both paws fits inside the 224:300 portrait canvas; generous transparent padding below the foot line. The layout guide's text and colored lines are reference marks only; never render them. Produce one single finished transparent sprite.",
+          "reference_images": [
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/PadReach-20261027/references/koala-attack.png",
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/PadReach-20261027/layout-guide-v2.png",
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/HomeWave-20261025/masters/bear-idle.png",
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/PadReach-20261027/v1/reach-v1.png",
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/PadReach-20261027/pot-plate-224x300.png"
+          ],
+          "attempt": 5,
+          "tool": "built-in image_gen",
+          "status": "generated",
+          "master": "masters/reach-05.png",
+          "requested_at": "2026-10-27T12:05:04.505831+08:00",
+          "source_file": "/Users/yangdage/.codex/generated_images/01a16bda-f6eb-7e13-b61f-c2320b501f7e/exec-9fa99743-f476-4fd6-8c30-e999ce77ef56.png",
+          "review": "Upper torso, chest and both paws now visible; good baseline. Brows still read slightly worried, and blowing lips should be more deliberate. Try one focused expression refinement while preserving the upper body."
+        },
+        {
+          "prompt": "Use case: precise-character-pose-edit for a live mobile game sprite. Image 1 is the exact approved plush koala toy whose body is hidden inside its felt flower pot (only the head shows). Image 2 is the locked layout guide of the new TALLER 224x300 canvas (44 px added on top; the pot keeps its exact pixels, rim at y=192, feet line at y=256). Image 3 shows the same plush style with an arm coming out of a pot. Draw the koala LEANING OUT OF THE POT TOWARDS THE VIEWER to blow a bubble, like a child leaning out over a window sill: its upper body has come up out of the pot so the plush chest and shoulders are visible above the rim, BOTH SMALL PLUSH PAWS GRIP THE FRONT OF THE POT RIM, and the torso bends forward over the rim towards the camera; shoulders hunched forward, head pushed forward and slightly down, about 15-20 % larger than the ghost head in Image 2 because it is closer to the camera, top of the head and ears a little more visible. Mouth: a clearly puckered round 'O', lips pushed forward, cheeks a little puffed, blowing hard; focused determined eyes looking forward and slightly up, brows lowered a touch (not timid). Keep the exact same character: same blue and cream plush fur, nose, ears and eye style, soft studio light from the upper right, photoreal plush toy render as Image 1. The leaves stay at the rim on both sides of the body (partly covered by the arms is fine). The POT must stay pixel-identical (everything below the red line in Image 2; composite pot-plate-224x300.png), except where the paws and chest pass in front of the rim. Transparent background, nothing above y=6, clean anti-aliased edges, no background shadow, no text, no bubbles, no motion lines.\n\nAdditional reference roles: Image 4 is the new upper-body trial with a successful visible chest, shoulders and two paws; preserve that upper-body construction. Image 5 is the exact pot plate, the immutable pot and its exact placement. The bear in Image 3 is ONLY an arm/plush-construction reference, do not change the koala's elongated charcoal nose to a teddy bear nose. CRITICAL pose readability: show a substantial upper torso with two distinct shoulders and a visible plush chest between the chin and the pot rim. Two short plush arms angle down from the shoulders, ending in two clearly separate small paws hooked over the FRONT rim at left and right. The chin must not conceal all of the chest. A compact but clearly articulated waist-to-shoulder bend, leaning out toward camera with the hands braced on the rim. Focused blowing expression, not a surprised open mouth and not raised worried brows. Entire character including ears and both paws fits inside the 224:300 portrait canvas; generous transparent padding below the foot line. The layout guide's text and colored lines are reference marks only; never render them. Produce one single finished transparent sprite.\n\nEXPRESSION REFINEMENT: Image 4 is the new upper-body trial. Preserve its successful visible chest, shoulder and two-paw construction. Refine the face to determined effort: both eyebrows angle slightly DOWN toward the nose, inner brow ends lower than outer ends, a gentle focused furrow. Do NOT raise the inner eyebrows into a worried/pleading shape. Eyes still gaze forward and slightly upward. Lips form a protruding small ROUND puckered O, cheeks are lightly inflated; no astonished vertical oval mouth. Keep the forward/down head pitch and the visible chest beneath it. Retain the original koala identity from Image 1, not the bear identity. The pot will be restored from Image 5 after generation. Do not reduce the chest or hide the arms behind the head.",
+          "reference_images": [
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/PadReach-20261027/references/koala-attack.png",
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/PadReach-20261027/layout-guide-v2.png",
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/HomeWave-20261025/masters/bear-idle.png",
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/PadReach-20261027/masters/reach-05.png",
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/PadReach-20261027/pot-plate-224x300.png"
+          ],
+          "attempt": 6,
+          "tool": "built-in image_gen",
+          "status": "generated",
+          "master": "masters/reach-06.png",
+          "requested_at": "2026-10-27T12:07:55.674844+08:00",
+          "preflight_note": "One request rejected before generation because image_gen accepts at most 5 reference paths. Retried with reach-05 as the pose reference, replacing v1; the first v2 generation already included all four user references and the pot plate.",
+          "source_file": "/Users/yangdage/.codex/generated_images/01a16bda-f6eb-7e13-b61f-c2320b501f7e/exec-68a3df0d-10d5-45f2-971f-d572e76c56d9.png",
+          "review": "Selected for pot-locked compositing: substantial chest and shoulders, separate arms and two paws gripping the front rim; slightly lowered brows and puckered O mouth."
+        }
+      ],
+      "generation_count": 2,
+      "selected_generation": 6,
+      "status": "delivered_for_user_review",
+      "final_size": [
+        224,
+        300
+      ],
+      "final_mode": "RGBA",
+      "postprocess": {
+        "script": "work/composite_reach_v2.py",
+        "description": "Keep generated chest, shoulders, both paws and side leaves. Extract the foreground from reach-06 with its native transparency; premultiplied-alpha Lanczos downsample to 224x300 and register 10 px upward so paws sit on the locked rim. Composite in front of pot-plate-224x300.png and retain original inner leaves. Restore every RGBA pixel at y>=192 outside the paws/chest foreground matte exactly from the pot plate. Remove isolated generated alpha speckles and prevent side-leaf resampling from touching the locked lower region.",
+        "immutable_pot_source": "pot-plate-224x300.png",
+        "foreground_mask": "work/reach-v2-body-mask.png",
+        "validation_file": "work/validation-v2.json"
+      },
+      "delivery_sha256": "0de906f191774b771b0d63c47dc17717492863990dd11210cd07d8383539cb2f"
+    },
+    {
+      "id": "reach",
+      "file": "delivery/creatures/koala/42A9FF/reach.png",
+      "required": true,
+      "transparent": true,
+      "prompt": "Use case: precise-character-pose-edit for a live mobile game sprite. Image 1 is the exact approved plush koala toy sitting in its felt flower pot; Image 2 is the locked layout guide of the 224x256 canvas. Redraw ONLY the koala's body and head in a new pose: it BENDS FORWARD FROM THE WAIST TOWARDS THE VIEWER, eagerly leaning out of the pot to blow a bubble at the camera. The torso tips towards the camera so the head comes closer: the head looks noticeably larger than in Image 1 and sits lower, tilted forward and down about 25 degrees, so more of the top of the head and the ears is visible and the chin is tucked; the lower body visibly folds forward over the pot rim and may overlap the front of the rim and the leaves. Mouth: a small round puckered 'O', lips pushed forward, cheeks slightly sucked in, as if blowing hard; eyes wide and looking forward/up. Keep the exact same character: same plush fur texture, same blue and cream colours, same nose, ears and eye style, same soft studio lighting from the upper right, photoreal plush toy render. The POT must stay pixel-identical in position, size and design to Image 1 (everything below the red line in Image 2), except where the leaning body passes in front of it. Same 224x256 canvas, feet line unchanged at y=212, nothing above y=6, transparent background, clean anti-aliased edges, no shadow on the background, no text, no bubbles, no motion lines.",
+      "generations": [
+        {
+          "attempt": 1,
+          "tool": "built-in image_gen",
+          "prompt": "Use case: precise-character-pose-edit for a live mobile game sprite. Image 1 is the exact approved plush koala toy sitting in its felt flower pot; Image 2 is the locked layout guide of the 224x256 canvas. Redraw ONLY the koala's body and head in a new pose: it BENDS FORWARD FROM THE WAIST TOWARDS THE VIEWER, eagerly leaning out of the pot to blow a bubble at the camera. The torso tips towards the camera so the head comes closer: the head looks noticeably larger than in Image 1 and sits lower, tilted forward and down about 25 degrees, so more of the top of the head and the ears is visible and the chin is tucked; the lower body visibly folds forward over the pot rim and may overlap the front of the rim and the leaves. Mouth: a small round puckered 'O', lips pushed forward, cheeks slightly sucked in, as if blowing hard; eyes wide and looking forward/up. Keep the exact same character: same plush fur texture, same blue and cream colours, same nose, ears and eye style, same soft studio lighting from the upper right, photoreal plush toy render. The POT must stay pixel-identical in position, size and design to Image 1 (everything below the red line in Image 2), except where the leaning body passes in front of it. Same 224x256 canvas, feet line unchanged at y=212, nothing above y=6, transparent background, clean anti-aliased edges, no shadow on the background, no text, no bubbles, no motion lines.\n\nProduction clarification: The attached images are ordered exactly as Image 1 attack, Image 2 layout guide, Image 3 ready, Image 4 idle. Image 3 is supplied for identity continuity only; do NOT use its closed mouth for this reach pose. Image 4 is the final pixel-locked pot source and takes precedence for the pot. Change the actual 3D pose/perspective of the plush head and torso, not merely its scale or position. Make the forward waist bend and foreshortening unmistakable, with a larger, lower head pitched down and eyes looking forward/up under the brow. Keep the round ears and the short dense blue plush fur of Image 1. Keep the pot at the same normalized location and size as the guide. The guide includes a title margin and colored guide overlays: none of those belong in the output. Render just ONE sprite on a true transparent canvas with aspect ratio 224:256 (7:8), ideally a 896x1024 RGBA master for downsampling. Coordinates are relative to the 224x256 delivery canvas: top safety line y=6, rim y=148, pot bottom/feet y=212, transparent padding beneath. No cropping, no checkerboard pixels, no watermark, no graphic annotations, no bubble and no cast shadow.",
+          "reference_images": [
+            "references/koala-attack.png",
+            "layout-guide.png",
+            "references/koala-ready.png",
+            "references/koala-idle.png"
+          ],
+          "status": "generated",
+          "requested_at": "2026-10-27T11:25:48.209408+08:00",
+          "master": "masters/reach-01.png",
+          "source_file": "/Users/yangdage/.codex/generated_images/01a16bda-f6eb-7e13-b61f-c2320b501f7e/exec-bf0221e5-c385-4824-bde8-73df3a03277e.png",
+          "review": "Identity and fur close, but body reads too upright with sideways head roll; pot is too low in canvas. Retained as rejected first trial."
+        },
+        {
+          "attempt": 2,
+          "tool": "built-in image_gen",
+          "prompt": "Use case: precise-character-pose-edit for a live mobile game sprite. Image 1 is the exact approved plush koala toy sitting in its felt flower pot; Image 2 is the locked layout guide of the 224x256 canvas. Redraw ONLY the koala's body and head in a new pose: it BENDS FORWARD FROM THE WAIST TOWARDS THE VIEWER, eagerly leaning out of the pot to blow a bubble at the camera. The torso tips towards the camera so the head comes closer: the head looks noticeably larger than in Image 1 and sits lower, tilted forward and down about 25 degrees, so more of the top of the head and the ears is visible and the chin is tucked; the lower body visibly folds forward over the pot rim and may overlap the front of the rim and the leaves. Mouth: a small round puckered 'O', lips pushed forward, cheeks slightly sucked in, as if blowing hard; eyes wide and looking forward/up. Keep the exact same character: same plush fur texture, same blue and cream colours, same nose, ears and eye style, same soft studio lighting from the upper right, photoreal plush toy render. The POT must stay pixel-identical in position, size and design to Image 1 (everything below the red line in Image 2), except where the leaning body passes in front of it. Same 224x256 canvas, feet line unchanged at y=212, nothing above y=6, transparent background, clean anti-aliased edges, no shadow on the background, no text, no bubbles, no motion lines.\n\nIMPORTANT CORRECTION FOR THIS ATTEMPT: Image 1 is attack, Image 2 the layout guide, Image 3 ready (not the requested mouth), Image 4 idle (the exact pot), Image 5 the first trial which is TOO UPRIGHT and has an incorrect sideways head roll. Do not copy that pose. We need a genuine sagittal FORWARD BOW from the waist, toward the viewer. The skull pitches DOWN by 25 to 30 degrees; the left and right ears stay at roughly the same height, not a sideways cocked head. Show a much larger curved TOP OF THE SKULL / crown above the eyes, the nose points slightly DOWN and OUT toward the viewer, the muzzle is foreshortened, the chin TUCKS under, and the eyes look UP toward the viewer beneath the lowered brow. The head is low and close to the pot, projecting in front of the green leaves with the shoulders rounded forward; a plush creature physically bending out of its pot toward us, not just a bigger upright head. A tiny tight round O mouth, no big open oval and no tongue. Keep the original friendly recognizable koala face and round ears, blue short dense plush and cream inner ears/muzzle. Soft upper-right lighting.\nCANVAS REGISTRATION: a true 7:8 transparent canvas. The exact pot rim must be at 57.8 percent of canvas height (148/256), and the bottom of the pot must be at 82.8 percent (212/256). The bottom 17.2 percent of the canvas is blank transparent padding. Leave at least 6/256 of canvas height above the highest ear, no cropping. Use the pot/leaf scale and placement of Image 4. The head may cover a small central part of the upper pot rim. Keep all guide labels, red/blue lines and checkerboard OUT of the finished sprite. Deliver one photoreal plush toy sprite, not a comparison or a sheet.",
+          "reference_images": [
+            "references/koala-attack.png",
+            "layout-guide.png",
+            "references/koala-ready.png",
+            "references/koala-idle.png",
+            "masters/reach-01.png"
+          ],
+          "status": "generated",
+          "requested_at": "2026-10-27T11:28:31.111052+08:00",
+          "master": "masters/reach-02.png",
+          "source_file": "/Users/yangdage/.codex/generated_images/01a16bda-f6eb-7e13-b61f-c2320b501f7e/exec-0186878c-afa2-45db-b6f8-63e771999f59.png",
+          "review": "Head/torso remain too high relative to the pot; retain as an unused variant. Next attempt will lower head in front of rim rather than enlarging the whole toy."
+        },
+        {
+          "attempt": 3,
+          "tool": "built-in image_gen",
+          "prompt": "Use case: precise-character-pose-edit for a live mobile game sprite. Image 1 is the exact approved plush koala toy sitting in its felt flower pot; Image 2 is the locked layout guide of the 224x256 canvas. Redraw ONLY the koala's body and head in a new pose: it BENDS FORWARD FROM THE WAIST TOWARDS THE VIEWER, eagerly leaning out of the pot to blow a bubble at the camera. The torso tips towards the camera so the head comes closer: the head looks noticeably larger than in Image 1 and sits lower, tilted forward and down about 25 degrees, so more of the top of the head and the ears is visible and the chin is tucked; the lower body visibly folds forward over the pot rim and may overlap the front of the rim and the leaves. Mouth: a small round puckered 'O', lips pushed forward, cheeks slightly sucked in, as if blowing hard; eyes wide and looking forward/up. Keep the exact same character: same plush fur texture, same blue and cream colours, same nose, ears and eye style, same soft studio lighting from the upper right, photoreal plush toy render. The POT must stay pixel-identical in position, size and design to Image 1 (everything below the red line in Image 2), except where the leaning body passes in front of it. Same 224x256 canvas, feet line unchanged at y=212, nothing above y=6, transparent background, clean anti-aliased edges, no shadow on the background, no text, no bubbles, no motion lines.\n\nREAD THIS POSE BLOCK FIRST: This is a forward-bowing attack keyframe, with the large head HANGING LOW IN FRONT OF the flower-pot rim, not an upright seated portrait. The camera stays fixed and the POT remains FRONT VIEW, while the KOALA bends its neck and waist DOWN TOWARD THE CAMERA, giving a view OVER the crown of its head. Face pitched down 25 degrees, eyes looking up toward us. The silhouette of its large domed crown occupies the upper half of its head; facial features move DOWN into the lower half. Nose/muzzle foreshortened by the downward pitch, tiny circular blowing O mouth below it, chin tucked in. Ears swing back behind the head with the forward bend, rather than standing high above it. Keep the ears approximately level. No sideways head roll. No upright pose. No new hands gripping the rim.\n224x256 logical layout targets: top of ears around y=28-40; crown around y=45; head center near (112,108); face/muzzle reaching y=164-172, OVERLAPPING the leaves and front upper rim; tiny puckered O mouth near (112,153). The head is much closer to the viewer than the torso, noticeably larger than the reference face, but fits fully within x=7..217. The unmodified original pot is behind the bending head: rim y=148, bottom y=212. The lower 44px are transparent padding. Exposed pot areas retain the exact blue felt flower patterns from the idle reference.\nREFERENCE ORDER: Image 1 attack = identity and materials; Image 2 = layout guide only (ignore its labels/checkerboard/colored lines); Image 3 ready = same character identity only, do NOT copy closed mouth; Image 4 idle = immutable pot. Output ONE transparent 7:8 sprite, same blue/cream koala with brown oval nose and round ears, same photoreal short dense plush, same upper-right soft light, no environment, bubbles, text, props, floor shadow or guides. The visible BOWING/LEANING OUT action is the priority.",
+          "reference_images": [
+            "references/koala-attack.png",
+            "layout-guide.png",
+            "references/koala-ready.png",
+            "references/koala-idle.png"
+          ],
+          "status": "generated",
+          "requested_at": "2026-10-27T11:31:15.247851+08:00",
+          "master": "masters/reach-03.png",
+          "source_file": "/Users/yangdage/.codex/generated_images/01a16bda-f6eb-7e13-b61f-c2320b501f7e/exec-ad2ac1f2-f26b-41e0-8a94-f66f02d6d251.png",
+          "review": "Preserves identity but keeps the chin above leaves; forward rim overlap still too weak. Unused variant."
+        },
+        {
+          "attempt": 4,
+          "tool": "built-in image_gen",
+          "prompt": "Create the REQUESTED NEW BENT-OVER POSE, with the huge head physically IN FRONT OF AND OVERLAPPING THE TOP THIRD OF THE POT. It must NOT remain upright behind the leaves like the reference. The pot sits still, the plush toy folds at the waist over its front rim, head projecting toward us then nodding DOWN 25 degrees. Its chin hangs over the front pot at y=174; much of the green leaves/rim is hidden BEHIND the cheeks and lower head. The dome/top of the skull is visible and the ears recede behind the face. The head should look like it is bowing while the eyes look upward at us. Small puckered perfectly round O blowing mouth, not a surprised tall open oval. The pose is the essential requested CHANGE. Same exact character/material, not same upright posture.\n\nUse case: precise-character-pose-edit for a live mobile game sprite. Image 1 is the exact approved plush koala toy sitting in its felt flower pot; Image 2 is the locked layout guide of the 224x256 canvas. Redraw ONLY the koala's body and head in a new pose: it BENDS FORWARD FROM THE WAIST TOWARDS THE VIEWER, eagerly leaning out of the pot to blow a bubble at the camera. The torso tips towards the camera so the head comes closer: the head looks noticeably larger than in Image 1 and sits lower, tilted forward and down about 25 degrees, so more of the top of the head and the ears is visible and the chin is tucked; the lower body visibly folds forward over the pot rim and may overlap the front of the rim and the leaves. Mouth: a small round puckered 'O', lips pushed forward, cheeks slightly sucked in, as if blowing hard; eyes wide and looking forward/up. Keep the exact same character: same plush fur texture, same blue and cream colours, same nose, ears and eye style, same soft studio lighting from the upper right, photoreal plush toy render. The POT must stay pixel-identical in position, size and design to Image 1 (everything below the red line in Image 2), except where the leaning body passes in front of it. Same 224x256 canvas, feet line unchanged at y=212, nothing above y=6, transparent background, clean anti-aliased edges, no shadow on the background, no text, no bubbles, no motion lines.\n\nReference order: 1 approved attack identity, 2 canvas/layout registration, 3 ready identity only (ignore puffed cheeks), 4 exact idle pot. Preserve the brown oval koala nose, cream muzzle/ear centres, blue fur, soft upper-right light. Pot and floor of sprite stay facing front; only head/torso pitch forward. Left/right ears roughly level, not tilted sideways. New lower head centered x=112 y=117, head top around y=48, ears around y=35, chin y=174, mouth around y=157. Head width about 150 px excluding ears, ears still inside 224 px. The pot behind the head remains centered near x=112 with original width around 130 px, rim at y=148 and bottom at y=212. Keep 44px fully transparent below the pot on a 224x256-equivalent canvas. One isolated transparent full sprite, clean edges. No labels or guide lines. Prioritize a clearly different forward-bent silhouette.",
+          "reference_images": [
+            "references/koala-attack.png",
+            "layout-guide.png",
+            "references/koala-ready.png",
+            "references/koala-idle.png"
+          ],
+          "status": "generated",
+          "requested_at": "2026-10-27T11:33:38.745085+08:00",
+          "master": "masters/reach-04.png",
+          "source_file": "/Users/yangdage/.codex/generated_images/01a16bda-f6eb-7e13-b61f-c2320b501f7e/exec-af05698f-aee9-4552-8a83-4ad10ca14cbd.png",
+          "review": "Selected for pot-locked compositing: larger/lower forward head, chin in front of leaves and rim, round blowing mouth."
+        }
+      ],
+      "generation_count": 4,
+      "selected_generation": 4,
+      "status": "superseded_by_reach_v2",
+      "final_size": [
+        224,
+        256
+      ],
+      "final_mode": "RGBA",
+      "postprocess": {
+        "script": "work/composite_reach.py",
+        "description": "Extract the generated foreground head/body from masters/reach-04.png, remove isolated alpha speckles, and downsample with premultiplied-alpha Lanczos. Composite it in front of the original idle leaves and pot. For y >= 148, restore original idle RGBA byte-for-byte wherever the foreground body mask is zero. Preserve original faint alpha padding below the visible foot line.",
+        "immutable_pot_source": "references/koala-idle.png",
+        "body_occlusion_mask": "work/reach-body-mask.png",
+        "validation_file": "work/validation.json"
+      },
+      "archived_file": "v1/reach-v1.png"
+    },
+    {
+      "id": "lean",
+      "file": "delivery/creatures/koala/42A9FF/lean.png",
+      "required": false,
+      "transparent": true,
+      "prompt": "Use case: precise-character-pose-edit for a live mobile game sprite. Image 1 is the exact approved plush koala toy in its felt flower pot; Image 3 is its puffed-cheek frame; Image 2 is the locked 224x256 layout guide. Redraw ONLY the koala's body and head in a wind-up pose: it LEANS BACK AWAY FROM THE VIEWER, taking a big breath before blowing: torso tipped back, head slightly smaller and higher than in Image 1, chin raised a little, cheeks fully puffed with the mouth closed (as in Image 3), eyes looking forward/up. Same character, fur, colours and lighting from the upper right, photoreal plush toy render. The POT must stay pixel-identical to Image 1 (everything below the red line in Image 2); the leaves stay at the rim. Same 224x256 canvas, feet line at y=212, nothing above y=6, transparent background, no text, no bubbles, no motion lines.",
+      "generation_count": 0,
+      "status": "not_generated_optional"
+    }
+  ],
+  "references_v2": {
+    "image1": "references/koala-attack.png  (identity, fur, colours, lighting, the pot)",
+    "image2": "layout-guide-v2.png  (224x300 canvas: 44 px added on top; pot rim y=192, feet line y=256, pot area locked; ghost = current head size)",
+    "image3": "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/HomeWave-20261025/masters/bear-idle.png  (same plush style with an arm out of the pot: how paws and fur look)",
+    "image4": "v1/reach-v1.png  (first attempt: the forward-tilted head is right, but with no body the pose did not read)",
+    "pot_plate": "pot-plate-224x300.png  (exact locked pot pixels at their v2 position, for compositing)"
+  }
+}

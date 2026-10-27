@@ -378,7 +378,16 @@ namespace Flightbeat.Game
             float bayCanvas = GardenBayCanvas(), bayNumber = baySpacing >= 74f ? 15f : 14f;
             float maxShakeAge = feedback.GardenMaxFusionAge;
             float padShake = maxShakeAge < .3f ? Mathf.Sin(ui * 70f) * 2.5f * (1f - maxShakeAge / .3f) : 0f;
+            // 10-27: members in the hand-drawn reach pose are drawn after the others (it may pass over a neighbour).
+            padPumps.Clear();
             for (int i = 0; i < Battle.Fleet.Count; i++) {
+                Fighter f = Battle.Fleet[i];
+                float fs = Battle.Time - f.LastFired;
+                padPumps.Add(PadPumpFor(f, f.Ammo > 0 ? (fs < .1f ? 1f : Mathf.Clamp01(1f - (fs - .1f) / .2f)) : 0f));
+            }
+            for (int n = 0; n < Battle.Fleet.Count * 2; n++) {
+                int i = n % Battle.Fleet.Count;
+                if (padPumps[i].front != (n >= Battle.Fleet.Count)) continue;
                 Fighter ship = Battle.Fleet[i];
                 Vector2 at = feedback.Position(ship.Id, i);
                 at.x += padShake; at.y += feedback.GardenStrikeShake * .5f;
@@ -386,10 +395,17 @@ namespace Flightbeat.Game
                 float since = Battle.Time - ship.LastFired;
                 float fire = ship.Ammo > 0 ? (since < .1f ? 1f : Mathf.Clamp01(1f - (since - .1f) / .2f)) : 0f;
                 float pulse = since >= 0f && since < .06f ? 1f - since / .06f : 0f;
+                // 2026-10-26: the firing effects (PadPumpFor): all-out glow behind, bubble ring in front; pose frames.
+                PadPump pump = padPumps[i];
+                float pumpFeet = GardenPadFeet(ship.Id, at.y + 12f), pumpBody = bayCanvas * PadScale(ship);
+                PadPumpFx(s, ship, pump, Vector2.zero, at.x, pumpFeet, pumpBody, true);
+                GardenSkin.BendPose = pump.pose; GardenSkin.BendInhale = pump.inhale;
+                GardenSkin.PadCombat = pump.combat;
                 Creature(s, GardenColor(ship.Color), at.x, GardenPadFeet(ship.Id, at.y + 12f), bayCanvas, ship.Tier, ship.Ammo.ToString(),
                     0f, bayNumber, true, true, .035f, ship.Id * 1.7f, PadScale(ship), squash, 0f,
                     fire, pulse, ship.Ammo > 0 ? 1f - fire : 0f, false, 0f, PadInhale(ship, ship.Ammo > 0 && fire < .5f));
                 padMouth[ship.Id] = LastMouth;
+                PadPumpFx(s, ship, pump, LastMouth, at.x, pumpFeet, pumpBody, false);
                 float wait = PadWaitAlpha(ship);
                 // 2026-10-21 (user): no ball icon; 10:21 a quiet regular-weight note instead of bold (it only informs).
                 if (wait > .01f) GardenBars.QuietChip(s, "等待", at.x, GardenRaisedPadY(674f), 58f, 25f, 16f, wait);

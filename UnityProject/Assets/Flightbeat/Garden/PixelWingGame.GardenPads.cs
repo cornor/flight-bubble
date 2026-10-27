@@ -97,6 +97,137 @@ namespace Flightbeat.Game
             return .22f * Mathf.Exp(-t * 9f) * Mathf.Cos(t / LandTime * Mathf.PI * 2.5f);
         }
 
+        // 2026-10-26 (user: the toys on the pads should fire with punch, like the PvZ plants). 10-27 11:15 (user):
+        // back to the clean version after the body-warp trials (beat pump, sideways lean, turning round, reaching up,
+        // growing towards the camera, a stalk) did not read as bending forward: the member's own motion is the
+        // original one again; only the effects stay. While firing, the bubble ring, droplets and pot puffs keep a ~.36 s
+        // cadence, and after ~1.6 s of steady fire the member goes "all out" (a glow of its colour and speed lines).
+        // A member with the hand-drawn pose frames (GardenSkin.BendPose: `reach` bending forward and blowing, optional
+        // `lean` leaning back with puffed cheeks) blows in bursts while firing: reach for ~.9 s, then lean (or the
+        // puffed frame) for ~.33 s, again; it leans back while ready. Such a member is drawn after the others (`front`)
+        // as its reaching body may pass over its neighbours. Drawing only: reads Battle.Time, Ammo and LastFired.
+        // The warp/stalk machinery in GardenSkin (BendActive, BendExtend, ...) is kept for later but not used.
+        class PadBeat { public float phase, start, last, stopped = -10f; public bool firing; }
+        struct PadPump {
+            public float frenzy, ring, thrust, period;
+            public int pose;
+            public bool inhale, front, noRing;
+            public GardenSkin.PadCombatPose combat;
+        }
+        readonly Dictionary<int, PadBeat> padBeat = new Dictionary<int, PadBeat>();
+        readonly List<PadPump> padPumps = new List<PadPump>();
+        Flightbeat.Model.Battle padBeatBattle;
+        PadPump PadPumpFor(Fighter ship, float fire)
+        {
+            if (padBeatBattle != Battle) { padBeatBattle = Battle; padBeat.Clear(); }
+            float now = Battle.Time;
+            if (!padBeat.TryGetValue(ship.Id, out PadBeat b)) { b = new PadBeat { last = now }; padBeat[ship.Id] = b; }
+            float dt = Mathf.Clamp(now - b.last, 0f, .1f); b.last = now;
+            bool firing = fire > .5f && ship.Ammo > 0;
+            if (firing && !b.firing) { b.start = now; b.phase = .45f; }
+            if (!firing && b.firing) b.stopped = now;
+            b.firing = firing;
+            var p = new PadPump { ring = -1f, period = .36f };
+            if (ship.Ammo <= 0) return p;
+            Color tint = GardenColor(ship.Color);
+            if (GardenSkin.HasPadCombat(tint))
+            {
+                float side = ship.Id % 2 == 0 ? 1f : -1f;
+                if (firing)
+                {
+                    p.combat = GardenSkin.SamplePadCombat(now - b.start, side);
+                    p.ring = p.combat.ring;
+                    p.period = GardenSkin.PadCombatPeriod;
+                    p.thrust = p.ring >= 0f ? Mathf.Exp(-6f * p.ring) : 0f;
+                    // The body carries the effort; the existing glow stays behind it at a lower gain.
+                    p.frenzy = Mathf.Clamp01((now - b.start - 1.6f) / 1.2f) * .3f;
+                    p.front = p.combat.to == 1;
+                    p.noRing = true;   // 10-27 19:50: the white ring sat on the bigger face; droplets and pot puffs stay
+                }
+                else if (now - b.stopped < .15f)
+                    p.combat = GardenSkin.SamplePadCombat(.68f + now - b.stopped, side);
+                return p;
+            }
+            bool reach = GardenSkin.Has(GardenSkin.PlantSlot(tint, "reach")), lean = GardenSkin.Has(GardenSkin.PlantSlot(tint, "lean"));
+            bool breathIn = false;
+            if (firing)
+            {
+                p.frenzy = Mathf.Clamp01((now - b.start - 1.6f) / 1.2f);
+                p.period = Mathf.Lerp(.36f, .26f, p.frenzy);
+                b.phase += dt / p.period;
+                float f = b.phase - Mathf.Floor(b.phase);
+                p.ring = f >= .5f ? (f - .5f) / .5f : -1f;
+                if (reach)
+                {
+                    float cycle = Mathf.Lerp(1.25f, 1f, p.frenzy), tc = (now - b.start) % cycle;
+                    breathIn = tc > cycle - .33f;
+                    if (breathIn) p.ring = -1f;                                // no bubble ring while taking a breath
+                }
+                p.thrust = p.ring >= 0f ? Mathf.Exp(-6f * p.ring) : 0f;
+            }
+            if (reach)
+            {
+                p.pose = firing && !breathIn ? 1 : lean ? 2 : 0;
+                p.inhale = firing && breathIn && !lean;                        // no lean frame: the puffed frame
+                p.front = p.pose == 1;
+            }
+            return p;
+        }
+        // behind: the all-out glow and speed lines (before the member is drawn); otherwise the ring, droplets and pot puffs.
+        void PadPumpFx(PixelSurface s, Fighter ship, PadPump p, Vector2 mouth, float x, float feet, float bodyH, bool behind)
+        {
+            Color tint = GardenColor(ship.Color);
+            if (behind)
+            {
+                if (p.frenzy <= .01f) return;
+                s.Glow(x, feet - bodyH * .42f, bodyH * 1.9f, bodyH * 1.9f, new Color(tint.r, tint.g, tint.b, .38f * p.frenzy * (.6f + .4f * p.thrust)), 0f);
+                s.Glow(x, feet - bodyH * .42f, bodyH * 1.2f, bodyH * 1.2f, new Color(1f, 1f, .9f, .22f * p.frenzy * p.thrust), 0f);
+                bool mapped = s.MapLayout; s.MapLayout = false;
+                try
+                {
+                    for (int k = 0; k < 4; k++)
+                    {
+                        float ph = (Battle.Time * 2.6f + k * .27f + ship.Id * .13f) % 1f, side = k % 2 == 0 ? -1f : 1f;
+                        Vector2 a = PlushLayout.Point(new Vector2(x + side * bodyH * (.42f + .06f * k), feet - bodyH * (.1f + .9f * ph)));
+                        s.Segment(a, a + new Vector2(0f, bodyH * .22f), 2.2f, new Color(1f, 1f, 1f, .8f * p.frenzy * Mathf.Sin(ph * Mathf.PI)));
+                    }
+                }
+                finally { s.MapLayout = mapped; }
+                return;
+            }
+            if (p.ring < 0f || float.IsNaN(mouth.x)) return;
+            float u = p.ring, age = u * p.period * .5f;
+            if (u < .6f)
+            {
+                float v = u / .6f;
+                for (int side = -1; side <= 1; side += 2)
+                    s.Glow(x + side * (bodyH * .34f + 18f * v), feet - 3f, 10f + 12f * v, 7f + 6f * v, new Color(1f, 1f, 1f, .6f * (1f - v)), 0f);
+            }
+            bool wasMapped = s.MapLayout; s.MapLayout = false;
+            try
+            {
+                Vector2 m = PlushLayout.Point(mouth);
+                Vector2 c = m + new Vector2(0f, -bodyH * .22f * u);
+                float r = bodyH * (.07f + .22f * Mathf.Sqrt(u)), a = Mathf.Pow(1f - u, 1.3f);
+                if (!p.noRing) s.Glow(c.x, c.y, r * 2.4f, r * 1.8f, new Color(tint.r, tint.g, tint.b, .35f * a), 0f);
+                Vector2 prev = c + new Vector2(r, 0f);
+                for (int i = 1; i <= 20 && !p.noRing; i++)
+                {
+                    float t = i / 20f * Mathf.PI * 2f;
+                    Vector2 next = c + new Vector2(Mathf.Cos(t) * r, Mathf.Sin(t) * r * .72f);
+                    s.Segment(prev, next, .8f + 2.4f * (1f - u), new Color(1f, 1f, 1f, .95f * a));
+                    prev = next;
+                }
+                for (int k = 0; k < 4; k++)
+                {
+                    float side = k % 2 == 0 ? -1f : 1f, speed = 70f + k * 22f;
+                    Vector2 d = m + new Vector2(side * speed * age, -90f * age + 520f * age * age - k * 2f);
+                    GardenSkin.Shot(s, tint, d, (k < 2 ? 6f : 4.5f) * (1f - .4f * u), a);
+                }
+            }
+            finally { s.MapLayout = wasMapped; }
+        }
+
         // Shots leave from the member's mouth. 2026-10-21: each member's own mouth (GardenSkin.MouthCanvas), taken from
         // the pad drawing so it follows the squash, the size pop, the art scale and the shake; computed here otherwise.
         Vector2 GardenMouth(int fighterId)

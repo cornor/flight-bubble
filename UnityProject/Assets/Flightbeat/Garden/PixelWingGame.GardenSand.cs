@@ -24,6 +24,18 @@ namespace Flightbeat.Game
         bool[] sandSeen;
         float sandAt, sandTime;
         bool sandSquashing;
+        // 2026-10-27 18:23 (user: a cleared bead is filled at once, so clearing does not feel like anything; refill the
+        // whole board together every so often, with a slam). Display only, the model still refills at once: between
+        // two refills every bead keeps its drawn target (sandHoldX/Y), so the holes you blow stay open and new beads
+        // wait under the cloud ceiling; every SandBatch seconds of battle time all held beads are released together and
+        // fall hard (stronger gravity) and land with a bigger squash. Shots aim at the drawn bead, so a held bead is
+        // still the one hit. No holding while the board is near the rail (railRed > .25), during the intro, a finale,
+        // bomb aiming or out of battle, and a release is forced as soon as any bead is held 3 rows above its place.
+        const float SandBatch = .92f;                       // ~2 beats of the 130 BPM level music
+        float[] sandHoldX, sandHoldY;
+        bool[] sandSmash;
+        float sandReleaseAt;
+        bool sandForce;
 
         float SandColumnX(int i)
         {
@@ -51,6 +63,8 @@ namespace Flightbeat.Game
                 sandPosition = SandPositionField != null ? SandPositionField.GetValue(Battle) as int[] : null;
                 sandX = new float[n]; sandY = new float[n]; sandVy = new float[n];
                 sandLandAt = new float[n]; sandLandK = new float[n]; sandSeen = new bool[n];
+                sandHoldX = new float[n]; sandHoldY = new float[n]; sandSmash = new bool[n];
+                sandReleaseAt = Battle.Time; sandForce = false;
             }
             float pitch = Battle.PitchY;
             float pitchX = Battle.Level.pitchX > 0f ? Battle.Level.pitchX : 10.5f;
@@ -58,6 +72,9 @@ namespace Flightbeat.Game
             // The logical row hidden under the cloud ceiling (screen y ~104) for beads that pour in.
             float ceiling = (104f - 562f) / ScreenLayout.EnemyScaleY + 562f - offset;
             bool snap = reset || Battle.State == Phase.Intro;
+            bool hold = !snap && Battle.Active && Battle.ActiveFinale == null && selection != 2 && railRed <= .25f;
+            bool release = !hold || sandForce || Battle.Time - sandReleaseAt >= SandBatch || Battle.Time < sandReleaseAt;
+            if (release) { sandReleaseAt = Battle.Time; sandForce = false; }
             for (int i = 0; i < n; i++)
             {
                 if (!Battle.Alive[i] || !Battle.OnBoard(i)) {
@@ -68,6 +85,7 @@ namespace Flightbeat.Game
                 {
                     changed = true;
                     sandSeen[i] = true; sandX[i] = tx; sandY[i] = ty; sandVy[i] = 0f; sandLandAt[i] = -9f;
+                    sandHoldX[i] = tx; sandHoldY[i] = ty; sandSmash[i] = false;
                     continue;
                 }
                 if (!sandSeen[i])
@@ -75,7 +93,17 @@ namespace Flightbeat.Game
                     changed = true;
                     sandSeen[i] = true; sandX[i] = tx; sandY[i] = Mathf.Min(ty - pitch, ceiling);
                     sandVy[i] = pitch * 4f; sandLandAt[i] = -9f;
+                    sandHoldX[i] = tx; sandHoldY[i] = hold ? sandY[i] : ty; sandSmash[i] = false;   // waits under the ceiling
                 }
+                // The batch refill: release every held target together, or keep holding.
+                if (release || !hold)
+                {
+                    if (hold && ty - sandY[i] > pitch * .3f) sandSmash[i] = true;     // a timed release: this bead slams down
+                    sandHoldX[i] = tx; sandHoldY[i] = ty;
+                }
+                else if (ty < sandHoldY[i]) { sandHoldX[i] = tx; sandHoldY[i] = ty; }   // moved up: follow at once
+                else if (sandHoldY[i] > ceiling + pitch && ty - sandHoldY[i] > pitch * 3f) sandForce = true;   // a bead on the board held too far behind: release next frame (new beads waiting under the ceiling do not count)
+                tx = sandHoldX[i]; ty = sandHoldY[i];
                 float age = ui - sandLandAt[i];
                 sandSquashing |= age >= 0f && age <= .16f;
                 // Exact equality: do not truncate a slow fall or a landing animation.
@@ -85,7 +113,9 @@ namespace Flightbeat.Game
                 if (Mathf.Abs(dx) > pitchX * 3f) { sandX[i] = tx; dx = 0f; }
                 if (dy > .001f)
                 {
-                    float v = Mathf.Min(Mathf.Max(sandVy[i], pitch * 3f) + gravity * dt, fastest);
+                    bool smash = sandSmash[i];
+                    float v = smash ? Mathf.Min(Mathf.Max(sandVy[i], pitch * 8f) + gravity * 2.4f * dt, fastest * 1.8f)
+                        : Mathf.Min(Mathf.Max(sandVy[i], pitch * 3f) + gravity * dt, fastest);
                     float fall = Mathf.Min(v * dt, dy);
                     // Sideways first: x covers its gap by the time y has covered 40% of the remaining fall.
                     sandX[i] += dx * Mathf.Min(1f, fall * 2.5f / dy);
@@ -93,7 +123,8 @@ namespace Flightbeat.Game
                     if (fall >= dy)
                     {
                         sandY[i] = ty; sandX[i] = tx; sandVy[i] = 0f;
-                        if (v > pitch * 10f) { sandLandAt[i] = ui; sandLandK[i] = Mathf.Clamp01(v / fastest); sandSquashing = true; }
+                        if (smash) { sandLandAt[i] = ui; sandLandK[i] = 1.35f; sandSquashing = true; sandSmash[i] = false; }   // the slam
+                        else if (v > pitch * 10f) { sandLandAt[i] = ui; sandLandK[i] = Mathf.Clamp01(v / fastest); sandSquashing = true; }
                     }
                     else sandVy[i] = v;
                 }

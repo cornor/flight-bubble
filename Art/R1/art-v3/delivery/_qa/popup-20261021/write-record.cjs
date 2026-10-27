@@ -1,8 +1,0 @@
-const fs=require('fs'),path=require('path'),crypto=require('crypto');const qa=__dirname,del=path.resolve(qa,'../..');
-const read=n=>JSON.parse(fs.readFileSync(path.join(qa,n),'utf8'));
-const request=read('request.json'),generations=read('generations.json'),selected=read('selected.json'),exportInfo=read('postprocessing.json'),validation=read('validation.json');
-const editPrompt=fs.readFileSync(path.join(qa,'panel-card-attempt-02-prompt.txt'),'utf8').trim();
-const refs=[...new Set(request.specs.flatMap(s=>s.refs))].map(p=>({path:p,sha256:crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex')}));
-const r={date:'2026-10-21',source:'docs/r1/弹框-出图需求.md',mode:'built-in image_gen; transparent_background=true',total_calls:6,delivery_directory:'Art/R1/art-v3/delivery/ui4/',reference_images:refs,generations:generations.map(g=>({...g,attempt:1,archive:'_originals/popup-'+g.name+'-attempt-01.png',selected:g.name!=='panel-card'})),panel_edit:{attempt:2,selected:true,prompt:editPrompt,edit_target:generations.find(g=>g.name==='panel-card').raw,raw:selected[0].raw,archive:'_originals/popup-panel-card-attempt-02.png',reason:'Reduce blue saturation of the lower card face to better match the requested cream-white to very pale blue gradient.'},exports:exportInfo,qa:validation,preview:'_qa/popup-20261021/overview.png',nine_slice_preview:'_qa/popup-20261021/nine-slice-review.png',scope:'Only new art, native generation archives, and records produced. No source code, existing art, atlas, game build, or deployment changed by this task.'};
-fs.writeFileSync(path.join(del,'generation-20261021-popup.json'),JSON.stringify(r,null,2)+'\n');console.log('Saved generation-20261021-popup.json');
-

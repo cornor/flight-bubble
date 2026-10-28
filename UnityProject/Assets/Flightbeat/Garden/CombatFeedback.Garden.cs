@@ -733,15 +733,22 @@ namespace Flightbeat.Feedback
             s.MapLayout = false;
             try
             {
-                // 11:51 (user): 「连击 ×」 in the same lettering and colours as the digits; the life bar is gone. Instead the
-                // whole counter dims a little and wavers when the chain is about to break (last 30 % of its life).
+                // 11:51 (user): 「连击 ×」 in the same lettering and colours as the digits; the life bar is gone.
+                // 2026-10-28 (user, after 沙画消消): no more dim/waver warning. The chain window is now 2 s (Battle.Hits /
+                // Battle.Tick, was 1.4 s). Like 沙画消消, the counter sits still for 1 s without a hit, then the whole
+                // counter flies off to the right over 1 s with a back-in ease (small wind-up to the left, then accelerating
+                // away) and is fully gone at the moment the model breaks the chain (ComboLife 0, 2 s). A hit during
+                // the flight refills ComboLife, so the counter snaps straight home and the chain really is rescued.
+                // After the break ComboLife stays 0, so the fade-out happens off-screen.
                 Color hi = Mix(color, Color.white, .7f), lo = Mix(color, GardenBars.Navy, .15f);
-                float life = Mathf.Clamp01(battle.ComboLife), warn = life < .3f ? (1f - life / .3f) : 0f;
-                float a = fade * (1f - .35f * warn * (.5f + .5f * Mathf.Sin(time * 18f)));
+                const float flyStart = .5f, back = 1.70158f;
+                float life = Mathf.Clamp01(battle.ComboLife), fly = life < flyStart ? 1f - life / flyStart : 0f;
+                float flyX = 600f * fly * fly * ((back + 1f) * fly - back);
+                float a = fade, homeX = digitX + flyX;
                 const float labelSize = 24f;
-                float labelW = GardenBarArt.TextWidth("连击 ×", labelSize), digitLeft = digitX - GardenBarArt.TextWidth(text, size) * .5f;
+                float labelW = GardenBarArt.TextWidth("连击 ×", labelSize), digitLeft = homeX - GardenBarArt.TextWidth(text, size) * .5f;
                 DrawComboHudText(s, "连击 ×", digitLeft - 5f - labelW * .5f, badgeY + 1f, labelSize, hi, lo, a);
-                DrawComboHudText(s, text, digitX, badgeY - 2f, size, hi, lo, a);
+                DrawComboHudText(s, text, homeX, badgeY - 2f, size, hi, lo, a);
             }
             finally { s.MapLayout = badgeMapped; }
         }

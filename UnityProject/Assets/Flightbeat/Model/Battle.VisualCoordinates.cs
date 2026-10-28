@@ -28,9 +28,10 @@ namespace Flightbeat.Model
         public float LaneLeft(int lane) => OriginalMath.Binary32(OriginalMath.Binary32(LaneWidth * OriginalMath.Binary32((float)lane)) + 12f);
         public float AdvanceHeld => OriginalMath.WasmMax(OriginalMath.Binary32(advanceHeldUntil - Time), 0f);
         // f54984. Source subtract/add/divide order and clamp behavior.
+        // R1 2026-10-28 (user): combo window 2 s (was 1.4), matching Battle.Hits / Battle.Tick.
         public float ComboLife
         {
-            get { float t = OriginalMath.Binary32((OriginalMath.Binary32(OriginalMath.Binary32(lastHit - Time) + 1.4f)) / 1.4f); return t < 0f ? 0f : OriginalMath.WasmMin(t, 1f); }
+            get { float t = OriginalMath.Binary32((OriginalMath.Binary32(OriginalMath.Binary32(lastHit - Time) + 2f)) / 2f); return t < 0f ? 0f : OriginalMath.WasmMin(t, 1f); }
         }
     }
 }

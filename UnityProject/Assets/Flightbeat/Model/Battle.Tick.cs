@@ -70,7 +70,7 @@ namespace Flightbeat.Model
             }
             // WAT 299..345: preserve comparisons, grouping and the strict threshold.
             NoticeTime = OriginalMath.Binary32(NoticeTime - dt);
-            if (OriginalMath.Binary32(Time - lastHit) > 1.4f) Combo = 0;
+            if (OriginalMath.Binary32(Time - lastHit) > 2f) Combo = 0; // R1 2026-10-28: combo window 2 s (was 1.4)
             float raw = RawFirepower; // WAT 316 / f54966
             float current = Firepower;
             if (!(raw > current))

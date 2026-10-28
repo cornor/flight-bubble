@@ -16,7 +16,7 @@ namespace Flightbeat.Model
             Remaining = unchecked(Remaining - 1);
             Score = unchecked(Score + shot.Tier * 10 + 10);
             float time = Time;
-            int combo = OriginalMath.Binary32(time - lastHit) <= 1.4f ? unchecked(Combo + 1) : 1;
+            int combo = OriginalMath.Binary32(time - lastHit) <= 2f ? unchecked(Combo + 1) : 1; // R1 2026-10-28 (user): combo window 1.4 s -> 2 s, like 沙画消消
             lastHit = time;
             Combo = combo;
             BestCombo = Math.Max(BestCombo, combo);

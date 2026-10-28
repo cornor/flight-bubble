@@ -1,0 +1,169 @@
+{
+ "game": 13,
+ "resource": "sector11",
+ "mode": "S",
+ "sigma": {},
+ "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第13关-草原小斑马-13.png",
+ "sourceSha256": "5b48d3a33bb522f20d7fbfce10dd9236829490021e47b894160342c407f281a0",
+ "fileSha256": "f64940c0ea51a24db7a29a08fd9c3d689ba671fb318a307997dc0746350f56e1",
+ "cellsSha256": "190a026c7e28c5b2ff259acb84bfc512fdc53122e80fffd81de6f28ffdaa7273",
+ "changedCells": 149,
+ "withinLimits": true,
+ "colors": [
+  {
+   "index": 2,
+   "name": "小冰",
+   "target": 1050,
+   "quantized": 1168,
+   "final": 1050,
+   "moved": 118,
+   "over": false
+  },
+  {
+   "index": 0,
+   "name": "小白",
+   "target": 864,
+   "quantized": 815,
+   "final": 864,
+   "moved": 49,
+   "over": false
+  },
+  {
+   "index": 11,
+   "name": "小黑",
+   "target": 680,
+   "quantized": 686,
+   "final": 680,
+   "moved": 14,
+   "over": false
+  },
+  {
+   "index": 9,
+   "name": "小荧",
+   "target": 586,
+   "quantized": 542,
+   "final": 586,
+   "moved": 86,
+   "over": false
+  },
+  {
+   "index": 4,
+   "name": "小棕",
+   "target": 420,
+   "quantized": 389,
+   "final": 420,
+   "moved": 31,
+   "over": false
+  }
+ ],
+ "transform": {
+  "scale": 1.015,
+  "dx": 0,
+  "dy": 0,
+  "mirror": false,
+  "mode": "S"
+ },
+ "budgetRetry": true,
+ "mixPass": true,
+ "conversionPass": true,
+ "protection": {
+  "constraints": {
+   "sourceSha256": "5b48d3a33bb522f20d7fbfce10dd9236829490021e47b894160342c407f281a0",
+   "description": "2026-10-26第5轮图：斑马耳尖、鼻子、尾尖、四蹄全部纳入主体；仅底部连续草地和土层可延展到边界。",
+   "subjectRects": [
+    [
+     1.5,
+     0.5,
+     59.5,
+     53
+    ]
+   ],
+   "protectRects": [
+    [
+     8,
+     0,
+     29,
+     13
+    ],
+    [
+     51,
+     32,
+     60,
+     45
+    ]
+   ],
+   "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/constraints/第13关-草原小斑马-13.json",
+   "sha256": "e1a0de9ecc9e4ddd066c31340c11f4b031ec2ae62ec6d00b67e156d3097164ec"
+  },
+  "subjectCropSafe": true,
+  "sourceFit": "crop",
+  "sourceCropped": false,
+  "policy": "small-parts-thin-tips-and-explicit-regions-v1"
+ },
+ "searchDiagnostics": {
+  "cropRejected": 0,
+  "refillRejected": 0,
+  "lowerBoundRejected": 0,
+  "foregroundBounds": [
+   1.5,
+   0.8,
+   59.5,
+   53.0
+  ],
+  "fine": false
+ },
+ "candidates": [
+  {
+   "transform": {
+    "scale": 1.015,
+    "dx": 0,
+    "dy": 0,
+    "mirror": false,
+    "mode": "S"
+   },
+   "changes": 149,
+   "mix": 0.065,
+   "structure": "超差",
+   "structureNote": "清完步数 1916→1200；卡住步数 7→0；救场 7→0",
+   "budget": {
+    "changedCells": 149,
+    "colors": [
+     {
+      "index": 0,
+      "moved": 49,
+      "limit": 129.6,
+      "over": false
+     },
+     {
+      "index": 2,
+      "moved": 118,
+      "limit": 157.5,
+      "over": false
+     },
+     {
+      "index": 4,
+      "moved": 31,
+      "limit": 63.0,
+      "over": false
+     },
+     {
+      "index": 9,
+      "moved": 86,
+      "limit": 87.89999999999999,
+      "over": false
+     },
+     {
+      "index": 11,
+      "moved": 14,
+      "limit": 102.0,
+      "over": false
+     }
+    ],
+    "withinLimits": true
+   },
+   "mixPass": true,
+   "budgetRetry": true
+  }
+ ],
+ "converted": "2026-10-26T16:11:10"
+}

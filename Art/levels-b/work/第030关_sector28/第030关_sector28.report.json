@@ -1,0 +1,226 @@
+{
+ "game": 30,
+ "resource": "sector28",
+ "mode": "P",
+ "sigma": {
+  "6": 11,
+  "11": 6
+ },
+ "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第30关-送行小章鱼-12.png",
+ "sourceSha256": "efec04ab8607f3c7944f9a36578a117b83ddd189dbc7727e22563f301543b225",
+ "fileSha256": "445c3e48b56ffcc1575c2828b3fad56defa1f3bec9f553770a9e5df29b489ef0",
+ "cellsSha256": "2dd6f39e45a13aa55fe430f2b64731d1e4c124e492f43d4901e3cb5de3a7294a",
+ "changedCells": 50,
+ "withinLimits": true,
+ "colors": [
+  {
+   "index": 2,
+   "name": "小冰",
+   "target": 1798,
+   "quantized": 1793,
+   "final": 1798,
+   "moved": 13,
+   "over": false
+  },
+  {
+   "index": 11,
+   "name": "小黑",
+   "target": 509,
+   "quantized": 533,
+   "final": 509,
+   "moved": 24,
+   "over": false
+  },
+  {
+   "index": 6,
+   "name": "小霞",
+   "target": 498,
+   "quantized": 520,
+   "final": 498,
+   "moved": 22,
+   "over": false
+  },
+  {
+   "index": 0,
+   "name": "小白",
+   "target": 324,
+   "quantized": 320,
+   "final": 324,
+   "moved": 4,
+   "over": false
+  },
+  {
+   "index": 13,
+   "name": "小玫",
+   "target": 310,
+   "quantized": 288,
+   "final": 310,
+   "moved": 22,
+   "over": false
+  },
+  {
+   "index": 8,
+   "name": "小红",
+   "target": 161,
+   "quantized": 146,
+   "final": 161,
+   "moved": 15,
+   "over": false
+  }
+ ],
+ "transform": {
+  "scale": 0.975,
+  "dx": 0,
+  "dy": -2,
+  "mirror": true,
+  "mode": "P"
+ },
+ "budgetRetry": false,
+ "mixPass": true,
+ "conversionPass": true,
+ "protection": {
+  "constraints": {
+   "sourceSha256": "efec04ab8607f3c7944f9a36578a117b83ddd189dbc7727e22563f301543b225",
+   "subjectRects": [
+    [
+     0,
+     8,
+     60,
+     51
+    ]
+   ],
+   "protectRects": [
+    [
+     0,
+     36,
+     15,
+     46
+    ],
+    [
+     8,
+     42,
+     36,
+     51
+    ],
+    [
+     12,
+     23,
+     32,
+     36
+    ],
+    [
+     0,
+     16,
+     8,
+     37
+    ]
+   ],
+   "description": "章鱼、旗帜作为防裁切主体；锁定左侧触手、下方触手和脸，礁石和水面属于背景。；根据第一版转换对照，额外锁定易产生突起的边缘区域。；玫色斑纹只扩展到肤色，红色只扩展到黑/肤色；背景只通过岩石/水面黑白边界调整，防止头顶长出色块。",
+   "recolorFrom": {
+    "13": [
+     6
+    ],
+    "8": [
+     11,
+     6
+    ],
+    "6": [
+     11,
+     13
+    ],
+    "11": [
+     0,
+     6,
+     8,
+     13
+    ],
+    "0": [
+     2,
+     11
+    ],
+    "2": [
+     0,
+     11
+    ]
+   },
+   "path": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/constraints/第30关-送行小章鱼-12.json",
+   "sha256": "e1f74e00c8aa919b3b14f6408ba4e27a0885e602d6d89253e4244af07d973a78"
+  },
+  "subjectCropSafe": true,
+  "sourceFit": "crop",
+  "sourceCropped": false,
+  "policy": "small-parts-thin-tips-and-explicit-regions-v1"
+ },
+ "searchDiagnostics": {
+  "cropRejected": 0,
+  "refillRejected": 0,
+  "lowerBoundRejected": 0,
+  "foregroundBounds": [
+   0.0,
+   8.9,
+   59.400000000000006,
+   51.0
+  ],
+  "fine": false
+ },
+ "candidates": [
+  {
+   "transform": {
+    "scale": 0.975,
+    "dx": 0,
+    "dy": -2,
+    "mirror": true,
+    "mode": "P"
+   },
+   "changes": 50,
+   "mix": 0.1517,
+   "structure": "超差",
+   "structureNote": "清完步数 3571→4809；卡住步数 25→37；救场 24→35",
+   "budget": {
+    "changedCells": 50,
+    "colors": [
+     {
+      "index": 0,
+      "moved": 4,
+      "limit": 48.6,
+      "over": false
+     },
+     {
+      "index": 2,
+      "moved": 13,
+      "limit": 269.7,
+      "over": false
+     },
+     {
+      "index": 6,
+      "moved": 22,
+      "limit": 74.7,
+      "over": false
+     },
+     {
+      "index": 8,
+      "moved": 15,
+      "limit": 24.15,
+      "over": false
+     },
+     {
+      "index": 11,
+      "moved": 24,
+      "limit": 76.35,
+      "over": false
+     },
+     {
+      "index": 13,
+      "moved": 22,
+      "limit": 46.5,
+      "over": false
+     }
+    ],
+    "withinLimits": true
+   },
+   "mixPass": true,
+   "budgetRetry": false
+  }
+ ],
+ "converted": "2026-10-26T15:50:44"
+}

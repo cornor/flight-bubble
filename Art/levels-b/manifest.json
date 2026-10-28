@@ -60,10 +60,82 @@
         "bot": {
           "verdict": "通过",
           "fileSha256": "fb840c4794e6aec163afce5653242f3b38d7028390aee40650e24a88df0b60fa",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-112211",
-          "at": "2026-10-20T11:28:40",
-          "runs": 12
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-164430",
+          "at": "2026-10-27T16:46:43",
+          "runs": 64,
+          "engine": "headless"
         }
+      }
+    },
+    "sector03": {
+      "game": 5,
+      "resource": "sector03",
+      "mode": "R",
+      "sigma": {
+        "6": 3,
+        "11": 13,
+        "13": 7,
+        "8": 6
+      },
+      "sourceImage": "/sessions/rcw-01nnykdvihujbxa1onp9dgwd/mnt/flight-bubble/Art/levels-b/source/第5关-赖床小猪-18.png",
+      "sourceSha256": "99ddfd4e5d5b5dcb5f5ae4c87364780cc122f83fb81ca41055fb34d0ed8b1a70",
+      "fileSha256": "a91d31d4dc7b3891e8e9acf534a79a3b62a01fa1041793ca57589fa3bb4270f5",
+      "cellsSha256": "2c2b02a58deb97da7302f819075e64231ca10afb9b9734683319b33c2870cae7",
+      "changedCells": 0,
+      "withinLimits": true,
+      "title": "赖床小猪",
+      "draft": "Art/levels-b/work/第005关_sector03/sector03.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "a91d31d4dc7b3891e8e9acf534a79a3b62a01fa1041793ca57589fa3bb4270f5",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261028-010641",
+          "at": "2026-10-28T01:06:41"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "a91d31d4dc7b3891e8e9acf534a79a3b62a01fa1041793ca57589fa3bb4270f5",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261028-010645",
+          "at": "2026-10-28T01:07:28",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "streamBalance": {
+        "changed": 632,
+        "length": 5936,
+        "place": "deep"
+      },
+      "queueTune": {
+        "moved": 13,
+        "maxRowShift": 6,
+        "boardSha256": "f7b73926f80ff30de0e9e18d9cacff996a8121f0df176d911fc9c633762204bb",
+        "tuningGap": {
+          "score": 0.22343413988281252,
+          "ease": -0.05995925744140626,
+          "worst": 0.19529611265625002
+        },
+        "validation": {
+          "original": {
+            "score": 1.0520900219921874,
+            "ease": -0.5074903234960937,
+            "worst": 0.96875
+          },
+          "tuned": {
+            "score": 0.1927326376171875,
+            "ease": -0.06563859939453123,
+            "worst": 0.29709947437499995
+          }
+        },
+        "seeds": {
+          "tuning": 64,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-28T01:06:41"
       }
     },
     "sector04": {
@@ -111,7 +183,7 @@
       },
       "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第7关-乌龟三稿-08.png",
       "sourceSha256": "6cc62b87066494219c275b9937a4d9baff3d2c05206c054c5d42052f8d4b515d",
-      "fileSha256": "539442ce096493a16d0e66f5c3ec4c27484bd60c85a1fa4321b4e06852aba1b2",
+      "fileSha256": "4c330e87a07626f3d0e6e698e3880ef6f2d07f53b87d91ce679559522b021853",
       "cellsSha256": "8565ef2a71b00d08e4a010006e98f10af6d5e93dc13943ba521d5f69a68c2d8e",
       "changedCells": 48,
       "withinLimits": true,
@@ -121,17 +193,120 @@
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "539442ce096493a16d0e66f5c3ec4c27484bd60c85a1fa4321b4e06852aba1b2",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261020-113020",
-          "at": "2026-10-20T11:30:20"
+          "fileSha256": "4c330e87a07626f3d0e6e698e3880ef6f2d07f53b87d91ce679559522b021853",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-162811",
+          "at": "2026-10-27T16:28:11"
         },
         "bot": {
           "verdict": "通过",
-          "fileSha256": "539442ce096493a16d0e66f5c3ec4c27484bd60c85a1fa4321b4e06852aba1b2",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-113032",
-          "at": "2026-10-20T11:34:54",
-          "runs": 12
+          "fileSha256": "4c330e87a07626f3d0e6e698e3880ef6f2d07f53b87d91ce679559522b021853",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-162811",
+          "at": "2026-10-27T16:28:26",
+          "runs": 12,
+          "engine": "headless"
         }
+      },
+      "queueTune": {
+        "moved": 13,
+        "maxRowShift": 5,
+        "boardSha256": "539442ce096493a16d0e66f5c3ec4c27484bd60c85a1fa4321b4e06852aba1b2",
+        "tuningGap": {
+          "score": 0.09709507710937501,
+          "ease": -0.0061399614453124945,
+          "worst": 0.125
+        },
+        "validation": {
+          "original": {
+            "score": 0.40239116578125,
+            "ease": -0.176781520390625,
+            "worst": 0.421875
+          },
+          "tuned": {
+            "score": 0.09896273644531249,
+            "ease": 0.002457045683593749,
+            "worst": 0.14169701874999996
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-27T16:28:10"
+      }
+    },
+    "sector06": {
+      "game": 8,
+      "resource": "sector06",
+      "mode": "R",
+      "sigma": {
+        "1": 0,
+        "4": 6,
+        "0": 1,
+        "6": 2,
+        "9": 4
+      },
+      "sourceImage": "/sessions/rcw-01nnykdvihujbxa1onp9dgwd/mnt/flight-bubble/Art/levels-b/source/第8关-吃草小绵羊-16.png",
+      "sourceSha256": "b2a732424003f5196bb5440fe97cef81fc01d2066ed26a3ecefa6d063cc18c3d",
+      "fileSha256": "0d8e8411acedcdb00bc6c3a0116c53f1cc73033d6e806e30864ad343c31d9801",
+      "cellsSha256": "6af728423dbaa7017a898ea69282609292ad53c37a0005abd6172a5913fcdb24",
+      "changedCells": 0,
+      "withinLimits": true,
+      "title": "吃草小绵羊",
+      "draft": "Art/levels-b/work/第008关_sector06/sector06.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "0d8e8411acedcdb00bc6c3a0116c53f1cc73033d6e806e30864ad343c31d9801",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-232937",
+          "at": "2026-10-27T23:29:37"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "0d8e8411acedcdb00bc6c3a0116c53f1cc73033d6e806e30864ad343c31d9801",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-232937",
+          "at": "2026-10-27T23:30:14",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "streamBalance": {
+        "changed": 1000,
+        "length": 3360,
+        "place": "deep"
+      },
+      "queueTune": {
+        "moved": 6,
+        "maxRowShift": 5,
+        "boardSha256": "f871c80c804304b1d570e43af70a751588965d5c6b2a8db4d313faaddba7fab9",
+        "tuningGap": {
+          "score": 0.03515625,
+          "ease": 0.0,
+          "worst": 0.21875
+        },
+        "validation": {
+          "original": {
+            "score": 0.4570800783203125,
+            "ease": -0.024438476660156264,
+            "worst": 1
+          },
+          "tuned": {
+            "score": 0.04561613242187501,
+            "ease": -0.0023002537109375054,
+            "worst": 0.296875
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-27T23:29:37"
       }
     },
     "sector07": {
@@ -158,9 +333,10 @@
         "bot": {
           "verdict": "通过",
           "fileSha256": "d93d2783ffe8c920f75325122af5a083d4747a95c3c8f19ec01527c9efd847c4",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-114929",
-          "at": "2026-10-20T11:52:05",
-          "runs": 12
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-164954",
+          "at": "2026-10-27T16:51:49",
+          "runs": 64,
+          "engine": "headless"
         }
       }
     },
@@ -169,29 +345,60 @@
       "resource": "sector08",
       "mode": "S",
       "sigma": {},
-      "sourceImage": "/sessions/rcw-019546jlmeswqyyqxdnwq122/mnt/flight-bubble/Art/levels-b/source/第10关-破壳小鸡-03.png",
-      "sourceSha256": "05599dc6a52631427a4e5b9c19278f4df74b47222abafedeff031db33cf9ab81",
-      "fileSha256": "681463ea4597365b1719852210126d7aa08c31b02fd52eb985f78179c775426c",
-      "cellsSha256": "048e82a90ed171531a800690ba1b6521dd1ac0b7e113e012bb2f19e7a5d32c4f",
-      "changedCells": 100,
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第10关-破壳小鸡-16.png",
+      "sourceSha256": "a4b55b35e7bbd193258a246f1ab129944e48621e56713b170230fa0b2fc65843",
+      "fileSha256": "082d07b1b364f3b8442d170fd98255292627bd3a50f7de855ce47ebaa3aad2ef",
+      "cellsSha256": "a02ec399c05b741e5e6a43aba9717ef0d80415b46b76fc711dadbf21809bdb38",
+      "changedCells": 40,
       "withinLimits": true,
       "title": "破壳小鸡",
       "draft": "Art/levels-b/work/第010关_sector08/sector08.json",
-      "status": "draft",
+      "status": "evaluated",
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "681463ea4597365b1719852210126d7aa08c31b02fd52eb985f78179c775426c",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261020-001828",
-          "at": "2026-10-20T00:18:28"
+          "fileSha256": "082d07b1b364f3b8442d170fd98255292627bd3a50f7de855ce47ebaa3aad2ef",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-202719",
+          "at": "2026-10-26T20:27:19"
         },
         "bot": {
-          "verdict": "超差",
-          "fileSha256": "681463ea4597365b1719852210126d7aa08c31b02fd52eb985f78179c775426c",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-112211",
-          "at": "2026-10-20T11:28:40",
-          "runs": 12
+          "verdict": "通过",
+          "fileSha256": "082d07b1b364f3b8442d170fd98255292627bd3a50f7de855ce47ebaa3aad2ef",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-165154",
+          "at": "2026-10-27T16:53:14",
+          "runs": 64,
+          "engine": "headless"
         }
+      },
+      "queueTune": {
+        "moved": 9,
+        "maxRowShift": 3,
+        "boardSha256": "e5ce0b3d78d960137f49460a57f7fcb954a33c416a8b8f31385917c6d5ff53bc",
+        "tuningGap": {
+          "score": 0.06803976007812498,
+          "ease": 0.011291274648437502,
+          "worst": 0.09375
+        },
+        "validation": {
+          "original": {
+            "score": 0.6889025072656251,
+            "ease": -0.08041454410156249,
+            "worst": 0.796875
+          },
+          "tuned": {
+            "score": 0.08055143378906254,
+            "ease": -0.009025716894531272,
+            "worst": 0.078125
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-26T20:27:02"
       }
     },
     "sector09": {
@@ -221,25 +428,29 @@
         "bot": {
           "verdict": "通过",
           "fileSha256": "dfdbe6fca0e356afc1ca716610f0483bce0cbb91d349e1438c86e001800811f0",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-115906",
-          "at": "2026-10-20T12:03:30",
-          "runs": 12
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-164954",
+          "at": "2026-10-27T16:51:49",
+          "runs": 64,
+          "engine": "headless"
         }
       }
     },
     "sector10": {
       "game": 12,
       "resource": "sector10",
-      "mode": "P",
+      "mode": "R",
       "sigma": {
-        "0": 11,
-        "11": 0
+        "15": 0,
+        "0": 2,
+        "8": 17,
+        "7": 8,
+        "6": 1
       },
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第12关-雪橇小企鹅-10.png",
-      "sourceSha256": "12ee4d5510076de2fcf1c5ce0b0d375dab9c1086701642c06073d58993b34fbc",
-      "fileSha256": "63637e5463b425ee4fca2301abe1462f5b39785868170d7e7a1a67c4756ece11",
-      "cellsSha256": "6c5c30ca1edae830a9b8700d41893997466a2190e9867d94396839165f98a154",
-      "changedCells": 72,
+      "sourceImage": "/sessions/rcw-01nnykdvihujbxa1onp9dgwd/mnt/flight-bubble/Art/levels-b/source/第12关-雪橇小企鹅-13.png",
+      "sourceSha256": "934c93e3467d6caa6191ed92548908304833ba34f63f5b2f5e9a889e2198eec6",
+      "fileSha256": "f13b3a6395a70fa0a0ee05535f4fddba19fd8cc547657f12276fdb093a62eacd",
+      "cellsSha256": "f0db495baa7267391516eff02b1d9fb14afd49e8e52a10a7da87e51c729bd77f",
+      "changedCells": 0,
       "withinLimits": true,
       "title": "雪橇小企鹅",
       "draft": "Art/levels-b/work/第012关_sector10/sector10.json",
@@ -247,17 +458,226 @@
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "63637e5463b425ee4fca2301abe1462f5b39785868170d7e7a1a67c4756ece11",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261020-125720",
-          "at": "2026-10-20T12:57:20"
+          "fileSha256": "f13b3a6395a70fa0a0ee05535f4fddba19fd8cc547657f12276fdb093a62eacd",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-131304",
+          "at": "2026-10-27T13:13:04"
         },
         "bot": {
           "verdict": "通过",
-          "fileSha256": "63637e5463b425ee4fca2301abe1462f5b39785868170d7e7a1a67c4756ece11",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-130024",
-          "at": "2026-10-20T13:07:42",
+          "fileSha256": "f13b3a6395a70fa0a0ee05535f4fddba19fd8cc547657f12276fdb093a62eacd",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-165320",
+          "at": "2026-10-27T16:55:14",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "streamBalance": {
+        "changed": 1041,
+        "length": 9856
+      },
+      "queueTune": {
+        "moved": 14,
+        "maxRowShift": 3,
+        "boardSha256": "7ae61dff121f039fb3fb19d54766b4d8423ca2496c9062b7bc2ea05885b9fa5b",
+        "tuningGap": {
+          "score": 0.1611397784375,
+          "ease": -0.020992610781250004,
+          "worst": 0.28125
+        },
+        "validation": {
+          "original": {
+            "score": 0.4151432787890625,
+            "ease": -0.20319684986328126,
+            "worst": 0.45525230734375
+          },
+          "tuned": {
+            "score": 0.13937962070312498,
+            "ease": -0.03554612019531251,
+            "worst": 0.3125
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-27T12:57:25"
+      }
+    },
+    "sector11": {
+      "game": 13,
+      "resource": "sector11",
+      "mode": "S",
+      "sigma": {},
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第13关-草原小斑马-13.png",
+      "sourceSha256": "5b48d3a33bb522f20d7fbfce10dd9236829490021e47b894160342c407f281a0",
+      "fileSha256": "f64940c0ea51a24db7a29a08fd9c3d689ba671fb318a307997dc0746350f56e1",
+      "cellsSha256": "190a026c7e28c5b2ff259acb84bfc512fdc53122e80fffd81de6f28ffdaa7273",
+      "changedCells": 149,
+      "withinLimits": true,
+      "title": "草原小斑马",
+      "draft": "Art/levels-b/work/第013关_sector11/sector11.json",
+      "status": "draft",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "f64940c0ea51a24db7a29a08fd9c3d689ba671fb318a307997dc0746350f56e1",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-161110",
+          "at": "2026-10-26T16:11:10"
+        },
+        "bot": {
+          "verdict": "超差",
+          "fileSha256": "f64940c0ea51a24db7a29a08fd9c3d689ba671fb318a307997dc0746350f56e1",
+          "evidence": "Builds/R1-evidence/levels-b-resume-art1-20261026",
+          "at": "2026-10-26T16:15:14",
           "runs": 12
         }
+      }
+    },
+    "sector12": {
+      "game": 14,
+      "resource": "sector12",
+      "mode": "R",
+      "sigma": {
+        "13": 2,
+        "11": 8,
+        "8": 16,
+        "15": 1
+      },
+      "sourceImage": "/sessions/rcw-01nnykdvihujbxa1onp9dgwd/mnt/flight-bubble/Art/levels-b/source/第14关-抱苹果小白兔-13.png",
+      "sourceSha256": "cdd124b024b3faea4f2d63bed0d2a4e57a582339675c3342043b8dbe29fdd4ad",
+      "fileSha256": "3dc059e519ee8dbdad50780d3d5fd7a67b39d2cbff6784d50e6cb6309e61132f",
+      "cellsSha256": "517b3d6728e18ff9b4d21264d85768b34d1170fb169706329361f515c33f0a93",
+      "changedCells": 0,
+      "withinLimits": true,
+      "title": "抱苹果小白兔",
+      "draft": "Art/levels-b/work/第014关_sector12/sector12.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "3dc059e519ee8dbdad50780d3d5fd7a67b39d2cbff6784d50e6cb6309e61132f",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-181748",
+          "at": "2026-10-27T18:17:48"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "3dc059e519ee8dbdad50780d3d5fd7a67b39d2cbff6784d50e6cb6309e61132f",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-182547",
+          "at": "2026-10-27T18:27:43",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "streamBalance": {
+        "changed": 665,
+        "length": 7168
+      },
+      "queueTune": {
+        "moved": 7,
+        "maxRowShift": 3,
+        "boardSha256": "0abd687d5503aaaddf7557c0d24ab8247cbf59cb4c17afea4898344bffa17ac3",
+        "tuningGap": {
+          "score": 0.26068196710937497,
+          "ease": -0.0477409195703125,
+          "worst": 0.22003273562499992
+        },
+        "validation": {
+          "original": {
+            "score": 0.62149678125,
+            "ease": -0.310748390625,
+            "worst": 0.515625
+          },
+          "tuned": {
+            "score": 0.2417982555078125,
+            "ease": -0.10369537451171874,
+            "worst": 0.21875
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-27T18:17:47",
+        "acceptedBy": "用户 10-27 18:15 接受（验证差距 0.24）"
+      }
+    },
+    "sector13": {
+      "game": 15,
+      "resource": "sector13",
+      "mode": "P",
+      "sigma": {
+        "3": 2,
+        "11": 3,
+        "10": 0,
+        "0": 10,
+        "2": 11
+      },
+      "sourceImage": "/sessions/rcw-01nnykdvihujbxa1onp9dgwd/mnt/flight-bubble/Art/levels-b/source/第15关-推皮球小虎鲸-19.png",
+      "sourceSha256": "59d1b4990341cb5dda8e392a2fa387592f14e301439b41142b0c5860de828e6d",
+      "fileSha256": "54dd54487bdb25a6b4a9f5248f0f45c49ea92b8208a8b8b7dd8f1a84641ae037",
+      "cellsSha256": "c0005b17ae779716a766227c8491c3151a999ec0d3e3c3196bccb37b64cd3f91",
+      "changedCells": 0,
+      "withinLimits": true,
+      "streamBalance": {
+        "changed": 579,
+        "length": 8512,
+        "place": "deep"
+      },
+      "title": "推皮球小虎鲸",
+      "draft": "Art/levels-b/work/第015关_sector13/sector13.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "54dd54487bdb25a6b4a9f5248f0f45c49ea92b8208a8b8b7dd8f1a84641ae037",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-181733",
+          "at": "2026-10-27T18:17:34"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "54dd54487bdb25a6b4a9f5248f0f45c49ea92b8208a8b8b7dd8f1a84641ae037",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-181754",
+          "at": "2026-10-27T18:20:34",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "queueTune": {
+        "moved": 14,
+        "maxRowShift": 2,
+        "boardSha256": "b1b1921c7cc6843e058359ae6437575340f7c1b76f0297d0b48bd7a00479f860",
+        "tuningGap": {
+          "score": 0.18928864570312498,
+          "ease": -0.05753494785156249,
+          "worst": 0.1875
+        },
+        "validation": {
+          "original": {
+            "score": 0.7908882316796875,
+            "ease": -0.34954567833984374,
+            "worst": 0.71875
+          },
+          "tuned": {
+            "score": 0.18364535164062498,
+            "ease": -0.046488631796875,
+            "worst": 0.28125
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-27T18:15:47",
+        "acceptedBy": "用户 10-27 18:15 放行（验证差距 0.18）"
       }
     },
     "sector14": {
@@ -265,11 +685,11 @@
       "resource": "sector14",
       "mode": "S",
       "sigma": {},
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第16关-叶尖小瓢虫-09.png",
-      "sourceSha256": "cb07f6a4bdba5eb312f01a34d201ce72f2caf29403b87ae0ea4fbee58ddda4ff",
-      "fileSha256": "1ea9372f7a2916f9d4ad30c1d7f85f6a3227c1e30da21f320dc7c31d6662dce3",
-      "cellsSha256": "10f1d45ab0d402a06c2d070b88fac70129056c275e609c55e491e4c90452ebf0",
-      "changedCells": 74,
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第16关-叶尖小瓢虫-16.png",
+      "sourceSha256": "40b92e41c191fd8a829cb20d3ef20e60bc70510fdaea8541f487b12bae90f228",
+      "fileSha256": "d2762b44d0bfc38719fab957b713bb4ff287ba43a75beca26dc306121542d081",
+      "cellsSha256": "11eba52cd479d5acfcecab978566cde499d2e909622c3978a996e0200c5ee3ba",
+      "changedCells": 42,
       "withinLimits": true,
       "title": "叶尖小瓢虫",
       "draft": "Art/levels-b/work/第016关_sector14/sector14.json",
@@ -277,15 +697,15 @@
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "1ea9372f7a2916f9d4ad30c1d7f85f6a3227c1e30da21f320dc7c31d6662dce3",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261020-131647",
-          "at": "2026-10-20T13:16:47"
+          "fileSha256": "d2762b44d0bfc38719fab957b713bb4ff287ba43a75beca26dc306121542d081",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-163445",
+          "at": "2026-10-26T16:34:45"
         },
         "bot": {
           "verdict": "超差",
-          "fileSha256": "1ea9372f7a2916f9d4ad30c1d7f85f6a3227c1e30da21f320dc7c31d6662dce3",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-131704",
-          "at": "2026-10-20T13:25:35",
+          "fileSha256": "d2762b44d0bfc38719fab957b713bb4ff287ba43a75beca26dc306121542d081",
+          "evidence": "Builds/R1-evidence/levels-b-resume-art4-20261026",
+          "at": "2026-10-26T16:55:52",
           "runs": 12
         }
       }
@@ -297,7 +717,7 @@
       "sigma": {},
       "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第17关-散步大白鹅-11.png",
       "sourceSha256": "e2e9170d40d2f528414019bd6da965db71a061ed7134f99355de804bb2f6e0ed",
-      "fileSha256": "092b318d956c83f3b0b71fe0be4c3679b4b58aa7a68702c1a32aa3069745c4c2",
+      "fileSha256": "c2825b0a0132ffa54a1e478b524ccc567f7b5e944c84270effad53ede0f010c4",
       "cellsSha256": "f40ea68f9bbcf28bc038ef0c6c3cfcb041da34329c89f55bb070d57434134586",
       "changedCells": 49,
       "withinLimits": true,
@@ -307,17 +727,48 @@
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "092b318d956c83f3b0b71fe0be4c3679b4b58aa7a68702c1a32aa3069745c4c2",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261020-135320",
-          "at": "2026-10-20T13:53:20"
+          "fileSha256": "c2825b0a0132ffa54a1e478b524ccc567f7b5e944c84270effad53ede0f010c4",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-163928",
+          "at": "2026-10-27T16:39:28"
         },
         "bot": {
           "verdict": "通过",
-          "fileSha256": "092b318d956c83f3b0b71fe0be4c3679b4b58aa7a68702c1a32aa3069745c4c2",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-135440",
-          "at": "2026-10-20T14:11:52",
-          "runs": 12
+          "fileSha256": "c2825b0a0132ffa54a1e478b524ccc567f7b5e944c84270effad53ede0f010c4",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-164221",
+          "at": "2026-10-27T16:44:19",
+          "runs": 64,
+          "engine": "headless"
         }
+      },
+      "queueTune": {
+        "moved": 6,
+        "maxRowShift": 3,
+        "boardSha256": "092b318d956c83f3b0b71fe0be4c3679b4b58aa7a68702c1a32aa3069745c4c2",
+        "tuningGap": {
+          "score": 0.06907072710937501,
+          "ease": -0.006900670664062497,
+          "worst": 0.0625
+        },
+        "validation": {
+          "original": {
+            "score": 0.38072808351562504,
+            "ease": 0.18059841675781252,
+            "worst": 0.484375
+          },
+          "tuned": {
+            "score": 0.118940246015625,
+            "ease": 0.042649745234374994,
+            "worst": 0.140625
+          }
+        },
+        "seeds": {
+          "tuning": 64,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-27T16:39:28"
       }
     },
     "sector16": {
@@ -344,10 +795,80 @@
         "bot": {
           "verdict": "通过",
           "fileSha256": "0f374833ac15426eb76ded50fc78a21d4364d2bf24b8471fa23c5581bd9e99f1",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-130024",
-          "at": "2026-10-20T13:07:42",
-          "runs": 12
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-165320",
+          "at": "2026-10-27T16:55:14",
+          "runs": 64,
+          "engine": "headless"
         }
+      }
+    },
+    "sector17": {
+      "game": 19,
+      "resource": "sector17",
+      "mode": "R",
+      "sigma": {
+        "9": 10
+      },
+      "sourceImage": "/sessions/rcw-01nnykdvihujbxa1onp9dgwd/mnt/flight-bubble/Art/levels-b/source/第19关-树枝小喜鹊-20.png",
+      "sourceSha256": "dedafaf54558719ba345c0ceb9c2aa67a6882d61f3591263539708b4e92ba17b",
+      "fileSha256": "ba17621411df797402fdba78008fdb473b6e50068117c2614a45654d69ea9ce0",
+      "cellsSha256": "f79ab2e6ed9f3c3bc3ac80da1abf1e49e116c5f4d52f4e47ada87fc7e3ecf457",
+      "changedCells": 0,
+      "withinLimits": true,
+      "streamBalance": {
+        "changed": 710,
+        "length": 7616,
+        "place": "deep"
+      },
+      "title": "树枝小喜鹊",
+      "draft": "Art/levels-b/work/第019关_sector17/sector17.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "ba17621411df797402fdba78008fdb473b6e50068117c2614a45654d69ea9ce0",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-181733",
+          "at": "2026-10-27T18:17:34"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "ba17621411df797402fdba78008fdb473b6e50068117c2614a45654d69ea9ce0",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-182345",
+          "at": "2026-10-27T18:25:42",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "queueTune": {
+        "moved": 9,
+        "maxRowShift": 3,
+        "boardSha256": "a20638e22111df2fc3f7883d734165364b20598cbf526fe998fbf8a6c4fe2d52",
+        "tuningGap": {
+          "score": 0.16873216867187502,
+          "ease": -0.06492399207031252,
+          "worst": 0.21875
+        },
+        "validation": {
+          "original": {
+            "score": 0.8798493802734375,
+            "ease": -0.42625281513671875,
+            "worst": 0.984375
+          },
+          "tuned": {
+            "score": 0.20458009109375,
+            "ease": -0.0778338429296875,
+            "worst": 0.421875
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-27T18:15:47",
+        "acceptedBy": "用户 10-27 18:15 放行（验证差距 0.20）"
       }
     },
     "sector18": {
@@ -355,28 +876,29 @@
       "resource": "sector18",
       "mode": "S",
       "sigma": {},
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第20关-腮帮子小仓鼠-11.png",
-      "sourceSha256": "849e3ced9ed251d13254e70beb585cc79159e684a26539cf9cf68402b42a7d41",
-      "fileSha256": "bdd65fe954c94c87c8b1b2f2df81aba9054df02c1a7abd9449af8fcf04bdb43a",
-      "cellsSha256": "432c8f5a596bdfe4717af1236b16ab4c666be51b840ab28c4e01b4f4c72be763",
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第20关-腮帮子小仓鼠-12.png",
+      "sourceSha256": "b8c3d3fabaa43575bc8560787dc6ed67b32c5786e6a2548fec2185718adb81d3",
+      "fileSha256": "fe6378b6f1c7905c712dc1f9a5ff7ba9082590cbf4a0228ac831157f00d8c2bf",
+      "cellsSha256": "3a3d7e5da0a56d54ab57c7d7146384a81779b5c3a2b41c6fbc812c5382fd203a",
       "changedCells": 65,
       "withinLimits": true,
       "title": "腮帮子小仓鼠",
       "draft": "Art/levels-b/work/第020关_sector18/sector18.json",
-      "status": "draft",
+      "status": "evaluated",
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "bdd65fe954c94c87c8b1b2f2df81aba9054df02c1a7abd9449af8fcf04bdb43a",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261020-140533",
-          "at": "2026-10-20T14:05:33"
+          "fileSha256": "fe6378b6f1c7905c712dc1f9a5ff7ba9082590cbf4a0228ac831157f00d8c2bf",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-155044",
+          "at": "2026-10-26T15:50:44"
         },
         "bot": {
-          "verdict": "超差",
-          "fileSha256": "bdd65fe954c94c87c8b1b2f2df81aba9054df02c1a7abd9449af8fcf04bdb43a",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-141441",
-          "at": "2026-10-20T14:23:22",
-          "runs": 12
+          "verdict": "通过",
+          "fileSha256": "fe6378b6f1c7905c712dc1f9a5ff7ba9082590cbf4a0228ac831157f00d8c2bf",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-165519",
+          "at": "2026-10-27T16:57:46",
+          "runs": 64,
+          "engine": "headless"
         }
       }
     },
@@ -404,22 +926,30 @@
         "bot": {
           "verdict": "通过",
           "fileSha256": "900719e86b6c40d1c76c79616f588434cdbd4625aa43f9a75b46e9028ef1e197",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-135440",
-          "at": "2026-10-20T14:11:52",
-          "runs": 12
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-165519",
+          "at": "2026-10-27T16:57:46",
+          "runs": 64,
+          "engine": "headless"
         }
       }
     },
     "sector20": {
       "game": 22,
       "resource": "sector20",
-      "mode": "S",
-      "sigma": {},
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第22关-草地野餐篮-05.png",
-      "sourceSha256": "1999ab37c697829ad4897c618d807f167b53a590da4a5355995e47d2fc4ec9da",
-      "fileSha256": "0f0fb784461b7af7c01e7dbf66e47c451209e42a86fa2a7d49f12367287f5e6d",
-      "cellsSha256": "e207e61d9d3a4bf5d871ec0568efecf7795561f7a55b74d61fa59088adec0a69",
-      "changedCells": 96,
+      "mode": "R",
+      "sigma": {
+        "1": 2,
+        "0": 9,
+        "6": 16,
+        "4": 1,
+        "7": 0,
+        "8": 4
+      },
+      "sourceImage": "/sessions/rcw-01nnykdvihujbxa1onp9dgwd/mnt/flight-bubble/Art/levels-b/source/第22关-草地野餐篮-09.png",
+      "sourceSha256": "4723621cfa858293a2fe4cd42184ff1cbbfbac54627097dd0570cf3cc5ccf53d",
+      "fileSha256": "536284a66822752b9ad4ae14d3ad8afbc111f9d1eb9c9c6377bd6d7c52c5ad55",
+      "cellsSha256": "b7c59e94d27dc591b71921ceac11ea91da4a25ac3b96eae84141c8560cc28700",
+      "changedCells": 0,
       "withinLimits": true,
       "title": "草地野餐篮",
       "draft": "Art/levels-b/work/第022关_sector20/sector20.json",
@@ -427,17 +957,123 @@
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "0f0fb784461b7af7c01e7dbf66e47c451209e42a86fa2a7d49f12367287f5e6d",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261020-133458",
-          "at": "2026-10-20T13:34:58"
+          "fileSha256": "536284a66822752b9ad4ae14d3ad8afbc111f9d1eb9c9c6377bd6d7c52c5ad55",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-171139",
+          "at": "2026-10-27T17:11:39"
         },
         "bot": {
           "verdict": "通过",
-          "fileSha256": "0f0fb784461b7af7c01e7dbf66e47c451209e42a86fa2a7d49f12367287f5e6d",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-133508",
-          "at": "2026-10-20T13:42:09",
-          "runs": 12
+          "fileSha256": "536284a66822752b9ad4ae14d3ad8afbc111f9d1eb9c9c6377bd6d7c52c5ad55",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-171139",
+          "at": "2026-10-27T17:13:30",
+          "runs": 64,
+          "engine": "headless"
         }
+      },
+      "streamBalance": {
+        "changed": 304,
+        "length": 12992,
+        "place": "deep"
+      },
+      "queueTune": {
+        "moved": 24,
+        "maxRowShift": 6,
+        "boardSha256": "2b3f9a5f2f3a9ab5189b58284da73172cc79e8402a6841e8ba9c7913d44e6acf",
+        "tuningGap": {
+          "score": 0.071702006796875,
+          "ease": -0.01114689167968752,
+          "worst": 0.15674158031250007
+        },
+        "validation": {
+          "original": {
+            "score": 0.27282232042968746,
+            "ease": -0.13641116021484373,
+            "worst": 0.3942477892187499
+          },
+          "tuned": {
+            "score": 0.07204808718749996,
+            "ease": -0.02725499339843749,
+            "worst": 0.16389392874999992
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-27T17:11:39"
+      }
+    },
+    "sector21": {
+      "game": 23,
+      "resource": "sector21",
+      "mode": "R",
+      "sigma": {
+        "2": 4,
+        "15": 7,
+        "11": 1
+      },
+      "sourceImage": "/sessions/rcw-01nnykdvihujbxa1onp9dgwd/mnt/flight-bubble/Art/levels-b/source/第23关-月光白天鹅-19.png",
+      "sourceSha256": "f8f26f8a93cea746acf55c4d51ee4a0c27f12829b5f8a3ebfeb7544439787bf7",
+      "fileSha256": "e2c152f77333e37d51d1376d99b68f7465c3bade2c00149235ea489a953e803e",
+      "cellsSha256": "36d198a9f051ef62c236d7d84af6eff9c50cbe002aa43392ce097108b96a0e2f",
+      "changedCells": 0,
+      "withinLimits": true,
+      "streamBalance": {
+        "changed": 1066,
+        "length": 5600,
+        "place": "deep"
+      },
+      "title": "月光白天鹅",
+      "draft": "Art/levels-b/work/第023关_sector21/sector21.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "e2c152f77333e37d51d1376d99b68f7465c3bade2c00149235ea489a953e803e",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-174425",
+          "at": "2026-10-27T17:44:25"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "e2c152f77333e37d51d1376d99b68f7465c3bade2c00149235ea489a953e803e",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-174425",
+          "at": "2026-10-27T17:45:10",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "queueTune": {
+        "moved": 4,
+        "maxRowShift": 4,
+        "boardSha256": "980bf797b78eec9b642768a2f659001e51d8656aedebdd9b90dfd74d481d6b1c",
+        "tuningGap": {
+          "score": 0.05859375,
+          "ease": 0.0,
+          "worst": 0.375
+        },
+        "validation": {
+          "original": {
+            "score": 0.37763077464843753,
+            "ease": -0.03842476232421875,
+            "worst": 0.796875
+          },
+          "tuned": {
+            "score": 0.056640625,
+            "ease": 0.0,
+            "worst": 0.234375
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-27T17:44:25"
       }
     },
     "sector22": {
@@ -445,29 +1081,60 @@
       "resource": "sector22",
       "mode": "S",
       "sigma": {},
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第24关-提灯萤火虫-12.png",
-      "sourceSha256": "2b4f22760de76c611f340b1d04d9f341733369142077487612f0b2fc1377bb6e",
-      "fileSha256": "a0a7dd3743d2a63a4c77862dc0ad17121bf85bafa066a1df0fc34d94e7599ab2",
-      "cellsSha256": "87c80a265353448e2e7b1ab980aee688b23816c3349ac902bdce79707e38c873",
-      "changedCells": 61,
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第24关-提灯萤火虫-14.png",
+      "sourceSha256": "1657eca66ece952109e30b1cae3e49af014e09668e240a9cf9f4e3492359820e",
+      "fileSha256": "3910b66c9d65a578048d023936a4af799fd7d0c2fad09b2421f4f041cc91b91d",
+      "cellsSha256": "a1a6f078c978cc6aa7164b0634e1f7a03fda87d180ebd3f6b275946fbfbfcefa",
+      "changedCells": 98,
       "withinLimits": true,
       "title": "提灯萤火虫",
       "draft": "Art/levels-b/work/第024关_sector22/sector22.json",
-      "status": "draft",
+      "status": "evaluated",
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "a0a7dd3743d2a63a4c77862dc0ad17121bf85bafa066a1df0fc34d94e7599ab2",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261020-143752",
-          "at": "2026-10-20T14:37:52"
+          "fileSha256": "3910b66c9d65a578048d023936a4af799fd7d0c2fad09b2421f4f041cc91b91d",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-202719",
+          "at": "2026-10-26T20:27:19"
         },
         "bot": {
-          "verdict": "超差",
-          "fileSha256": "a0a7dd3743d2a63a4c77862dc0ad17121bf85bafa066a1df0fc34d94e7599ab2",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-143752",
-          "at": "2026-10-20T14:42:09",
-          "runs": 12
+          "verdict": "通过",
+          "fileSha256": "3910b66c9d65a578048d023936a4af799fd7d0c2fad09b2421f4f041cc91b91d",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-165943",
+          "at": "2026-10-27T17:01:42",
+          "runs": 64,
+          "engine": "headless"
         }
+      },
+      "queueTune": {
+        "moved": 12,
+        "maxRowShift": 3,
+        "boardSha256": "4499c88242cea3cdc3cf927c95ea54e82b940985bc13352eab5fb03ddc05de52",
+        "tuningGap": {
+          "score": 0.08114347195312499,
+          "ease": 0.0382914898828125,
+          "worst": 0.1904529034375
+        },
+        "validation": {
+          "original": {
+            "score": 1.3465738308203126,
+            "ease": 0.6732869154101563,
+            "worst": 0.890625
+          },
+          "tuned": {
+            "score": 0.1320654020703125,
+            "ease": 0.06338197658203125,
+            "worst": 0.265625
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-26T20:22:24"
       }
     },
     "sector23": {
@@ -477,7 +1144,7 @@
       "sigma": {},
       "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第25关-抱松果小松鼠-10.png",
       "sourceSha256": "81f2be0fc10418ca28650171bca417fa6abad2f25b6ea0bdf75afbe02fc29477",
-      "fileSha256": "3421e85a71d1ec1b150df28fd83a79221bf191bf074ddbba31ecc0714322ec9f",
+      "fileSha256": "01970d954e8801242d857972fadfd79ab55eec12a0c6c71635160ad927de9ff3",
       "cellsSha256": "dd5f2c81fca1e0fb95596765cecfa844e2c2357c29948a8e3f0699c89f4a335d",
       "changedCells": 56,
       "withinLimits": true,
@@ -487,17 +1154,173 @@
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "3421e85a71d1ec1b150df28fd83a79221bf191bf074ddbba31ecc0714322ec9f",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261020-135320",
-          "at": "2026-10-20T13:53:20"
+          "fileSha256": "01970d954e8801242d857972fadfd79ab55eec12a0c6c71635160ad927de9ff3",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-202719",
+          "at": "2026-10-26T20:27:19"
         },
         "bot": {
           "verdict": "通过",
-          "fileSha256": "3421e85a71d1ec1b150df28fd83a79221bf191bf074ddbba31ecc0714322ec9f",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-135440",
-          "at": "2026-10-20T14:11:52",
-          "runs": 12
+          "fileSha256": "01970d954e8801242d857972fadfd79ab55eec12a0c6c71635160ad927de9ff3",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-170147",
+          "at": "2026-10-27T17:04:24",
+          "runs": 64,
+          "engine": "headless"
         }
+      },
+      "queueTune": {
+        "moved": 8,
+        "maxRowShift": 2,
+        "boardSha256": "3421e85a71d1ec1b150df28fd83a79221bf191bf074ddbba31ecc0714322ec9f",
+        "tuningGap": {
+          "score": 0.076038253984375,
+          "ease": -0.007955360429687489,
+          "worst": 0.13029362249999998
+        },
+        "validation": {
+          "original": {
+            "score": 0.2533134881640625,
+            "ease": -0.03212350248046876,
+            "worst": 0.23645321406250003
+          },
+          "tuned": {
+            "score": 0.1368900400390625,
+            "ease": 0.03342487814453125,
+            "worst": 0.1875
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-26T20:24:46"
+      }
+    },
+    "sector24": {
+      "game": 26,
+      "resource": "sector24",
+      "mode": "P",
+      "sigma": {
+        "1": 2,
+        "2": 1
+      },
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第26关-红蘑菇屋-16.png",
+      "sourceSha256": "f208a712e0e536b1f4ac8fed235077f11200a4d1e984f9a4ce245ebabb65821e",
+      "fileSha256": "0b624a1316481c1d807578c54962cdc916e9defd53c1f29be7ef86c0db1be0cf",
+      "cellsSha256": "0f61b286d78176c95effae4d11bdce3c054fb4c41a1b0390591396d63c37619e",
+      "changedCells": 14,
+      "withinLimits": true,
+      "title": "红蘑菇屋",
+      "draft": "Art/levels-b/work/第026关_sector24/sector24.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "0b624a1316481c1d807578c54962cdc916e9defd53c1f29be7ef86c0db1be0cf",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-212903",
+          "at": "2026-10-26T21:29:03"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "0b624a1316481c1d807578c54962cdc916e9defd53c1f29be7ef86c0db1be0cf",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-170147",
+          "at": "2026-10-27T17:04:24",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "queueTune": {
+        "moved": 10,
+        "maxRowShift": 3,
+        "boardSha256": "cfcc92f6d3e7acc4777f0c8d77b80b4a8929cebc57886d8f03100ce518cea90d",
+        "tuningGap": {
+          "score": 0.06080558632812502,
+          "ease": -0.02259029316406251,
+          "worst": 0.11659332031249997
+        },
+        "validation": {
+          "original": {
+            "score": 0.3234746010546875,
+            "ease": -0.16173730052734375,
+            "worst": 0.640625
+          },
+          "tuned": {
+            "score": 0.08119683542968752,
+            "ease": 0.022710765253906258,
+            "worst": 0.09375
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-26T21:29:03"
+      }
+    },
+    "sector25": {
+      "game": 27,
+      "resource": "sector25",
+      "mode": "S",
+      "sigma": {},
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第27关-大胡萝卜-15.png",
+      "sourceSha256": "269b1d3f85069d67d2566f4827950c842a8efce12f1551b775d3374e6dc4021a",
+      "fileSha256": "e49d7f903c6c35b4dfcec4cc968025fcd904465d407ba0410cec4bbfe8a345fb",
+      "cellsSha256": "92e93e68166166fd6794d1962bbbb75ac4656693e574821ef05b09fea22b8aa2",
+      "changedCells": 103,
+      "withinLimits": true,
+      "title": "大胡萝卜",
+      "draft": "Art/levels-b/work/第027关_sector25/sector25.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "e49d7f903c6c35b4dfcec4cc968025fcd904465d407ba0410cec4bbfe8a345fb",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-212903",
+          "at": "2026-10-26T21:29:03"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "e49d7f903c6c35b4dfcec4cc968025fcd904465d407ba0410cec4bbfe8a345fb",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-170431",
+          "at": "2026-10-27T17:06:01",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "queueTune": {
+        "moved": 4,
+        "maxRowShift": 3,
+        "boardSha256": "ca52393a3f5eca7e1e946343eeb5a471af40064ab86012aefffdd6cc16ad5dd8",
+        "tuningGap": {
+          "score": 0.0470777040625,
+          "ease": 0.00778610624999998,
+          "worst": 0.10674619624999993
+        },
+        "validation": {
+          "original": {
+            "score": 0.3373313458203125,
+            "ease": -0.16866567291015624,
+            "worst": 0.4355690446875
+          },
+          "tuned": {
+            "score": 0.051271640585937514,
+            "ease": 0.005427046933593756,
+            "worst": 0.0808350934375
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-26T21:29:03"
       }
     },
     "sector26": {
@@ -524,10 +1347,178 @@
         "bot": {
           "verdict": "通过",
           "fileSha256": "0b8027d79205b2db08188f5b53c731e98cecaba16ebd8d3e014a6959d820fc01",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-142402",
-          "at": "2026-10-20T14:27:17",
-          "runs": 12
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-165836",
+          "at": "2026-10-27T16:59:24",
+          "runs": 64,
+          "engine": "headless"
         }
+      }
+    },
+    "sector27": {
+      "game": 29,
+      "resource": "sector27",
+      "mode": "S",
+      "sigma": {},
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第29关-沙滩小木船-11.png",
+      "sourceSha256": "cf2a60b84e75af966a8165864d010c5ebecf4eb90aa7e256103ed251d2ef44e1",
+      "fileSha256": "d77a2dfac57b4700f6b36a3a92d295ce2f4b4f9be51e3e2535f9721069fe2d43",
+      "cellsSha256": "0efd162502c8d6cb69bd8e34910ad2b264a964e7d5f4308012a7a896a6a9d130",
+      "changedCells": 123,
+      "withinLimits": true,
+      "title": "沙滩小木船",
+      "draft": "Art/levels-b/work/第029关_sector27/sector27.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "d77a2dfac57b4700f6b36a3a92d295ce2f4b4f9be51e3e2535f9721069fe2d43",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-153213",
+          "at": "2026-10-26T15:32:13"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "d77a2dfac57b4700f6b36a3a92d295ce2f4b4f9be51e3e2535f9721069fe2d43",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-165943",
+          "at": "2026-10-27T17:01:42",
+          "runs": 64,
+          "engine": "headless"
+        }
+      }
+    },
+    "sector28": {
+      "game": 30,
+      "resource": "sector28",
+      "mode": "P",
+      "sigma": {
+        "6": 11,
+        "11": 6
+      },
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第30关-送行小章鱼-12.png",
+      "sourceSha256": "efec04ab8607f3c7944f9a36578a117b83ddd189dbc7727e22563f301543b225",
+      "fileSha256": "1d071858bf8ec5a285cae28651d36d9daa543479b9fc4f5c9a694d19b811b9d1",
+      "cellsSha256": "2dd6f39e45a13aa55fe430f2b64731d1e4c124e492f43d4901e3cb5de3a7294a",
+      "changedCells": 50,
+      "withinLimits": true,
+      "title": "送行小章鱼",
+      "draft": "Art/levels-b/work/第030关_sector28/sector28.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "1d071858bf8ec5a285cae28651d36d9daa543479b9fc4f5c9a694d19b811b9d1",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-202719",
+          "at": "2026-10-26T20:27:19"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "1d071858bf8ec5a285cae28651d36d9daa543479b9fc4f5c9a694d19b811b9d1",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-170601",
+          "at": "2026-10-27T17:07:18",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "queueTune": {
+        "moved": 2,
+        "maxRowShift": 3,
+        "boardSha256": "445c3e48b56ffcc1575c2828b3fad56defa1f3bec9f553770a9e5df29b489ef0",
+        "tuningGap": {
+          "score": 0.10545058203125005,
+          "ease": 0.021475291015625023,
+          "worst": 0.125
+        },
+        "validation": {
+          "original": {
+            "score": 0.17113614398437496,
+            "ease": 0.06994307199218748,
+            "worst": 0.3125
+          },
+          "tuned": {
+            "score": 0.09342485714843746,
+            "ease": 0.007649928574218728,
+            "worst": 0.09375
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-26T20:20:44"
+      }
+    },
+    "sector29": {
+      "game": 31,
+      "resource": "sector29",
+      "mode": "R",
+      "sigma": {
+        "7": 6,
+        "2": 3,
+        "11": 7,
+        "8": 1
+      },
+      "sourceImage": "/sessions/rcw-01nnykdvihujbxa1onp9dgwd/mnt/flight-bubble/Art/levels-b/source/第31关-海边篝火-25.png",
+      "sourceSha256": "a4f70aa7bb0360260299bd847feba02de139634f1bb778f619942fc004147a6e",
+      "fileSha256": "f6a8f8a0fa11409e3aea9294c7900a9d7a025799d39ced53b8fc07f2e31e7275",
+      "cellsSha256": "b868718c6605b1ec81a27ae8201063093fadfe47630045ddea0126cc605205e6",
+      "changedCells": 0,
+      "withinLimits": true,
+      "streamBalance": {
+        "changed": 717,
+        "length": 6720,
+        "place": "deep"
+      },
+      "title": "海边篝火",
+      "draft": "Art/levels-b/work/第031关_sector29/sector29.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "f6a8f8a0fa11409e3aea9294c7900a9d7a025799d39ced53b8fc07f2e31e7275",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-181733",
+          "at": "2026-10-27T18:17:34"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "f6a8f8a0fa11409e3aea9294c7900a9d7a025799d39ced53b8fc07f2e31e7275",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-181754",
+          "at": "2026-10-27T18:20:34",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "queueTune": {
+        "moved": 13,
+        "maxRowShift": 5,
+        "boardSha256": "b4e53138992288f71dc27d7b6eb1a8a684b85f57d98a07cbc5250ee0679ce9a0",
+        "tuningGap": {
+          "score": 0.16061917203125003,
+          "ease": -0.025159163984374983,
+          "worst": 0.234375
+        },
+        "validation": {
+          "original": {
+            "score": 0.6178525471874999,
+            "ease": -0.2907027841796875,
+            "worst": 0.515625
+          },
+          "tuned": {
+            "score": 0.16495919761718753,
+            "ease": 0.019979598808593763,
+            "worst": 0.171875
+          }
+        },
+        "seeds": {
+          "tuning": 64,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-27T18:15:47",
+        "acceptedBy": "用户 10-27 18:15 放行（验证差距 0.165，线 0.15）"
       }
     },
     "sector30": {
@@ -540,7 +1531,7 @@
       },
       "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第32关-行囊小熊-08.png",
       "sourceSha256": "3c7cefa94a1fe13c3492c3ac46c5fad101032c532a2cdb921ab301ad09640d6e",
-      "fileSha256": "9d50607333b26f4bb4e2ce1011cae5d3c2e89c5d27f1d335185f7b9dc06e7924",
+      "fileSha256": "ba4a27b9e354cc5e32fab4cf6badbcbb9d4adc0ed725527f32dfa8e8b336bf40",
       "cellsSha256": "b6f5142c3a8bec5cf1d6a2311f9527e91b3e196b3506d45aa45a126b0b9b33c5",
       "changedCells": 63,
       "withinLimits": true,
@@ -550,16 +1541,238 @@
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "9d50607333b26f4bb4e2ce1011cae5d3c2e89c5d27f1d335185f7b9dc06e7924",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261020-133642",
-          "at": "2026-10-20T13:36:42"
+          "fileSha256": "ba4a27b9e354cc5e32fab4cf6badbcbb9d4adc0ed725527f32dfa8e8b336bf40",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-202007",
+          "at": "2026-10-26T20:20:07"
         },
         "bot": {
           "verdict": "通过",
-          "fileSha256": "9d50607333b26f4bb4e2ce1011cae5d3c2e89c5d27f1d335185f7b9dc06e7924",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261020-134301",
-          "at": "2026-10-20T13:52:21",
-          "runs": 12
+          "fileSha256": "ba4a27b9e354cc5e32fab4cf6badbcbb9d4adc0ed725527f32dfa8e8b336bf40",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-170724",
+          "at": "2026-10-27T17:08:39",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "queueTune": {
+        "moved": 2,
+        "maxRowShift": 2,
+        "boardSha256": "9d50607333b26f4bb4e2ce1011cae5d3c2e89c5d27f1d335185f7b9dc06e7924",
+        "tuningGap": {
+          "score": 0.04986309476562499,
+          "ease": 0.011432852226562491,
+          "worst": 0.07923170468749996
+        },
+        "validation": {
+          "original": {
+            "score": 0.3436713513671875,
+            "ease": 0.17183567568359376,
+            "worst": 0.58859768421875
+          },
+          "tuned": {
+            "score": 0.0555743986328125,
+            "ease": 0.019967782597656237,
+            "worst": 0.12331227781250001
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-26T20:19:20"
+      }
+    },
+    "sector31": {
+      "game": 33,
+      "resource": "sector31",
+      "mode": "S",
+      "sigma": {},
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第33关-夜空飘落的大雪花-02.png",
+      "sourceSha256": "cd2baca7128810357d06e8ddec3963a79aeb0478ddccadc70678f2fa73aabcb6",
+      "fileSha256": "fe23fcbde7b351cfdd239ce880e583e22259d02a6745e4606cb6b0465a122820",
+      "cellsSha256": "d580f1864b06fa89a7ea3a4cf4a33cff1d589ee46698f3d4233ca4e8342bf0c5",
+      "changedCells": 0,
+      "withinLimits": true,
+      "streamBalance": {
+        "changed": 306,
+        "length": 4788,
+        "place": "deep"
+      },
+      "title": "夜空飘落的大雪花",
+      "draft": "Art/levels-b/work/第033关_sector31/sector31.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "fe23fcbde7b351cfdd239ce880e583e22259d02a6745e4606cb6b0465a122820",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261028-001716",
+          "at": "2026-10-28T00:17:16"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "fe23fcbde7b351cfdd239ce880e583e22259d02a6745e4606cb6b0465a122820",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261028-001716",
+          "at": "2026-10-28T00:19:19",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "queueTune": {
+        "moved": 3,
+        "maxRowShift": 3,
+        "boardSha256": "7ffa5f18af6df369bffa9505e1f2ea58c8edd6d13c2b9d9c9cbc3ed6713afaac",
+        "tuningGap": {
+          "score": 0.015625,
+          "ease": 0.0,
+          "worst": 0.0625
+        },
+        "validation": {
+          "original": {
+            "score": 0.375,
+            "ease": 0.0,
+            "worst": 1
+          },
+          "tuned": {
+            "score": 0.01171875,
+            "ease": 0.0,
+            "worst": 0.0625
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-10-28T00:17:15"
+      }
+    },
+    "sector32": {
+      "game": 34,
+      "resource": "sector32",
+      "mode": "R",
+      "sigma": {
+        "11": 3,
+        "3": 11,
+        "16": 15
+      },
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第34关-冰面上滑行的企鹅队员（队员回家）-06.png",
+      "sourceSha256": "d4fc41bf503af786f7a4360f8ec8cd5737ccba9fddc3f28718ed708eb922d297",
+      "fileSha256": "b3d0ce1ff247ac455b9aec027ef55df242d86b1ba4135306991e46559bc9afe7",
+      "cellsSha256": "02587e8709e5226db34966b6bcb0007ce416cd82771371b196d863f272d308bf",
+      "changedCells": 0,
+      "withinLimits": true,
+      "streamBalance": {
+        "changed": 665,
+        "length": 7868,
+        "place": "deep"
+      },
+      "title": "冰面上滑行的企鹅队员（队员回家）",
+      "draft": "Art/levels-b/work/第034关_sector32/sector32.json",
+      "status": "draft"
+    },
+    "sector33": {
+      "game": 35,
+      "resource": "sector33",
+      "mode": "P",
+      "sigma": {
+        "2": 14,
+        "14": 2
+      },
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第35关-小白鲸-04.png",
+      "sourceSha256": "70e262dedd1f6b12716d1c35c98c5e50f1cc8996f0084009f4d38e74b4dc62a9",
+      "fileSha256": "68b5de16426801874de925f26dce15dfe7b290e47fa9cf91a7a9e5c1d7d48480",
+      "cellsSha256": "e9a0f01fa80f9b0636c436030206a5ab47b4c0096063c5980bd8acb25fb36136",
+      "changedCells": 0,
+      "withinLimits": true,
+      "streamBalance": {
+        "changed": 273,
+        "length": 7588,
+        "place": "deep"
+      },
+      "title": "冰海里的小白鲸",
+      "draft": "Art/levels-b/work/第035关_sector33/sector33.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "68b5de16426801874de925f26dce15dfe7b290e47fa9cf91a7a9e5c1d7d48480",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261028-003306",
+          "at": "2026-10-28T00:33:06"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "68b5de16426801874de925f26dce15dfe7b290e47fa9cf91a7a9e5c1d7d48480",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261028-003306",
+          "at": "2026-10-28T00:33:57",
+          "runs": 64,
+          "engine": "headless"
+        }
+      }
+    },
+    "sector34": {
+      "game": 36,
+      "resource": "sector34",
+      "mode": "P",
+      "sigma": {
+        "0": 3,
+        "3": 0
+      },
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第36关-趴在雪坡上的小雪豹-02.png",
+      "sourceSha256": "1f8fd0d9722331cd057b15248c7cb59a9221268273c466979bd2e9ca45eab182",
+      "fileSha256": "2daaa6b5683b6c11a6a2f65fe0c9c31c2c191bed833c9ca0e0caeed0cbc4c4b0",
+      "cellsSha256": "cd84b4cdb71647ad9ab319af0a689488af26827dece2aad2fd837f21e365b63e",
+      "changedCells": 0,
+      "withinLimits": true,
+      "streamBalance": {
+        "changed": 165,
+        "length": 6664,
+        "place": "deep"
+      },
+      "title": "趴在雪坡上的小雪豹",
+      "draft": "Art/levels-b/work/第036关_sector34/sector34.json",
+      "status": "draft",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "2daaa6b5683b6c11a6a2f65fe0c9c31c2c191bed833c9ca0e0caeed0cbc4c4b0",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261028-001106",
+          "at": "2026-10-28T00:11:06"
+        }
+      }
+    },
+    "sector35": {
+      "game": 37,
+      "resource": "sector35",
+      "mode": "P",
+      "sigma": {
+        "7": 10,
+        "10": 7
+      },
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第37关-雪夜里亮着暖灯的小木屋-02.png",
+      "sourceSha256": "e131bd9b675274ed5858c078387f8bb02f1ad41c36b28a3f9abfd05fb1869f10",
+      "fileSha256": "37c0db2ef9951851dce066a36a1d62dc8a90106c58b2f17d38b61a5c9ab839a9",
+      "cellsSha256": "bced54d3e113a793415ffdfb04ccef74c1653f66da46decb7eb569712c3501d7",
+      "changedCells": 0,
+      "withinLimits": true,
+      "streamBalance": {
+        "changed": 410,
+        "length": 10920,
+        "place": "deep"
+      },
+      "title": "雪夜里亮着暖灯的小木屋",
+      "draft": "Art/levels-b/work/第037关_sector35/sector35.json",
+      "status": "draft",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "37c0db2ef9951851dce066a36a1d62dc8a90106c58b2f17d38b61a5c9ab839a9",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261028-001106",
+          "at": "2026-10-28T00:11:06"
         }
       }
     }

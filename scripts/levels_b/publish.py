@@ -50,7 +50,7 @@ def check_entry(entry, data):
     if sigma:
         full = {c: c for c in set(a['cells']) | set(a.get('stream') or [])}
         full.update(sigma)
-    problems += validate(a, level, entry.get('mode', 'S'), full)
+    problems += validate(a, level, entry.get('mode', 'S'), full, game, stream_balance=bool(entry.get('streamBalance')))
     return problems
 
 

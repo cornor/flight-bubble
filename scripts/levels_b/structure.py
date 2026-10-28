@@ -23,7 +23,9 @@ reach the front of their columns. Two measures, both deterministic:
    18:45: this replay is chaotic: swapping 20 adjacent cells (invisible) moved its steps by up to 35 % and flipped
    the old verdict on 7 of 10 sample levels, so it is reported only.
 
-Judgement (18:50, provisional until the pilot playtests calibrate it): D_10 and D_20 must EACH be at most MIX_LIMIT
+2026-10-26 23:31 (user decision): the recorded check no longer depends on D10/D20 (shown to be unrelated to bot
+difficulty); it passes when the draft is a valid B level (levelsb_common.validate). --temp keeps the old rule.
+Former judgement (18:50, provisional until the pilot playtests calibrate it): D_10 and D_20 must EACH be at most MIX_LIMIT
 (2026-10-19 review R1: was their mean, which let 0.30 + 0.10 pass); otherwise 超差. Passing is a coarse screen, not
 proof of equal difficulty. The first generated pictures scored 0.02-0.05 (fish), 0.08-0.15 (fox)
 and 0.11-0.21 (turtle).
@@ -41,7 +43,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import make_temp
-from levelsb_common import FIRST, LAST, LEVELS_A, ROOT, SIDE, apply_sigma, invert, file_sha256, label, load_a, load_manifest, name, record_check, resource
+from levelsb_common import (FIRST, LAST, LEVELS_A, ROOT, SIDE, apply_sigma, full_map, invert, file_sha256, label, load_a,
+                            load_manifest, name, record_check, resource, validate)
 
 RATE = (1.0, 3.4, 4.6, 6.3)
 LAYERS = (1, 3, 10, 20)
@@ -258,12 +261,20 @@ def main():
                     print(f'{label(game)}：草稿文件与清单哈希不一致，先重新 convert'); return 1
                 b = json.loads(data)
                 sigma = {int(k): v for k, v in (entry.get('sigma') or {}).items()}
-                if sigma:   # 22:05: judge in A's colour roles (mode P swaps colours consistently)
-                    b = apply_sigma(b, invert(sigma))
+                problems = validate(a, b, entry.get('mode', 'S'), sigma or None, game,
+                                    stream_balance=bool(entry.get('streamBalance')))
+                if sigma:   # 22:05: judge in A's colour roles (modes P/R map colours consistently)
+                    b = apply_sigma(b, invert(full_map(a, sigma)))
             sa, sb = simulate(a), simulate(b)
             la, lb = layers(a), layers(b)
             mix = round(float(front_mix(la, lb)), 4)
-            verdict, note = judge_mix(la, lb)
+            # 2026-10-26 23:31 (user): D10/D20 is reported only; the check passes when the file is a valid B level.
+            mix_verdict, mix_note = judge_mix(la, lb)
+            if args.temp:
+                verdict, note = mix_verdict, mix_note
+            else:
+                verdict = '超差' if problems else '通过'
+                note = '；'.join(problems) or (f'（仅记录）{mix_note}' if mix_note else '')
             shifts = lowest_shifts(a, b)
             replay, replay_note = judge(sa, sb)
             rows.append(dict(game=game, verdict=verdict, note=note, mix=mix, replay=replay, replayNote=replay_note, a=sa, b=sb,

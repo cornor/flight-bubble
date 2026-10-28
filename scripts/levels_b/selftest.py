@@ -42,7 +42,7 @@ def main():
     b = json.loads(json.dumps(a))
     ok(lc.validate(a, b, 'S') == [], '原样复制通过')
     b['queue'][0]['ammo'] += 1
-    ok(any('queue' in p for p in lc.validate(a, b, 'S')), '改一个队员子弹 → 报 queue 不一致')
+    ok(any('排队队员或弹量' in p for p in lc.validate(a, b, 'S')), '改一个队员子弹 → 报排队队员或弹量不一致')
     b = json.loads(json.dumps(a))
     other = next(i for i, color in enumerate(a['cells']) if color != a['cells'][0])
     b['cells'][0], b['cells'][other] = b['cells'][other], b['cells'][0]

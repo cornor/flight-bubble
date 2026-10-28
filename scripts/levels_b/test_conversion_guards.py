@@ -22,7 +22,9 @@ class ConversionGuards(unittest.TestCase):
         valid = candidate(149, True)
         self.assertIs(sorted([invalid, valid], key=candidate_key)[0], valid)
         self.assertIs(sorted([candidate(151, False), valid], key=candidate_key)[0], valid)
-        self.assertIs(sorted([candidate(0, True, False), valid], key=candidate_key)[0], valid)
+        # 2026-10-26 23:31 (user): D10/D20 is reported only, so it no longer outranks the change count.
+        fewer = candidate(0, True, False)
+        self.assertIs(sorted([fewer, valid], key=candidate_key)[0], fewer)
 
     def test_budget_counts_both_ends_and_exact_boundaries(self):
         grid = np.zeros((60, 60), int); final = grid.copy()
@@ -97,6 +99,35 @@ class ConversionGuards(unittest.TestCase):
         result = convert.refill(grid, target, np.zeros((60, 60, 3)), [0, 1, 2], recolor_from={'2': [1]})
         self.assertFalse(((result == 2) & (grid == 0)).any())
         self.assertEqual(int((result == 2).sum()), 120)
+
+    def test_refill_uses_other_boundary_when_intermediate_colour_budget_runs_out(self):
+        # The thin ring (1) is the first/shortest route from background (0) to centre (2).
+        # It cannot carry all ten transfers within its own 15% edit cap. The wide bridge (3) can.
+        grid = np.zeros((60, 60), int)
+        grid[15:45, 15:45] = 1
+        grid[16:44, 16:44] = 2
+        grid[30:40, 10:20] = 3
+        target = {c: int((grid == c).sum()) for c in range(4)}
+        target[0] -= 10; target[2] += 10
+        distance = np.zeros((60, 60, 4))
+        rules = {'2': [1, 3]}  # The central feature must not expand directly into original background.
+        legacy = convert.refill(grid, target, distance, list(range(4)), recolor_from=rules)
+        self.assertFalse(refill_budget(grid, legacy, target)['withinLimits'])
+        final, retried = convert.refill_candidate(grid, target, distance, list(range(4)), recolor_from=rules)
+        self.assertTrue(retried)
+        self.assertTrue(refill_budget(grid, final, target)['withinLimits'])
+        self.assertEqual({c: int((final == c).sum()) for c in target}, target)
+
+    def test_budget_retry_keeps_existing_passing_result_and_rejects_impossible_budget(self):
+        grid = np.zeros((60, 60), int); grid[15:40, 20:45] = 1
+        distance = np.zeros((60, 60, 2))
+        target = {0: 2985, 1: 615}
+        legacy = convert.refill(grid, target, distance, [0, 1])
+        final, retried = convert.refill_candidate(grid, target, distance, [0, 1])
+        self.assertFalse(retried)
+        np.testing.assert_array_equal(final, legacy)
+        with self.assertRaises(convert.RefillBlocked):
+            convert.refill(grid, {0: 3175, 1: 425}, distance, [0, 1], enforce_budget=True)
 
 
 if __name__ == '__main__':

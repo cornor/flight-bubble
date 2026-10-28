@@ -15,6 +15,7 @@ seeds. 17:40 (user decision, plan A+D): the bot's own spread (--noise: unchanged
 win rates by up to 33 points and times by 11 %) is as large as most real differences, so the bot is only a
 coarse screen for clear failures:
   win rate or revive rate differs by WIN_GAP (50 points) or more in any strategy  -> 超差
+  mean progress differs by PROGRESS_GAP (25 points) or more in any strategy      -> 超差 (2026-10-26, level 27)
   any run missing, errored or timed out                                         -> 无法判断
   otherwise                                                                     -> 通过（粗筛）
 A level becomes 'evaluated' only when this screen and structure.py both passed on the same file.
@@ -39,6 +40,7 @@ UNITY = '/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/MacOS/Uni
 STRATEGIES = {0: '内置建议', 1: '优先攻击', 2: '优先合成', 3: '优先清位'}
 # Initial tolerances; calibrate with --noise (the bot's own spread on unchanged levels) and the pilot.
 WIN_GAP, TIME_REL, BLOCKED_REL, BLOCKED_ABS, DISTANCE_PX = .50, .15, .15, 3.0, 3.0
+PROGRESS_GAP = .25
 
 
 def summary(runs):
@@ -58,6 +60,9 @@ def compare(a, b):
         return '超差', f'胜率 {a["winRate"]:.0%}→{b["winRate"]:.0%}'
     if abs(a['reviveRate'] - b['reviveRate']) >= WIN_GAP:
         return '超差', f'复活率 {a["reviveRate"]:.0%}→{b["reviveRate"]:.0%}'
+    # 2026-10-26 17:40 (level 27, user decision): both sides losing hid a clear gap in how far they got.
+    if abs(a['progress'] - b['progress']) >= PROGRESS_GAP:
+        return '超差', f'清除进度 {a["progress"]:.0%}→{b["progress"]:.0%}'
     return '通过', '粗筛'
 
 
@@ -82,15 +87,20 @@ def main():
     mode = ap.add_mutually_exclusive_group()
     for m in ('temp', 'self', 'noise'):
         mode.add_argument('--' + m, action='store_true')
-    ap.add_argument('--runs', type=int, default=12)
+    ap.add_argument('--runs', type=int, default=None, help='每种打法局数：Unity 默认 12；--headless 默认 64（10-27：12 局时第 17 关某打法 58%%→8%%，64 局为 61%%→58%%）')
     ap.add_argument('--strategies', default='0,1,2,3')
     ap.add_argument('--out', type=Path)
     ap.add_argument('--unity', default=UNITY)
+    ap.add_argument('--headless', action='store_true', help='用 sim/ 无界面模拟代替 Unity（逐局结果与 Unity 一致，见 simlib.py）；不支持 --trace')
     ap.add_argument('--trace', action='store_true', help='记录开局、首次卡住前决策和复活/终局快照，不改变打法')
     ap.add_argument('--no-manifest', action='store_true', help='隔离评估，只写证据，不更新制作清单')
     ap.add_argument('--candidate-dir', type=Path, help='从独立目录读取 sectorNN.json，必须配合 --no-manifest')
     args = ap.parse_args()
     strategies = [int(x) for x in args.strategies.split(',')]
+    if args.runs is None:
+        args.runs = 64 if args.headless else 12
+    if args.headless and args.trace:
+        ap.error('--headless 不支持 --trace，诊断请用 Unity')
     kind = next((m for m in ('temp', 'self', 'noise') if getattr(args, m)), 'draft')
     if args.candidate_dir and (kind != 'draft' or not args.no_manifest):
         ap.error('--candidate-dir 只用于独立候选对比，必须配合 --no-manifest，不能与 self/noise/temp 混用')
@@ -130,18 +140,24 @@ def main():
                                   seed=seed + 1000 if args.noise else seed, trace=args.trace))
     input_path, result_path = out / 'input.json', out / 'results.json'
     input_path.write_text(json.dumps(dict(cases=cases), ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
-    print(f'{len(args.levels)} 关 × {len(strategies)} 种打法 × {args.runs} 次 × A/B = {len(cases)} 局，启动 Unity…（证据：{out}）', flush=True)
+    engine = '无界面模拟' if args.headless else 'Unity'
+    print(f'{len(args.levels)} 关 × {len(strategies)} 种打法 × {args.runs} 次 × A/B = {len(cases)} 局，启动{engine}…（证据：{out}）', flush=True)
     started = datetime.now()
-    run = subprocess.run([args.unity, '-batchmode', '-nographics', '-quit', '-projectPath', str(ROOT / 'UnityProject'),
-                          '-executeMethod', 'Flightbeat.Editor.LevelsBDifficultyChecks.Run',
-                          '--levels-b-eval-input', str(input_path), '--levels-b-eval-output', str(result_path),
-                          '-logFile', str(out / 'unity.log')], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+    if args.headless:
+        import simlib
+        run = subprocess.run([simlib.DOTNET, simlib.SIM_DLL, '--input', str(input_path), '--output', str(result_path)],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+    else:
+        run = subprocess.run([args.unity, '-batchmode', '-nographics', '-quit', '-projectPath', str(ROOT / 'UnityProject'),
+                              '-executeMethod', 'Flightbeat.Editor.LevelsBDifficultyChecks.Run',
+                              '--levels-b-eval-input', str(input_path), '--levels-b-eval-output', str(result_path),
+                              '-logFile', str(out / 'unity.log')], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
     if not result_path.exists():
-        print(f'Unity 没有生成结果（退出码 {run.returncode}），见 {out / "unity.log"}'); return 1
-    print(f'Unity 用时 {(datetime.now() - started).total_seconds():.0f} 秒')
+        print(f'{engine} 没有生成结果（退出码 {run.returncode}）'); return 1
+    print(f'{engine} 用时 {(datetime.now() - started).total_seconds():.0f} 秒')
     report_unity = json.loads(result_path.read_text())
     if run.returncode != 0 or not report_unity.get('passed') or report_unity.get('error'):
-        print(f'Unity 运行未成功（退出码 {run.returncode}），不记录评估状态；见 {out / "unity.log"}')
+        print(f'{engine} 运行未成功（退出码 {run.returncode}），不记录评估状态')
         return 1
     results = report_unity['results']
     # Every expected run must be there exactly once.
@@ -182,10 +198,10 @@ def main():
         lines.append(f'| {row["game"]} | {STRATEGIES[row["strategy"]]} | {row["verdict"]} | {fmt(row["a"])} | {fmt(row["b"])} | {row["note"]} |')
     lines += ['', '| 关 | 结论 |', '|---|---|'] + [f'| {label(g)} | {v} |' for g, v in level_verdicts.items()]
     (out / 'report.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
-    (out / 'report.json').write_text(json.dumps(dict(kind=kind, isolated=args.no_manifest, trace=args.trace,
+    (out / 'report.json').write_text(json.dumps(dict(kind=kind, engine='headless' if args.headless else 'unity', isolated=args.no_manifest, trace=args.trace,
                                                      candidateDirectory=str(args.candidate_dir) if args.candidate_dir else None,
                                                      runs=args.runs, levels=level_verdicts, rows=rows, sources=sources,
-                                                     tolerance=dict(winGap=WIN_GAP, timeRel=TIME_REL, blockedRel=BLOCKED_REL,
+                                                     tolerance=dict(winGap=WIN_GAP, progressGap=PROGRESS_GAP, timeRel=TIME_REL, blockedRel=BLOCKED_REL,
                                                                     blockedAbs=BLOCKED_ABS, distancePx=DISTANCE_PX)),
                                                 ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     for g, v in level_verdicts.items():
@@ -197,7 +213,7 @@ def main():
     if kind == 'draft' and not args.no_manifest:
         evidence = str(out.relative_to(ROOT)) if out.is_relative_to(ROOT) else str(out)
         for g, v in level_verdicts.items():
-            record_check(g, 'bot', v, evidence, sources[g]['bSha'], dict(runs=args.runs))
+            record_check(g, 'bot', v, evidence, sources[g]['bSha'], dict(runs=args.runs, engine='headless' if args.headless else 'unity'))
     print(f'报告：{out / "report.md"}')
     return 0 if all(v == '通过' for v in level_verdicts.values()) else 2
 

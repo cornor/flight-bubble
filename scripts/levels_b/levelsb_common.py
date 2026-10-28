@@ -109,42 +109,166 @@ def invert(sigma):
     return {v: k for k, v in sigma.items()}
 
 
-def check_sigma(level, sigma):
+GARDEN_CATALOG = ROOT / 'UnityProject/Assets/Flightbeat/Garden/GardenColorCatalog.Generated.cs'
+_DEBUT = None
+
+
+def _debut_rows():
+    """debut[levelIndex] from the game's catalog (RGB lists; levelIndex = game level - 1), parsed from the C# source."""
+    global _DEBUT
+    if _DEBUT is None:
+        import re
+        src = GARDEN_CATALOG.read_text(encoding='utf-8')
+        head = 'static readonly int[][] debut = {'
+        body = src[src.index(head) + len(head):]
+        body = body[:body.index('};')]
+        _DEBUT = [[] if item == 'noDebut' else [int(x, 16) for x in re.findall(r'0x([0-9A-Fa-f]{6})', item)]
+                  for item in re.findall(r'noDebut|new\[\]\s*\{[^}]*\}', body)]
+    return _DEBUT
+
+
+def _palette_index(level):
+    p = level['palette']
+    return {(p[3 * i] << 16) | (p[3 * i + 1] << 8) | p[3 * i + 2]: i for i in range(len(p) // 3)}
+
+
+def debut_colors(game_level, level):
+    """Palette indices of the members (colours) that debut on this game level: the opening shows their name chips and
+    clearing the level adds them to the codex, so a B level must still contain them."""
+    idx = _palette_index(level)
+    return {idx[x] for x in _debut_rows()[game_level - 1] if x in idx}
+
+
+def allowed_colors(game_level, level):
+    """Palette indices whose member has debuted on this game level or earlier (A never uses any other)."""
+    idx = _palette_index(level)
+    return {idx[x] for row in _debut_rows()[:game_level] for x in row if x in idx}
+
+
+def full_map(level, sigma):
+    """sigma (A index -> B index) completed with identity over every colour the A level uses."""
+    m = {c: c for c in level_colors(level)}
+    m.update({int(k): int(v) for k, v in (sigma or {}).items()})
+    return m
+
+
+def check_sigma(level, sigma, game_level=None, recolor=False):
+    """Mode P: a permutation among the level's own colours. Mode R (2026-10-26 23:31 user decision, recolour): any
+    one-to-one map of the level's colours onto members that have debuted by this level, keeping this level's debut
+    members present."""
     used = set(level_colors(level))
-    if set(sigma) != set(sigma.values()):
-        raise ValueError('置换必须是一一对应（每个颜色只出现一次）')
-    extra = (set(sigma) | set(sigma.values())) - used
-    if extra:
-        raise ValueError(f'置换里有本关没有的颜色索引：{sorted(extra)}')
+    if not recolor:
+        if set(sigma) != set(sigma.values()):
+            raise ValueError('置换必须是一一对应（每个颜色只出现一次）')
+        extra = (set(sigma) | set(sigma.values())) - used
+        if extra:
+            raise ValueError(f'置换里有本关没有的颜色索引：{sorted(extra)}')
+        return
+    if game_level is None:
+        raise ValueError('换色模式需要关号')
+    if set(sigma) - used:
+        raise ValueError(f'换色的原颜色不在本关：{sorted(set(sigma) - used)}')
+    m = full_map(level, sigma)
+    if len(set(m.values())) != len(m):
+        raise ValueError('换色必须一一对应（两种颜色不能换成同一种）')
+    image = set(m.values())
+    early = image - allowed_colors(game_level, level)
+    if early:
+        raise ValueError(f'换色用到了本关还没登场的角色：{sorted(name(level, c) for c in early)}')
+    lost = debut_colors(game_level, level) - image
+    if lost:
+        raise ValueError(f'本关登场的新角色必须保留：{sorted(name(level, c) for c in lost)}')
 
 
-def validate(a, b, mode, sigma=None):
-    """Plan 3.1. Returns a list of problems (empty = valid)."""
+# 2026-10-26 18:08 user decision: the queue may be reordered — same members, same ammo, only the order changes.
+# A queue entry is a slot (where and when: lane, order, deployAt, sourceRow/sourceColumn) holding a member (what:
+# colour, ammo and every other field). B may move members between slots; slots, the member multiset and every
+# special member (kind not 0) stay exactly as in A. Row shift = change of position within its lane (deploy depth).
+QUEUE_SLOT_FIELDS = ('lane', 'order', 'deployAt', 'sourceRow', 'sourceColumn')
+QUEUE_MAX_ROW_SHIFT = 6   # 2026-10-27 16:15 user: 3 -> 6 (provisional, calibrate by playtests)
+
+
+def _queue_member(entry):
+    return json.dumps({k: v for k, v in entry.items() if k not in QUEUE_SLOT_FIELDS}, sort_keys=True)
+
+
+def _queue_rows(queue):
+    seen, rows = {}, []
+    for entry in queue:
+        rows.append(seen.get(entry['lane'], 0))
+        seen[entry['lane']] = rows[-1] + 1
+    return rows
+
+
+def queue_reorder(qa, qb, max_row_shift=None):
+    """(problems, stats) for B's queue against A's. Identical queues give no problems and moved=0."""
+    limit = QUEUE_MAX_ROW_SHIFT if max_row_shift is None else max_row_shift
+    if qa == qb:
+        return [], dict(moved=0, maxRowShift=0)
+    if len(qa) != len(qb):
+        return ['排队人数与 A 关不一致'], None
     problems = []
-    if mode not in ('S', 'P'):
+    if any({k: ea.get(k) for k in QUEUE_SLOT_FIELDS} != {k: eb.get(k) for k in QUEUE_SLOT_FIELDS}
+           for ea, eb in zip(qa, qb)):
+        problems.append('排队位置（队列、顺序、出场时间）与 A 关不一致')
+    if sorted(map(_queue_member, qa)) != sorted(map(_queue_member, qb)):
+        problems.append('排队队员或弹量与 A 关不一致（只允许调整顺序）')
+    if any(ea.get('kind', 0) != 0 and _queue_member(ea) != _queue_member(eb) for ea, eb in zip(qa, qb)):
+        problems.append('特殊队员必须留在原位')
+    if problems:
+        return problems, None
+    # Identical members are interchangeable: pairing their A and B depths in sorted order gives the smallest
+    # possible largest move, so the shift reported is the true minimum.
+    ra, rb = _queue_rows(qa), _queue_rows(qb)
+    depth_a, depth_b = {}, {}
+    for i in range(len(qa)):
+        depth_a.setdefault(_queue_member(qa[i]), []).append(ra[i])
+        depth_b.setdefault(_queue_member(qb[i]), []).append(rb[i])
+    shift = max(abs(x - y) for key in depth_a for x, y in zip(sorted(depth_a[key]), sorted(depth_b[key])))
+    moved = sum(_queue_member(ea) != _queue_member(eb) for ea, eb in zip(qa, qb))
+    stats = dict(moved=moved, maxRowShift=shift)
+    if shift > limit:
+        problems.append(f'排队调整幅度过大：有队员前后移动 {shift} 位，上限 {limit} 位')
+    return problems, stats
+
+
+def validate(a, b, mode, sigma=None, game_level=None, stream_balance=False):
+    """Plan 3.1. Returns a list of problems (empty = valid). Mode R needs the game level (debut rules).
+    stream_balance (2026-10-27 12:20 user decision): the sand stream may be recoloured so that every colour's total
+    (board + stream) still equals A's; its length and per-column split (streamOffsets) stay exactly as in A."""
+    problems = []
+    if mode not in ('S', 'P', 'R'):
         return [f'未知模式 {mode}']
     sigma = sigma or {}
     if mode == 'S' and any(k != v for k, v in sigma.items()):
         problems.append('模式 S 不允许颜色置换')
-    if mode == 'P':
+    if mode in ('P', 'R'):
         try:
-            check_sigma(a, sigma)
+            check_sigma(a, sigma, game_level, recolor=mode == 'R')
         except ValueError as e:
             problems.append(str(e))
             return problems
-    restored = apply_sigma(b, invert(sigma)) if mode == 'P' else b
+        sigma = full_map(a, sigma)
+    restored = apply_sigma(b, invert(sigma)) if mode in ('P', 'R') else b
     cells = restored.get('cells') or []
     if len(cells) != SIDE * SIDE or restored.get('columns') != SIDE or restored.get('rows') != SIDE:
         problems.append('棋盘必须是 60 × 60')
     if any((not isinstance(c, int)) or c < 0 or c >= len(a['palette']) // 3 for c in cells):
         problems.append('有非法颜色索引')
-    if counts(cells) != counts(a['cells']):
+    if stream_balance:
+        total = lambda lv: counts(list(lv['cells']) + list(lv.get('stream') or []))
+        if total(restored) != total(a):
+            problems.append('各色总数（棋盘 + 沙流）与 A 关不一致')
+    elif counts(cells) != counts(a['cells']):
         problems.append('棋盘各色格子数与 A 关不一致')
-    # Field by field, except cells and title.
+    # Field by field, except cells, title and queue (queue: see queue_reorder below).
     keys = set(a) | set(restored)
-    for k in sorted(keys - {'cells', 'title'}):
+    for k in sorted(keys - {'cells', 'title', 'queue'} - ({'stream'} if stream_balance else set())):
         if a.get(k) != restored.get(k):
             problems.append(f'字段 {k} 与 A 关不一致')
+    if stream_balance and len(restored.get('stream') or []) != len(a.get('stream') or []):
+        problems.append('沙流长度与 A 关不一致')
+    problems += queue_reorder(a.get('queue') or [], restored.get('queue') or [])[0]
     offsets, stream = b.get('streamOffsets') or [], b.get('stream') or []
     if stream and (len(offsets) != SIDE + 1 or offsets[-1] != len(stream)):
         problems.append('streamOffsets 长度或末项不对')

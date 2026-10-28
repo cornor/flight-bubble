@@ -20,14 +20,14 @@ def refill_budget(grid, final, target):
 
 
 def candidate_key(r):
-    """Every hard gate precedes aesthetic tie breakers; never prefer an invalid candidate over a valid one."""
+    """Every hard gate precedes aesthetic tie breakers; never prefer an invalid candidate over a valid one.
+    2026-10-26 23:31 (user): D10/D20 no longer gates (difficulty is judged by the headless simulation); among
+    candidates within the refill budget, the smaller front-mix difference only breaks ties after the change count."""
     budget = r['budget']
-    from structure import MIX_LIMIT
-    violations = sum(c['over'] for c in budget['colors']) + (r['changes'] > CHANGED_TOTAL) + (not r['passes'])
+    violations = sum(c['over'] for c in budget['colors']) + (r['changes'] > CHANGED_TOTAL)
     excess = (sum(max(0., c['moved'] / c['limit'] - 1) for c in budget['colors'])
-              + max(0., r['changes'] / CHANGED_TOTAL - 1) + max(0., r['mixExact'] / MIX_LIMIT - 1))
-    return (not (r['passes'] and budget['withinLimits']),
-            violations, excess, r['changes'], r['mixExact'],
+              + max(0., r['changes'] / CHANGED_TOTAL - 1))
+    return (not budget['withinLimits'], violations, excess, r['changes'], r['mixExact'],
             abs(r['transform']['scale'] - 1),
             abs(r['transform']['dx']) + abs(r['transform']['dy']), r['transform']['mirror'])
 

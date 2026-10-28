@@ -70,7 +70,7 @@ def judge(game, image, res):
     want = st.layers(apply_sigma(a, sigma)) if sigma else la   # what B should hold, in the picture's colours
     have = st.layers(b)
     colors = rep['colors'] if isinstance(rep['colors'], list) else ast.literal_eval(rep['colors'])
-    usable = rep['withinLimits'] and st.mix_passes(la, lb)
+    usable = rep['withinLimits']   # 2026-10-26 23:31: D10/D20 reported only
     return dict(
         image=str(Path(image).resolve().relative_to(ROOT)) if Path(image).resolve().is_relative_to(ROOT) else str(image),
         game=game, mode=rep['mode'], sigma={short(a, int(k)) + '→' + short(a, v): 1 for k, v in sigma.items() if int(k) != v},
@@ -131,7 +131,7 @@ def main():
                               config if config and config.exists() else None, args.fine_search)
         results = list(pool.map(worker, jobs))
     rows, lines = [], [f'# B 关候选图筛查（{datetime.now():%Y-%m-%d %H:%M}）', '',
-                       '可用 = 补齐不超限 且 下 10/20 排差异各 ≤0.20。「画面多/少」按画面自己的颜色说（模式 P 已换好），36 格 ≈ 画面 1%。', '']
+                       '可用 = 补齐不超限（10-26 起下 10/20 排差异仅记录）。「画面多/少」按画面自己的颜色说（模式 P 已换好），36 格 ≈ 画面 1%。', '']
     errors = []
     for (game, image), res in results:
         if 'error' in res:

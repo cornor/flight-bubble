@@ -1,0 +1,493 @@
+{
+  "pot": "The SAME flower pot and the SAME two green leaves as in the reference image, at exactly the same position and size, but the pot is EMPTY: the plush character is not there. Above the rim, where the character used to be, show the open top of the pot: its back rim and a soft dark felt/soil interior, in the same fluffy realistic plush rendering and soft light from the upper right. Leaves drawn exactly as in the reference. Transparent background, 224x256 canvas. No text, no shadow, no character parts.",
+  "body": "The SAME plush character as the reference image, with the same pose, expression, size and position, but ALONE: no flower pot and no leaves. Complete the lower body that the pot and leaves hide in the reference: a soft rounded plush bottom ending around y=200. Same fluffy realistic plush rendering, colors and soft light from the upper right. Transparent background, 224x256 canvas, top of head below y=6. No text, no shadow.",
+  "characters": {
+    "bear-2982F4": "references/bear-idle.png",
+    "capybara-FF7E27": "references/capybara-idle.png",
+    "chick-FFDF48": "references/chick-idle.png",
+    "cat-FFFFFF": "references/cat-idle.png"
+  },
+  "generations": [
+    {
+      "character": "bear-2982F4",
+      "asset": "body",
+      "attempt": 1,
+      "status": "selected",
+      "references": [
+        "references/bear-idle.png"
+      ],
+      "prompt": "Use case: precise-object-edit.\nAsset type: isolated character layer for a two-layer plush game sprite.\nImage 1 is the original idle sprite and authoritative exact identity/pose/expression/scale/color reference.\nThe SAME plush character as the reference image, with the same pose, expression, size and position, but ALONE: no flower pot and no leaves. Complete the lower body that the pot and leaves hide in the reference: a soft rounded plush bottom ending around y=200. Same fluffy realistic plush rendering, colors and soft light from the upper right. Transparent background, 224x256 canvas, top of head below y=6. No text, no shadow.\nBlue plush bear with the original tilted head, huge round ears, cream muzzle, dark brown oval nose and original upward-looking eyes. LEFT ear stays higher and RIGHT ear stays lower. Do not change its face or expression. The hidden body is compact blue fur, softly rounded and tapering below the head. Pot/body base center is x=100. The lower body should fit within x=60..145 from y=150 downward and round to a small bottom near x=100,y=200.\nCoordinate specification: retain the entire original 7:8 transparent canvas, target 224x256; original ears and head top remain at approximately y=15, never above y=6. Keep the entire existing head at the identical scale and location. Only reveal and complete the lower body previously hidden by the leaves and pot. End the body smoothly at approximately y=200, leaving bottom rows transparent. Do NOT center or zoom the whole toy differently after removing the pot. The completed hidden lower body is narrower than the original pot so that the original pot can cover it exactly.\nMaintain the original short compact toy proportions; no long human-like torso, no standing legs, no new equipment, no props, no bubbles. Soft realistic fluffy toy fibers, original saturated color palette and soft upper-right light. No cast shadow, floor, background, text, watermark, checkerboard or other views.\nOutput exactly ONE isolated FRONT-facing plush character, including the original face and its completed round lower body. NO pot, NO green leaves, NO plant parts. This generated master supplies the occluded lower body; the original exposed face/ears/head pixels will be restored in the final sprite for exact overlap.",
+      "transparent_background": true,
+      "master": "masters/bear-body-01.png",
+      "delivery": "delivery/creatures/blue/2982F4/body.png",
+      "note": "使用生成结果补齐被遮挡部分；原图已露出的脸、耳朵、身体像素及花盆/叶子由合成脚本恢复。"
+    },
+    {
+      "character": "bear-2982F4",
+      "asset": "pot",
+      "attempt": 1,
+      "status": "selected",
+      "references": [
+        "references/bear-idle.png"
+      ],
+      "prompt": "Use case: precise-object-edit / compositing.\nAsset type: empty plush flower-pot production master for a fixed foreground sprite layer.\nImage 1 is the original idle sprite and authoritative pot design/size/location/color/light reference.\nFinal asset requirement: The SAME flower pot and the SAME two green leaves as in the reference image, at exactly the same position and size, but the pot is EMPTY: the plush character is not there. Above the rim, where the character used to be, show the open top of the pot: its back rim and a soft dark felt/soil interior, in the same fluffy realistic plush rendering and soft light from the upper right. Leaves drawn exactly as in the reference. Transparent background, 224x256 canvas. No text, no shadow, no character parts.\nProduction separation: for THIS generated master, omit BOTH GREEN LEAVES entirely. The two exact original leaves and original lower-pot pixels will be composited on top later. Generate only the SAME EMPTY POT with its whole open top visible, so there is uninterrupted rim and dark soft felt interior behind the future leaves. Do not generate any character, animal part, face, ears, tail, paw, or plush body.\nBlue soft felt pot with the exact original pale-blue cloud appliqué and polka dots. The pot stays centered near x=100, lower silhouette x=39..163, foot line y=212. Its visible rear rim begins around y=138, not higher. Blue felt rim, soft deep navy-blue felt interior.\nPrecise layout: preserve the full 7:8 transparent canvas corresponding to 224x256, with the small pot located in its original lower portion, not zoomed in or recentered. The open rear rim is a shallow oval around y=138; dark soft felt/soil sits between the rear rim and the front rim around y=148. Keep the pot below y=138 and the original foot line y=212. The large empty space above the pot is transparent. Do not make a tall rear wall or raise the rim toward the top of the reference leaves. The opening should feel like a soft handmade felt toy pot, not hard ceramic or plastic, and the dark interior should show subtle plush fiber detail.\nSame realistic plush texture and upper-right soft light. No foliage, no leaves in this master, no character parts, no background, no floor, no cast shadow, no text, watermark or comparison layout. Output ONE EMPTY POT ONLY with genuine transparent alpha.",
+      "transparent_background": true,
+      "master": "masters/bear-pot-01.png",
+      "delivery": "delivery/creatures/blue/2982F4/pot.png",
+      "note": "空盆原图无叶片；最终复用参考图两片叶子与 y>=148 的全部 RGBA 像素，仅采用生成的盆口后沿与内部。"
+    },
+    {
+      "character": "capybara-FF7E27",
+      "asset": "body",
+      "attempt": 1,
+      "status": "selected",
+      "references": [
+        "references/capybara-idle.png"
+      ],
+      "prompt": "Use case: precise-object-edit.\nAsset type: isolated character layer for a two-layer plush game sprite.\nImage 1 is the original idle sprite and authoritative exact identity/pose/expression/scale/color reference.\nThe SAME plush character as the reference image, with the same pose, expression, size and position, but ALONE: no flower pot and no leaves. Complete the lower body that the pot and leaves hide in the reference: a soft rounded plush bottom ending around y=200. Same fluffy realistic plush rendering, colors and soft light from the upper right. Transparent background, 224x256 canvas, top of head below y=6. No text, no shadow.\nOrange-brown plush capybara, with the same enormous drooping brown muzzle, sleepy sideways eyes, original small ears and original head tilt. Exactly the same original expression and pose. The hidden body is compact orange plush, rounded, no new gestures. Lower body centered near x=118; below y=150 it should fit within x=73..163 and taper to a round bottom near x=118,y=200.\nCoordinate specification: retain the entire original 7:8 transparent canvas, target 224x256; original ears and head top remain at approximately y=15, never above y=6. Keep the entire existing head at the identical scale and location. Only reveal and complete the lower body previously hidden by the leaves and pot. End the body smoothly at approximately y=200, leaving bottom rows transparent. Do NOT center or zoom the whole toy differently after removing the pot. The completed hidden lower body is narrower than the original pot so that the original pot can cover it exactly.\nMaintain the original short compact toy proportions; no long human-like torso, no standing legs, no new equipment, no props, no bubbles. Soft realistic fluffy toy fibers, original saturated color palette and soft upper-right light. No cast shadow, floor, background, text, watermark, checkerboard or other views.\nOutput exactly ONE isolated FRONT-facing plush character, including the original face and its completed round lower body. NO pot, NO green leaves, NO plant parts. This generated master supplies the occluded lower body; the original exposed face/ears/head pixels will be restored in the final sprite for exact overlap.",
+      "transparent_background": true,
+      "master": "masters/capybara-body-01.png",
+      "delivery": "delivery/creatures/orange/FF7E27/body.png",
+      "note": "使用生成结果补齐被遮挡部分；原图已露出的脸、耳朵、身体像素及花盆/叶子由合成脚本恢复。"
+    },
+    {
+      "character": "capybara-FF7E27",
+      "asset": "pot",
+      "attempt": 1,
+      "status": "selected",
+      "references": [
+        "references/capybara-idle.png"
+      ],
+      "prompt": "Use case: precise-object-edit / compositing.\nAsset type: empty plush flower-pot production master for a fixed foreground sprite layer.\nImage 1 is the original idle sprite and authoritative pot design/size/location/color/light reference.\nFinal asset requirement: The SAME flower pot and the SAME two green leaves as in the reference image, at exactly the same position and size, but the pot is EMPTY: the plush character is not there. Above the rim, where the character used to be, show the open top of the pot: its back rim and a soft dark felt/soil interior, in the same fluffy realistic plush rendering and soft light from the upper right. Leaves drawn exactly as in the reference. Transparent background, 224x256 canvas. No text, no shadow, no character parts.\nProduction separation: for THIS generated master, omit BOTH GREEN LEAVES entirely. The two exact original leaves and original lower-pot pixels will be composited on top later. Generate only the SAME EMPTY POT with its whole open top visible, so there is uninterrupted rim and dark soft felt interior behind the future leaves. Do not generate any character, animal part, face, ears, tail, paw, or plush body.\nOrange soft felt pot with the exact original peach cloud appliqué and circular dots. The pot stays centered near x=118, lower silhouette x=51..183, foot line y=212. Its visible rear rim begins around y=138, not higher. Orange felt rim, soft deep warm-brown felt interior.\nPrecise layout: preserve the full 7:8 transparent canvas corresponding to 224x256, with the small pot located in its original lower portion, not zoomed in or recentered. The open rear rim is a shallow oval around y=138; dark soft felt/soil sits between the rear rim and the front rim around y=148. Keep the pot below y=138 and the original foot line y=212. The large empty space above the pot is transparent. Do not make a tall rear wall or raise the rim toward the top of the reference leaves. The opening should feel like a soft handmade felt toy pot, not hard ceramic or plastic, and the dark interior should show subtle plush fiber detail.\nSame realistic plush texture and upper-right soft light. No foliage, no leaves in this master, no character parts, no background, no floor, no cast shadow, no text, watermark or comparison layout. Output ONE EMPTY POT ONLY with genuine transparent alpha.",
+      "transparent_background": true,
+      "master": "masters/capybara-pot-01.png",
+      "delivery": "delivery/creatures/orange/FF7E27/pot.png",
+      "note": "空盆原图无叶片；最终复用参考图两片叶子与 y>=148 的全部 RGBA 像素，仅采用生成的盆口后沿与内部。"
+    },
+    {
+      "character": "chick-FFDF48",
+      "asset": "body",
+      "attempt": 1,
+      "status": "not_selected",
+      "references": [
+        "references/chick-idle.png"
+      ],
+      "prompt": "Use case: precise-object-edit.\nAsset type: isolated character layer for a two-layer plush game sprite.\nImage 1 is the original idle sprite and authoritative exact identity/pose/expression/scale/color reference.\nThe SAME plush character as the reference image, with the same pose, expression, size and position, but ALONE: no flower pot and no leaves. Complete the lower body that the pot and leaves hide in the reference: a soft rounded plush bottom ending around y=200. Same fluffy realistic plush rendering, colors and soft light from the upper right. Transparent background, 224x256 canvas, top of head below y=6. No text, no shadow.\nFluffy yellow chick with the SAME three-lobed crown tuft, original upward gaze, original orange open beak, pink cheek blush and small side wings. Preserve the exact expression and original feather silhouette. Complete a compact oval yellow plush body below, round bottom, no new feet or changed wing gestures. Lower body centered x=117, within x=74..160 below y=150, rounding to bottom near y=200.\nCoordinate specification: retain the entire original 7:8 transparent canvas, target 224x256; original ears and head top remain at approximately y=15, never above y=6. Keep the entire existing head at the identical scale and location. Only reveal and complete the lower body previously hidden by the leaves and pot. End the body smoothly at approximately y=200, leaving bottom rows transparent. Do NOT center or zoom the whole toy differently after removing the pot. The completed hidden lower body is narrower than the original pot so that the original pot can cover it exactly.\nMaintain the original short compact toy proportions; no long human-like torso, no standing legs, no new equipment, no props, no bubbles. Soft realistic fluffy toy fibers, original saturated color palette and soft upper-right light. No cast shadow, floor, background, text, watermark, checkerboard or other views.\nOutput exactly ONE isolated FRONT-facing plush character, including the original face and its completed round lower body. NO pot, NO green leaves, NO plant parts. This generated master supplies the occluded lower body; the original exposed face/ears/head pixels will be restored in the final sprite for exact overlap.",
+      "transparent_background": true,
+      "master": "masters/chick-body-01.png",
+      "delivery": "delivery/creatures/yellow/FFDF48/body.png",
+      "note": "下半身多生成了一对翅膀，定向移除重复的下方翅膀。"
+    },
+    {
+      "character": "chick-FFDF48",
+      "asset": "pot",
+      "attempt": 1,
+      "status": "selected",
+      "references": [
+        "references/chick-idle.png"
+      ],
+      "prompt": "Use case: precise-object-edit / compositing.\nAsset type: empty plush flower-pot production master for a fixed foreground sprite layer.\nImage 1 is the original idle sprite and authoritative pot design/size/location/color/light reference.\nFinal asset requirement: The SAME flower pot and the SAME two green leaves as in the reference image, at exactly the same position and size, but the pot is EMPTY: the plush character is not there. Above the rim, where the character used to be, show the open top of the pot: its back rim and a soft dark felt/soil interior, in the same fluffy realistic plush rendering and soft light from the upper right. Leaves drawn exactly as in the reference. Transparent background, 224x256 canvas. No text, no shadow, no character parts.\nProduction separation: for THIS generated master, omit BOTH GREEN LEAVES entirely. The two exact original leaves and original lower-pot pixels will be composited on top later. Generate only the SAME EMPTY POT with its whole open top visible, so there is uninterrupted rim and dark soft felt interior behind the future leaves. Do not generate any character, animal part, face, ears, tail, paw, or plush body.\nWarm yellow soft felt pot with the exact original cream-and-yellow five-petal flower appliqués. The pot stays centered near x=117, lower silhouette x=51..185, foot line y=212. Its visible rear rim begins around y=138, not higher. Yellow felt rim, soft deep ochre-brown felt interior.\nPrecise layout: preserve the full 7:8 transparent canvas corresponding to 224x256, with the small pot located in its original lower portion, not zoomed in or recentered. The open rear rim is a shallow oval around y=138; dark soft felt/soil sits between the rear rim and the front rim around y=148. Keep the pot below y=138 and the original foot line y=212. The large empty space above the pot is transparent. Do not make a tall rear wall or raise the rim toward the top of the reference leaves. The opening should feel like a soft handmade felt toy pot, not hard ceramic or plastic, and the dark interior should show subtle plush fiber detail.\nSame realistic plush texture and upper-right soft light. No foliage, no leaves in this master, no character parts, no background, no floor, no cast shadow, no text, watermark or comparison layout. Output ONE EMPTY POT ONLY with genuine transparent alpha.",
+      "transparent_background": true,
+      "master": "masters/chick-pot-01.png",
+      "delivery": "delivery/creatures/yellow/FFDF48/pot.png",
+      "note": "空盆原图无叶片；最终复用参考图两片叶子与 y>=148 的全部 RGBA 像素，仅采用生成的盆口后沿与内部。"
+    },
+    {
+      "character": "cat-FFFFFF",
+      "asset": "body",
+      "attempt": 1,
+      "status": "selected",
+      "references": [
+        "references/cat-idle.png"
+      ],
+      "prompt": "Use case: precise-object-edit.\nAsset type: isolated character layer for a two-layer plush game sprite.\nImage 1 is the original idle sprite and authoritative exact identity/pose/expression/scale/color reference.\nThe SAME plush character as the reference image, with the same pose, expression, size and position, but ALONE: no flower pot and no leaves. Complete the lower body that the pot and leaves hide in the reference: a soft rounded plush bottom ending around y=200. Same fluffy realistic plush rendering, colors and soft light from the upper right. Transparent background, 224x256 canvas, top of head below y=6. No text, no shadow.\nFluffy white cat with the exact original tilted head, pointed ears with pink inner ears, sideways upward-looking eyes, pink nose, small pink tongue and original whiskers. LEFT ear remains higher; keep all facial proportions and expression. Hidden lower body is compact white fur, smooth rounded bottom, no new paw gesture. Lower body centered x=112, within x=70..154 below y=150, rounding to bottom near y=200.\nCoordinate specification: retain the entire original 7:8 transparent canvas, target 224x256; original ears and head top remain at approximately y=15, never above y=6. Keep the entire existing head at the identical scale and location. Only reveal and complete the lower body previously hidden by the leaves and pot. End the body smoothly at approximately y=200, leaving bottom rows transparent. Do NOT center or zoom the whole toy differently after removing the pot. The completed hidden lower body is narrower than the original pot so that the original pot can cover it exactly.\nMaintain the original short compact toy proportions; no long human-like torso, no standing legs, no new equipment, no props, no bubbles. Soft realistic fluffy toy fibers, original saturated color palette and soft upper-right light. No cast shadow, floor, background, text, watermark, checkerboard or other views.\nOutput exactly ONE isolated FRONT-facing plush character, including the original face and its completed round lower body. NO pot, NO green leaves, NO plant parts. This generated master supplies the occluded lower body; the original exposed face/ears/head pixels will be restored in the final sprite for exact overlap.",
+      "transparent_background": true,
+      "master": "masters/cat-body-01.png",
+      "delivery": "delivery/creatures/white/FFFFFF/body.png",
+      "note": "使用生成结果补齐被遮挡部分；原图已露出的脸、耳朵、身体像素及花盆/叶子由合成脚本恢复。"
+    },
+    {
+      "character": "cat-FFFFFF",
+      "asset": "pot",
+      "attempt": 1,
+      "status": "selected",
+      "references": [
+        "references/cat-idle.png"
+      ],
+      "prompt": "Use case: precise-object-edit / compositing.\nAsset type: empty plush flower-pot production master for a fixed foreground sprite layer.\nImage 1 is the original idle sprite and authoritative pot design/size/location/color/light reference.\nFinal asset requirement: The SAME flower pot and the SAME two green leaves as in the reference image, at exactly the same position and size, but the pot is EMPTY: the plush character is not there. Above the rim, where the character used to be, show the open top of the pot: its back rim and a soft dark felt/soil interior, in the same fluffy realistic plush rendering and soft light from the upper right. Leaves drawn exactly as in the reference. Transparent background, 224x256 canvas. No text, no shadow, no character parts.\nProduction separation: for THIS generated master, omit BOTH GREEN LEAVES entirely. The two exact original leaves and original lower-pot pixels will be composited on top later. Generate only the SAME EMPTY POT with its whole open top visible, so there is uninterrupted rim and dark soft felt interior behind the future leaves. Do not generate any character, animal part, face, ears, tail, paw, or plush body.\nCream-white soft felt pot with the exact original lavender-and-cream five-petal flower appliqués. The pot stays centered near x=112, lower silhouette x=50..175, foot line y=212. Its visible rear rim begins around y=138, not higher. Cream felt rim, soft deep muted warm-gray felt interior.\nPrecise layout: preserve the full 7:8 transparent canvas corresponding to 224x256, with the small pot located in its original lower portion, not zoomed in or recentered. The open rear rim is a shallow oval around y=138; dark soft felt/soil sits between the rear rim and the front rim around y=148. Keep the pot below y=138 and the original foot line y=212. The large empty space above the pot is transparent. Do not make a tall rear wall or raise the rim toward the top of the reference leaves. The opening should feel like a soft handmade felt toy pot, not hard ceramic or plastic, and the dark interior should show subtle plush fiber detail.\nSame realistic plush texture and upper-right soft light. No foliage, no leaves in this master, no character parts, no background, no floor, no cast shadow, no text, watermark or comparison layout. Output ONE EMPTY POT ONLY with genuine transparent alpha.",
+      "transparent_background": true,
+      "master": "masters/cat-pot-01.png",
+      "delivery": "delivery/creatures/white/FFFFFF/pot.png",
+      "note": "空盆原图无叶片；最终复用参考图两片叶子与 y>=148 的全部 RGBA 像素，仅采用生成的盆口后沿与内部。"
+    },
+    {
+      "character": "chick-FFDF48",
+      "asset": "body",
+      "attempt": 2,
+      "status": "selected",
+      "references": [
+        "references/chick-idle.png",
+        "masters/chick-body-01.png"
+      ],
+      "prompt": "Use case: precise-object-edit.\nImage 1 is the original chick idle sprite, the exact reference for face, pose, original wings and feather tuft. Image 2 is the isolated-body draft to correct.\nMake one targeted correction to image 2: REMOVE the duplicate LOWER pair of wing/arm protrusions attached to the new torso. Retain ONLY the single original upper pair of tiny wings at the sides of the original head/body, as visible in image 1. A chick has two wings total, not four. The entire new lower torso below the original wings must have a simple continuous gently rounded oval plush contour, no arms, no extra wings, no legs, no feet. Fill where the extra lower wings were removed with clean background transparency and natural yellow fur contour.\nKeep all other appearance as image 2: same head and original expression, same yellow fur, same upper-right light, same size, placement and full 7:8 transparent canvas. Do not move or shrink the original upper wings. Lower body ends around y=200 in the 224x256 target coordinate system, with a soft round bottom. No pot, no leaves, no props, no floor, no shadow, no background, no checkerboard, no text. True transparent alpha. Output exactly one corrected isolated FRONT-facing chick.",
+      "transparent_background": true,
+      "master": "masters/chick-body-02.png",
+      "delivery": "delivery/creatures/yellow/FFDF48/body.png",
+      "note": "使用生成结果补齐被遮挡部分；原图已露出的脸、耳朵、身体像素及花盆/叶子由合成脚本恢复。"
+    }
+  ],
+  "generation_mode": "built-in image_gen",
+  "generation_count_total": 9,
+  "generation_count_by_character": {
+    "bear-2982F4": 2,
+    "capybara-FF7E27": 2,
+    "chick-FFDF48": 3,
+    "cat-FFFFFF": 2
+  },
+  "generation_count_by_character_and_asset": {
+    "bear-2982F4": {
+      "pot": 1,
+      "body": 1
+    },
+    "capybara-FF7E27": {
+      "pot": 1,
+      "body": 1
+    },
+    "chick-FFDF48": {
+      "pot": 1,
+      "body": 2
+    },
+    "cat-FFFFFF": {
+      "pot": 1,
+      "body": 1
+    }
+  },
+  "composition": {
+    "script": "compose.py",
+    "command": "python3 Art/PlushToy/PotSprout-20261029/compose.py --deliver",
+    "mode": "User-authorized extraction/compositing of original artwork with built-in image_gen completions.",
+    "canvas": [
+      224,
+      256
+    ],
+    "body_bottom_y": 200,
+    "rim_y": 148,
+    "pot_pixel_lock": "Exact original RGBA for rows 148..255, original leaves and original curved side-rim pixels.",
+    "body_pixel_lock": "Original exposed face, ears, expression, pose and fur pixels restored; only previously occluded regions use the generated body completion.",
+    "new_pot_opening_y_range": [
+      135,
+      147
+    ],
+    "layer_order": "body below pot",
+    "validation": "qa/validation.json",
+    "comparison": "qa/layer-comparison.png",
+    "overlay": "qa/overlay-50.png",
+    "blink": "qa/overlay-blink.gif",
+    "reference_files_modified": false,
+    "composite_limitation": "The new pot opening covers a small part of the lower chest between the leaves; reference alpha 252/253 causes slight source-over overlap differences. See README and quantitative QA; the whole recomposed sprite is not claimed to be byte-identical."
+  },
+  "v2": {
+    "pot": "The SAME flower pot as the reference image, at exactly the same position and size, with NOTHING growing in it: remove the two big green leaves too. Show the open top of the pot: its back rim and a soft dark felt/soil interior. Repaint the short piece of the front rim that the leaf tips used to cover. Same fluffy plush rendering and soft light from the upper right. Transparent background, 224x256 canvas. No leaves, no plant, no character, no text, no shadow.",
+    "sprout": "Only a small green seedling (no pot): a short soft felt stem with two small baby leaves on top, the same green felt material as the reference leaves, no flower bud. It stands at the centre of the pot opening (x about 112), its foot on the soil surface just above the front rim (y about 145), about 30-40 px tall. Transparent background, 224x256 canvas, positioned so that it sits in pot.png. No text, no shadow.",
+    "leaves": "Only the two big green leaves of the reference image, exactly the same position, shape, colour and lighting; complete the parts hidden behind the character. Transparent background, 224x256 canvas. Nothing else.",
+    "body": "Fix the v1 body.png only around the neck/chest (y about 120-150): remove the leaf-shaped cut, dark crease and transparent slits left by the leaves and repaint continuous natural plush fur in the character's colour, blending with the fur above and below. Keep everything else unchanged.",
+    "generations": [
+      {
+        "character": "bear-2982F4",
+        "asset": "body",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "v1/blue/2982F4/body.png",
+          "references/bear-idle.png"
+        ],
+        "prompt": "Use case: precise-object-edit.\nAsset type: repaired isolated plush game character sprite.\nImage 1 is the EXACT EDIT TARGET, the v1 isolated body sprite. Image 2 is an identity/material reference only.\nFix the v1 body.png only around the neck/chest (y about 120-150): remove the leaf-shaped cut, dark crease and transparent slits left by the leaves and repaint continuous natural plush fur in the character's colour, blending with the fur above and below. Keep everything else unchanged.\nRepair ONLY the small neck/chest junction around target rows y=120..150 in the original 224x256 canvas. The target currently has a sharp V-shaped leaf-shaped cut/dark triangular crease below the chin, two unnatural shoulder grooves, and some tiny transparent slits or disconnected edge remnants. Remove these defects completely. Replace them with uninterrupted, continuous, soft saturated blue fur; keep the cream muzzle completely unchanged. The head and torso must read as ONE smoothly connected plush toy, not two pasted pieces and not a V-neck shirt. Use a soft gradual natural under-chin shadow, NOT a sharp V-shaped shadow, brown triangular bib, collar, seam, or leaf-shaped fold. Fill the missing side connections with natural rounded furry contours tapering into the torso. Preserve the original upper head and the existing rounded lower body silhouette; do not invent limbs or alter the toy proportions.\nLOCK everything outside this local repair: original face, expression, head tilt, ears, eyes, nose, mouth, whiskers, crown tuft, original head width, and round lower torso/base. Same position and same scale on the full original 7:8 transparent canvas. Head top approximately y=15, body bottom y=200. Do not crop, recenter, rotate, zoom, or change pose. Same realistic plush fibers and soft upper-right light. No pot, no leaves, no sprout, no equipment, no floor, no cast shadow, no background, no checkerboard, no text. Output exactly ONE corrected transparent character image, not a comparison sheet. The final asset will preserve original pixels outside the small repaired band.",
+        "transparent_background": true,
+        "master": "masters/v2-bear-body-01.png",
+        "delivery": "delivery/creatures/blue/2982F4/body.png",
+        "note": "只采用修复带内的生成毛绒，带外逐像素保留 v1 body.png；无 V 形切口或透明缝。"
+      },
+      {
+        "character": "bear-2982F4",
+        "asset": "sprout",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "references/bear-idle.png"
+        ],
+        "prompt": "Use case: stylized-concept.\nAsset type: isolated tiny felt seedling game sprite, a separate transparent layer for the referenced toy's pot.\nImage 1 is MATERIAL AND LIGHTING REFERENCE ONLY: match the realistic green plush/felt of its two large leaves, but do not draw the animal, pot, or those adult leaves.\nOnly a small green seedling (no pot): a short soft felt stem with two small baby leaves on top, the same green felt material as the reference leaves, no flower bud. It stands at the centre of the pot opening (x about 112), its foot on the soil surface just above the front rim (y about 145), about 30-40 px tall. Transparent background, 224x256 canvas, positioned so that it sits in pot.png. No text, no shadow.\nExactly ONE green seedling, exactly TWO small tender baby leaves at the TOP of a short soft felt stem. No flower bud, no seed casing, no third leaf, no roots, no soil blob and no pot. Two small rounded teardrop baby leaves open to left and right, gently cupped, with subtle soft veins and handmade wool-felt fibers; readable simple young silhouette. Green stem approximately 12-16 px long, leaf crown and stem together 36-38 px tall, about 40 px wide. The tiny stem has a neat blunt rounded foot that can touch the soil surface. Fresh green palette compatible with the original adult leaves, upper-right soft lighting, no glossy plastic.\nPrecise target layout on a full 224x256 (7:8) transparent canvas: this character's actual pot-opening center is x=100; put the stem foot at (x=100, y=145), top near y=108..110. Keep all content above y=146 so it will NOT overlap the front rim. Width no more than 44 px, far narrower than the original pot opening. Maintain the large transparent margins; do not include pot outlines or reference guides. No other object, text, shadow, floor, background or checkerboard. Actual transparent alpha. Output ONE seedling layer only.",
+        "transparent_background": true,
+        "master": "masters/v2-bear-sprout-01.png",
+        "delivery": "delivery/creatures/blue/2982F4/sprout.png",
+        "note": "缩放配准到 42×38px，茎底 y=145，位于各自原花盆中心；不压前盆沿。"
+      },
+      {
+        "character": "capybara-FF7E27",
+        "asset": "body",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "v1/orange/FF7E27/body.png",
+          "references/capybara-idle.png"
+        ],
+        "prompt": "Use case: precise-object-edit.\nAsset type: repaired isolated plush game character sprite.\nImage 1 is the EXACT EDIT TARGET, the v1 isolated body sprite. Image 2 is an identity/material reference only.\nFix the v1 body.png only around the neck/chest (y about 120-150): remove the leaf-shaped cut, dark crease and transparent slits left by the leaves and repaint continuous natural plush fur in the character's colour, blending with the fur above and below. Keep everything else unchanged.\nRepair ONLY the small neck/chest junction around target rows y=120..150 in the original 224x256 canvas. The target currently has a sharp V-shaped leaf-shaped cut/dark triangular crease below the chin, two unnatural shoulder grooves, and some tiny transparent slits or disconnected edge remnants. Remove these defects completely. Replace them with uninterrupted, continuous, soft orange-brown fur; keep the existing oversized brown muzzle completely unchanged. The head and torso must read as ONE smoothly connected plush toy, not two pasted pieces and not a V-neck shirt. Use a soft gradual natural under-chin shadow, NOT a sharp V-shaped shadow, brown triangular bib, collar, seam, or leaf-shaped fold. Fill the missing side connections with natural rounded furry contours tapering into the torso. Preserve the original upper head and the existing rounded lower body silhouette; do not invent limbs or alter the toy proportions.\nLOCK everything outside this local repair: original face, expression, head tilt, ears, eyes, nose, mouth, whiskers, crown tuft, original head width, and round lower torso/base. Same position and same scale on the full original 7:8 transparent canvas. Head top approximately y=15, body bottom y=200. Do not crop, recenter, rotate, zoom, or change pose. Same realistic plush fibers and soft upper-right light. No pot, no leaves, no sprout, no equipment, no floor, no cast shadow, no background, no checkerboard, no text. Output exactly ONE corrected transparent character image, not a comparison sheet. The final asset will preserve original pixels outside the small repaired band.",
+        "transparent_background": true,
+        "master": "masters/v2-capybara-body-01.png",
+        "delivery": "delivery/creatures/orange/FF7E27/body.png",
+        "note": "只采用修复带内的生成毛绒，带外逐像素保留 v1 body.png；无 V 形切口或透明缝。"
+      },
+      {
+        "character": "capybara-FF7E27",
+        "asset": "sprout",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "references/capybara-idle.png"
+        ],
+        "prompt": "Use case: stylized-concept.\nAsset type: isolated tiny felt seedling game sprite, a separate transparent layer for the referenced toy's pot.\nImage 1 is MATERIAL AND LIGHTING REFERENCE ONLY: match the realistic green plush/felt of its two large leaves, but do not draw the animal, pot, or those adult leaves.\nOnly a small green seedling (no pot): a short soft felt stem with two small baby leaves on top, the same green felt material as the reference leaves, no flower bud. It stands at the centre of the pot opening (x about 112), its foot on the soil surface just above the front rim (y about 145), about 30-40 px tall. Transparent background, 224x256 canvas, positioned so that it sits in pot.png. No text, no shadow.\nExactly ONE green seedling, exactly TWO small tender baby leaves at the TOP of a short soft felt stem. No flower bud, no seed casing, no third leaf, no roots, no soil blob and no pot. Two small rounded teardrop baby leaves open to left and right, gently cupped, with subtle soft veins and handmade wool-felt fibers; readable simple young silhouette. Green stem approximately 12-16 px long, leaf crown and stem together 36-38 px tall, about 40 px wide. The tiny stem has a neat blunt rounded foot that can touch the soil surface. Fresh green palette compatible with the original adult leaves, upper-right soft lighting, no glossy plastic.\nPrecise target layout on a full 224x256 (7:8) transparent canvas: this character's actual pot-opening center is x=118; put the stem foot at (x=118, y=145), top near y=108..110. Keep all content above y=146 so it will NOT overlap the front rim. Width no more than 44 px, far narrower than the original pot opening. Maintain the large transparent margins; do not include pot outlines or reference guides. No other object, text, shadow, floor, background or checkerboard. Actual transparent alpha. Output ONE seedling layer only.",
+        "transparent_background": true,
+        "master": "masters/v2-capybara-sprout-01.png",
+        "delivery": "delivery/creatures/orange/FF7E27/sprout.png",
+        "note": "缩放配准到 42×38px，茎底 y=145，位于各自原花盆中心；不压前盆沿。"
+      },
+      {
+        "character": "chick-FFDF48",
+        "asset": "body",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "v1/yellow/FFDF48/body.png",
+          "references/chick-idle.png"
+        ],
+        "prompt": "Use case: precise-object-edit.\nAsset type: repaired isolated plush game character sprite.\nImage 1 is the EXACT EDIT TARGET, the v1 isolated body sprite. Image 2 is an identity/material reference only.\nFix the v1 body.png only around the neck/chest (y about 120-150): remove the leaf-shaped cut, dark crease and transparent slits left by the leaves and repaint continuous natural plush fur in the character's colour, blending with the fur above and below. Keep everything else unchanged.\nRepair ONLY the small neck/chest junction around target rows y=120..150 in the original 224x256 canvas. The target currently has a sharp V-shaped leaf-shaped cut/dark triangular crease below the chin, two unnatural shoulder grooves, and some tiny transparent slits or disconnected edge remnants. Remove these defects completely. Replace them with uninterrupted, continuous, soft yellow fluffy feather-like plush fur; retain the original single pair of small upper wings, no extra wings or limbs. The head and torso must read as ONE smoothly connected plush toy, not two pasted pieces and not a V-neck shirt. Use a soft gradual natural under-chin shadow, NOT a sharp V-shaped shadow, brown triangular bib, collar, seam, or leaf-shaped fold. Fill the missing side connections with natural rounded furry contours tapering into the torso. Preserve the original upper head and the existing rounded lower body silhouette; do not invent limbs or alter the toy proportions.\nLOCK everything outside this local repair: original face, expression, head tilt, ears, eyes, nose, mouth, whiskers, crown tuft, original head width, and round lower torso/base. Same position and same scale on the full original 7:8 transparent canvas. Head top approximately y=15, body bottom y=200. Do not crop, recenter, rotate, zoom, or change pose. Same realistic plush fibers and soft upper-right light. No pot, no leaves, no sprout, no equipment, no floor, no cast shadow, no background, no checkerboard, no text. Output exactly ONE corrected transparent character image, not a comparison sheet. The final asset will preserve original pixels outside the small repaired band.",
+        "transparent_background": true,
+        "master": "masters/v2-chick-body-01.png",
+        "delivery": "delivery/creatures/yellow/FFDF48/body.png",
+        "note": "只采用修复带内的生成毛绒，带外逐像素保留 v1 body.png；无 V 形切口或透明缝。"
+      },
+      {
+        "character": "chick-FFDF48",
+        "asset": "sprout",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "references/chick-idle.png"
+        ],
+        "prompt": "Use case: stylized-concept.\nAsset type: isolated tiny felt seedling game sprite, a separate transparent layer for the referenced toy's pot.\nImage 1 is MATERIAL AND LIGHTING REFERENCE ONLY: match the realistic green plush/felt of its two large leaves, but do not draw the animal, pot, or those adult leaves.\nOnly a small green seedling (no pot): a short soft felt stem with two small baby leaves on top, the same green felt material as the reference leaves, no flower bud. It stands at the centre of the pot opening (x about 112), its foot on the soil surface just above the front rim (y about 145), about 30-40 px tall. Transparent background, 224x256 canvas, positioned so that it sits in pot.png. No text, no shadow.\nExactly ONE green seedling, exactly TWO small tender baby leaves at the TOP of a short soft felt stem. No flower bud, no seed casing, no third leaf, no roots, no soil blob and no pot. Two small rounded teardrop baby leaves open to left and right, gently cupped, with subtle soft veins and handmade wool-felt fibers; readable simple young silhouette. Green stem approximately 12-16 px long, leaf crown and stem together 36-38 px tall, about 40 px wide. The tiny stem has a neat blunt rounded foot that can touch the soil surface. Fresh green palette compatible with the original adult leaves, upper-right soft lighting, no glossy plastic.\nPrecise target layout on a full 224x256 (7:8) transparent canvas: this character's actual pot-opening center is x=118; put the stem foot at (x=118, y=145), top near y=108..110. Keep all content above y=146 so it will NOT overlap the front rim. Width no more than 44 px, far narrower than the original pot opening. Maintain the large transparent margins; do not include pot outlines or reference guides. No other object, text, shadow, floor, background or checkerboard. Actual transparent alpha. Output ONE seedling layer only.",
+        "transparent_background": true,
+        "master": "masters/v2-chick-sprout-01.png",
+        "delivery": "delivery/creatures/yellow/FFDF48/sprout.png",
+        "note": "缩放配准到 42×38px，茎底 y=145，位于各自原花盆中心；不压前盆沿。"
+      },
+      {
+        "character": "cat-FFFFFF",
+        "asset": "body",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "v1/white/FFFFFF/body.png",
+          "references/cat-idle.png"
+        ],
+        "prompt": "Use case: precise-object-edit.\nAsset type: repaired isolated plush game character sprite.\nImage 1 is the EXACT EDIT TARGET, the v1 isolated body sprite. Image 2 is an identity/material reference only.\nFix the v1 body.png only around the neck/chest (y about 120-150): remove the leaf-shaped cut, dark crease and transparent slits left by the leaves and repaint continuous natural plush fur in the character's colour, blending with the fur above and below. Keep everything else unchanged.\nRepair ONLY the small neck/chest junction around target rows y=120..150 in the original 224x256 canvas. The target currently has a sharp V-shaped leaf-shaped cut/dark triangular crease below the chin, two unnatural shoulder grooves, and some tiny transparent slits or disconnected edge remnants. Remove these defects completely. Replace them with uninterrupted, continuous, soft soft white fur; keep all original whiskers, pink tongue and facial details unchanged. The head and torso must read as ONE smoothly connected plush toy, not two pasted pieces and not a V-neck shirt. Use a soft gradual natural under-chin shadow, NOT a sharp V-shaped shadow, brown triangular bib, collar, seam, or leaf-shaped fold. Fill the missing side connections with natural rounded furry contours tapering into the torso. Preserve the original upper head and the existing rounded lower body silhouette; do not invent limbs or alter the toy proportions.\nLOCK everything outside this local repair: original face, expression, head tilt, ears, eyes, nose, mouth, whiskers, crown tuft, original head width, and round lower torso/base. Same position and same scale on the full original 7:8 transparent canvas. Head top approximately y=15, body bottom y=200. Do not crop, recenter, rotate, zoom, or change pose. Same realistic plush fibers and soft upper-right light. No pot, no leaves, no sprout, no equipment, no floor, no cast shadow, no background, no checkerboard, no text. Output exactly ONE corrected transparent character image, not a comparison sheet. The final asset will preserve original pixels outside the small repaired band.",
+        "transparent_background": true,
+        "master": "masters/v2-cat-body-01.png",
+        "delivery": "delivery/creatures/white/FFFFFF/body.png",
+        "note": "只采用修复带内的生成毛绒，带外逐像素保留 v1 body.png；无 V 形切口或透明缝。"
+      },
+      {
+        "character": "cat-FFFFFF",
+        "asset": "sprout",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "references/cat-idle.png"
+        ],
+        "prompt": "Use case: stylized-concept.\nAsset type: isolated tiny felt seedling game sprite, a separate transparent layer for the referenced toy's pot.\nImage 1 is MATERIAL AND LIGHTING REFERENCE ONLY: match the realistic green plush/felt of its two large leaves, but do not draw the animal, pot, or those adult leaves.\nOnly a small green seedling (no pot): a short soft felt stem with two small baby leaves on top, the same green felt material as the reference leaves, no flower bud. It stands at the centre of the pot opening (x about 112), its foot on the soil surface just above the front rim (y about 145), about 30-40 px tall. Transparent background, 224x256 canvas, positioned so that it sits in pot.png. No text, no shadow.\nExactly ONE green seedling, exactly TWO small tender baby leaves at the TOP of a short soft felt stem. No flower bud, no seed casing, no third leaf, no roots, no soil blob and no pot. Two small rounded teardrop baby leaves open to left and right, gently cupped, with subtle soft veins and handmade wool-felt fibers; readable simple young silhouette. Green stem approximately 12-16 px long, leaf crown and stem together 36-38 px tall, about 40 px wide. The tiny stem has a neat blunt rounded foot that can touch the soil surface. Fresh green palette compatible with the original adult leaves, upper-right soft lighting, no glossy plastic.\nPrecise target layout on a full 224x256 (7:8) transparent canvas: this character's actual pot-opening center is x=112; put the stem foot at (x=112, y=145), top near y=108..110. Keep all content above y=146 so it will NOT overlap the front rim. Width no more than 44 px, far narrower than the original pot opening. Maintain the large transparent margins; do not include pot outlines or reference guides. No other object, text, shadow, floor, background or checkerboard. Actual transparent alpha. Output ONE seedling layer only.",
+        "transparent_background": true,
+        "master": "masters/v2-cat-sprout-01.png",
+        "delivery": "delivery/creatures/white/FFFFFF/sprout.png",
+        "note": "缩放配准到 42×38px，茎底 y=145，位于各自原花盆中心；不压前盆沿。"
+      },
+      {
+        "character": "bear-2982F4",
+        "asset": "leaves",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "references/bear-idle.png",
+          "qa-v2/generation-inputs/bear-leaves-extracted.png"
+        ],
+        "prompt": "Use case: precise-object-edit / background-extraction.\nAsset type: two adult plush leaf cutouts for the same game character.\nImage 1 is the authoritative original sprite for leaf identity, position, silhouette, exact green color and light. Image 2 is the extracted leaf pair, the EDIT TARGET, showing the current visible pixels.\nOnly the two big green leaves of the reference image, exactly the same position, shape, colour and lighting; complete the parts hidden behind the character. Transparent background, 224x256 canvas. Nothing else.\nMake ONE separate transparent layer containing EXACTLY the same TWO adult green felt leaves. Preserve the original outward left/right angles, unequal tilt, curvature, softly fuzzy edges and vein/fold pattern. Do not redesign the leaves, do not make them symmetrical, do not add a stem, flower bud, branches, pot, soil, character or other objects.\nComplete ONLY the tiny interrupted/occluded parts of the leaves: where the lower edges/bases are clipped into flat horizontal cut lines by the old pot/character, give each leaf a softly rounded continuous underside tapering to a natural narrow pointed base. Do NOT create long dangling leaf stalks. Use the source leaf's own green felt texture to continue it. The two original visible leaf surfaces must remain in the same place and at the same scale; their visible RGB pixels will be restored exactly in final compositing.\nFull transparent canvas is 224x256 (7:8). Adult leaves stay around their existing y=124..154 positions, width and height. Complete the tiny bases only a few pixels lower if needed, no lower than about y=157. Do not zoom, recenter, raise, enlarge or spread the leaves. Same realistic wool-felt/plush surface and soft upper-right light. No background, shadow, floor, text, labels, watermark or checkerboard. Output one pair of leaves only.",
+        "transparent_background": true,
+        "master": "masters/v2-bear-leaves-01.png",
+        "delivery": "delivery/creatures/blue/2982F4/leaves.png",
+        "note": "仅用来补齐原叶片被遮挡的末端；原参考图可见叶片 RGBA 全部原位保留。",
+        "reference_snapshots": {
+          "qa-v2/candidates/bear/leaves.png": "qa-v2/generation-inputs/bear-leaves-extracted.png"
+        },
+        "tool_referenced_image_paths": [
+          "references/bear-idle.png",
+          "qa-v2/candidates/bear/leaves.png"
+        ]
+      },
+      {
+        "character": "capybara-FF7E27",
+        "asset": "leaves",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "references/capybara-idle.png",
+          "qa-v2/generation-inputs/capybara-leaves-extracted.png"
+        ],
+        "prompt": "Use case: precise-object-edit / background-extraction.\nAsset type: two adult plush leaf cutouts for the same game character.\nImage 1 is the authoritative original sprite for leaf identity, position, silhouette, exact green color and light. Image 2 is the extracted leaf pair, the EDIT TARGET, showing the current visible pixels.\nOnly the two big green leaves of the reference image, exactly the same position, shape, colour and lighting; complete the parts hidden behind the character. Transparent background, 224x256 canvas. Nothing else.\nMake ONE separate transparent layer containing EXACTLY the same TWO adult green felt leaves. Preserve the original outward left/right angles, unequal tilt, curvature, softly fuzzy edges and vein/fold pattern. Do not redesign the leaves, do not make them symmetrical, do not add a stem, flower bud, branches, pot, soil, character or other objects.\nComplete ONLY the tiny interrupted/occluded parts of the leaves: where the lower edges/bases are clipped into flat horizontal cut lines by the old pot/character, give each leaf a softly rounded continuous underside tapering to a natural narrow pointed base. Do NOT create long dangling leaf stalks. Use the source leaf's own green felt texture to continue it. The two original visible leaf surfaces must remain in the same place and at the same scale; their visible RGB pixels will be restored exactly in final compositing.\nFull transparent canvas is 224x256 (7:8). Adult leaves stay around their existing y=124..154 positions, width and height. Complete the tiny bases only a few pixels lower if needed, no lower than about y=157. Do not zoom, recenter, raise, enlarge or spread the leaves. Same realistic wool-felt/plush surface and soft upper-right light. No background, shadow, floor, text, labels, watermark or checkerboard. Output one pair of leaves only.",
+        "transparent_background": true,
+        "master": "masters/v2-capybara-leaves-01.png",
+        "delivery": "delivery/creatures/orange/FF7E27/leaves.png",
+        "note": "仅用来补齐原叶片被遮挡的末端；原参考图可见叶片 RGBA 全部原位保留。",
+        "reference_snapshots": {
+          "qa-v2/candidates/capybara/leaves.png": "qa-v2/generation-inputs/capybara-leaves-extracted.png"
+        },
+        "tool_referenced_image_paths": [
+          "references/capybara-idle.png",
+          "qa-v2/candidates/capybara/leaves.png"
+        ]
+      },
+      {
+        "character": "chick-FFDF48",
+        "asset": "leaves",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "references/chick-idle.png",
+          "qa-v2/generation-inputs/chick-leaves-extracted.png"
+        ],
+        "prompt": "Use case: precise-object-edit / background-extraction.\nAsset type: two adult plush leaf cutouts for the same game character.\nImage 1 is the authoritative original sprite for leaf identity, position, silhouette, exact green color and light. Image 2 is the extracted leaf pair, the EDIT TARGET, showing the current visible pixels.\nOnly the two big green leaves of the reference image, exactly the same position, shape, colour and lighting; complete the parts hidden behind the character. Transparent background, 224x256 canvas. Nothing else.\nMake ONE separate transparent layer containing EXACTLY the same TWO adult green felt leaves. Preserve the original outward left/right angles, unequal tilt, curvature, softly fuzzy edges and vein/fold pattern. Do not redesign the leaves, do not make them symmetrical, do not add a stem, flower bud, branches, pot, soil, character or other objects.\nComplete ONLY the tiny interrupted/occluded parts of the leaves: where the lower edges/bases are clipped into flat horizontal cut lines by the old pot/character, give each leaf a softly rounded continuous underside tapering to a natural narrow pointed base. Do NOT create long dangling leaf stalks. Use the source leaf's own green felt texture to continue it. The two original visible leaf surfaces must remain in the same place and at the same scale; their visible RGB pixels will be restored exactly in final compositing.\nFull transparent canvas is 224x256 (7:8). Adult leaves stay around their existing y=124..154 positions, width and height. Complete the tiny bases only a few pixels lower if needed, no lower than about y=157. Do not zoom, recenter, raise, enlarge or spread the leaves. Same realistic wool-felt/plush surface and soft upper-right light. No background, shadow, floor, text, labels, watermark or checkerboard. Output one pair of leaves only.",
+        "transparent_background": true,
+        "master": "masters/v2-chick-leaves-01.png",
+        "delivery": "delivery/creatures/yellow/FFDF48/leaves.png",
+        "note": "仅用来补齐原叶片被遮挡的末端；原参考图可见叶片 RGBA 全部原位保留。",
+        "reference_snapshots": {
+          "qa-v2/candidates/chick/leaves.png": "qa-v2/generation-inputs/chick-leaves-extracted.png"
+        },
+        "tool_referenced_image_paths": [
+          "references/chick-idle.png",
+          "qa-v2/candidates/chick/leaves.png"
+        ]
+      },
+      {
+        "character": "cat-FFFFFF",
+        "asset": "leaves",
+        "attempt": 1,
+        "status": "selected",
+        "references": [
+          "references/cat-idle.png",
+          "qa-v2/generation-inputs/cat-leaves-extracted.png"
+        ],
+        "prompt": "Use case: precise-object-edit / background-extraction.\nAsset type: two adult plush leaf cutouts for the same game character.\nImage 1 is the authoritative original sprite for leaf identity, position, silhouette, exact green color and light. Image 2 is the extracted leaf pair, the EDIT TARGET, showing the current visible pixels.\nOnly the two big green leaves of the reference image, exactly the same position, shape, colour and lighting; complete the parts hidden behind the character. Transparent background, 224x256 canvas. Nothing else.\nMake ONE separate transparent layer containing EXACTLY the same TWO adult green felt leaves. Preserve the original outward left/right angles, unequal tilt, curvature, softly fuzzy edges and vein/fold pattern. Do not redesign the leaves, do not make them symmetrical, do not add a stem, flower bud, branches, pot, soil, character or other objects.\nComplete ONLY the tiny interrupted/occluded parts of the leaves: where the lower edges/bases are clipped into flat horizontal cut lines by the old pot/character, give each leaf a softly rounded continuous underside tapering to a natural narrow pointed base. Do NOT create long dangling leaf stalks. Use the source leaf's own green felt texture to continue it. The two original visible leaf surfaces must remain in the same place and at the same scale; their visible RGB pixels will be restored exactly in final compositing.\nFull transparent canvas is 224x256 (7:8). Adult leaves stay around their existing y=124..154 positions, width and height. Complete the tiny bases only a few pixels lower if needed, no lower than about y=157. Do not zoom, recenter, raise, enlarge or spread the leaves. Same realistic wool-felt/plush surface and soft upper-right light. No background, shadow, floor, text, labels, watermark or checkerboard. Output one pair of leaves only.",
+        "transparent_background": true,
+        "master": "masters/v2-cat-leaves-01.png",
+        "delivery": "delivery/creatures/white/FFFFFF/leaves.png",
+        "note": "仅用来补齐原叶片被遮挡的末端；原参考图可见叶片 RGBA 全部原位保留。",
+        "reference_snapshots": {
+          "qa-v2/candidates/cat/leaves.png": "qa-v2/generation-inputs/cat-leaves-extracted.png"
+        },
+        "tool_referenced_image_paths": [
+          "references/cat-idle.png",
+          "qa-v2/candidates/cat/leaves.png"
+        ]
+      }
+    ],
+    "generation_mode": "built-in image_gen",
+    "generation_count_total": 12,
+    "generation_count_by_character": {
+      "bear-2982F4": 3,
+      "capybara-FF7E27": 3,
+      "chick-FFDF48": 3,
+      "cat-FFFFFF": 3
+    },
+    "generation_count_by_asset": {
+      "body": 4,
+      "sprout": 4,
+      "leaves": 4,
+      "pot": 0
+    },
+    "reused_master_sources": [
+      {
+        "character": "bear-2982F4",
+        "asset": "pot",
+        "master": "masters/bear-pot-01.png",
+        "original_generation_prompt": "Use case: precise-object-edit / compositing.\nAsset type: empty plush flower-pot production master for a fixed foreground sprite layer.\nImage 1 is the original idle sprite and authoritative pot design/size/location/color/light reference.\nFinal asset requirement: The SAME flower pot and the SAME two green leaves as in the reference image, at exactly the same position and size, but the pot is EMPTY: the plush character is not there. Above the rim, where the character used to be, show the open top of the pot: its back rim and a soft dark felt/soil interior, in the same fluffy realistic plush rendering and soft light from the upper right. Leaves drawn exactly as in the reference. Transparent background, 224x256 canvas. No text, no shadow, no character parts.\nProduction separation: for THIS generated master, omit BOTH GREEN LEAVES entirely. The two exact original leaves and original lower-pot pixels will be composited on top later. Generate only the SAME EMPTY POT with its whole open top visible, so there is uninterrupted rim and dark soft felt interior behind the future leaves. Do not generate any character, animal part, face, ears, tail, paw, or plush body.\nBlue soft felt pot with the exact original pale-blue cloud appliqué and polka dots. The pot stays centered near x=100, lower silhouette x=39..163, foot line y=212. Its visible rear rim begins around y=138, not higher. Blue felt rim, soft deep navy-blue felt interior.\nPrecise layout: preserve the full 7:8 transparent canvas corresponding to 224x256, with the small pot located in its original lower portion, not zoomed in or recentered. The open rear rim is a shallow oval around y=138; dark soft felt/soil sits between the rear rim and the front rim around y=148. Keep the pot below y=138 and the original foot line y=212. The large empty space above the pot is transparent. Do not make a tall rear wall or raise the rim toward the top of the reference leaves. The opening should feel like a soft handmade felt toy pot, not hard ceramic or plastic, and the dark interior should show subtle plush fiber detail.\nSame realistic plush texture and upper-right soft light. No foliage, no leaves in this master, no character parts, no background, no floor, no cast shadow, no text, watermark or comparison layout. Output ONE EMPTY POT ONLY with genuine transparent alpha.",
+        "new_generation_calls": 0,
+        "method": "复用此前内置 image_gen 生成的无叶片空盆原稿，重新配准并完整采用 y<154 的连续盆沿/内部；y>=154 原样替换成参考图。"
+      },
+      {
+        "character": "capybara-FF7E27",
+        "asset": "pot",
+        "master": "masters/capybara-pot-01.png",
+        "original_generation_prompt": "Use case: precise-object-edit / compositing.\nAsset type: empty plush flower-pot production master for a fixed foreground sprite layer.\nImage 1 is the original idle sprite and authoritative pot design/size/location/color/light reference.\nFinal asset requirement: The SAME flower pot and the SAME two green leaves as in the reference image, at exactly the same position and size, but the pot is EMPTY: the plush character is not there. Above the rim, where the character used to be, show the open top of the pot: its back rim and a soft dark felt/soil interior, in the same fluffy realistic plush rendering and soft light from the upper right. Leaves drawn exactly as in the reference. Transparent background, 224x256 canvas. No text, no shadow, no character parts.\nProduction separation: for THIS generated master, omit BOTH GREEN LEAVES entirely. The two exact original leaves and original lower-pot pixels will be composited on top later. Generate only the SAME EMPTY POT with its whole open top visible, so there is uninterrupted rim and dark soft felt interior behind the future leaves. Do not generate any character, animal part, face, ears, tail, paw, or plush body.\nOrange soft felt pot with the exact original peach cloud appliqué and circular dots. The pot stays centered near x=118, lower silhouette x=51..183, foot line y=212. Its visible rear rim begins around y=138, not higher. Orange felt rim, soft deep warm-brown felt interior.\nPrecise layout: preserve the full 7:8 transparent canvas corresponding to 224x256, with the small pot located in its original lower portion, not zoomed in or recentered. The open rear rim is a shallow oval around y=138; dark soft felt/soil sits between the rear rim and the front rim around y=148. Keep the pot below y=138 and the original foot line y=212. The large empty space above the pot is transparent. Do not make a tall rear wall or raise the rim toward the top of the reference leaves. The opening should feel like a soft handmade felt toy pot, not hard ceramic or plastic, and the dark interior should show subtle plush fiber detail.\nSame realistic plush texture and upper-right soft light. No foliage, no leaves in this master, no character parts, no background, no floor, no cast shadow, no text, watermark or comparison layout. Output ONE EMPTY POT ONLY with genuine transparent alpha.",
+        "new_generation_calls": 0,
+        "method": "复用此前内置 image_gen 生成的无叶片空盆原稿，重新配准并完整采用 y<154 的连续盆沿/内部；y>=154 原样替换成参考图。"
+      },
+      {
+        "character": "chick-FFDF48",
+        "asset": "pot",
+        "master": "masters/chick-pot-01.png",
+        "original_generation_prompt": "Use case: precise-object-edit / compositing.\nAsset type: empty plush flower-pot production master for a fixed foreground sprite layer.\nImage 1 is the original idle sprite and authoritative pot design/size/location/color/light reference.\nFinal asset requirement: The SAME flower pot and the SAME two green leaves as in the reference image, at exactly the same position and size, but the pot is EMPTY: the plush character is not there. Above the rim, where the character used to be, show the open top of the pot: its back rim and a soft dark felt/soil interior, in the same fluffy realistic plush rendering and soft light from the upper right. Leaves drawn exactly as in the reference. Transparent background, 224x256 canvas. No text, no shadow, no character parts.\nProduction separation: for THIS generated master, omit BOTH GREEN LEAVES entirely. The two exact original leaves and original lower-pot pixels will be composited on top later. Generate only the SAME EMPTY POT with its whole open top visible, so there is uninterrupted rim and dark soft felt interior behind the future leaves. Do not generate any character, animal part, face, ears, tail, paw, or plush body.\nWarm yellow soft felt pot with the exact original cream-and-yellow five-petal flower appliqués. The pot stays centered near x=117, lower silhouette x=51..185, foot line y=212. Its visible rear rim begins around y=138, not higher. Yellow felt rim, soft deep ochre-brown felt interior.\nPrecise layout: preserve the full 7:8 transparent canvas corresponding to 224x256, with the small pot located in its original lower portion, not zoomed in or recentered. The open rear rim is a shallow oval around y=138; dark soft felt/soil sits between the rear rim and the front rim around y=148. Keep the pot below y=138 and the original foot line y=212. The large empty space above the pot is transparent. Do not make a tall rear wall or raise the rim toward the top of the reference leaves. The opening should feel like a soft handmade felt toy pot, not hard ceramic or plastic, and the dark interior should show subtle plush fiber detail.\nSame realistic plush texture and upper-right soft light. No foliage, no leaves in this master, no character parts, no background, no floor, no cast shadow, no text, watermark or comparison layout. Output ONE EMPTY POT ONLY with genuine transparent alpha.",
+        "new_generation_calls": 0,
+        "method": "复用此前内置 image_gen 生成的无叶片空盆原稿，重新配准并完整采用 y<154 的连续盆沿/内部；y>=154 原样替换成参考图。"
+      },
+      {
+        "character": "cat-FFFFFF",
+        "asset": "pot",
+        "master": "masters/cat-pot-01.png",
+        "original_generation_prompt": "Use case: precise-object-edit / compositing.\nAsset type: empty plush flower-pot production master for a fixed foreground sprite layer.\nImage 1 is the original idle sprite and authoritative pot design/size/location/color/light reference.\nFinal asset requirement: The SAME flower pot and the SAME two green leaves as in the reference image, at exactly the same position and size, but the pot is EMPTY: the plush character is not there. Above the rim, where the character used to be, show the open top of the pot: its back rim and a soft dark felt/soil interior, in the same fluffy realistic plush rendering and soft light from the upper right. Leaves drawn exactly as in the reference. Transparent background, 224x256 canvas. No text, no shadow, no character parts.\nProduction separation: for THIS generated master, omit BOTH GREEN LEAVES entirely. The two exact original leaves and original lower-pot pixels will be composited on top later. Generate only the SAME EMPTY POT with its whole open top visible, so there is uninterrupted rim and dark soft felt interior behind the future leaves. Do not generate any character, animal part, face, ears, tail, paw, or plush body.\nCream-white soft felt pot with the exact original lavender-and-cream five-petal flower appliqués. The pot stays centered near x=112, lower silhouette x=50..175, foot line y=212. Its visible rear rim begins around y=138, not higher. Cream felt rim, soft deep muted warm-gray felt interior.\nPrecise layout: preserve the full 7:8 transparent canvas corresponding to 224x256, with the small pot located in its original lower portion, not zoomed in or recentered. The open rear rim is a shallow oval around y=138; dark soft felt/soil sits between the rear rim and the front rim around y=148. Keep the pot below y=138 and the original foot line y=212. The large empty space above the pot is transparent. Do not make a tall rear wall or raise the rim toward the top of the reference leaves. The opening should feel like a soft handmade felt toy pot, not hard ceramic or plastic, and the dark interior should show subtle plush fiber detail.\nSame realistic plush texture and upper-right soft light. No foliage, no leaves in this master, no character parts, no background, no floor, no cast shadow, no text, watermark or comparison layout. Output ONE EMPTY POT ONLY with genuine transparent alpha.",
+        "new_generation_calls": 0,
+        "method": "复用此前内置 image_gen 生成的无叶片空盆原稿，重新配准并完整采用 y<154 的连续盆沿/内部；y>=154 原样替换成参考图。"
+      }
+    ],
+    "composition": {
+      "script": "compose_v2.py",
+      "command": "python3 Art/PlushToy/PotSprout-20261029/compose_v2.py --deliver",
+      "canvas": [
+        224,
+        256
+      ],
+      "delivery_files_per_character": [
+        "pot.png",
+        "sprout.png",
+        "leaves.png",
+        "body.png"
+      ],
+      "pot_pixel_lock": "Reference RGBA rows y>=154 copied exactly; rows 148..153 are a continuous newly restored leaf-free rim.",
+      "leaves_pixel_lock": "Visible original leaf mask RGBA unchanged at original coordinates; generated underside/base completion adds up to two rows, no content at y>=156.",
+      "body_pixel_lock": "v1 body unchanged outside the feathered neck repair mask; actual changed rows limited to y=120..153. Face details additionally protected.",
+      "sprout_size": [
+        42,
+        38
+      ],
+      "sprout_foot_y": 145,
+      "sprout_centers": {
+        "bear-2982F4": 100,
+        "capybara-FF7E27": 118,
+        "chick-FFDF48": 118,
+        "cat-FFFFFF": 112
+      },
+      "stack_order": [
+        "body",
+        "pot",
+        "leaves"
+      ],
+      "planted_stack_order": [
+        "pot",
+        "sprout"
+      ],
+      "validation": "qa-v2/validation.json",
+      "preview": "qa-v2/sixteen-assets.png",
+      "composite_comparison": "qa-v2/composite-comparison.png",
+      "body_repair_comparison": "qa-v2/neck-before-after.png",
+      "v1_untouched": true,
+      "source_references_untouched": true,
+      "composite_note": "New rim, tiny completed leaf bases, local neck repair and original alpha 252/253 introduce small visual differences. No claim that the entire composite is byte-identical."
+    }
+  }
+}

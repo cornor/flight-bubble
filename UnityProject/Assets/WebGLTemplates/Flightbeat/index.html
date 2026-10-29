@@ -98,8 +98,15 @@
     }
     // 2026-10-22 11:12 (user: text looked soft on phones): render up to 2x device pixels (was 1.5x from the original;
     // a 3x phone drew at half resolution and the browser scaled it up).
-    const config={dataUrl:'Build/{{{ DATA_FILENAME }}}',frameworkUrl:'Build/{{{ FRAMEWORK_FILENAME }}}',codeUrl:'Build/{{{ CODE_FILENAME }}}',streamingAssetsUrl:'StreamingAssets',companyName:"BubbleSquad",productName:"FlightBubble",productVersion:"0.11.0",devicePixelRatio:Math.min(window.devicePixelRatio||1,2)};
-    const loader=document.createElement('script');loader.src='Build/{{{ LOADER_FILENAME }}}';
+    // 2026-10-29 (performance): browsers with ASTC textures (phones, WeChat) load Build-astc, whose textures take a
+    // quarter of the memory and download; others load the plain build. astcBuild is filled in by scripts/r1v3/build.sh.
+    const astcBuild=null;
+    const useAstc=!!astcBuild&&(()=>{try{const c=document.createElement('canvas'),g=c.getContext('webgl2')||c.getContext('webgl');
+      const ok=!!(g&&g.getExtension('WEBGL_compressed_texture_astc'));const lose=g&&g.getExtension('WEBGL_lose_context');if(lose)lose.loseContext();return ok;}catch(e){return false;}})();
+    const files=useAstc?astcBuild:{data:'Build/{{{ DATA_FILENAME }}}',framework:'Build/{{{ FRAMEWORK_FILENAME }}}',code:'Build/{{{ CODE_FILENAME }}}',loader:'Build/{{{ LOADER_FILENAME }}}'};
+    window.gardenTextureBuild=useAstc?'astc':'plain';
+    const config={dataUrl:files.data,frameworkUrl:files.framework,codeUrl:files.code,streamingAssetsUrl:'StreamingAssets',companyName:"BubbleSquad",productName:"FlightBubble",productVersion:"0.11.0",devicePixelRatio:Math.min(window.devicePixelRatio||1,2)};
+    const loader=document.createElement('script');loader.src=files.loader;
     loader.onload=()=>createUnityInstance(canvas,config,p=>{target=Math.max(target,Math.min(p,1)*.96);}).then(instance=>{
       target=1;done=true;
     }).catch(error=>{console.error(error);fail();});

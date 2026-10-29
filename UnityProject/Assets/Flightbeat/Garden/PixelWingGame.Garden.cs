@@ -443,11 +443,16 @@ namespace Flightbeat.Game
                     // reaches the front twirls once to face you (.36 s: edge-on twice, mirrored in between, lifted a
                     // little), blinks as it lands and gives the old small hop - its "my turn" moment. Hidden members
                     // keep their bubble burst instead.
-                    bool twirl = wake < .7f && QueueReveal(ship, row) >= 1f;
+                    Color queueTint = row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color);
+                    // 2026-10-29 14:53 (user): members with the pot / body art hide in their pot while queued and grow
+                    // out of it at the front (sprout), instead of the twirl / back view below.
+                    bool hasSprout = !(row != 0 && ship.Kind == 2) && GardenSkin.HasSprout(queueTint);
+                    bool fresh = wake < .7f && QueueReveal(ship, row) >= 1f;
+                    bool twirl = fresh && !hasSprout, sprouting = fresh && hasSprout && row == 0;
                     float spin = twirl && wake < .36f ? wake / .36f : -1f;
-                    float hopT = twirl ? wake - .36f : wake, hop = hopT >= 0f && hopT < .3f ? Mathf.Sin(hopT / .3f * Mathf.PI) : 0f;
+                    float hopT = twirl ? wake - .36f : sprouting ? -1f : wake, hop = hopT >= 0f && hopT < .3f ? Mathf.Sin(hopT / .3f * Mathf.PI) : 0f;
                     float lift = spin >= 0f ? 7f * Mathf.Sin(spin * Mathf.PI) : 0f;
-                    bool blink = twirl && wake >= .3f && wake < .44f;
+                    bool blink = twirl && wake >= .3f && wake < .44f || sprouting && wake >= .42f && wake < .54f;
                     // 2026-10-29 (user, like 沙画消消's level-start hint): before the first deploy, the suggested front member
                     // keeps hopping - up and stretched (.25 s), down and squashed (.25 s) - until any member is sent out.
                     float hintLift = 0f, hintSquash = 0f;
@@ -469,10 +474,9 @@ namespace Flightbeat.Game
                         }
                     }
                     float feetY = QueueDisplayY(at.y - 6f * hop - lift - hintLift) + 12;
-                    Color queueTint = row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color);
                     // 2026-10-29 (user): members with a back view show their back in the rows behind; reaching the front
                     // they turn round instead of twirling: back, edge-on, then the face (a half turn in the same .36 s).
-                    bool hasBack = !(row != 0 && ship.Kind == 2) && Has(PlantSlot(queueTint, "back"));
+                    bool hasBack = !hasSprout && !(row != 0 && ship.Kind == 2) && Has(PlantSlot(queueTint, "back"));
                     if (spin >= 0f && hasBack) {
                         GardenSkin.BendTurn = Mathf.Max(.06f, Mathf.Abs(Mathf.Cos(spin * Mathf.PI)));
                         GardenSkin.BackView = spin < .5f;
@@ -482,14 +486,54 @@ namespace Flightbeat.Game
                         GardenSkin.BendMirror = spin > .25f && spin < .75f;
                     }
                     if (row > 0 && hasBack) GardenSkin.BackView = true;
+                    // Sprout: the pot jiggles (.1 s), then the body rises out of it with a small overshoot (.32 s), drawn
+                    // after the pot and before the unfolding leaves; from .5 s the normal idle art takes over
+                    // (body + pot + leaves = idle).
+                    float potJiggle = 0f;
+                    if (hasSprout && (row > 0 || sprouting && wake < .5f)) {
+                        if (sprouting) potJiggle = wake < .1f ? .08f * Mathf.Sin(wake / .1f * Mathf.PI) : 0f;
+                        GardenSkin.PotOnly = true;
+                    }
                     // 2026-10-29 (user, like 沙画消消): tapped while every pad is taken - the front member shakes its head
                     // (12, -14, 9, -5, 0 degrees over .35 s, the pot stays put); the deny sound is the game's own.
                     if (row == 0) GardenSkin.BendRotate = QueueRefuseShake(lane);
                     // Queue portraits share a 100% canvas scale; cancel the old per-character size compensation.
                     Creature(s, queueTint, at.x, feetY, queueCanvas, ship.Tier,
                         row != 0 && ship.Kind == 2 ? "" : ship.Ammo.ToString(), 0f, 14f * queueScale, false, true, row == 0 ? .03f : .02f, lane * 2.3f + row * 1.1f,
-                        1f / ArtScale(queueTint), -.05f * hop + hintSquash, 14f * queueScale, -1f, 0f, 0f, blink, 0f);   // 2026-10-16 22:30: number pill tucked against the feet
+                        1f / ArtScale(queueTint), -.05f * hop + hintSquash + potJiggle, 14f * queueScale, -1f, 0f, 0f, blink, 0f);   // 2026-10-16 22:30: number pill tucked against the feet
+                    // 16:25 (user): v2 - a seedling grows in the queued pot (swaying a little); at the front it wiggles, shoots
+                    // up and fades while the two big leaves unfold from the middle (small and squat -> full, a small overshoot).
+                    if (hasSprout && (row > 0 || sprouting && wake < .5f)) {
+                        float sizeS = 1f / ArtScale(queueTint);
+                        // 20:21 (user): the seedling twice as big, grown up from its own stem base.
+                        const float SproutSize = 2f;
+                        Vector2 stemBase = new Vector2(GardenSkin.SproutStemX(queueTint), 146f);
+                        // 20:58 (user): bigger nearer the front (QueueSproutSize, grows on moving up a row); a slower +-6 deg
+                        // sway that runs across the queue as a wave, like wind over a row of seedlings.
+                        if (row > 0) {
+                            float grow = QueueSproutSize(ship.Id, row);
+                            GardenSkin.DrawSproutLayer(s, queueTint, "sprout", at.x, feetY, queueCanvas, sizeS, stemBase, grow, grow,
+                                6f * Mathf.Sin(ui * 1.6f - lane * .6f - row * .35f), 1f);
+                        }
+                        else {
+                            float lt = (wake - .1f) / .32f, lk = wake < .1f ? 0f : lt >= 1f ? 1f
+                                : 1f + 2.4f * Mathf.Pow(lt - 1f, 3f) + 1.4f * Mathf.Pow(lt - 1f, 2f);   // ease-out-back
+                            // The body rises out of the pot (in front of its soil, cut at the front rim), then the leaves.
+                            GardenSkin.DrawSproutBody(s, queueTint, at.x, feetY, queueCanvas, sizeS, lk);
+                            GardenSkin.DrawSproutLayer(s, queueTint, "leaves", at.x, feetY, queueCanvas, sizeS, new Vector2(112f, 150f),
+                                .25f + .75f * lk, .4f + .6f * lk, 0f, Mathf.Clamp01(lk * 3f));
+                            // 17:57: the seedling shrinks into the soil and fades within .1 s (stretching up, it ghosted over the face).
+                            float sk = Mathf.Clamp01((wake - .1f) / .1f), sway = wake < .1f ? 8f * Mathf.Sin(wake / .1f * Mathf.PI * 2f) : 0f;
+                            GardenSkin.DrawSproutLayer(s, queueTint, "sprout", at.x, feetY, queueCanvas, sizeS, stemBase, SproutSize * (1f - .5f * sk), SproutSize * (1f - .5f * sk), sway, 1f - sk);
+                        }
+                    }
                     if (twirl && wake >= .3f && wake < .6f) QueueTwirlSparkle(s, at.x, QueueDisplayY(at.y) + 12f - queueCanvas * .75f, queueCanvas, wake - .3f);
+                    // 20:50 (user, option 1): the bubble splash covered the member growing out of the pot, so it is half the
+                    // size and plays while the pot jiggles (0-.18 s): the pot pops open, then the member grows in plain view.
+                    // Centred a little below the rim (canvas y 158) so the seedling's two leaves stay visible as it wiggles.
+                    if (sprouting && wake < .18f)
+                        GardenFx.Burst(s, "impact-dust", new Vector2(at.x, feetY - queueCanvas * (212f - 158f) / 256f), queueCanvas * .4f, wake, .18f);
+                    if (sprouting && wake >= .42f && wake < .72f) QueueTwirlSparkle(s, at.x, QueueDisplayY(at.y) + 12f - queueCanvas * .75f, queueCanvas, wake - .42f);
                     // 2026-10-21 12:26 (user): hidden members show no number pill (was a "?" pill); the bubble art carries the "?".
                     // 2026-10-21: a hidden member reaching the front bursts out of its bubble.
                     float reveal = QueueReveal(ship, row);

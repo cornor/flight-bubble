@@ -11,7 +11,7 @@ cd "$repo"
 # Fixed output directory (user request 2026-10-15): every build replaces Builds/WebGL/GardenR1-bubble.
 output="$repo/Builds/WebGL/GardenR1-bubble"
 if [ "$#" -gt 0 ] && [ "$1" != "$output" ]; then echo "输出固定为 $output"; exit 2; fi
-case "$output" in "$repo"/Builds/WebGL/*) rm -rf "$output" "$output".*.log "$output".*.json ;; *) [ -e "$output" ] && { echo "输出目录已存在：$output"; exit 1; } ;; esac
+case "$output" in "$repo"/Builds/WebGL/*) rm -rf "$output" "$output".*.log "$output".*.json "$output-astc" "$output-astc".*.json ;; *) [ -e "$output" ] && { echo "输出目录已存在：$output"; exit 1; } ;; esac
 mkdir -p "$(dirname "$output")"
 unity='/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/MacOS/Unity'
 clean_flag=()
@@ -40,6 +40,18 @@ step "图集补字、覆盖、源码与 B 套关卡检查"
   --flightbeat-webgl-build "$output" ${clean_flag[@]+"${clean_flag[@]}"} -logFile "$output.build.log" || {
     echo "Unity 构建失败，日志：$output.build.log"; grep -E "error CS|Error|Exception" "$output.build.log" | head -40; exit 1; }
 step "Unity WebGL 构建"
+# 2026-10-29 (performance): a second player with the R1 textures as ASTC 4x4 (a quarter of the memory and download,
+# visually the same) for phones / WeChat; index.html loads it when the browser supports ASTC (else the plain Build/).
+# R1_ASTC=0 skips it for a quicker local build.
+if [ "${R1_ASTC:-1}" != 0 ]; then
+  FLIGHTBEAT_WEBGL_ASTC=1 "$unity" -batchmode -nographics -quit -projectPath "$repo/UnityProject" -buildTarget WebGL \
+    -executeMethod Flightbeat.Editor.WebGlCliBuild.Run --flightbeat-garden-r1 \
+    --flightbeat-webgl-build "$output-astc" -logFile "$output.astc-build.log" || {
+      echo "Unity 构建（手机 ASTC 版）失败，日志：$output.astc-build.log"; grep -E "error CS|Error|Exception" "$output.astc-build.log" | head -40; exit 1; }
+  mv "$output-astc/Build" "$output/Build-astc"
+  rm -rf "$output-astc" "$output-astc".*.json
+  step "Unity WebGL 构建（手机 ASTC 版）"
+fi
 python3 scripts/r1/install_web_extras.py "$output"
 python3 - "$output" <<'PY'
 import sys
@@ -55,6 +67,16 @@ if p.exists():
     stamp = time.strftime('%Y%m%d%H%M%S')
     built = time.strftime('%Y-%m-%d %H:%M:%S')
     t = p.read_text()
+    # 2026-10-29: point the page at the phone (ASTC) build when it was made.
+    astc = out / 'Build-astc'
+    if astc.is_dir():
+        def one(suffix):
+            found = sorted(astc.glob('*' + suffix))
+            if not found: raise SystemExit('Build-astc 缺少 ' + suffix)
+            return 'Build-astc/' + found[0].name
+        files = "{data:'%s',framework:'%s',code:'%s',loader:'%s'}" % (one('.data.unityweb'), one('.framework.js.unityweb'), one('.wasm.unityweb'), one('.loader.js'))
+        if 'const astcBuild=null;' not in t: raise SystemExit('index.html 没有 astcBuild 占位')
+        t = t.replace('const astcBuild=null;', 'const astcBuild=' + files + ';', 1)
     if 'name="build-time"' not in t:
         t = t.replace('<head>', '<head>\n  <meta name="build-time" content="' + built + '">', 1)
         t = t.replace('</body>', '  <script>console.log("泡泡小队 构建时间 ' + built + '")</script>\n</body>', 1)
@@ -62,7 +84,7 @@ if p.exists():
     note = out / '打开说明.txt'
     if note.exists(): note.write_text(note.read_text() + '构建时间：' + built + '\n')
     # 2026-10-21 21:07: the loading page art too (same names when redrawn, so browsers kept the old bar images).
-    p.write_text(re.sub(r"((?:Build/[^'\"?]+\.(?:unityweb|js))|(?:TemplateData/[^'\"?)]+\.(?:png|jpg|webp|js)))(\?v=\d+)?",
+    p.write_text(re.sub(r"((?:Build(?:-astc)?/[^'\"?]+\.(?:unityweb|js))|(?:TemplateData/[^'\"?)]+\.(?:png|jpg|webp|js)))(\?v=\d+)?",
                         lambda m: m[1] + '?v=' + stamp, p.read_text()))
 PY
 if [ "${R1_LEVELS_TEST:-0}" = 1 ]; then

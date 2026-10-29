@@ -433,6 +433,21 @@ namespace Flightbeat.Game
             if (ui - at > 1f) { queueWokeAt.Remove(id); return 99f; }
             return ui - at;
         }
+        // 2026-10-29 20:58 (user): the seedling in a queued pot grows as its member moves up - third row 1.5x, second row
+        // 2x the delivered art - with a .22 s ease-out-back when the row changes (first seen: no growth). Reset per battle.
+        readonly Dictionary<int, Vector3> sproutRow = new Dictionary<int, Vector3>();   // id -> (row, previous row, since)
+        Flightbeat.Model.Battle sproutBattle;
+        static float SproutRowSize(int row) => row >= 2 ? 1.5f : 2f;
+        float QueueSproutSize(int id, int row)
+        {
+            if (sproutBattle != Battle) { sproutBattle = Battle; sproutRow.Clear(); }
+            if (!sproutRow.TryGetValue(id, out var r)) { r = new Vector3(row, row, -10f); sproutRow[id] = r; }
+            else if ((int)r.x != row) { r = new Vector3(row, r.x, ui); sproutRow[id] = r; }
+            float to = SproutRowSize(row), t = (ui - r.z) / .22f;
+            if (t >= 1f) return to;
+            float k = t <= 0f ? 0f : 1f + 2.70158f * Mathf.Pow(t - 1f, 3f) + 1.70158f * Mathf.Pow(t - 1f, 2f);
+            return Mathf.LerpUnclamped(SproutRowSize((int)r.y), to, k);
+        }
         // 2026-10-21: seconds since a hidden member was revealed at the front (it was seen hidden further back); large
         // otherwise. Reset with the sleepers when the battle changes.
         readonly HashSet<int> queueHidden = new HashSet<int>();

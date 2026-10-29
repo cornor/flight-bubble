@@ -37,3 +37,7 @@
 - 已在原始显示尺寸和放大图检查：无眼睛、鼻子、嘴或粉色内耳；保留写实毛绒与原配色。小鸡保留头顶呆毛、两侧小翅膀尖和尾羽，猫咪右侧有小尾巴尖；花盆和叶片仍朝前。
 
 查看 [正背面对照图](qa/front-back-comparison.png) 或 [四位背面透明拼图](qa/back-lineup.png)。详细像素结果、配准坐标与文件 SHA-256 见 [qa/validation.json](qa/validation.json)；执行 `python3 Art/PlushToy/BackView-20261029/compose.py --deliver` 可复现合成与检查。此次只交付美术文件，未构建或发布游戏。
+
+## 2026-10-29 14:59 暂存
+
+用户决定先改试"藏在花盆里、到第一排长出来"（`../PotSprout-20261029/`），背面图暂不用：`scripts/r1v3/build_atlas_v3.py` 的 `PLUSH_ROOTS` 去掉了 `PLUSH_BACK`，本目录的图和程序里的 `back` 状态都保留，加回 `PLUSH_BACK` 即可恢复。

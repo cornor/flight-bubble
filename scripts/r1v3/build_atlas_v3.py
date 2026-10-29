@@ -47,7 +47,11 @@ PLUSH_REACH = ROOT / 'Art/PlushToy/PadReach-20261027/delivery'
 PAD_COMBAT_ART = ROOT / 'Art/PlushToy/PadCombat-20261027'
 # 2026-10-29: back views for queue members behind the front row (optional state `back`; level 3's four on trial).
 PLUSH_BACK = ROOT / 'Art/PlushToy/BackView-20261029/delivery'
-PLUSH_ROOTS = (PLUSH_REACH, PLUSH_BACK, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
+# 2026-10-29 14:53: queue members hidden in their pot (`pot`: empty pot + leaves) that grow out of it at the front (`body`).
+PLUSH_POT = ROOT / 'Art/PlushToy/PotSprout-20261029/delivery'
+# 2026-10-29 14:59 (user): the back-view trial is set aside (art kept in BackView-20261029); the pot sprout is tried instead.
+# Put PLUSH_BACK back into PLUSH_ROOTS to bring the back views back.
+PLUSH_ROOTS = (PLUSH_REACH, PLUSH_POT, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
 
 def art_path(rel):
     # User-restored Git glass lock must not be replaced by the plush pad override.
@@ -142,7 +146,7 @@ for entry in color_data['colors']:
     for st in ['idle', 'attack', 'spent']:
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE,
                       lambda x=h, state=st: P.round_creature(x, state)))
-    for st in ['blink', 'cheer', 'ready', 'reach', 'lean', 'back']:   # ready: puffed cheeks before firing (2026-10-21); reach/lean: pad poses (2026-10-27); back: queue back view (2026-10-29); all optional
+    for st in ['blink', 'cheer', 'ready', 'reach', 'lean', 'back', 'pot', 'body', 'sprout', 'leaves']:   # pot/body/sprout/leaves: queue sprout (2026-10-29); ready: puffed cheeks before firing (2026-10-21); reach/lean: pad poses (2026-10-27); back: queue back view (2026-10-29); all optional
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE, None))
 # Mystery reserves reveal neither their palette nor their optional animation.
 # Art item 76 delivers only idle: a mystery member never attacks while hidden, so the other states reuse it.
@@ -605,7 +609,7 @@ for entry in SLOTS:
     p = art_path(rel)
     # A plush member must never blink or cheer back into the older jelly character.
     if rel.startswith('creatures/') and any((root / Path(rel).parent / 'idle.png').exists() for root in PLUSH_ROOTS) and not any((root / rel).exists() for root in PLUSH_ROOTS):
-        if Path(rel).stem in ('blink', 'cheer', 'ready', 'reach', 'lean', 'back'): continue
+        if Path(rel).stem in ('blink', 'cheer', 'ready', 'reach', 'lean', 'back', 'pot', 'body', 'sprout', 'leaves'): continue
     if p.exists():
         im = Image.open(p).convert('RGBA'); src = hashlib.sha256(p.read_bytes()).hexdigest(); delivered.append(rel)
     else:

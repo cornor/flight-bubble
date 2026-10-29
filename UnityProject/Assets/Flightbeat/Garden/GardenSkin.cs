@@ -302,6 +302,76 @@ namespace Flightbeat.Garden
         // 2026-10-29 (user, like 沙画消消): queue members behind the front row show their back (`back` art, when delivered).
         // Set before Creature, cleared by it like the Bend* values.
         public static bool BackView;
+        // 2026-10-29 14:53 (user): queue members behind the front row may instead hide in their pot (`pot` art: the empty pot
+        // and its leaves) and grow out of it at the front (DrawSproutBody with the `body` art, the pot drawn after it).
+        public static bool PotOnly;
+        // 16:25 (user): v2 - the queued pot holds a little seedling (`sprout`); at the front the seedling shoots up and fades
+        // while the two big leaves (`leaves`) unfold from the middle and the body grows out of the pot.
+        public static bool HasSprout(Color tint) => Has(PlantSlot(tint, "pot")) && Has(PlantSlot(tint, "body"))
+            && Has(PlantSlot(tint, "sprout")) && Has(PlantSlot(tint, "leaves"));
+        // Canvas x (of the 224x256 frame) of the seedling's stem: the middle of its trimmed art, within 1 px of where each
+        // stem meets the soil (100 / 118 / 118 / 112 for the bear, capybara, chick and cat). Scaling about it keeps the stem
+        // planted in its own pot.
+        public static float SproutStemX(Color tint)
+        {
+            if (Data == null || !slots.TryGetValue(PlantSlot(tint, "sprout"), out var slot)) return 112f;
+            float fw = slot.fw > 0f ? slot.fw : slot.w;
+            return (slot.ox + slot.w * .5f) / fw * 224f;
+        }
+        // One sprout layer (`sprout` / `leaves`) scaled by (sx, sy) and turned by `angle` degrees about `pivot` (canvas px of
+        // the 224x256 frame), with `alpha`. Same frame arguments as Creature / DrawSproutBody.
+        public static void DrawSproutLayer(PixelSurface s, Color tint, string state, float centerX, float feet, float canvasHeight, float sizeScale,
+            Vector2 pivot, float sx, float sy, float angle, float alpha)
+        {
+            if (alpha <= .01f || sx <= .01f || sy <= .01f || Data == null || !slots.TryGetValue(PlantSlot(tint, state), out var slot)) return;
+            bool mapped = PlushLayout.Enabled && s.MapLayout;
+            if (mapped) { feet = PlushLayout.Y(feet); s.MapLayout = false; }
+            try {
+                float scale = (sizeScale > 0f ? sizeScale : 1f) * ArtScale(tint);
+                float ah = canvasHeight * scale, aw = ah * ArtAspect, ay = feet - ah * FeetLine, ax = centerX - aw / 2;
+                float fw = slot.fw > 0f ? slot.fw : slot.w, fh = slot.fh > 0f ? slot.fh : slot.h;
+                float u0 = slot.ox / fw, u1 = (slot.ox + slot.w) / fw, v0 = slot.oy / fh, v1 = (slot.oy + slot.h) / fh;
+                Vector2 piv = new Vector2(ax + aw * pivot.x / 224f, ay + ah * pivot.y / 256f);
+                float r = angle * Mathf.Deg2Rad, c = Mathf.Cos(r), n = Mathf.Sin(r);
+                Vector2 P(float u, float v) {
+                    float x = (ax + aw * u - piv.x) * sx, y = (ay + ah * v - piv.y) * sy;
+                    return piv + new Vector2(x * c - y * n, x * n + y * c);
+                }
+                s.GardenQuadCorners(P(u0, v0), P(u1, v0), P(u1, v1), P(u0, v1), Uv(slot, Data.size), new Color(1f, 1f, 1f, alpha), slot.atlas);
+            }
+            finally { if (mapped) s.MapLayout = true; }
+        }
+        // The `body` art risen `rise` of the way out of the pot (0 = hidden, 1 = where it sits in the idle art; a little
+        // more overshoots), cut at the pot rim (canvas y 148) so nothing shows below it. Same frame as Creature: centre x,
+        // feet (layout y), canvas height and size scale. Draw it after the pot (Creature with PotOnly), before the leaves.
+        public static void DrawSproutBody(PixelSurface s, Color tint, float centerX, float feet, float canvasHeight, float sizeScale, float rise)
+        {
+            if (rise <= 0f || Data == null || !slots.TryGetValue(PlantSlot(tint, "body"), out var slot)) return;
+            bool mapped = PlushLayout.Enabled && s.MapLayout;
+            if (mapped) { feet = PlushLayout.Y(feet); s.MapLayout = false; }
+            try {
+                float scale = (sizeScale > 0f ? sizeScale : 1f) * ArtScale(tint);
+                float ah = canvasHeight * scale, aw = ah * ArtAspect, ay = feet - ah * FeetLine, ax = centerX - aw / 2;
+                float fw = slot.fw > 0f ? slot.fw : slot.w, fh = slot.fh > 0f ? slot.fh : slot.h;
+                float u0 = slot.ox / fw, u1 = (slot.ox + slot.w) / fw, v0 = slot.oy / fh, v1 = (slot.oy + slot.h) / fh;
+                // 17:57 (simulated frame by frame): the body is drawn OVER the pot (in front of its back rim and soil) and
+                // cut at the front rim (y 148), and it starts narrow (60 % wide, inside the opening) and widens as it rises,
+                // so it squeezes out of the pot instead of showing a flat cut beside it.
+                const float rim = 148f / 256f;
+                float squeeze = Mathf.Lerp(.6f, 1f, Mathf.Clamp01(rise));
+                float drop = (1f - rise) * (rim - v0);                 // how far (in canvas fractions) it is still sunk
+                float vb = Mathf.Min(v1, rim - drop);                  // lowest art row still above the rim
+                if (vb <= v0 + 1e-4f) return;
+                Rect uv = Uv(slot, Data.size);
+                float tb = (vb - v0) / (v1 - v0);
+                Rect rows = new Rect(uv.x, uv.y + uv.height * (1f - tb), uv.width, uv.height * tb);
+                float top = ay + ah * (v0 + drop), bottom = ay + ah * (vb + drop);
+                float xl = centerX + (ax + aw * u0 - centerX) * squeeze, xr = centerX + (ax + aw * u1 - centerX) * squeeze;
+                s.GardenQuadCorners(new Vector2(xl, top), new Vector2(xr, top),
+                    new Vector2(xr, bottom), new Vector2(xl, bottom), rows, Color.white, slot.atlas);
+            }
+            finally { if (mapped) s.MapLayout = true; }
+        }
         public static float BendTurn = 1f, BendHop;
         // 2026-10-27 10:19 (user: puff and lean back before firing, lean forward and blow while firing, body apart from
         // the pot). `BendActive`: the pads drive the pose, so the whole-image fire/ready squash and the old outward
@@ -367,8 +437,8 @@ namespace Flightbeat.Garden
             bool plushMapped = PlushLayout.Enabled && s.MapLayout;
             if (plushMapped) { feet = PlushLayout.Y(feet); s.MapLayout = false; }
             float bStretch = BendStretch, bShear = BendShear, bDrop = BendDrop, bTurn = BendTurn, bHop = BendHop;
-            bool bMirror = BendMirror, bActive = BendActive, bInhale = BendInhale, bBack = BackView;
-            BackView = false;
+            bool bMirror = BendMirror, bActive = BendActive, bInhale = BendInhale, bBack = BackView, bPot = PotOnly;
+            BackView = PotOnly = false;
             var combat = PadCombat; PadCombat = default;
             var flower = PadFlower; PadFlower = default;   // 2026-10-28: the flower bubble ring (GardenSkin.FlowerRing)
             bool combatActive = combat.enabled && ammo != "0" && HasPadCombat(tint);
@@ -481,6 +551,7 @@ namespace Flightbeat.Garden
                 if ((Clock + phase * 1.37f) % cycle < .13f && Has(PlantSlot(tint, "blink"))) state = "blink";
             }
             if (bBack && !Celebrate && ammo != "0" && Has(PlantSlot(tint, "back"))) state = "back";
+            if (bPot && Has(PlantSlot(tint, "pot"))) state = "pot";
             // 2026-10-21 (user): hidden members show the rainbow question-mark bubble when delivered; `outline` (alpha)
             // draws the white silhouette grown by 8 canvas px behind the member (front-row members you can tap).
             Color32 mk = tint; bool mystery = ((mk.r << 16) | (mk.g << 8) | mk.b) == 0x8C919C && Has("plants/mystery-bubble");

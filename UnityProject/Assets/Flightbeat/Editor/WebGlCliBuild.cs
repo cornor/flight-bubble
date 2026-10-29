@@ -30,6 +30,10 @@ namespace Flightbeat.Editor
             // afterwards (also on the next build if a crash left it parked).
             RestoreNativeAudio();
             ParkNativeAudio();
+            // 2026-10-29: plain (desktop) or ASTC (phone) textures for this run; see GardenAssetImport.
+            AssetDatabase.RegisterCustomDependency(GardenAssetImport.FormatDependency,
+                Hash128.Compute(GardenAssetImport.Astc ? "astc4x4" : "plain"));
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             BuildReport report;
             try {
             report = BuildPipeline.BuildPlayer(new BuildPlayerOptions

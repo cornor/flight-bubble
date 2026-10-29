@@ -1,0 +1,92 @@
+战区 2 第 33–52 关暂停交接（2026-10-28 17:24，北京时间）
+
+用户明确要求：“暂停，我让另外一个 AI 来完成”。
+本助手已停止全部本批搜索、模拟、检查管理器、构建等待器及监视器；14 个所属进程均已退出。没有自动续跑，没有活动 goal。
+未完成的单次迭代已中止；已落盘的完整迭代检查点保留，可以直接续跑。不要把中止当作调优失败。
+
+一、范围
+原目标：完成第 33–52 关，最后仅用 R1_LEVELS_TEST=1 打测试包集中试玩。第 53–82 关不在本轮。
+不要修改游戏代码，不正式构建、发布、部署或提交 Git。
+先读：关卡第二套-题材-战区2.md、关卡第二套-出图简版-20261026.md、关卡第二套-执行计划-战区1.md 第 4–7 节、关卡第二套-执行计划-战区2.md 第 6 节。
+题材状态已是“已确认（2026-10-27）”。34 黑色只有上限 20.7%，无下限；41 是冰雕旋转小马，46 是风车，47 是冰滑梯。保留题材文档的物种区分约定。
+
+二、已完成
+全部 20 关的美术、选图和转换已完成，不需要重新从出图开始。38–52 新原图 41 张；33–37 沿用上一批 12 张新图及第 35 关旧 04 号。原始字节、尺寸、SHA-256 已记录，未覆盖旧图。
+全部入选转换为 0 格补齐改动，已核对实际配色和面积上限。
+已完成结构及完整粗筛：33、34、35、36、37、38、39、43、45、47、49，共 11 关，其中 34、37、39 是用户明确接受的测试例外，不能写成默认难度门槛达标。
+待完成：40、41、42、44、46、48、50、51、52，共 9 关。
+33、35 保持此前通过版本；36 比较 01/02 后采用 02；37 采用 02。
+45 独立验证原队列 0.0756 比调后 0.1076 更好，保留原队列。
+47：独立差距 0.2494→0.0896，移动 11 名队员、最大 6 排，最终检查通过。
+49：独立差距 0.4105→0.1426，移动 13 名队员、最大 6 排，最终检查通过。
+
+三、用户已确认的三个测试例外（不必重复询问或重新调优）
+34：06 号图和最佳队列，独立差距 0.200885，标注“难度偏高”。已 apply，移动 2 人、最大 5 排。
+37：02 号图和最佳队列，独立差距 0.184359，标注“更依赖复活”。已 apply，移动 15 人、最大 6 排。
+39：02 号图和原队列，独立差距 0.188627，标注“部分打法偏易”。第二轮调后 0.2099，保留更好的原队列。
+三关均通过结构及 4 打法×64 种子完整粗筛，并已加入 B-test。
+manifest.json 的 playtestException 保存用户决定、实际差距、默认 0.15 门槛和文件哈希。原始 result 的 passed=false 保留；只接受试玩例外，不是正式验收。
+确认前隔离候选与最终文件 SHA 完全一致，相关模拟源文件未变，故复用真实隔离粗筛证据，并记录 reusedIsolatedEvidence。
+粗筛证据：Builds/R1-evidence/levels-b-eval-draft-20261028-124526（34）、131707（37）、150646（39）。
+结构复核：levels-b-structure-draft-20261028-141110（34/37）、152715（39）。
+当前没有未回答的问题。其他关若两轮完整调优仍超差，按用户要求单独询问，其他关继续。
+
+四、暂停时实际检查点
+40：首轮 21 次内部迭代，独立差距 0.3770 未通过。第二轮 64 种子已保存 7 次迭代，调参差距 0.2203，stall=0，未结束/独立验证。
+41：首轮独立差距 0.2350 未通过。第二轮已保存 2 次迭代，调参差距 0.2327，stall=2。
+44：首轮独立差距 0.1579 未通过。第二轮已保存 2 次迭代，调参差距 0.1342，stall=2。
+42：首轮 26 次迭代，独立差距 0.2281 未通过，第二轮尚未启动。
+46：首轮 14 次迭代，独立差距 0.2693 未通过，第二轮尚未启动。
+48：首轮 17 次迭代，独立差距 0.2323 未通过，第二轮尚未启动。
+50：首轮 16 次迭代，独立差距 0.2392 未通过，第二轮尚未启动。
+51：首轮已保存 11 次迭代，调参差距 0.1104，stall=2，未结束/独立验证。
+52：首轮已保存 9 次迭代，调参差距 0.2547，stall=1，未结束/独立验证。
+40 的 01 号另做过同一 32 种子的初始诊断，差距 0.9389，比 02 号的 0.7552 更差，因此第二轮仍用 02。证据 40-01-precheck.json；这不是第三轮完整搜索。
+第一轮 32 种子，第二轮 64 种子；独立验证 201–264。默认接受差距 0.15；max-shift=6、target=.06、patience=5、proposals=10、finalists=3 未改变。
+内部迭代次数不等于完整调优轮数。不要 --reset，也不要只凭调参差距就 apply。
+
+五、文件与恢复
+仓库根目录：/Users/yangdage/aitools/flight/flight-bubble
+当前工作目录：tools/work/levels-b/zone2-20261028/
+首批候选和 .NET 运行时：tools/work/levels-b/zone2-20261027/
+检查点：tools/work/levels-b/queue-tune/，文件名包含关号、原始候选棋盘 SHA 前 12 位及可选 -s64 后缀。
+新原图记录：Art/levels-b/source/generation-20261028-zone2-38-52.json、handoff-20261028-zone2-38-52.txt。
+首批记录：generation-20261027-zone2-33-52.json。
+selected.json：38–52 入选图、候选棋盘和转换报告索引。
+color-audit.json：配色面积核验。
+zone2-33-52-art-preview.png：20 关预览，37 为最终采用的 02。
+各 *-result.json：完整搜索与独立验证结果；postprocess-results.json：检查管理器已处理列表。
+33、35、38 不在 postprocess-results.json，但 manifest 已通过，不要重做。
+tune-first.json 和 tune-next.json 已全部结束，无需再启动原来的两个 worker。
+
+后续 AI 得到用户授权继续后，可从仓库根目录分别启动以下管理器（当前全部已停止）：
+  python3 -u tools/work/levels-b/zone2-20261028/rest_scheduler.py
+  python3 -u tools/work/levels-b/zone2-20261028/finalize_ready.py
+  python3 -u tools/work/levels-b/zone2-20261028/finish_build.py
+只读快照：
+  python3 tools/work/levels-b/zone2-20261028/status.py
+
+rest_scheduler 恢复 51/52 首轮及各关第二轮，最多 5 路搜索；首轮失败自动安排一次 64 种子第二轮，第二轮失败不再自行第三轮。
+finalize_ready 单进程串行写 manifest，仅处理独立验证通过的结果；三个用户例外已写入 done，会跳过。不要同时启动两个同名管理器。
+tune_worker.py 内置运行时路径。手工调用原脚本需设置：
+  DOTNET="$PWD/tools/work/levels-b/zone2-20261027/dotnet8/dotnet"
+  LEVELSB_SIM="$PWD/tools/work/levels-b/zone2-20261027/simbin/LevelsBSim.dll"
+  DOTNET_PROCESSOR_COUNT=2
+手工处理新例外前先确保 finalize_ready 闲置并停止它，避免并发写 manifest；完成后记录 postprocess-results.json，再重启。已有 review-N/proposal.json 可参考，但不能推定用户批准其他关。
+
+六、测试包尚未生成
+本轮没有运行测试构建；test-build-result.json 不存在。现有 Builds/WebGL/GardenR1-bubble 不能作为本批完成证据。
+当前 B-test 共 29 关：原战区 1 的 26 关，加本批 34、37、39。其他通过关目前仍在草稿。
+最终统一 stage_test.py 33 ... 52 会合并通道，不要清空战区 1 的测试关卡。
+finish_build.py 等 20 关 manifest 全部 evaluated 后，stage 全部 20 关，运行 publish.py --check --allow-test，再 R1_LEVELS_TEST=1 bash scripts/r1v3/build.sh，然后对真实新包运行 check_web.sh，结果写 test-build-result.json。
+若用户同意暂缓某关，须调整等待和打包名单，不能伪造 evaluated。
+构建固定替换 Builds/WebGL/GardenR1-bubble；必须有 LEVELS_TEST_BUILD.txt。不正式发布，不调用 publish.py --approve。
+此前 selftest.py、check_source.py、publish.py --check --allow-test 已通过，见 integrity-checks.json；仍须完成真实新测试包的网页检查。
+测试包成功后再启动本地 HTTP 试玩服务并给用户链接。本助手原来的 8792 服务已不存在。
+
+七、最终待收尾
+更新执行计划-战区2.md 第 6 节逐关结果、修改轮数、卡点、后续提示词建议及测试构建/试玩状态；更新执行计划总览和 v3-第三批接入计划.md。
+已通过自动检查不等于人工试玩验收或上线。原图和报告均需保留。
+本助手未改游戏代码或正式关卡 Resources，只制作 Art 原图/草稿、文档、忽略目录辅助脚本和 B-test。此前同工作区其他任务改过 UI 文件，不要回退其修改。
+没有 Git 提交、正式构建或发布。
+暂停进程记录：tools/work/levels-b/zone2-20261028/pause-20261028.json。

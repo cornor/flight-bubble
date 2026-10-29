@@ -1,0 +1,145 @@
+{
+  "common": "Back view of the SAME plush toy character as the reference image, sitting in the SAME flower pot. Only the character has turned around to face away from the camera; the pot and its two green leaves stay exactly as in the reference (front-facing, same position, same pattern), the leaves drawn in front of the body. Show the back of the head, the back of the ears and the back of the plush body; no eyes, nose or mouth visible. Same fluffy realistic plush rendering, same colors, same soft light from the upper right, same size and silhouette height as the reference. Transparent background, 224x256 canvas, feet line at y=212, top of head below y=6. No text, no shadow, no background.",
+  "characters": {
+    "bear-2982F4": {
+      "reference": "references/bear-idle.png",
+      "extra": "Blue teddy bear: round blue ears seen from behind, blue fuzzy back of the head, a tiny round stub tail just above the leaves."
+    },
+    "capybara-FF7E27": {
+      "reference": "references/capybara-idle.png",
+      "extra": "Orange-brown capybara: back of the rounded head and small ears, smooth fuzzy back; it faces away from the camera."
+    },
+    "chick-FFDF48": {
+      "reference": "references/chick-idle.png",
+      "extra": "Yellow chick: the tuft of feathers on top seen from behind, round fluffy yellow back, little wing tips at the sides and a small tail tuft."
+    },
+    "cat-FFFFFF": {
+      "reference": "references/cat-idle.png",
+      "extra": "White cat: pointed ears seen from behind (no pink inner ear visible), fluffy white back of the head, the tip of a white tail curling up at one side."
+    }
+  },
+  "generations": [
+    {
+      "character": "bear-2982F4",
+      "attempt": 1,
+      "status": "generated_not_selected",
+      "reference": "references/bear-idle.png",
+      "prompt": "Use case: precise-object-edit.\nAsset type: transparent rear-facing game sprite, a matching back pose for an existing idle sprite.\nInput image 1 is the EDIT TARGET and exact identity, silhouette, scale, pot, leaves, palette and lighting reference.\nBack view of the SAME plush toy character as the reference image, sitting in the SAME flower pot. Only the character has turned around to face away from the camera; the pot and its two green leaves stay exactly as in the reference (front-facing, same position, same pattern), the leaves drawn in front of the body. Show the back of the head, the back of the ears and the back of the plush body; no eyes, nose or mouth visible. Same fluffy realistic plush rendering, same colors, same soft light from the upper right, same size and silhouette height as the reference. Transparent background, 224x256 canvas, feet line at y=212, top of head below y=6. No text, no shadow, no background.\nCharacter-specific requirement: Blue teddy bear: round blue ears seen from behind, blue fuzzy back of the head, a tiny round stub tail just above the leaves.\nPrecise edit: Rotate ONLY the furry animal 180 degrees in place so we look straight at the back of its skull and compact back; keep its original short, pot-nested body proportions. Maintain the original outer silhouette height and placement very closely, including the original head tilt and ear heights. No new extended torso, standing body, arms, equipment, or bubble wand. Rear ears are fully covered in the character's outer fur, never face or inner-ear patches. The fixed two green leaves stay in the foreground and cover the lower back. Any little tail must stay ABOVE the pot rim and behind these leaves, and remain subtle.\nLayout: preserve the reference image's full 7:8 transparent canvas including all margins. Target coordinate system 224x256: head does not enter rows 0-5; pot foot line y=212; row y=148 is the locked pot-rim boundary. Everything from y=148 through y=255 must stay visually identical to the reference; do not rotate, reshape or move the pot. The source reference pixels below that line will be composited back exactly in the deliverable. Keep the leaf positions and shapes exact.\nRender only ONE centered character asset, no side-by-side comparison, no labels, no checkerboard, no cast shadow, no floor, no background. True transparent alpha, clean wispy plush edges, realistic soft furry toy material matching the reference, same saturation and soft upper-right illumination.",
+      "transparent_background": true,
+      "master": "masters/bear-back-01.png",
+      "delivery": "delivery/creatures/blue/2982F4/back.png",
+      "note": "完整角色首稿；叶子与花盆仍有生成偏移，改用独立身体层后合成原始前景。"
+    },
+    {
+      "character": "capybara-FF7E27",
+      "attempt": 1,
+      "status": "generated_not_selected",
+      "reference": "references/capybara-idle.png",
+      "prompt": "Use case: precise-object-edit.\nAsset type: transparent rear-facing game sprite, a matching back pose for an existing idle sprite.\nInput image 1 is the EDIT TARGET and exact identity, silhouette, scale, pot, leaves, palette and lighting reference.\nBack view of the SAME plush toy character as the reference image, sitting in the SAME flower pot. Only the character has turned around to face away from the camera; the pot and its two green leaves stay exactly as in the reference (front-facing, same position, same pattern), the leaves drawn in front of the body. Show the back of the head, the back of the ears and the back of the plush body; no eyes, nose or mouth visible. Same fluffy realistic plush rendering, same colors, same soft light from the upper right, same size and silhouette height as the reference. Transparent background, 224x256 canvas, feet line at y=212, top of head below y=6. No text, no shadow, no background.\nCharacter-specific requirement: Orange-brown capybara: back of the rounded head and small ears, smooth fuzzy back; it faces away from the camera.\nPrecise edit: Rotate ONLY the furry animal 180 degrees in place so we look straight at the back of its skull and compact back; keep its original short, pot-nested body proportions. Maintain the original outer silhouette height and placement very closely, including the original head tilt and ear heights. No new extended torso, standing body, arms, equipment, or bubble wand. Rear ears are fully covered in the character's outer fur, never face or inner-ear patches. The fixed two green leaves stay in the foreground and cover the lower back. Any little tail must stay ABOVE the pot rim and behind these leaves, and remain subtle.\nLayout: preserve the reference image's full 7:8 transparent canvas including all margins. Target coordinate system 224x256: head does not enter rows 0-5; pot foot line y=212; row y=148 is the locked pot-rim boundary. Everything from y=148 through y=255 must stay visually identical to the reference; do not rotate, reshape or move the pot. The source reference pixels below that line will be composited back exactly in the deliverable. Keep the leaf positions and shapes exact.\nRender only ONE centered character asset, no side-by-side comparison, no labels, no checkerboard, no cast shadow, no floor, no background. True transparent alpha, clean wispy plush edges, realistic soft furry toy material matching the reference, same saturation and soft upper-right illumination.",
+      "transparent_background": true,
+      "master": "masters/capybara-back-01.png",
+      "delivery": "delivery/creatures/orange/FF7E27/back.png",
+      "note": "完整角色首稿；叶子与花盆仍有生成偏移，改用独立身体层后合成原始前景。"
+    },
+    {
+      "character": "chick-FFDF48",
+      "attempt": 1,
+      "status": "generated_not_selected",
+      "reference": "references/chick-idle.png",
+      "prompt": "Use case: precise-object-edit.\nAsset type: transparent rear-facing game sprite, a matching back pose for an existing idle sprite.\nInput image 1 is the EDIT TARGET and exact identity, silhouette, scale, pot, leaves, palette and lighting reference.\nBack view of the SAME plush toy character as the reference image, sitting in the SAME flower pot. Only the character has turned around to face away from the camera; the pot and its two green leaves stay exactly as in the reference (front-facing, same position, same pattern), the leaves drawn in front of the body. Show the back of the head, the back of the ears and the back of the plush body; no eyes, nose or mouth visible. Same fluffy realistic plush rendering, same colors, same soft light from the upper right, same size and silhouette height as the reference. Transparent background, 224x256 canvas, feet line at y=212, top of head below y=6. No text, no shadow, no background.\nCharacter-specific requirement: Yellow chick: the tuft of feathers on top seen from behind, round fluffy yellow back, little wing tips at the sides and a small tail tuft.\nPrecise edit: Rotate ONLY the furry animal 180 degrees in place so we look straight at the back of its skull and compact back; keep its original short, pot-nested body proportions. Maintain the original outer silhouette height and placement very closely, including the original head tilt and ear heights. No new extended torso, standing body, arms, equipment, or bubble wand. Rear ears are fully covered in the character's outer fur, never face or inner-ear patches. The fixed two green leaves stay in the foreground and cover the lower back. Any little tail must stay ABOVE the pot rim and behind these leaves, and remain subtle.\nLayout: preserve the reference image's full 7:8 transparent canvas including all margins. Target coordinate system 224x256: head does not enter rows 0-5; pot foot line y=212; row y=148 is the locked pot-rim boundary. Everything from y=148 through y=255 must stay visually identical to the reference; do not rotate, reshape or move the pot. The source reference pixels below that line will be composited back exactly in the deliverable. Keep the leaf positions and shapes exact.\nRender only ONE centered character asset, no side-by-side comparison, no labels, no checkerboard, no cast shadow, no floor, no background. True transparent alpha, clean wispy plush edges, realistic soft furry toy material matching the reference, same saturation and soft upper-right illumination.",
+      "transparent_background": true,
+      "master": "masters/chick-back-01.png",
+      "delivery": "delivery/creatures/yellow/FFDF48/back.png",
+      "note": "完整角色首稿；叶子与花盆仍有生成偏移，改用独立身体层后合成原始前景。"
+    },
+    {
+      "character": "cat-FFFFFF",
+      "attempt": 1,
+      "status": "generated_not_selected",
+      "reference": "references/cat-idle.png",
+      "prompt": "Use case: precise-object-edit.\nAsset type: transparent rear-facing game sprite, a matching back pose for an existing idle sprite.\nInput image 1 is the EDIT TARGET and exact identity, silhouette, scale, pot, leaves, palette and lighting reference.\nBack view of the SAME plush toy character as the reference image, sitting in the SAME flower pot. Only the character has turned around to face away from the camera; the pot and its two green leaves stay exactly as in the reference (front-facing, same position, same pattern), the leaves drawn in front of the body. Show the back of the head, the back of the ears and the back of the plush body; no eyes, nose or mouth visible. Same fluffy realistic plush rendering, same colors, same soft light from the upper right, same size and silhouette height as the reference. Transparent background, 224x256 canvas, feet line at y=212, top of head below y=6. No text, no shadow, no background.\nCharacter-specific requirement: White cat: pointed ears seen from behind (no pink inner ear visible), fluffy white back of the head, the tip of a white tail curling up at one side.\nPrecise edit: Rotate ONLY the furry animal 180 degrees in place so we look straight at the back of its skull and compact back; keep its original short, pot-nested body proportions. Maintain the original outer silhouette height and placement very closely, including the original head tilt and ear heights. No new extended torso, standing body, arms, equipment, or bubble wand. Rear ears are fully covered in the character's outer fur, never face or inner-ear patches. The fixed two green leaves stay in the foreground and cover the lower back. Any little tail must stay ABOVE the pot rim and behind these leaves, and remain subtle.\nLayout: preserve the reference image's full 7:8 transparent canvas including all margins. Target coordinate system 224x256: head does not enter rows 0-5; pot foot line y=212; row y=148 is the locked pot-rim boundary. Everything from y=148 through y=255 must stay visually identical to the reference; do not rotate, reshape or move the pot. The source reference pixels below that line will be composited back exactly in the deliverable. Keep the leaf positions and shapes exact.\nRender only ONE centered character asset, no side-by-side comparison, no labels, no checkerboard, no cast shadow, no floor, no background. True transparent alpha, clean wispy plush edges, realistic soft furry toy material matching the reference, same saturation and soft upper-right illumination.",
+      "transparent_background": true,
+      "master": "masters/cat-back-01.png",
+      "delivery": "delivery/creatures/white/FFFFFF/back.png",
+      "note": "完整角色首稿；叶子与花盆仍有生成偏移，改用独立身体层后合成原始前景。"
+    },
+    {
+      "character": "bear-2982F4",
+      "attempt": 2,
+      "status": "selected",
+      "references": [
+        "references/bear-idle.png",
+        "masters/bear-back-01.png"
+      ],
+      "prompt": "Use case: precise-object-edit / compositing.\nAsset type: transparent rear-facing plush BODY LAYER for an existing 224x256 game sprite.\nInput image 1: original front sprite, authoritative identity, silhouette, position, scale, palette and upper-right light. Input image 2: first rear-view draft, a reference for rear fur anatomy only.\nPrimary request: create the same animal turned completely away from the camera. Correct the draft into a BODY-ONLY layer. Remove the entire pot AND BOTH GREEN LEAVES from the generated output. The ORIGINAL reference pot and original leaves will be pasted on top later, so generate uninterrupted furry back wherever leaves/pot previously occluded it. This production separation is required to lock those original foreground pixels exactly.\nEar placement must match image 1 rather than mirror it: the ear on the LEFT of the picture is higher (near x=66,y=40 in a 224x256 canvas), and the ear on the RIGHT is lower (near x=165,y=80). Keep the gently clockwise-tilted original head silhouette. Exactly two round blue outer ear backs. Tiny round blue tail at the lower center of the back, partly hidden by the original leaves when composited.\nShow only the back of the skull, the outer backs of ears, and the short compact lower furry back. No eyes, nose, mouth, muzzle, cheek blush, visible inner ears, or front facial features. No paws, feet, standing body or long exposed torso.\nCanvas/framing: true transparent background, 7:8 canvas corresponding to 224x256. Keep the same upper-body silhouette HEIGHT and WIDTH and CENTER as image 1. Topmost fur approximately y=15, never above y=6. Continue the compact furry lower back down to y=156 behind the future two leaves and pot rim, but do not extend below y=160. Rows below that must be empty transparent. Leave the original lateral margins and generous bottom transparency. Do not zoom or recenter to fill the entire canvas. It will be composited with leaves fixed near y=125-150 and the original pot from y=148 downward.\nSurface: same realistic soft plush fibers and exact character color as image 1, with soft upper-right studio illumination and clean furry silhouette edges. No stronger glossy shine or overexposure. No cast shadow, no floor, no background, no checkerboard, no text, no watermark, no second view.\nCRITICAL output: animal back ONLY. NO pot, NO green leaves, NO plant parts. The pot and leaves are added from the unchanged source later.",
+      "transparent_background": true,
+      "master": "masters/bear-back-02-body.png",
+      "delivery": "delivery/creatures/blue/2982F4/back.png",
+      "note": "独立毛绒背部层；通过 compose.py 缩放配准后复用参考图叶片和花盆像素。"
+    },
+    {
+      "character": "capybara-FF7E27",
+      "attempt": 2,
+      "status": "selected",
+      "references": [
+        "references/capybara-idle.png",
+        "masters/capybara-back-01.png"
+      ],
+      "prompt": "Use case: precise-object-edit / compositing.\nAsset type: transparent rear-facing plush BODY LAYER for an existing 224x256 game sprite.\nInput image 1: original front sprite, authoritative identity, silhouette, position, scale, palette and upper-right light. Input image 2: first rear-view draft, a reference for rear fur anatomy only.\nPrimary request: create the same animal turned completely away from the camera. Correct the draft into a BODY-ONLY layer. Remove the entire pot AND BOTH GREEN LEAVES from the generated output. The ORIGINAL reference pot and original leaves will be pasted on top later, so generate uninterrupted furry back wherever leaves/pot previously occluded it. This production separation is required to lock those original foreground pixels exactly.\nExactly TWO small capybara ears, located near the TOP-RIGHT of the head as in image 1 (approximately x=135,y=28 and x=171,y=43 at 224x256). The short curved crest near the upper middle is only fur, not a third ear. Broad compact rounded orange head/back, no long neck, no muzzle. Preserve the original head's slightly asymmetric broad silhouette.\nShow only the back of the skull, the outer backs of ears, and the short compact lower furry back. No eyes, nose, mouth, muzzle, cheek blush, visible inner ears, or front facial features. No paws, feet, standing body or long exposed torso.\nCanvas/framing: true transparent background, 7:8 canvas corresponding to 224x256. Keep the same upper-body silhouette HEIGHT and WIDTH and CENTER as image 1. Topmost fur approximately y=15, never above y=6. Continue the compact furry lower back down to y=156 behind the future two leaves and pot rim, but do not extend below y=160. Rows below that must be empty transparent. Leave the original lateral margins and generous bottom transparency. Do not zoom or recenter to fill the entire canvas. It will be composited with leaves fixed near y=125-150 and the original pot from y=148 downward.\nSurface: same realistic soft plush fibers and exact character color as image 1, with soft upper-right studio illumination and clean furry silhouette edges. No stronger glossy shine or overexposure. No cast shadow, no floor, no background, no checkerboard, no text, no watermark, no second view.\nCRITICAL output: animal back ONLY. NO pot, NO green leaves, NO plant parts. The pot and leaves are added from the unchanged source later.",
+      "transparent_background": true,
+      "master": "masters/capybara-back-02-body.png",
+      "delivery": "delivery/creatures/orange/FF7E27/back.png",
+      "note": "独立毛绒背部层；通过 compose.py 缩放配准后复用参考图叶片和花盆像素。"
+    },
+    {
+      "character": "chick-FFDF48",
+      "attempt": 2,
+      "status": "selected",
+      "references": [
+        "references/chick-idle.png",
+        "masters/chick-back-01.png"
+      ],
+      "prompt": "Use case: precise-object-edit / compositing.\nAsset type: transparent rear-facing plush BODY LAYER for an existing 224x256 game sprite.\nInput image 1: original front sprite, authoritative identity, silhouette, position, scale, palette and upper-right light. Input image 2: first rear-view draft, a reference for rear fur anatomy only.\nPrimary request: create the same animal turned completely away from the camera. Correct the draft into a BODY-ONLY layer. Remove the entire pot AND BOTH GREEN LEAVES from the generated output. The ORIGINAL reference pot and original leaves will be pasted on top later, so generate uninterrupted furry back wherever leaves/pot previously occluded it. This production separation is required to lock those original foreground pixels exactly.\nKeep the same three-lobed upright yellow crown tuft at its original position and height. Rounded compact yellow back with very small wing tips on both sides, and a small lower-center tail tuft. Do not enlarge the crown or lengthen the body.\nShow only the back of the skull, the outer backs of ears, and the short compact lower furry back. No eyes, nose, mouth, muzzle, cheek blush, visible inner ears, or front facial features. No paws, feet, standing body or long exposed torso.\nCanvas/framing: true transparent background, 7:8 canvas corresponding to 224x256. Keep the same upper-body silhouette HEIGHT and WIDTH and CENTER as image 1. Topmost fur approximately y=15, never above y=6. Continue the compact furry lower back down to y=156 behind the future two leaves and pot rim, but do not extend below y=160. Rows below that must be empty transparent. Leave the original lateral margins and generous bottom transparency. Do not zoom or recenter to fill the entire canvas. It will be composited with leaves fixed near y=125-150 and the original pot from y=148 downward.\nSurface: same realistic soft plush fibers and exact character color as image 1, with soft upper-right studio illumination and clean furry silhouette edges. No stronger glossy shine or overexposure. No cast shadow, no floor, no background, no checkerboard, no text, no watermark, no second view.\nCRITICAL output: animal back ONLY. NO pot, NO green leaves, NO plant parts. The pot and leaves are added from the unchanged source later.",
+      "transparent_background": true,
+      "master": "masters/chick-back-02-body.png",
+      "delivery": "delivery/creatures/yellow/FFDF48/back.png",
+      "note": "独立毛绒背部层；通过 compose.py 缩放配准后复用参考图叶片和花盆像素。"
+    },
+    {
+      "character": "cat-FFFFFF",
+      "attempt": 2,
+      "status": "selected",
+      "references": [
+        "references/cat-idle.png",
+        "masters/cat-back-01.png"
+      ],
+      "prompt": "Use case: precise-object-edit / compositing.\nAsset type: transparent rear-facing plush BODY LAYER for an existing 224x256 game sprite.\nInput image 1: original front sprite, authoritative identity, silhouette, position, scale, palette and upper-right light. Input image 2: first rear-view draft, a reference for rear fur anatomy only.\nPrimary request: create the same animal turned completely away from the camera. Correct the draft into a BODY-ONLY layer. Remove the entire pot AND BOTH GREEN LEAVES from the generated output. The ORIGINAL reference pot and original leaves will be pasted on top later, so generate uninterrupted furry back wherever leaves/pot previously occluded it. This production separation is required to lock those original foreground pixels exactly.\nKeep the same original tilted head and pointed ear heights: LEFT ear higher, RIGHT ear lower. The rear surface of BOTH ears is white outer fur, no pink inner surface. A small white tail tip curls at one side, still within the existing body envelope. Keep the original head width; no longer torso.\nShow only the back of the skull, the outer backs of ears, and the short compact lower furry back. No eyes, nose, mouth, muzzle, cheek blush, visible inner ears, or front facial features. No paws, feet, standing body or long exposed torso.\nCanvas/framing: true transparent background, 7:8 canvas corresponding to 224x256. Keep the same upper-body silhouette HEIGHT and WIDTH and CENTER as image 1. Topmost fur approximately y=15, never above y=6. Continue the compact furry lower back down to y=156 behind the future two leaves and pot rim, but do not extend below y=160. Rows below that must be empty transparent. Leave the original lateral margins and generous bottom transparency. Do not zoom or recenter to fill the entire canvas. It will be composited with leaves fixed near y=125-150 and the original pot from y=148 downward.\nSurface: same realistic soft plush fibers and exact character color as image 1, with soft upper-right studio illumination and clean furry silhouette edges. No stronger glossy shine or overexposure. No cast shadow, no floor, no background, no checkerboard, no text, no watermark, no second view.\nCRITICAL output: animal back ONLY. NO pot, NO green leaves, NO plant parts. The pot and leaves are added from the unchanged source later.",
+      "transparent_background": true,
+      "master": "masters/cat-back-02-body.png",
+      "delivery": "delivery/creatures/white/FFFFFF/back.png",
+      "note": "独立毛绒背部层；通过 compose.py 缩放配准后复用参考图叶片和花盆像素。"
+    }
+  ],
+  "generation_mode": "built-in image_gen",
+  "generation_count_total": 8,
+  "generation_count_by_character": {
+    "bear-2982F4": 2,
+    "capybara-FF7E27": 2,
+    "chick-FFDF48": 2,
+    "cat-FFFFFF": 2
+  },
+  "composition": {
+    "script": "compose.py",
+    "command": "python3 Art/PlushToy/BackView-20261029/compose.py --deliver",
+    "canvas": [
+      224,
+      256
+    ],
+    "pot_pixel_lock": "All RGBA pixels at y >= 148 copied exactly from reference, plus the curved upper rim side regions above that line.",
+    "leaf_pixel_lock": "Separate original left/right leaf masks with their fuzzy edges; source pixels copied in front of the generated back.",
+    "reference_files_modified": false,
+    "validation": "qa/validation.json",
+    "preview": "qa/front-back-comparison.png",
+    "generation_mode": "built-in image_gen; no external API or CLI image generation"
+  }
+}

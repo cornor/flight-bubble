@@ -379,6 +379,7 @@ namespace Flightbeat.Game
             float maxShakeAge = feedback.GardenMaxFusionAge;
             float padShake = maxShakeAge < .3f ? Mathf.Sin(ui * 70f) * 2.5f * (1f - maxShakeAge / .3f) : 0f;
             // 10-27: members in the hand-drawn reach pose are drawn after the others (it may pass over a neighbour).
+            DrawPadFarewells(s, bayCanvas);   // 2026-10-28: members that ran out say goodbye (GardenPads)
             padPumps.Clear();
             for (int i = 0; i < Battle.Fleet.Count; i++) {
                 Fighter f = Battle.Fleet[i];
@@ -401,10 +402,12 @@ namespace Flightbeat.Game
                 PadPumpFx(s, ship, pump, Vector2.zero, at.x, pumpFeet, pumpBody, true);
                 GardenSkin.BendPose = pump.pose; GardenSkin.BendInhale = pump.inhale;
                 GardenSkin.PadCombat = pump.combat;
+                GardenSkin.PadFlower = pump.flower;
                 Creature(s, GardenColor(ship.Color), at.x, GardenPadFeet(ship.Id, at.y + 12f), bayCanvas, ship.Tier, ship.Ammo.ToString(),
                     0f, bayNumber, true, true, .035f, ship.Id * 1.7f, PadScale(ship), squash, 0f,
                     fire, pulse, ship.Ammo > 0 ? 1f - fire : 0f, false, 0f, PadInhale(ship, ship.Ammo > 0 && fire < .5f));
                 padMouth[ship.Id] = LastMouth;
+                PadSeenRecord(ship, at.x, pumpFeet, PadScale(ship));
                 PadPumpFx(s, ship, pump, LastMouth, at.x, pumpFeet, pumpBody, false);
                 float wait = PadWaitAlpha(ship);
                 // 2026-10-21 (user): no ball icon; 10:21 a quiet regular-weight note instead of bold (it only informs).
@@ -418,6 +421,7 @@ namespace Flightbeat.Game
             float rowHeight = (PlushLayout.Y(868f) - PlushLayout.Y(688f)) / 3f;
             float queueCanvas = Mathf.Min(94f, Mathf.Min(rowHeight * 1.06f, (500f / Battle.LaneCount - 12f) / ArtAspect));
             GardenHintLane(out int hintLane);
+            int startHint = GardenStartHintLane();
             for (int lane = 0; lane < Battle.LaneCount; lane++) {
                 var reserve = Battle.Reserve[lane];
                 // Back rows first so the front plant's pot and number stay on top.
@@ -434,13 +438,58 @@ namespace Flightbeat.Game
                     // (the front row, or the first three rows while the 优先出战 prop is picking) stand in a soft gold light
                     // under their feet. The back rows idle normally. A member reaching the front still gives a small hop.
                     bool back = row > 0;
-                    float wake = QueueWake(ship.Id, back), hop = wake < .3f ? Mathf.Sin(wake / .3f * Mathf.PI) : 0f;
-                    float feetY = QueueDisplayY(at.y - 6f * hop) + 12;
+                    float wake = QueueWake(ship.Id, back);
+                    // 2026-10-29 (user, after 沙画消消's bucket that turns open on reaching the first row): a member that
+                    // reaches the front twirls once to face you (.36 s: edge-on twice, mirrored in between, lifted a
+                    // little), blinks as it lands and gives the old small hop - its "my turn" moment. Hidden members
+                    // keep their bubble burst instead.
+                    bool twirl = wake < .7f && QueueReveal(ship, row) >= 1f;
+                    float spin = twirl && wake < .36f ? wake / .36f : -1f;
+                    float hopT = twirl ? wake - .36f : wake, hop = hopT >= 0f && hopT < .3f ? Mathf.Sin(hopT / .3f * Mathf.PI) : 0f;
+                    float lift = spin >= 0f ? 7f * Mathf.Sin(spin * Mathf.PI) : 0f;
+                    bool blink = twirl && wake >= .3f && wake < .44f;
+                    // 2026-10-29 (user, like 沙画消消's level-start hint): before the first deploy, the suggested front member
+                    // keeps hopping - up and stretched (.25 s), down and squashed (.25 s) - until any member is sent out.
+                    float hintLift = 0f, hintSquash = 0f;
+                    // 12:04 (user: too busy, tried A): two hops, then a 1 s rest (relaxing out of the last landing and
+                    // crouching just before the next pair).
+                    // 14:26 (user: squashes too much): landing squash .15 -> .06, stretch .08 -> .04.
+                    const float HintSquash = .06f, HintStretch = .04f;
+                    if (row == 0 && lane == startHint) {
+                        float cyc = Mathf.Repeat(ui - startHintAt, 2f);
+                        if (cyc < 1f) {
+                            float ph = Mathf.Repeat(cyc, .5f) / .25f;
+                            float k = ph < 1f ? 1f - (1f - ph) * (1f - ph) : 1f - (2f - ph) * (2f - ph);   // quad-out each half
+                            hintLift = 9f * queueScale * (ph < 1f ? k : 1f - k);
+                            hintSquash = ph < 1f ? Mathf.Lerp(HintSquash, -HintStretch, k) : Mathf.Lerp(-HintStretch, HintSquash, k);
+                        } else {
+                            float r = cyc - 1f;
+                            hintSquash = r < .15f ? HintSquash * (1f - Mathf.SmoothStep(0f, 1f, r / .15f))
+                                : r > .9f ? HintSquash * Mathf.SmoothStep(0f, 1f, (r - .9f) / .1f) : 0f;
+                        }
+                    }
+                    float feetY = QueueDisplayY(at.y - 6f * hop - lift - hintLift) + 12;
                     Color queueTint = row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color);
+                    // 2026-10-29 (user): members with a back view show their back in the rows behind; reaching the front
+                    // they turn round instead of twirling: back, edge-on, then the face (a half turn in the same .36 s).
+                    bool hasBack = !(row != 0 && ship.Kind == 2) && Has(PlantSlot(queueTint, "back"));
+                    if (spin >= 0f && hasBack) {
+                        GardenSkin.BendTurn = Mathf.Max(.06f, Mathf.Abs(Mathf.Cos(spin * Mathf.PI)));
+                        GardenSkin.BackView = spin < .5f;
+                    }
+                    else if (spin >= 0f) {
+                        GardenSkin.BendTurn = Mathf.Max(.06f, Mathf.Abs(Mathf.Cos(spin * Mathf.PI * 2f)));
+                        GardenSkin.BendMirror = spin > .25f && spin < .75f;
+                    }
+                    if (row > 0 && hasBack) GardenSkin.BackView = true;
+                    // 2026-10-29 (user, like 沙画消消): tapped while every pad is taken - the front member shakes its head
+                    // (12, -14, 9, -5, 0 degrees over .35 s, the pot stays put); the deny sound is the game's own.
+                    if (row == 0) GardenSkin.BendRotate = QueueRefuseShake(lane);
                     // Queue portraits share a 100% canvas scale; cancel the old per-character size compensation.
                     Creature(s, queueTint, at.x, feetY, queueCanvas, ship.Tier,
                         row != 0 && ship.Kind == 2 ? "" : ship.Ammo.ToString(), 0f, 14f * queueScale, false, true, row == 0 ? .03f : .02f, lane * 2.3f + row * 1.1f,
-                        1f / ArtScale(queueTint), -.05f * hop, 14f * queueScale, -1f, 0f, 0f, false, 0f);   // 2026-10-16 22:30: number pill tucked against the feet
+                        1f / ArtScale(queueTint), -.05f * hop + hintSquash, 14f * queueScale, -1f, 0f, 0f, blink, 0f);   // 2026-10-16 22:30: number pill tucked against the feet
+                    if (twirl && wake >= .3f && wake < .6f) QueueTwirlSparkle(s, at.x, QueueDisplayY(at.y) + 12f - queueCanvas * .75f, queueCanvas, wake - .3f);
                     // 2026-10-21 12:26 (user): hidden members show no number pill (was a "?" pill); the bubble art carries the "?".
                     // 2026-10-21: a hidden member reaching the front bursts out of its bubble.
                     float reveal = QueueReveal(ship, row);

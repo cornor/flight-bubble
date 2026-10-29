@@ -118,7 +118,8 @@ namespace Flightbeat.Game
                     }
 #if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
             // 2026-10-16: the bubble queue is a three-row glass tube (y 688-868); any tap on it deploys the front member.
-            if (p.y >= 688f && p.y < 868f && p.x >= 20f && p.x < 520f) Battle.Deploy(LaneAt(p.x));
+            // 2026-10-29: a refused tap (every pad taken) makes the lane's front member shake its head (GardenPads).
+            if (p.y >= 688f && p.y < 868f && p.x >= 20f && p.x < 520f) { int lane = LaneAt(p.x); if (!Battle.Deploy(lane)) GardenQueueRefused(lane); }
 #else
             if (p.y >= 700f && p.y < 754f && p.x >= 20f && p.x < 520f) Battle.Deploy(LaneAt(p.x));
 #endif

@@ -90,7 +90,7 @@ namespace Flightbeat.Garden
             float u = Mathf.Clamp01(distance / 34f);
             return .25f + .75f * u * u * (3f - 2f * u);
         }
-        public static void BubbleStream(PixelSurface s, Vector2 from, Vector2 to, float width, Color tint, float age)
+        public static void BubbleStream(PixelSurface s, Vector2 from, Vector2 to, float width, Color tint, float age, bool blown = false)
         {
             var delta = to - from; float length = delta.magnitude;
             if (length <= .001f) return;
@@ -107,7 +107,19 @@ namespace Flightbeat.Garden
             for (float d = head + flow; d < length; d += step, n++) {
                 int m = ((n % 3) + 3) % 3;
                 float size = width * (m == 0 ? .62f : m == 1 ? .48f : .55f);
-                GardenSkin.Shot(s, tint, from + dir * d, size * MouthGrow(d), 1f);
+                // 2026-10-28 (user): from the flower ring, soap bubbles turning into the solid balls (GardenSkin.BlownShot).
+                if (blown) {
+                    Vector2 at = GardenSkin.BlownCurve(from, to, d / length, 0f);   // rises first, then bends to the target
+                    // 2026-10-29 14:36 (user: the clear-to-solid joint of the tier-2 stream looked off, tiers 0/1 fine). The
+                    // balls follow each other ~11 px apart, so the single shot's look (1.7x bubble, a 14 px blink and a
+                    // white glint) became a fixed seam where a ring flashed on every ball and the big bubbles piled up.
+                    // In the stream: smaller bubbles (1.3x), a longer soft change (30 px) with no glint, and each ball
+                    // condenses a little earlier or later (+-10 px) so there is no hard line.
+                    float jitter = (Mathf.Abs(Mathf.Sin(n * 12.9898f) * 43758.5453f) % 1f - .5f) * 20f;
+                    GardenSkin.BlownShot(s, tint, at, size * 1.3f, size, (at - from).magnitude, 1f, false,
+                        GardenSkin.BlownCondense - 8f + jitter, 30f);
+                }
+                else GardenSkin.Shot(s, tint, from + dir * d, size * MouthGrow(d), 1f);
             }
             // 2026-10-19 09:34 (user picked C): no big pulsing ball at the hit point any more; a small splash keeps
             // spraying there instead: 7 droplets in the stream's color fly out in a ring (each with its own cycle, a

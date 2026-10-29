@@ -299,6 +299,9 @@ namespace Flightbeat.Garden
         // (mouth, crown and pot centre follow), `BendTurn` is the width during a turn (1 = none, ~0 edge-on at the
         // flip), `BendHop` lifts it off the pad during the turn (pixels). One-shot like the bend.
         public static bool BendMirror;
+        // 2026-10-29 (user, like 沙画消消): queue members behind the front row show their back (`back` art, when delivered).
+        // Set before Creature, cleared by it like the Bend* values.
+        public static bool BackView;
         public static float BendTurn = 1f, BendHop;
         // 2026-10-27 10:19 (user: puff and lean back before firing, lean forward and blow while firing, body apart from
         // the pot). `BendActive`: the pads drive the pose, so the whole-image fire/ready squash and the old outward
@@ -364,8 +367,10 @@ namespace Flightbeat.Garden
             bool plushMapped = PlushLayout.Enabled && s.MapLayout;
             if (plushMapped) { feet = PlushLayout.Y(feet); s.MapLayout = false; }
             float bStretch = BendStretch, bShear = BendShear, bDrop = BendDrop, bTurn = BendTurn, bHop = BendHop;
-            bool bMirror = BendMirror, bActive = BendActive, bInhale = BendInhale;
+            bool bMirror = BendMirror, bActive = BendActive, bInhale = BendInhale, bBack = BackView;
+            BackView = false;
             var combat = PadCombat; PadCombat = default;
+            var flower = PadFlower; PadFlower = default;   // 2026-10-28: the flower bubble ring (GardenSkin.FlowerRing)
             bool combatActive = combat.enabled && ammo != "0" && HasPadCombat(tint);
             if (combatActive) bActive = true;
             int bPose = BendPose;
@@ -475,6 +480,7 @@ namespace Flightbeat.Garden
                 float cycle = 3.1f + Mathf.Abs(phase) % 1.9f;
                 if ((Clock + phase * 1.37f) % cycle < .13f && Has(PlantSlot(tint, "blink"))) state = "blink";
             }
+            if (bBack && !Celebrate && ammo != "0" && Has(PlantSlot(tint, "back"))) state = "back";
             // 2026-10-21 (user): hidden members show the rainbow question-mark bubble when delivered; `outline` (alpha)
             // draws the white silhouette grown by 8 canvas px behind the member (front-row members you can tap).
             Color32 mk = tint; bool mystery = ((mk.r << 16) | (mk.g << 8) | mk.b) == 0x8C919C && Has("plants/mystery-bubble");
@@ -488,6 +494,10 @@ namespace Flightbeat.Garden
                 if (rm.x > 0f) LastMouth = new Vector2(ax + aw * rm.x / 224f, fy + fhh * rm.y / canvasH);   // else: the blowing frame's mouth
                 reachTop = fy + fhh * reachSlot.oy / reachSlot.fh;
             }
+            // 2026-10-28: the flower grows from the crown behind the head (its foot hides there); bubble in front below.
+            Vector2 flowerRing = default; float flowerR = 0f, flowerTop = 0f;
+            bool flowerDrawn = flower.enabled && FlowerRing && !mystery && !combatActive
+                && DrawFlowerStem(s, tint, flower, ax, ay, aw, ah, new Vector2(centerX, bodyFeet), lean, out flowerRing, out flowerR, out flowerTop);
             bool tilted = false;
             if (combatActive) {
                 tilted = DrawPadCombat(s, tint, combat, ax, ay, aw, ah, out reachTop);
@@ -553,12 +563,17 @@ namespace Flightbeat.Garden
                 s.Rect(centerX - w / 2 - 1, feet - h - 1, w + 2, h + 2, Ink);
                 s.Rect(centerX - w / 2, feet - h, w, h, tint);
             }
+            if (flowerDrawn) {
+                DrawFlowerBubble(s, tint, flower, flowerRing, flowerR);
+                LastMouth = flowerRing + new Vector2(0f, -flowerR * .4f);   // the shots leave from the ring
+            }
             // The plush ears start much higher than the old body's fixed y=62 anchor.
             // Use the shared silhouette bound, including breathing and outward tilt.
             float headTop = HeadTop(tint);
             float angle = lean * Mathf.Deg2Rad;
             float top = bodyFeet + ah * (headTop - FeetLine) * Mathf.Cos(angle) - aw * .5f * Mathf.Abs(Mathf.Sin(angle)), crownX = centerX;
             if (reachTop >= 0f) top = Mathf.Min(top, reachTop);
+            if (flowerDrawn) top = Mathf.Min(top, flowerTop + 8f);   // MAX sits above the flower
             if (stalk) { Vector2 head = OnStalk(.5f, headTop); top = head.y; crownX = head.x; }
             else if (warped) { Vector2 head = Warp(.5f, headTop); top = head.y; crownX = head.x; }
             float numberTop = feet + 2f - numberLift;

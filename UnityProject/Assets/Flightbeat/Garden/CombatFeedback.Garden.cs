@@ -573,7 +573,8 @@ namespace Flightbeat.Feedback
                 // 2026-10-18 23:40 (user: Ⅱ bullets too small). Stream balls are .48-.62 of the width, so width 10 made
                 // 5-6 px balls next to the 12 px Ⅰ shots; now Ⅱ 18 (9-11 px balls) and MAX 22 (11-14 px).
                 // 2026-10-22 10:51 (user): sizes as they were, except MAX now uses the Ⅱ width (18, was 22).
-                GardenFx.BubbleStream(s, from, to, 18, color(ship.Color), time);
+                Color streamTint = color(ship.Color);
+                GardenFx.BubbleStream(s, from, to, 18, streamTint, time, GardenSkin.HasFlowerRing(streamTint));
             }
             foreach (var f in flights) {
                 var shot = f.shot;
@@ -594,11 +595,20 @@ namespace Flightbeat.Feedback
                 // start, so with a shot every .07 s a ball sat on the face most of the time); a third one tightens the
                 // trail into a jet. (10:39: the three tiny droplets sprayed from the lips read as a fine splash; removed.)
                 Color tint = color(f.color);
+                // 2026-10-28 10:40 (user): with the flower ring a shot leaves the ring as a soap bubble and turns into the
+                // solid ball as it flies (GardenSkin.BlownShot: 11:47 it condenses in a blink); no MouthGrow.
+                bool blown = !shot.Rocket && GardenSkin.HasFlowerRing(tint);
                 for (int g = 3; g >= 0; g--) {
                     float age = shot.Age - g * .018f;
                     if (g > 0 && age <= 0f) continue;
-                    var q = Vector2.Lerp(from, to, Mathf.Clamp01(age / shot.Duration));
-                    GardenSkin.Shot(s, tint, q, (12f - g * 2.2f) * GardenFx.MouthGrow((q - from).magnitude), 1f);
+                    float tq = Mathf.Clamp01(age / shot.Duration);
+                    var q = blown ? GardenSkin.BlownCurve(from, to, GardenSkin.BlownEase(tq), (shot.Barrel - 1) * 7f) : Vector2.Lerp(from, to, tq);
+                    float size = 12f - g * 2.2f, dist = (q - from).magnitude;
+                    if (blown) {
+                        if (g > 0 && dist < GardenSkin.BlownCondense + GardenSkin.BlownCondenseSpan) continue;   // no trailing images of the bubble
+                        GardenSkin.BlownShot(s, tint, q, size * GardenSkin.BlownSoapScale, size, dist, 1f, g == 0);
+                    }
+                    else GardenSkin.Shot(s, tint, q, size * GardenFx.MouthGrow(dist), 1f);
                 }
             }
             DrawGardenPops(s, color);

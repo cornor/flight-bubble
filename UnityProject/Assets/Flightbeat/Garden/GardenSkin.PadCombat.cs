@@ -76,6 +76,39 @@ namespace Flightbeat.Garden
             p.sway *= individuality;
             return p;
         }
+        // 2026-10-27 21:14 (user): on the pad the member waits in the inhale pose (ready to blow); when it attacks it
+        // thrusts forward once and keeps blowing in the forward pose for as long as it fires, never going back to the
+        // inhale in between; when it stops it rebounds briefly and waits in the inhale pose again.
+        public static PadCombatPose PadCombatReady(float seconds)
+        {
+            return new PadCombatPose { enabled = true, from = 0, to = 0, blend = 1f, ring = -1f,
+                lift = 2f + 1.5f * Mathf.Sin(seconds * 3.2f) };                 // a slow breath held in
+        }
+        public static PadCombatPose PadCombatBlow(float seconds, float individuality = 1f)
+        {
+            var p = new PadCombatPose { enabled = true, ring = -1f };
+            if (seconds < .10f)
+            {
+                float q = seconds / .10f;
+                p.from = 0; p.to = 1; p.blend = Mathf.SmoothStep(0f, 1f, q);
+                p.lift = Mathf.Lerp(3f, -7f, q); p.sway = Mathf.Lerp(-2f, 4f, q);
+            }
+            else
+            {
+                float q = seconds - .10f;
+                p.from = p.to = 1; p.blend = 1f;
+                p.lift = -7f * Mathf.Exp(-q * 8f) - 1.5f + 1.5f * Mathf.Sin(q * Mathf.PI * 4.4f);   // keeps pushing the air out
+                p.sway = 4f * Mathf.Exp(-q * 8f);
+            }
+            p.sway *= individuality;
+            return p;
+        }
+        public static PadCombatPose PadCombatRelease(float seconds)
+        {
+            float q = Mathf.Clamp01(seconds / .15f);
+            return new PadCombatPose { enabled = true, from = 1, to = 2, blend = Mathf.SmoothStep(0f, 1f, q / .45f), ring = -1f,
+                lift = 5f * Mathf.Sin(q * Mathf.PI), sway = -3f * Mathf.Sin(q * Mathf.PI) };
+        }
         // The old pot is sampled in place. Root/paws stay still while the soft upper part moves.
         static bool DrawPadCombat(PixelSurface s, Color tint, PadCombatPose pose,
             float ax, float ay, float aw, float ah, out float top)

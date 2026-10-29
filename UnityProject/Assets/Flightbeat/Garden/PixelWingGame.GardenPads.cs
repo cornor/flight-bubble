@@ -113,6 +113,7 @@ namespace Flightbeat.Game
             public int pose;
             public bool inhale, front, noRing;
             public GardenSkin.PadCombatPose combat;
+            public GardenSkin.PadFlowerPose flower;
         }
         readonly Dictionary<int, PadBeat> padBeat = new Dictionary<int, PadBeat>();
         readonly List<PadPump> padPumps = new List<PadPump>();
@@ -128,24 +129,49 @@ namespace Flightbeat.Game
             if (!firing && b.firing) b.stopped = now;
             b.firing = firing;
             var p = new PadPump { ring = -1f, period = .36f };
-            if (ship.Ammo <= 0) return p;
             Color tint = GardenColor(ship.Color);
-            if (GardenSkin.HasPadCombat(tint))
+            bool flowerRing = GardenSkin.HasFlowerRing(tint);
+            if (ship.Ammo <= 0) { if (flowerRing) p.flower = GardenSkin.FlowerSpent(); return p; }
+            // 2026-10-28 (user: concept B 花朵泡泡环): the member keeps its original body and frames; the flower on its
+            // head sways while it waits and, while it fires, swells a bubble and pops it off every beat.
+            if (flowerRing)
             {
                 float side = ship.Id % 2 == 0 ? 1f : -1f;
                 if (firing)
                 {
-                    p.combat = GardenSkin.SamplePadCombat(now - b.start, side);
-                    p.ring = p.combat.ring;
-                    p.period = GardenSkin.PadCombatPeriod;
+                    p.frenzy = Mathf.Clamp01((now - b.start - 1.6f) / 1.2f) * .5f;
+                    p.period = Mathf.Lerp(.36f, .3f, p.frenzy * 2f);
+                    b.phase += dt / p.period;
+                    float f = b.phase - Mathf.Floor(b.phase);
+                    p.flower = GardenSkin.FlowerBlow(f, now, side);
+                    p.ring = f >= .7f ? (f - .7f) / .3f : -1f;                      // droplets and pot puffs with the pop
+                    p.thrust = p.ring >= 0f ? Mathf.Exp(-6f * p.ring) : 0f;
+                    p.noRing = true;
+                }
+                else p.flower = GardenSkin.FlowerRest(now, ship.Id * 1.3f);
+                return p;
+            }
+            if (GardenSkin.HasPadCombat(tint))
+            {
+                float side = ship.Id % 2 == 0 ? 1f : -1f;
+                // 10-27 21:14 (user): ready on the pad = the inhale pose; attacking = the forward blowing pose held for as
+                // long as it fires (no cycling back to the inhale); after firing a short rebound, then ready again.
+                if (firing)
+                {
+                    p.combat = GardenSkin.PadCombatBlow(now - b.start, side);
+                    b.phase += dt / .36f;                                          // droplets / pot puffs keep a beat
+                    float f = b.phase - Mathf.Floor(b.phase);
+                    p.ring = f >= .5f ? (f - .5f) / .5f : -1f;
+                    p.period = .36f;
                     p.thrust = p.ring >= 0f ? Mathf.Exp(-6f * p.ring) : 0f;
                     // The body carries the effort; the existing glow stays behind it at a lower gain.
                     p.frenzy = Mathf.Clamp01((now - b.start - 1.6f) / 1.2f) * .3f;
-                    p.front = p.combat.to == 1;
+                    p.front = true;
                     p.noRing = true;   // 10-27 19:50: the white ring sat on the bigger face; droplets and pot puffs stay
                 }
-                else if (now - b.stopped < .15f)
-                    p.combat = GardenSkin.SamplePadCombat(.68f + now - b.stopped, side);
+                else if (ship.Arrival <= 0f)                                       // landed on the pad
+                    p.combat = now - b.stopped < .15f ? GardenSkin.PadCombatRelease(now - b.stopped)
+                        : GardenSkin.PadCombatReady(now + ship.Id * .7f);
                 return p;
             }
             bool reach = GardenSkin.Has(GardenSkin.PlantSlot(tint, "reach")), lean = GardenSkin.Has(GardenSkin.PlantSlot(tint, "lean"));
@@ -422,6 +448,74 @@ namespace Flightbeat.Game
             return ui - at;
         }
         Flightbeat.Model.Battle queueRevealBattle;
+        // 2026-10-29 (user): the level-start hint. Lane of the member the game itself would suggest (Battle.SuggestedQueue,
+        // f55082: a head that merges with members on the pads first, then the one whose colour is at the front of the most
+        // columns, ties to the earlier Order), recomputed here read-only (SuggestedQueue / ColumnTarget write pierce
+        // fields, so drawing must not call them). Chosen once when the battle is ready and kept until the first deploy
+        // (State leaves Ready); -1 otherwise, in lessons (they have their own hint) and while a menu or aiming is open.
+        Flightbeat.Model.Battle startHintBattle;
+        int startHintLane = -1;
+        float startHintAt;
+        int GardenStartHintLane()
+        {
+            if (Battle == null || lesson != null || Battle.State != Phase.Ready || settings || selection != 0) return -1;
+            if (startHintBattle != Battle) { startHintBattle = Battle; startHintLane = GardenSuggestLane(); startHintAt = ui; }
+            return startHintLane >= 0 && startHintLane < Battle.LaneCount && Battle.Reserve[startHintLane].Count > 0 ? startHintLane : -1;
+        }
+        int GardenSuggestLane()
+        {
+            int bestScore = int.MinValue, bestOrder = int.MaxValue, best = -1;
+            if (Battle.UnlockedSlots <= Battle.Fleet.Count) return -1;
+            for (int q = 0; q < Battle.Reserve.Length; q++)
+            {
+                if (Battle.Reserve[q].Count == 0) continue;
+                Fighter c = Battle.Reserve[q][0];
+                if (Battle.Time < c.DeployAt) continue;
+                int matching = 0, targets = 0;
+                foreach (Fighter ship in Battle.Fleet) if (ship.Color == c.Color) matching++;
+                for (int col = 0; col < Battle.Level.columns; col++)
+                {
+                    int front = Battle.Front(col);
+                    if (front >= 0 && Battle.ColorAt(front) == c.Color) targets++;
+                }
+                int score = matching * 10 + (matching > 1 ? 100000 : 0) + targets * 100;
+                if (score > bestScore || (score == bestScore && c.Order < bestOrder)) { bestScore = score; bestOrder = c.Order; best = q; }
+            }
+            return best;
+        }
+        // 2026-10-29: a tap on a queue that could not deploy because every pad is taken (BattleInput) - the front member
+        // of that lane shakes its head (QueueRefuseShake, degrees for GardenSkin.BendRotate).
+        readonly Dictionary<int, float> queueRefusedAt = new Dictionary<int, float>();
+        internal void GardenQueueRefused(int lane)
+        {
+            if (Battle == null || lane < 0 || lane >= Battle.LaneCount || Battle.Reserve[lane].Count == 0) return;
+            if (Battle.UnlockedSlots > Battle.Fleet.Count) return;   // refused for another reason: no shake
+            queueRefusedAt[lane] = ui;
+        }
+        static readonly float[] RefuseKeys = { 0f, .06f, .14f, .21f, .27f, .35f }, RefuseAngles = { 0f, 12f, -14f, 9f, -5f, 0f };
+        float QueueRefuseShake(int lane)
+        {
+            if (!queueRefusedAt.TryGetValue(lane, out float at)) return 0f;
+            float t = ui - at;
+            if (t < 0f || t >= RefuseKeys[RefuseKeys.Length - 1]) { queueRefusedAt.Remove(lane); return 0f; }
+            int k = 1;
+            while (t > RefuseKeys[k]) k++;
+            float u = (t - RefuseKeys[k - 1]) / (RefuseKeys[k] - RefuseKeys[k - 1]);
+            return Mathf.Lerp(RefuseAngles[k - 1], RefuseAngles[k], u * u * (3f - 2f * u));
+        }
+        // Four small twinkles round the head of a member that has just twirled to face you (age 0..~.3 s).
+        void QueueTwirlSparkle(PixelSurface s, float x, float y, float canvas, float age)
+        {
+            float k = Mathf.Clamp01(age / .3f), a = 1f - k;
+            for (int i = 0; i < 4; i++)
+            {
+                float ang = (i * 90f + 45f) * Mathf.Deg2Rad, r = canvas * (.28f + .22f * k), d = canvas * .07f * (1f - .5f * k);
+                Vector2 p = new Vector2(x + Mathf.Cos(ang) * r, y + Mathf.Sin(ang) * r * .8f);
+                Color c = new Color(1f, .95f, .7f, a);
+                s.Segment(new Vector2(p.x - d, p.y), new Vector2(p.x + d, p.y), 2f, c);
+                s.Segment(new Vector2(p.x, p.y - d), new Vector2(p.x, p.y + d), 2f, c);
+            }
+        }
         // 2026-10-21 14:18 (user agreed): an ad-unlocked pad is shown on the pad itself instead of a 「已解锁出战位」 bar in
         // the middle. When a pad turns open: its padlock bubble bursts (rocket-pop), a mint ring of light spreads over
         // the pad, six sparkles rise, then the empty pad pulses three times (about 1.4 s in all).
@@ -480,6 +574,110 @@ namespace Flightbeat.Game
             float size = (9f + 4f * u) * queueScale;
             TextOutline(s, "z", x + 5f * u * queueScale, y - 16f * u * queueScale, size,
                 new Color(1f, 1f, 1f, a), new Color(Outline.r, Outline.g, Outline.b, a), 1.1f * queueScale);
+        }
+
+        // ---- Farewell (2026-10-28, user: like 沙画消消's full bucket popping away) --------------------------------------
+        // A member that fires its last shot leaves Battle.Fleet at once (Battle.Tick), so it used to blink off its pad.
+        // Now it says goodbye where it stood: a quick crouch, a happy hop up with the cheer face, swelling to 1.2x, then it
+        // shrinks away into a bubble pop with a small fan of confetti (member ~.5 s, confetti until ~1 s). Only members
+        // that leave with no ammo are celebrated (merge partners and other removals keep their ammo). Drawing only, on the
+        // UI clock, drawn before the members so a newcomer landing on the same pad stays in front.
+        struct PadSeen { public Fighter ship; public float x, feet, scale; }
+        struct PadFarewell { public float born, x, feet, scale; public int color, tier, seed; }
+        readonly Dictionary<int, PadSeen> padSeen = new Dictionary<int, PadSeen>();
+        readonly List<PadFarewell> padFarewells = new List<PadFarewell>();
+        readonly List<int> padGone = new List<int>();
+        Flightbeat.Model.Battle padSeenBattle;
+        const float FarewellLife = 1f;
+        static float FarewellHash(int n) { float v = Mathf.Sin(n * 12.9898f) * 43758.5453f; return v - Mathf.Floor(v); }
+
+        // Where a pad member was drawn this frame (feet as passed to Creature, before the layout mapping).
+        void PadSeenRecord(Fighter ship, float x, float feet, float scale) =>
+            padSeen[ship.Id] = new PadSeen { ship = ship, x = x, feet = feet, scale = scale };
+
+        void DrawPadFarewells(PixelSurface s, float canvas)
+        {
+            if (padSeenBattle != Battle) { padSeenBattle = Battle; padSeen.Clear(); padFarewells.Clear(); }
+            padGone.Clear();
+            foreach (var pair in padSeen)
+            {
+                bool here = false;
+                foreach (var f in Battle.Fleet) if (f.Id == pair.Key) { here = true; break; }
+                if (!here) padGone.Add(pair.Key);
+            }
+            foreach (int id in padGone)
+            {
+                PadSeen seen = padSeen[id];
+                padSeen.Remove(id);
+                if (seen.ship == null || seen.ship.Ammo > 0 || Battle.State == Phase.Intro) continue;
+                padFarewells.Add(new PadFarewell { born = ui, x = seen.x, feet = seen.feet, scale = seen.scale,
+                    color = seen.ship.Color, tier = seen.ship.Tier, seed = id });
+            }
+            if (padFarewells.Count == 0) return;
+            bool mapped = s.MapLayout, cheer = GardenSkin.Celebrate;
+            s.MapLayout = true;
+            try
+            {
+                for (int i = padFarewells.Count - 1; i >= 0; i--)
+                {
+                    PadFarewell f = padFarewells[i];
+                    float t = ui - f.born;
+                    if (t < 0f || t >= FarewellLife) { padFarewells.RemoveAt(i); continue; }
+                    Color tint = GardenColor(f.color);
+                    float body = canvas * f.scale, half = body * .42f;
+                    // 1. The member: crouch (.08 s), hop up and swell (.22 s), shrink away at the top (.18 s).
+                    if (t < .48f)
+                    {
+                        float lift = 0f, k = 1f, squash;
+                        if (t < .08f) squash = .14f * Mathf.Sin(t / .08f * Mathf.PI * .5f);
+                        else if (t < .30f)
+                        {
+                            float u = (t - .08f) / .22f, e = 1f - (1f - u) * (1f - u);
+                            lift = 26f * e; k = 1f + .2f * e;
+                            squash = .14f * Mathf.Pow(1f - u, 5f) - .12f * Mathf.Sin(u * Mathf.PI);   // crouch -> stretched -> round
+                        }
+                        else
+                        {
+                            float u = (t - .30f) / .18f;
+                            lift = 26f + 6f * u; k = 1.2f * (1f - u * u); squash = 0f;
+                        }
+                        if (k > .03f)
+                        {
+                            // Creature scales about the feet; keep the body's centre still instead.
+                            float feet = f.feet - lift, centre = feet - half;
+                            feet = centre + (feet - centre) * k;
+                            GardenSkin.Celebrate = true;
+                            // 2026-10-29 (user: keep the farewell with the flower ring): the flower stays on its head and
+                            // swings with the hop instead of vanishing when the member leaves the fleet.
+                            if (GardenSkin.HasFlowerRing(tint))
+                                GardenSkin.PadFlower = new GardenSkin.PadFlowerPose { enabled = true, bubble = -1f, pop = -1f,
+                                    sway = 12f * Mathf.Sin(t * 22f) * (1f - t / .48f), squash = squash * .6f };
+                            Creature(s, tint, f.x, feet, canvas, f.tier, "", 0f, 14f, false, false, 0f, f.seed * 1.7f, f.scale * k, squash);
+                            GardenSkin.Celebrate = cheer;
+                        }
+                    }
+                    // 2. Gone in a bubble pop and a fan of confetti from where it vanished.
+                    float pt = t - .40f;
+                    if (pt < 0f) continue;
+                    Vector2 c0 = new Vector2(f.x, f.feet - 30f - half);
+                    if (GardenFx.Has("rocket-pop")) GardenFx.Burst(s, "rocket-pop", c0, body * 1.3f, pt, .4f);
+                    Color ring = Color.Lerp(tint, Color.white, .45f);
+                    if (pt < .3f) { ring.a = .85f * (1f - pt / .3f); s.Ring(c0, body * (.35f + .5f * pt / .3f), ring, 2.5f * (1f - pt / .3f) + .5f, 20, 0f, 360f); }
+                    float fade = 1f - Mathf.Clamp01((pt - .35f) / .25f);
+                    for (int k = 0; k < 12; k++)
+                    {
+                        float h1 = FarewellHash(f.seed * 31 + k), h2 = FarewellHash(f.seed * 37 + k), h3 = FarewellHash(f.seed * 41 + k);
+                        float ang = Mathf.Lerp(200f, 340f, (k + h1) / 12f) * Mathf.Deg2Rad, speed = 150f + 170f * h2;
+                        Vector2 p = c0 + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * speed * pt + new Vector2(0f, 420f * pt * pt);
+                        float spin = h3 * 6.28f + pt * (8f + 10f * h1);
+                        Vector2 d = new Vector2(Mathf.Cos(spin), Mathf.Sin(spin)) * 3.5f;
+                        Color col = k % 3 == 0 ? Color.Lerp(tint, Color.white, .2f) : Color.HSVToRGB(FarewellHash(f.seed * 43 + k), .55f, 1f);
+                        col.a = fade;
+                        s.Segment(p - d, p + d, 3f, col);
+                    }
+                }
+            }
+            finally { s.MapLayout = mapped; GardenSkin.Celebrate = cheer; }
         }
     }
 }

@@ -45,7 +45,9 @@ FINALE_KING_ART = ROOT / 'Art/PlushToy/FinaleKing-20261026/masters'
 # 2026-10-27: hand-drawn pad poses on trial (reach: bending forward and blowing; lean: leaning back, puffed).
 PLUSH_REACH = ROOT / 'Art/PlushToy/PadReach-20261027/delivery'
 PAD_COMBAT_ART = ROOT / 'Art/PlushToy/PadCombat-20261027'
-PLUSH_ROOTS = (PLUSH_REACH, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
+# 2026-10-29: back views for queue members behind the front row (optional state `back`; level 3's four on trial).
+PLUSH_BACK = ROOT / 'Art/PlushToy/BackView-20261029/delivery'
+PLUSH_ROOTS = (PLUSH_REACH, PLUSH_BACK, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
 
 def art_path(rel):
     # User-restored Git glass lock must not be replaced by the plush pad override.
@@ -61,7 +63,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, PAD_COMBAT_ART / 'masters', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     files += [p for p in (PAD_COMBAT_ART / 'mouths.json', PAD_COMBAT_ART / 'coverage.json') if p.exists()]
@@ -140,7 +142,7 @@ for entry in color_data['colors']:
     for st in ['idle', 'attack', 'spent']:
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE,
                       lambda x=h, state=st: P.round_creature(x, state)))
-    for st in ['blink', 'cheer', 'ready', 'reach', 'lean']:   # ready: puffed cheeks before firing (2026-10-21); reach/lean: pad poses (2026-10-27); all optional
+    for st in ['blink', 'cheer', 'ready', 'reach', 'lean', 'back']:   # ready: puffed cheeks before firing (2026-10-21); reach/lean: pad poses (2026-10-27); back: queue back view (2026-10-29); all optional
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE, None))
 # Mystery reserves reveal neither their palette nor their optional animation.
 # Art item 76 delivers only idle: a mystery member never attacks while hidden, so the other states reuse it.
@@ -603,7 +605,7 @@ for entry in SLOTS:
     p = art_path(rel)
     # A plush member must never blink or cheer back into the older jelly character.
     if rel.startswith('creatures/') and any((root / Path(rel).parent / 'idle.png').exists() for root in PLUSH_ROOTS) and not any((root / rel).exists() for root in PLUSH_ROOTS):
-        if Path(rel).stem in ('blink', 'cheer', 'ready', 'reach', 'lean'): continue
+        if Path(rel).stem in ('blink', 'cheer', 'ready', 'reach', 'lean', 'back'): continue
     if p.exists():
         im = Image.open(p).convert('RGBA'); src = hashlib.sha256(p.read_bytes()).hexdigest(); delivered.append(rel)
     else:
@@ -630,6 +632,9 @@ for entry in SLOTS:
 for sid, im in GENERATED.items(): tiles.append((sid, im, 'generated'))
 from pad_combat_art import load as load_pad_combat
 tiles.extend(load_pad_combat(ROOT, OUT))
+# 2026-10-28 (user: concept B 花朵泡泡环 as the battle look): the shared flower ring and every member's crown.
+from flower_ring_art import load as load_flower_ring
+tiles.extend(load_flower_ring(ROOT, OUT, tiles))
 # 2026-10-21 (user: a white outline on the front-row members you can tap): each idle silhouette (and the mystery
 # bubble) grown by 4 canvas px (12:22, was 8), softened, as a white image drawn behind the member.
 for _sid, _im, _src in list(tiles):

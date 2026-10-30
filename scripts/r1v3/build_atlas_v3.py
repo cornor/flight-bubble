@@ -51,7 +51,22 @@ PLUSH_BACK = ROOT / 'Art/PlushToy/BackView-20261029/delivery'
 PLUSH_POT = ROOT / 'Art/PlushToy/PotSprout-20261029/delivery'
 # 2026-10-29 14:59 (user): the back-view trial is set aside (art kept in BackView-20261029); the pot sprout is tried instead.
 # Put PLUSH_BACK back into PLUSH_ROOTS to bring the back views back.
-PLUSH_ROOTS = (PLUSH_REACH, PLUSH_POT, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
+# 2026-10-30 09:29 (user): the pot sprout for the other 18 members (same four states).
+PLUSH_POT_ALL = ROOT / 'Art/PlushToy/PotSprout-All-20261030/delivery'
+PLUSH_ROOTS = (PLUSH_REACH, PLUSH_POT, PLUSH_POT_ALL, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
+SPROUT_POINTS = {k.upper(): v for k, v in json.loads((PLUSH_POT_ALL / 'sprout-points.json').read_text()).items()} \
+    if (PLUSH_POT_ALL / 'sprout-points.json').is_file() else {}
+# 2026-10-29 21:07: light theme and new UI art (界面优化); slot overrides below (THEME_SLOTS) and the battle background.
+UIREF = ROOT / 'Art/PlushToy/UIRefresh-20261029/delivery'
+# 2026-10-30 16:10 (调整, user: 完全照参考图): third batch, redrawn to the references; a file there wins over the same
+# path in UIREF and is stored at the earlier file's size (so the atlas use stays the same).
+UIREF_B = ROOT / 'Art/PlushToy/UIRefresh-B-20261030/delivery'
+def _ur(rel):
+    return UIREF_B / rel if (UIREF_B / rel).is_file() else UIREF / rel
+def _ur_scale(rel, base=1.0):
+    if (UIREF_B / rel).is_file() and (UIREF / rel).is_file():
+        return base * Image.open(UIREF / rel).width / Image.open(UIREF_B / rel).width
+    return base
 
 def art_path(rel):
     # User-restored Git glass lock must not be replaced by the plush pad override.
@@ -67,7 +82,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     files += [p for p in (PAD_COMBAT_ART / 'mouths.json', PAD_COMBAT_ART / 'coverage.json') if p.exists()]
@@ -147,7 +162,10 @@ for entry in color_data['colors']:
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE,
                       lambda x=h, state=st: P.round_creature(x, state)))
     for st in ['blink', 'cheer', 'ready', 'reach', 'lean', 'back', 'pot', 'body', 'sprout', 'leaves']:   # pot/body/sprout/leaves: queue sprout (2026-10-29); ready: puffed cheeks before firing (2026-10-21); reach/lean: pad poses (2026-10-27); back: queue back view (2026-10-29); all optional
-        SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png', CREATURE, None))
+        # 2026-10-30: the queue sprout layers are only ever drawn at queue size (<= ~94 px of the 256 frame), so they are
+        # stored at half scale; this keeps room on the creature atlas for all 22 members' sprouts.
+        SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png',
+                      CREATURE * .5 if st in ('pot', 'body', 'sprout', 'leaves') else CREATURE, None))
 # Mystery reserves reveal neither their palette nor their optional animation.
 # Art item 76 delivers only idle: a mystery member never attacks while hidden, so the other states reuse it.
 for st in ['idle', 'attack', 'spent']:
@@ -413,6 +431,30 @@ _rail = rail_tiled(); _rail.save(DEL.parent / 'generated/scene/rail-tiled.png')
 recolor(_rail, (.50, .02, .06), (.98, .16, .20), (1., .82, .80), knee=.6).save(DEL.parent / 'generated/scene/rail-red.png')
 SLOTS[:] = [(sid, '../generated/scene/rail-tiled.png', sc, fb) if sid == 'scene/fence' else (sid, src, sc, fb) for sid, src, sc, fb in SLOTS]
 SLOTS.append(('scene/fence-red', '../generated/scene/rail-red.png', UI, None))
+# 2026-10-29 21:07 (user: 浅色主题全局换): the light theme art (Art/PlushToy/UIRefresh-20261029, first batch) replaces
+# these battle slots at 1:1 (delivered at the slots' frame sizes), plus the guide hand (N9). Missing files keep the old art.
+THEME_SLOTS = {'scene/plush-board': 'theme/board-frame.png', 'scene/progress-track': 'theme/progress-track.png',
+               'scene/progress-frame': 'theme/level-pill.png', 'scene/level': 'theme/level-pill.png',
+               'scene/pause': 'theme/pause.png', 'scene/plot': 'theme/pad.png', 'scene/queue-panel': 'theme/queue-cell.png',
+               # 2026-10-30 second batch: dialogs (panel, rows, setting icons) and the home corner buttons
+               'plants/dialog/pause-panel': 'theme/dialog-panel.png', 'plants/dialog/panel': 'theme/dialog-panel.png',
+               'plants/ui/panel-card': 'theme/dialog-panel.png', 'plants/dialog/pause-row': 'theme/dialog-row.png',
+               'plants/dialog/row': 'theme/dialog-row.png', 'plants/dialog/icon-music': 'theme/icon-music.png',
+               'plants/dialog/icon-sound': 'theme/icon-sound.png', 'plants/dialog/icon-light': 'theme/icon-light.png',
+               'plants/ui/icon-music': 'theme/icon-music.png', 'plants/ui/icon-sound': 'theme/icon-sound.png',
+               'plants/ui/icon-light': 'theme/icon-light.png', 'plants/home/btn-settings': 'theme/btn-settings.png',
+               'plants/home/btn-codex': 'theme/btn-codex.png'}
+# (applied just before the tiles are packed, so slots added further down - home buttons - are covered too)
+for _sid, _rel in (('plants/uiref/guide-hand', 'guide/hand.png'), ('plants/uiref/button-blue', 'theme/button-blue.png'), ('plants/uiref/button-yellow', 'theme/button-yellow.png'),
+                   ('plants/uiref/button-red', 'theme/button-red.png'), ('plants/uiref/win-crown', 'win/mvp-crown.png'), ('plants/uiref/lose-hero-sad', 'lose/hero-sad.png'),
+                   ('plants/uiref/button-white', 'theme/button-white.png'), ('plants/uiref/icon-home', 'theme/icon-home.png'), ('plants/uiref/icon-replay', 'theme/icon-replay.png'),
+                   ('plants/uiref/icon-share', 'theme/icon-share.png'), ('plants/uiref/icon-video', 'theme/icon-video.png'), ('plants/uiref/slot-locked', 'slot/locked.png'),
+                   ('plants/uiref/rail-chevron', 'fx/rail-chevron.png'), ('plants/uiref/aim-ring', 'fx/aim-ring.png'), ('plants/uiref/codex-pedestal', 'codex/pedestal.png'),
+                   ('plants/uiref/incoming-title', 'incoming/title.png'), ('plants/uiref/incoming-chevron', 'incoming/chevron.png'),
+                   ('plants/uiref/revive-wave', 'fx/revive-wave.png')):
+    # 2026-10-29: result pages, guide and the second batch, on the roomier creature atlas (plants/ prefix); the aim ring
+    # is drawn at most ~280 px wide, so it is stored at half size.
+    if _ur(_rel).is_file(): SLOTS.append((_sid, str(_ur(_rel)), _ur_scale(_rel, .5 if _sid.endswith('aim-ring') else 1.0), None))
 
 if (_HOME / 'delivery/celebrate-halo.png').exists():
     (_HOME / 'generated').mkdir(exist_ok=True)
@@ -602,6 +644,9 @@ if missing:
 cursor_y = ((len(chars) + cols - 1) // cols) * CELL
 glyph_mode = 'source-preserved+' + str(len(missing))
 
+# 2026-10-30: the light-theme overrides (THEME_SLOTS), after every slot has been listed.
+SLOTS[:] = [(e[0], str(_ur(THEME_SLOTS[e[0]])), _ur_scale(THEME_SLOTS[e[0]]), *e[3:]) if e[0] in THEME_SLOTS and _ur(THEME_SLOTS[e[0]]).is_file() else e
+            for e in SLOTS]
 # ---- tiles
 tiles, placeholder, delivered = [], [], []
 for entry in SLOTS:
@@ -683,11 +728,15 @@ if _bg.exists():
     background = Image.open(PLUSH / "scene/background.png").convert("RGB") if (PLUSH / "scene/background.png").exists() else calm_stage(Image.open(_bg)); bg_src = _bg.name + ':' + hashlib.sha256(_bg.read_bytes()).hexdigest(); delivered.append('scene/background.png')
 else:
     background = P.background().convert('RGB'); bg_src = 'placeholder'; placeholder.append('scene/background.png')
+if (UIREF / 'theme/battle-background.png').is_file():   # 2026-10-29: light theme (T1), white to pale blue
+    _t1 = UIREF / 'theme/battle-background.png'
+    background = Image.open(_t1).convert('RGB'); bg_src = 'UIRefresh T1:' + hashlib.sha256(_t1.read_bytes()).hexdigest()
 background.resize(BG_SIZE, Image.LANCZOS).save(OUT / 'background.png')
 # Home background (H2): its own texture, 1080x2340 stored at 0.75 (core 9:16 picture at y 210-2130 of the source).
 _home_bg = DEL / '../../home-v1/delivery/background.png'
 if (PLUSH_FULL / 'home/background.png').exists(): _home_bg = PLUSH_FULL / 'home/background.png'
 if (HOME_WAVE_ART / 'background.png').exists(): _home_bg = HOME_WAVE_ART / 'background.png'
+if (UIREF / 'theme/home-background.png').exists(): _home_bg = UIREF / 'theme/home-background.png'   # 2026-10-30 light theme (T2)
 if _home_bg.exists():
     Image.open(_home_bg).convert('RGB').resize((810, 1755), Image.LANCZOS).save(OUT / 'home-background.png')
     delivered.append('home-v1/background.png')
@@ -698,8 +747,11 @@ if _home_bg.exists():
         _guid = hashlib.md5(b'GardenR1/home-background').hexdigest()
         _meta.write_text(re.sub(r'guid: [0-9a-f]{32}', 'guid: ' + _guid, _src, count=1), encoding='utf-8')
 # Separate high-resolution home layers keep the full creature atlas unchanged.
-for _name in ('title', 'bear-idle', 'bear-blink'):
+for _name in ('title', 'bear-idle', 'bear-blink', 'frog', 'chick'):
     _source = HOME_WAVE_ART / f'{_name}.png'
+    if (UIREF_B / f'home/{_name}.png').exists(): _source = UIREF_B / f'home/{_name}.png'   # 2026-10-30 batch 3 (H2)
+    if _name == 'title' and (UIREF / 'logo/title-logo.png').exists(): _source = UIREF / 'logo/title-logo.png'   # 2026-10-30 (N1)
+    if _name == 'title' and (UIREF_B / 'home/logo.png').exists(): _source = UIREF_B / 'home/logo.png'   # batch 3 (H1)
     if not _source.exists(): continue
     _image = Image.open(_source).convert('RGBA')
     _image.thumbnail((1200, 1200), Image.Resampling.LANCZOS)
@@ -714,6 +766,8 @@ for _name in ('title', 'bear-idle', 'bear-blink'):
         _meta.write_text(_settings.replace('alphaUsage: 0', 'alphaUsage: 1').replace('alphaIsTransparency: 0', 'alphaIsTransparency: 1'))
 if (PLUSH_FULL / 'home/codex-background.png').exists():
     Image.open(PLUSH_FULL / 'home/codex-background.png').convert('RGB').resize((810,1755),Image.Resampling.LANCZOS).save(OUT / 'codex-background.png')
+if (UIREF / 'theme/codex-background.png').exists():   # 2026-10-30 light theme (T3)
+    Image.open(UIREF / 'theme/codex-background.png').convert('RGB').resize((810,1755),Image.Resampling.LANCZOS).save(OUT / 'codex-background.png')
 # 2026-10-17 loading page (WebGL template, shown before the game downloads, so kept small: ~300 KB in all).
 # Softened home sky, the title logo, Xiao Lan blowing a bubble (H15 when delivered, otherwise its cheer pose) and
 # the halo soap bubble that grows with the download progress. Anchor = where the bubble starts, in the hero image.
@@ -721,6 +775,16 @@ def export_loading():
     import json as _json
     tpl = ROOT / 'UnityProject/Assets/WebGLTemplates/Flightbeat/TemplateData'
     tpl.mkdir(parents=True, exist_ok=True)
+    # 2026-10-30 (界面优化 1, user after the reference): sky-blue bubble background (N2) and the 泡泡小队 wordmark (N1);
+    # the page itself (index.html) lays out the progress bar and the health advisory. ~1/5 of the old mascot picture.
+    _lbg = UIREF_B / 'loading/background.png' if (UIREF_B / 'loading/background.png').exists() else UIREF / 'loading/loading-background.png'
+    _llogo = UIREF_B / 'loading/logo-stacked.png' if (UIREF_B / 'loading/logo-stacked.png').exists() else UIREF / 'logo/title-logo.png'
+    if _lbg.exists() and _llogo.exists():   # batch 3 (L1 stacked wordmark with the bear, L2 pattern) when delivered
+        bg = Image.open(_lbg).convert('RGB')
+        bg.resize((720, round(720 * bg.height / bg.width)), Image.Resampling.LANCZOS).save(tpl / 'loading-bg.webp', quality=86, method=6)
+        logo = Image.open(_llogo).convert('RGBA')
+        logo.resize((720, round(720 * logo.height / logo.width)), Image.Resampling.LANCZOS).save(tpl / 'loading-logo.webp', quality=90, method=6)
+        return (tpl / 'loading-bg.webp').stat().st_size + (tpl / 'loading-logo.webp').stat().st_size
     if (LOADING_ART / 'mascot-v2.png').exists():
         # B layout with the user's reference mascot: smiling, raised paw, refined blue pot.
         # The HTML footer supplies live progress and the health advisory independently.
@@ -875,6 +939,9 @@ for atlas_id in [0, 1]:
             slot['headTop'] = creature_heads[sid.rsplit('/', 1)[0]]
         if sid.rsplit('/', 1)[0] in creature_pots:
             slot['potCenterX'] = creature_pots[sid.rsplit('/', 1)[0]]
+        # 2026-10-30: the queue sprout's front rim and stem base per member (PotSprout-All-20261030), on the pot slot.
+        if sid.endswith('/pot') and sid.split('/')[-2].upper() in SPROUT_POINTS:
+            slot.update({k: float(v) for k, v in SPROUT_POINTS[sid.split('/')[-2].upper()].items() if k in ('rimY', 'stemX', 'stemY')})
         slots.append(slot)
     heights.append(top)
     atlas_image.save(OUT / ('atlas.png' if atlas_id == 0 else 'creatures.png'))

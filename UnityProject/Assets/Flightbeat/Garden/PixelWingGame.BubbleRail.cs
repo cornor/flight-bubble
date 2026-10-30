@@ -83,17 +83,24 @@ namespace Flightbeat.Game
             float a = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((railRed - .5f) / .2f));
             if (a <= .01f) return;
             float beat = .72f + .28f * railPulse;
-            const float top = 509f, h = 28f;
             bool mapped = s.MapLayout;
-            float cy = GardenBars.ScreenY(s, top + h * .5f);
+            // 2026-10-30 (调整 16, user after the reference): a glowing red line along the bottom edge of the bubble field
+            // (the rail), red chevrons under it at both ends holding it up, and the black bar just below.
+            float lineY = GardenBars.ScreenY(s, 562f), cy = GardenBars.ScreenY(s, 592f);
             s.MapLayout = false;
             try
             {
-                GardenBarArt.Plate(s, "danger", 270f, cy, 524f, h, Color.white, a * beat);
-                Color ink = new Color(1f, 1f, 1f, a), edge = new Color(.6f, .03f, .08f, a);
-                GardenBarArt.TextOutline(s, "泡泡快压到护栏了！", 270f, cy - 9f, 17f, ink, edge, .7f);
-                if (!GardenBars.Icon(s, "warn", 126f, cy, 20f, a * beat)) WarnSign(s, 126f, cy, a * beat);
-                if (!GardenBars.Icon(s, "warn", 414f, cy, 20f, a * beat)) WarnSign(s, 414f, cy, a * beat);
+                Color red = new Color(1f, .22f, .3f, a * beat);
+                s.GlowLine(new Vector2(14f, lineY), new Vector2(526f, lineY), 26f, new Color(1f, .25f, .3f, .55f * a * beat));
+                s.GlowLine(new Vector2(14f, lineY), new Vector2(526f, lineY), 8f, new Color(1f, .5f, .5f, .8f * a * beat));
+                s.Rect(14f, lineY - 1.5f, 512f, 3f, red);
+                if (Has("plants/uiref/rail-chevron"))
+                    for (int side = -1; side <= 1; side += 2)
+                    {
+                        float lift = (1f - railPulse) * 4f, x = 270f + side * 236f;
+                        Asset(s, "plants/uiref/rail-chevron", x - 13f, lineY + 3f - lift, 26f, 26f, new Color(1f, 1f, 1f, a * beat));
+                    }
+                DarkBar(s, "泡泡压到护栏了！", cy, 1f, "warn", a, 17f);
             }
             finally { s.MapLayout = mapped; }
         }

@@ -27,7 +27,7 @@ namespace Flightbeat.Game
             Color shade = DialogShade; shade.a = shadeAlpha;
             s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, shade);
             // 2026-10-22: revive uses the same border and background as all other dialogs.
-            if (!Asset9(s, panelSlot ?? "plants/dialog/pause-panel", panelSlot == null ? 50f : 58f, oy + y, panelSlot == null ? 440f : 424f, height, 36f, 24f, Color.white))
+            if (!Asset9(s, panelSlot ?? "plants/dialog/pause-panel", panelSlot == null ? 50f : 58f, oy + y, panelSlot == null ? 440f : 424f, height, 48f, 32f, Color.white))
                 GardenPanel(s, 50f, oy + y, 440f, height);
             GardenTitleArt.Draw(s, title, 270f, oy + y + titleOffset, titleSize);
             return oy;

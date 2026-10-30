@@ -28,7 +28,7 @@ namespace Flightbeat.Editor
         {
             surface.MapLayout = false;
             float top = PlushLayout.Y(114f) - 10f, bottom = PlushLayout.Y(562f) + 10f;
-            GardenSkin.Asset9(surface, "scene/plush-board", 2f, top, 536f, bottom - top, 27f, 27f, 18f, 18f, Color.white);
+            GardenSkin.Asset9(surface, "scene/plush-board", 2f, top, 536f, bottom - top, 36f, 36f, 24f, 24f, Color.white);
             surface.MapLayout = true;
             float offset = (float)Field(game, "advanceShown"), ui = (float)Field(game, "ui");
             var feedback = (CombatFeedback)Field(game, "feedback");

@@ -14,7 +14,7 @@ namespace Flightbeat.Garden
         public static readonly Color Ink = Hex(0x2A3B55), Paper = Hex(0xF6FAFF), Soil = Hex(0x9FD4FF), Wood = Hex(0x5A80B8), Leaf = Hex(0x86A67E), Field = Hex(0x8C919C);
         public static bool HideOriginalParticles;
         // v2: trimmed slots keep their full frame (fw, fh) and the trimmed offset (ox, oy) in stored pixels.
-        [Serializable] public sealed class Slot { public string id; public int atlas; public float x, y, w, h, ox, oy, fw, fh; public float headTop = -1f; public float potCenterX = .5f; }
+        [Serializable] public sealed class Slot { public string id; public int atlas; public float x, y, w, h, ox, oy, fw, fh; public float headTop = -1f; public float potCenterX = .5f; public float rimY = -1f, stemX = -1f, stemY = -1f; }
         [Serializable] public sealed class Glyph { public int code; public float x, y, w, h, advance, bearingX, bearingY; }
         [Serializable] public sealed class Atlas { public string characters; public int size, cell, fontSize, creatureWidth, creatureHeight; public Slot[] slots; public Glyph[] glyphs; }
         static Atlas atlas;
@@ -312,6 +312,14 @@ namespace Flightbeat.Garden
         // Canvas x (of the 224x256 frame) of the seedling's stem: the middle of its trimmed art, within 1 px of where each
         // stem meets the soil (100 / 118 / 118 / 112 for the bear, capybara, chick and cat). Scaling about it keeps the stem
         // planted in its own pot.
+        // 2026-10-30: each member's front-rim line and seedling stem base (canvas px of the 224x256 frame), stored on its
+        // `pot` slot from PotSprout-All-20261030/delivery/sprout-points.json; level 3's four use rim 148 / stem y 146.
+        public static void SproutPoints(Color tint, out float rimY, out float stemX, out float stemY)
+        {
+            rimY = 148f; stemY = 146f; stemX = SproutStemX(tint);
+            if (Data != null && slots.TryGetValue(PlantSlot(tint, "pot"), out var pot) && pot.rimY > 0f)
+            { rimY = pot.rimY; stemX = pot.stemX; stemY = pot.stemY; }
+        }
         public static float SproutStemX(Color tint)
         {
             if (Data == null || !slots.TryGetValue(PlantSlot(tint, "sprout"), out var slot)) return 112f;
@@ -357,7 +365,8 @@ namespace Flightbeat.Garden
                 // 17:57 (simulated frame by frame): the body is drawn OVER the pot (in front of its back rim and soil) and
                 // cut at the front rim (y 148), and it starts narrow (60 % wide, inside the opening) and widens as it rises,
                 // so it squeezes out of the pot instead of showing a flat cut beside it.
-                const float rim = 148f / 256f;
+                SproutPoints(tint, out float rimPx, out _, out _);
+                float rim = rimPx / 256f;
                 float squeeze = Mathf.Lerp(.6f, 1f, Mathf.Clamp01(rise));
                 float drop = (1f - rise) * (rim - v0);                 // how far (in canvas fractions) it is still sunk
                 float vb = Mathf.Min(v1, rim - drop);                  // lowest art row still above the rim

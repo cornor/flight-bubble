@@ -1,0 +1,2443 @@
+{
+  "batch": "ui-refresh-20261029",
+  "date": "2026-10-29",
+  "mode": "built-in image_gen",
+  "reference_handling": "README and listed local reference images inspected visually; initial prompts derived from the references. Direct input image paths for revisions are logged per attempt.",
+  "total_generation_count": 43,
+  "scope": "First and second batches, all table assets",
+  "assets": [
+    {
+      "id": "T1",
+      "file": "theme/battle-background.png",
+      "size": [
+        810,
+        1440
+      ],
+      "alpha": false,
+      "refs": [
+        "item09-light-battle-ref.png",
+        "item16-rail-ref.png"
+      ],
+      "spec": "Create a full-bleed vertical mobile battle background at EXACTLY 810x1440 pixels, aspect ratio 9:16. Top 20% pure near-white, smoothly and gently changing downward into very pale blue #E8F2FF, reaching #CFE4FF only at the very bottom. Very sparse ghosted bubble outlines and tiny four-point sparkle motifs, all below 8% visual opacity, mostly at the outer edges and lower corners. Keep middle 75% extremely quiet and almost plain to sit behind a busy game board. Flat background illustration, no scene or horizon, no panel, no actual game pieces. This background must be fully opaque.",
+      "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nCreate a full-bleed vertical mobile battle background at EXACTLY 810x1440 pixels, aspect ratio 9:16. Top 20% pure near-white, smoothly and gently changing downward into very pale blue #E8F2FF, reaching #CFE4FF only at the very bottom. Very sparse ghosted bubble outlines and tiny four-point sparkle motifs, all below 8% visual opacity, mostly at the outer edges and lower corners. Keep middle 75% extremely quiet and almost plain to sit behind a busy game board. Flat background illustration, no scene or horizon, no panel, no actual game pieces. This background must be fully opaque.",
+      "status": "delivered",
+      "generation_count": 2,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nCreate a full-bleed vertical mobile battle background at EXACTLY 810x1440 pixels, aspect ratio 9:16. Top 20% pure near-white, smoothly and gently changing downward into very pale blue #E8F2FF, reaching #CFE4FF only at the very bottom. Very sparse ghosted bubble outlines and tiny four-point sparkle motifs, all below 8% visual opacity, mostly at the outer edges and lower corners. Keep middle 75% extremely quiet and almost plain to sit behind a busy game board. Flat background illustration, no scene or horizon, no panel, no actual game pieces. This background must be fully opaque.",
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-1e907e5a-b692-4e96-9d96-27ae34724b69.png",
+          "master": "masters/T1-battle-background-attempt01.png",
+          "note": "Rejected: decorative bubbles and stars too prominent for below-8% motif requirement.",
+          "selected": false
+        },
+        {
+          "number": 2,
+          "prompt": "Use case: lighting-weather. Edit this battle background, keeping same sparse edge placement and blank center, NO text. Make decorative bubbles and four-point stars almost invisible ghosted flat watermarks, maximum opacity 5% (under 8%), barely distinguishable from the underlying gradient. Remove ALL glass gloss, white bright rims, rainbow glints or specular shine. The current decorations are far too prominent. The bottom must be lighter, #E0EDFF, never saturated blue. Top pure white #FFFFFF. Smooth vertical white to pale blue gradient, center absolutely quiet. Full-bleed 9:16 portrait, 810x1440 target, fully opaque. This is an unobtrusive mobile UI backing texture, so viewing from a distance it should look like just a plain white-to-pale-blue gradient.",
+          "referenced_image_paths": [
+            "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-1e907e5a-b692-4e96-9d96-27ae34724b69.png"
+          ],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-42fbdedb-cf70-4323-a995-cc22ba65cb8d.png",
+          "master": "masters/T1-battle-background-attempt02.png",
+          "selected": true
+        }
+      ],
+      "selected_master": "masters/T1-battle-background-attempt02.png",
+      "export": {
+        "size": [
+          810,
+          1440
+        ],
+        "method": "sips exact-size resample; original preserved"
+      },
+      "delivery_path": "delivery/theme/battle-background.png",
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "alpha": "opaque RGB"
+      }
+    },
+    {
+      "id": "T4",
+      "file": "theme/board-frame.png",
+      "size": [
+        192,
+        192
+      ],
+      "alpha": true,
+      "refs": [
+        "item09-light-battle-ref.png"
+      ],
+      "spec": "One axis-aligned rounded SQUARE game board panel, exact target canvas 192x192, 9-slice-ready. A complete white frosted glass border surrounding a FILLED near-flat extremely light gray-blue interior #E9F1FC (not a hollow frame). Corner radius about 32 target pixels, uniform white rim about 4 target pixels, subtle white frosted bevel, very restrained inner shading near edges. Entire central area perfectly plain uniform color, NO patterns or localized reflections; horizontal and vertical edge runs straight and even for clean 9-slicing. Square should occupy almost all canvas with 3 pixel transparent margin, no perspective, complete intact corners. Transparent outside only.",
+      "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nOne axis-aligned rounded SQUARE game board panel, exact target canvas 192x192, 9-slice-ready. A complete white frosted glass border surrounding a FILLED near-flat extremely light gray-blue interior #E9F1FC (not a hollow frame). Corner radius about 32 target pixels, uniform white rim about 4 target pixels, subtle white frosted bevel, very restrained inner shading near edges. Entire central area perfectly plain uniform color, NO patterns or localized reflections; horizontal and vertical edge runs straight and even for clean 9-slicing. Square should occupy almost all canvas with 3 pixel transparent margin, no perspective, complete intact corners. Transparent outside only.",
+      "status": "delivered",
+      "generation_count": 3,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nOne axis-aligned rounded SQUARE game board panel, exact target canvas 192x192, 9-slice-ready. A complete white frosted glass border surrounding a FILLED near-flat extremely light gray-blue interior #E9F1FC (not a hollow frame). Corner radius about 32 target pixels, uniform white rim about 4 target pixels, subtle white frosted bevel, very restrained inner shading near edges. Entire central area perfectly plain uniform color, NO patterns or localized reflections; horizontal and vertical edge runs straight and even for clean 9-slicing. Square should occupy almost all canvas with 3 pixel transparent margin, no perspective, complete intact corners. Transparent outside only.",
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-288e8d93-83e7-4c24-be9f-00887d3f4371.png",
+          "master": "masters/T4-board-frame-attempt01.png",
+          "note": "Rejected: dark translucent center.",
+          "selected": false
+        },
+        {
+          "number": 2,
+          "prompt": "Use case: precise-object-edit. Fix this square game-board panel asset: the entire interior must be an OPAQUE, UNIFORM, SOLID very pale gray-blue #E9F1FC, with NO dark center, NO see-through center, NO vignette, NO glass blur, NO reflection, NO gradient inside the central area. Keep a slim white softly rounded rim, simple clean flat frosted-white plastic border. Outside rounded square must be completely alpha transparent, including all four corners, no white backing, no flecks. Square corner radius 32 on 192px canvas. Panel inset 3 target pixels from outer canvas to protect edges. Orthographic front view, perfectly straight sides, horizontal and vertical edge bands uniform for 9-slice. Exact 192x192 target aspect 1:1. White clean simple minimal mobile game panel, no text, no ornament. Keep only a tiny bevel adjacent to white border.",
+          "referenced_image_paths": [
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/masters/T4-board-frame-attempt01.png"
+          ],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-c614b84e-e407-476a-a8a5-a0a1ca385c35.png",
+          "master": "masters/T4-board-frame-attempt02.png",
+          "note": "Rejected: hollow transparent center.",
+          "selected": false
+        },
+        {
+          "number": 3,
+          "prompt": "Create a minimal mobile UI background TILE, one solid rounded SQUARE CARD, straight front view. This is a fully FILLED light gray-blue card, like an opaque solid piece of #E9F1FC plastic. It has a thin soft WHITE rim and softly rounded corners radius 32 on target canvas 192x192. Center fill is #E9F1FC and opaque. Only very thin subtle white bevel at perimeter, nearly flat interior. Entire middle 65% perfectly uniform pale gray-blue. No glass, no see-through card, no hole, no vignette, no recess, no drop shadow, no dark colors, no text, no patterns, no objects. Card evenly inset within transparent square canvas by 3 target pixels. Transparent background OUTSIDE card only. Clean bright round toy game style. Nine-slice asset, all straight edge sections uniform. 1:1 aspect ratio.",
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-ff0a2492-e95e-4922-aba5-40da4ef8d409.png",
+          "master": "masters/T4-board-frame-attempt03.png",
+          "selected": true
+        }
+      ],
+      "selected_master": "masters/T4-board-frame-attempt03.png",
+      "export": {
+        "size": [
+          192,
+          192
+        ],
+        "method": "sips exact-size resample; original preserved"
+      },
+      "delivery_path": "delivery/theme/board-frame.png",
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "alpha": "RGBA, four corner alpha values 0"
+      },
+      "nine_slice_border_ltrb": [
+        36,
+        36,
+        36,
+        36
+      ]
+    },
+    {
+      "id": "T5",
+      "file": "theme/queue-cell.png",
+      "size": [
+        144,
+        114
+      ],
+      "alpha": true,
+      "refs": [
+        "item16-rail-ref.png"
+      ],
+      "spec": "Single empty queue-slot card for plush game. Exact target canvas 144x114 pixels, aspect ratio 24:19. Front-on horizontally rectangular card with gently rounded corners radius about 12 target pixels, white semi-transparent filled interior, pale blue 1–2 target-pixel thin outline and slight inner shadow. No texture or patterns, simple clean central empty space. Occupies almost entire canvas with 3px margin, actual transparency outside rounded card, center translucent white. Fully symmetrical shape, no perspective.",
+      "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle empty queue-slot card for plush game. Exact target canvas 144x114 pixels, aspect ratio 24:19. Front-on horizontally rectangular card with gently rounded corners radius about 12 target pixels, white semi-transparent filled interior, pale blue 1–2 target-pixel thin outline and slight inner shadow. No texture or patterns, simple clean central empty space. Occupies almost entire canvas with 3px margin, actual transparency outside rounded card, center translucent white. Fully symmetrical shape, no perspective.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle empty queue-slot card for plush game. Exact target canvas 144x114 pixels, aspect ratio 24:19. Front-on horizontally rectangular card with gently rounded corners radius about 12 target pixels, white semi-transparent filled interior, pale blue 1–2 target-pixel thin outline and slight inner shadow. No texture or patterns, simple clean central empty space. Occupies almost entire canvas with 3px margin, actual transparency outside rounded card, center translucent white. Fully symmetrical shape, no perspective.",
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-19cc18e8-5b91-454d-83f2-f66b8e3c709b.png",
+          "master": "masters/T5-queue-cell-attempt01.png",
+          "selected": true
+        }
+      ],
+      "selected_master": "masters/T5-queue-cell-attempt01.png",
+      "export": {
+        "size": [
+          144,
+          114
+        ],
+        "method": "sips exact-size resample; original preserved"
+      },
+      "delivery_path": "delivery/theme/queue-cell.png",
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "alpha": "RGBA, four corner alpha values 0"
+      }
+    },
+    {
+      "id": "T6",
+      "file": "theme/pad.png",
+      "size": [
+        120,
+        48
+      ],
+      "alpha": true,
+      "refs": [
+        "item16-rail-ref.png"
+      ],
+      "spec": "Single miniature deployment pedestal: very shallow horizontal elliptical tray, pale gray blue top with white highlight along upper-right rim and slightly darker blue-gray thin lower edge giving just a little thickness. Exact target 120x48 pixels (2.5:1 canvas). Elliptical top seen from slightly above; low profile, not a tall cylinder or bowl. Whole tray fills canvas width with about 4px safety margin and is centered, subtle soft shadow contained inside canvas, transparent background. Plain smooth empty surface, nothing standing on it.",
+      "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle miniature deployment pedestal: very shallow horizontal elliptical tray, pale gray blue top with white highlight along upper-right rim and slightly darker blue-gray thin lower edge giving just a little thickness. Exact target 120x48 pixels (2.5:1 canvas). Elliptical top seen from slightly above; low profile, not a tall cylinder or bowl. Whole tray fills canvas width with about 4px safety margin and is centered, subtle soft shadow contained inside canvas, transparent background. Plain smooth empty surface, nothing standing on it.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle miniature deployment pedestal: very shallow horizontal elliptical tray, pale gray blue top with white highlight along upper-right rim and slightly darker blue-gray thin lower edge giving just a little thickness. Exact target 120x48 pixels (2.5:1 canvas). Elliptical top seen from slightly above; low profile, not a tall cylinder or bowl. Whole tray fills canvas width with about 4px safety margin and is centered, subtle soft shadow contained inside canvas, transparent background. Plain smooth empty surface, nothing standing on it.",
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-1aab746d-512a-4613-a534-183c74d52d50.png",
+          "master": "masters/T6-pad-attempt01.png",
+          "selected": true
+        }
+      ],
+      "selected_master": "masters/T6-pad-attempt01.png",
+      "export": {
+        "size": [
+          120,
+          48
+        ],
+        "method": "sips exact-size resample; original preserved"
+      },
+      "delivery_path": "delivery/theme/pad.png",
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "alpha": "RGBA, four corner alpha values 0"
+      }
+    },
+    {
+      "id": "T7",
+      "file": "theme/progress-track.png",
+      "size": [
+        384,
+        36
+      ],
+      "alpha": true,
+      "refs": [
+        "item16-rail-ref.png"
+      ],
+      "spec": "Single EMPTY progress bar track. Final canvas exactly 384x36 (32:3 very long horizontal ratio). A slender white outer capsule rim, round semicircular ends, shallow inset very light blue-gray #E9F1FC inner trough. No fill segment, no knob. Uniform smooth continuous straight horizontal center with no pattern or hotspot. Precise front view, not tilted, entire capsule fits with 2 target px clear margin. Extremely long skinny pill; preserve 10.67:1 canvas ratio. Transparent exterior. If generator requires a taller canvas keep the capsule itself 10.67:1, centered in the transparent canvas so it can be cropped.",
+      "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle EMPTY progress bar track. Final canvas exactly 384x36 (32:3 very long horizontal ratio). A slender white outer capsule rim, round semicircular ends, shallow inset very light blue-gray #E9F1FC inner trough. No fill segment, no knob. Uniform smooth continuous straight horizontal center with no pattern or hotspot. Precise front view, not tilted, entire capsule fits with 2 target px clear margin. Extremely long skinny pill; preserve 10.67:1 canvas ratio. Transparent exterior. If generator requires a taller canvas keep the capsule itself 10.67:1, centered in the transparent canvas so it can be cropped.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle EMPTY progress bar track. Final canvas exactly 384x36 (32:3 very long horizontal ratio). A slender white outer capsule rim, round semicircular ends, shallow inset very light blue-gray #E9F1FC inner trough. No fill segment, no knob. Uniform smooth continuous straight horizontal center with no pattern or hotspot. Precise front view, not tilted, entire capsule fits with 2 target px clear margin. Extremely long skinny pill; preserve 10.67:1 canvas ratio. Transparent exterior. If generator requires a taller canvas keep the capsule itself 10.67:1, centered in the transparent canvas so it can be cropped.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-bb7dcd54-1958-4658-b9c6-1dff07c9b9db.png",
+          "master": "masters/T7-progress-track-attempt01.png",
+          "selected": true
+        }
+      ],
+      "selected_master": "masters/T7-progress-track-attempt01.png",
+      "export": {
+        "crop_xywh": [
+          0,
+          264,
+          2172,
+          204
+        ],
+        "size": [
+          384,
+          36
+        ],
+        "method": "sips crop transparent padding, then exact-size resample; original preserved"
+      },
+      "delivery_path": "delivery/theme/progress-track.png",
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "alpha": "RGBA, four corner alpha values 0"
+      }
+    },
+    {
+      "id": "T8",
+      "file": "theme/level-pill.png",
+      "size": [
+        384,
+        72
+      ],
+      "alpha": true,
+      "refs": [
+        "item16-rail-ref.png"
+      ],
+      "spec": "Single completely blank top-level badge base: clean white horizontal capsule with subtle very pale blue shading at bottom edge and a small soft shadow. Final canvas 384x72 pixels (16:3 wide ratio), semicircular ends, gently rounded 3D white toy UI, very slight thickness. Plain smooth central space, uniform horizontally for stretching. Whole pill in frame with 3px clear margin. No symbols or text. If generator needs taller canvas preserve the pill itself around 5.3:1 ratio, centered in transparent canvas for crop.",
+      "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle completely blank top-level badge base: clean white horizontal capsule with subtle very pale blue shading at bottom edge and a small soft shadow. Final canvas 384x72 pixels (16:3 wide ratio), semicircular ends, gently rounded 3D white toy UI, very slight thickness. Plain smooth central space, uniform horizontally for stretching. Whole pill in frame with 3px clear margin. No symbols or text. If generator needs taller canvas preserve the pill itself around 5.3:1 ratio, centered in transparent canvas for crop.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle completely blank top-level badge base: clean white horizontal capsule with subtle very pale blue shading at bottom edge and a small soft shadow. Final canvas 384x72 pixels (16:3 wide ratio), semicircular ends, gently rounded 3D white toy UI, very slight thickness. Plain smooth central space, uniform horizontally for stretching. Whole pill in frame with 3px clear margin. No symbols or text. If generator needs taller canvas preserve the pill itself around 5.3:1 ratio, centered in transparent canvas for crop.",
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-e2fd1f5a-6800-45b9-aa59-17e1d75aea46.png",
+          "master": "masters/T8-level-pill-attempt01.png",
+          "selected": true
+        }
+      ],
+      "selected_master": "masters/T8-level-pill-attempt01.png",
+      "export": {
+        "crop_xywh": [
+          0,
+          100,
+          2172,
+          532
+        ],
+        "size": [
+          384,
+          72
+        ],
+        "method": "sips crop transparent padding, then exact-size resample; original preserved"
+      },
+      "delivery_path": "delivery/theme/level-pill.png",
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "alpha": "RGBA, four corner alpha values 0"
+      }
+    },
+    {
+      "id": "T9",
+      "file": "theme/pause.png",
+      "size": [
+        84,
+        84
+      ],
+      "alpha": true,
+      "refs": [
+        "item16-rail-ref.png"
+      ],
+      "spec": "Single blue glossy circular pause button. Exact target canvas 84x84. Rounded round disc, face gradient #2F7BFF top to #1E5FE0 bottom, subtly darker bottom bevel giving thickness, soft upper-right specular reflection. Centered pair of WHITE vertical parallel rounded pause bars, equal height and width, crisp easy-readable icon. These two bars are the only symbol allowed. Button occupies 90% canvas with transparent exterior, tiny contained shadow, no square backing.",
+      "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle blue glossy circular pause button. Exact target canvas 84x84. Rounded round disc, face gradient #2F7BFF top to #1E5FE0 bottom, subtly darker bottom bevel giving thickness, soft upper-right specular reflection. Centered pair of WHITE vertical parallel rounded pause bars, equal height and width, crisp easy-readable icon. These two bars are the only symbol allowed. Button occupies 90% canvas with transparent exterior, tiny contained shadow, no square backing.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle blue glossy circular pause button. Exact target canvas 84x84. Rounded round disc, face gradient #2F7BFF top to #1E5FE0 bottom, subtly darker bottom bevel giving thickness, soft upper-right specular reflection. Centered pair of WHITE vertical parallel rounded pause bars, equal height and width, crisp easy-readable icon. These two bars are the only symbol allowed. Button occupies 90% canvas with transparent exterior, tiny contained shadow, no square backing.",
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-b877a004-4ab9-4c02-b929-bd324f1c62a3.png",
+          "master": "masters/T9-pause-attempt01.png",
+          "selected": true
+        }
+      ],
+      "selected_master": "masters/T9-pause-attempt01.png",
+      "export": {
+        "size": [
+          84,
+          84
+        ],
+        "method": "sips exact-size resample; original preserved"
+      },
+      "delivery_path": "delivery/theme/pause.png",
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "alpha": "RGBA, four corner alpha values 0"
+      }
+    },
+    {
+      "id": "T13",
+      "file": "theme/button-blue.png",
+      "size": [
+        390,
+        108
+      ],
+      "alpha": true,
+      "refs": [
+        "item04-home-ref.png"
+      ],
+      "spec": "Single completely BLANK primary button. Final canvas exactly 390x108, 65:18 horizontal capsule. Glossy blue #2F7BFF to #1E5FE0 gradient vertically, dark blue lower lip with a little toy-like thickness, smooth faint white bevel highlight on upper rim, complete rounded semicircular ends. Front orthographic view, no perspective. Shape occupies full width with 4 target pixel padding; plain center with no localized highlight or decoration, highlights and bottom bevel horizontally uniform for 9-slice stretching. Transparent exterior with soft tight shadow. No text, no glyph, no icon. If generator needs taller canvas preserve asset around 3.6:1 aspect ratio in transparent center for crop.",
+      "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle completely BLANK primary button. Final canvas exactly 390x108, 65:18 horizontal capsule. Glossy blue #2F7BFF to #1E5FE0 gradient vertically, dark blue lower lip with a little toy-like thickness, smooth faint white bevel highlight on upper rim, complete rounded semicircular ends. Front orthographic view, no perspective. Shape occupies full width with 4 target pixel padding; plain center with no localized highlight or decoration, highlights and bottom bevel horizontally uniform for 9-slice stretching. Transparent exterior with soft tight shadow. No text, no glyph, no icon. If generator needs taller canvas preserve asset around 3.6:1 aspect ratio in transparent center for crop.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle completely BLANK primary button. Final canvas exactly 390x108, 65:18 horizontal capsule. Glossy blue #2F7BFF to #1E5FE0 gradient vertically, dark blue lower lip with a little toy-like thickness, smooth faint white bevel highlight on upper rim, complete rounded semicircular ends. Front orthographic view, no perspective. Shape occupies full width with 4 target pixel padding; plain center with no localized highlight or decoration, highlights and bottom bevel horizontally uniform for 9-slice stretching. Transparent exterior with soft tight shadow. No text, no glyph, no icon. If generator needs taller canvas preserve asset around 3.6:1 aspect ratio in transparent center for crop.",
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-21d2f70c-f5f1-4361-b8f1-4af5bc39da77.png",
+          "master": "masters/T13-button-blue-attempt01.png",
+          "selected": true
+        }
+      ],
+      "selected_master": "masters/T13-button-blue-attempt01.png",
+      "export": {
+        "crop_xywh": [
+          0,
+          100,
+          2042,
+          566
+        ],
+        "size": [
+          390,
+          108
+        ],
+        "method": "sips crop transparent padding, then exact-size resample; original preserved"
+      },
+      "delivery_path": "delivery/theme/button-blue.png",
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "alpha": "RGBA, four corner alpha values 0"
+      },
+      "nine_slice_border_ltrb": [
+        60,
+        36,
+        60,
+        36
+      ]
+    },
+    {
+      "id": "T14",
+      "file": "theme/button-yellow.png",
+      "size": [
+        390,
+        108
+      ],
+      "alpha": true,
+      "refs": [
+        "item07-win-ref.png"
+      ],
+      "spec": "Single completely BLANK primary button matching a blue glossy toy UI capsule in shape and proportions. Final canvas exactly 390x108, 65:18 horizontal capsule. Sunny yellow #FFC93C face with lighter warm yellow on top and warm golden lower lip giving slight thickness, clean soft highlight on upper rim, complete rounded semicircular ends. Front orthographic view, no perspective. Shape occupies full width with 4 target pixel padding; plain center with no localized highlight or decoration, highlight and bottom bevel horizontally uniform for 9-slice stretching. Transparent exterior with soft tight shadow. No text, no glyph, no icon. If generator needs taller canvas preserve asset around 3.6:1 aspect ratio in transparent center for crop.",
+      "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nSingle completely BLANK primary button matching a blue glossy toy UI capsule in shape and proportions. Final canvas exactly 390x108, 65:18 horizontal capsule. Sunny yellow #FFC93C face with lighter warm yellow on top and warm golden lower lip giving slight thickness, clean soft highlight on upper rim, complete rounded semicircular ends. Front orthographic view, no perspective. Shape occupies full width with 4 target pixel padding; plain center with no localized highlight or decoration, highlight and bottom bevel horizontally uniform for 9-slice stretching. Transparent exterior with soft tight shadow. No text, no glyph, no icon. If generator needs taller canvas preserve asset around 3.6:1 aspect ratio in transparent center for crop.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: precise-object-edit. Create the matching YELLOW version of this exact blank blue capsule game button. Change ONLY its blue color to sunny yellow #FFC93C with pale warm yellow upper highlight and warm golden amber lower lip. Preserve EXACT outline, shape, canvas size, position, proportions, semicircular end caps, edge smoothness, bevel thickness, light direction, alpha silhouette and soft shadow. The blank center must stay blank and uniform horizontally for nine-slice scaling. No text, no letters, no symbols, no ornament. Transparent background remains transparent. Final delivery target 390x108. This yellow and the blue input must be an identical matched UI button pair.",
+          "referenced_image_paths": [
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/masters/T13-button-blue-attempt01.png"
+          ],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-f33366e5-1d7b-472b-8c88-9c2b717c4e4c.png",
+          "master": "masters/T14-button-yellow-attempt01.png",
+          "selected": true
+        }
+      ],
+      "selected_master": "masters/T14-button-yellow-attempt01.png",
+      "export": {
+        "crop_xywh": [
+          0,
+          100,
+          2042,
+          566
+        ],
+        "size": [
+          390,
+          108
+        ],
+        "method": "sips crop transparent padding, then exact-size resample; original preserved"
+      },
+      "delivery_path": "delivery/theme/button-yellow.png",
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "alpha": "RGBA, four corner alpha values 0"
+      },
+      "nine_slice_border_ltrb": [
+        60,
+        36,
+        60,
+        36
+      ]
+    },
+    {
+      "id": "N9",
+      "file": "guide/hand.png",
+      "size": [
+        160,
+        160
+      ],
+      "alpha": true,
+      "refs": [
+        "item02-dispatch-guide-ref.png",
+        "item03-merge-guide-ref.png"
+      ],
+      "spec": "One white cartoon glove tutorial pointer hand, soft plump 3D stuffed white fabric with very fine velvety surface, soft pale blue creases and shadow, no heavy dark outlines. Exact target canvas 160x160. Hand extends from lower-right toward upper-left, index finger straight pointing diagonally up-left, other fingers curled naturally and thumb visible, short rounded cuff toward bottom-right. CRITICAL placement: extended index fingertip at canvas pixel (40,40), exactly one quarter from top and left. Whole glove and soft shadow safely within canvas. Lighting upper right. Transparent background, no tap circle, rays, badge, glow, arrow, text or surrounding UI.",
+      "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nOne white cartoon glove tutorial pointer hand, soft plump 3D stuffed white fabric with very fine velvety surface, soft pale blue creases and shadow, no heavy dark outlines. Exact target canvas 160x160. Hand extends from lower-right toward upper-left, index finger straight pointing diagonally up-left, other fingers curled naturally and thumb visible, short rounded cuff toward bottom-right. CRITICAL placement: extended index fingertip at canvas pixel (40,40), exactly one quarter from top and left. Whole glove and soft shadow safely within canvas. Lighting upper right. Transparent background, no tap circle, rays, badge, glow, arrow, text or surrounding UI.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Production-ready standalone raster UI asset for a cute plush-toy bubble puzzle mobile game. Art direction based on inspected supplied references: clean bright rounded 3D toy UI, subtle physically soft materials, restrained bevels, soft light from upper right, no heavy outlines, no grunge. Palette white #FFFFFF, very pale blues #E8F2FF to #CFE4FF, primary blue #2F7BFF to #1E5FE0, accent yellow #FFC93C. Absolutely NO words, letters, numbers, watermark, logo, labels, characters, screenshot, interface mockup, or extra objects. Only requested asset.\nOne white cartoon glove tutorial pointer hand, soft plump 3D stuffed white fabric with very fine velvety surface, soft pale blue creases and shadow, no heavy dark outlines. Exact target canvas 160x160. Hand extends from lower-right toward upper-left, index finger straight pointing diagonally up-left, other fingers curled naturally and thumb visible, short rounded cuff toward bottom-right. CRITICAL placement: extended index fingertip at canvas pixel (40,40), exactly one quarter from top and left. Whole glove and soft shadow safely within canvas. Lighting upper right. Transparent background, no tap circle, rays, badge, glow, arrow, text or surrounding UI.",
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-9ab4e1a2-e99e-4bf4-8fbe-ecab1c883721.png",
+          "master": "masters/N9-hand-attempt01.png",
+          "selected": true
+        }
+      ],
+      "selected_master": "masters/N9-hand-attempt01.png",
+      "export": {
+        "size": [
+          160,
+          160
+        ],
+        "method": "sips exact-size resample; original preserved"
+      },
+      "delivery_path": "delivery/guide/hand.png",
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "alpha": "RGBA, four corner alpha values 0"
+      },
+      "hotspot_xy": [
+        36,
+        40
+      ]
+    },
+    {
+      "id": "T10",
+      "file": "theme/dialog-panel.png",
+      "size": [
+        270,
+        270
+      ],
+      "alpha": true,
+      "refs": [
+        "item05-settings-ref.png"
+      ],
+      "spec": "Single opaque WHITE rounded square dialog CARD, corner radius about 40 target pixels, very pale blue thin outline, soft tight shadow. Front view, plain fully filled white interior (never hollow or glass), uniform middle, no texture/pattern, straight even edge runs. Nine-slice-ready. Fill canvas with a 5px clear margin outside; all corners complete. Transparent outside card only.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single opaque WHITE rounded square dialog CARD, corner radius about 40 target pixels, very pale blue thin outline, soft tight shadow. Front view, plain fully filled white interior (never hollow or glass), uniform middle, no texture/pattern, straight even edge runs. Nine-slice-ready. Fill canvas with a 5px clear margin outside; all corners complete. Transparent outside card only.\nTarget delivery canvas: 270x270 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 3,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single opaque WHITE rounded square dialog CARD, corner radius about 40 target pixels, very pale blue thin outline, soft tight shadow. Front view, plain fully filled white interior (never hollow or glass), uniform middle, no texture/pattern, straight even edge runs. Nine-slice-ready. Fill canvas with a 5px clear margin outside; all corners complete. Transparent outside card only.\nTarget delivery canvas: 270x270 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-7f46c339-8548-4b46-93c8-1bda189e50a6.png",
+          "master": "masters/T10-dialog-panel-attempt01.png",
+          "note": "Rejected: generated center was hollow and translucent.",
+          "selected": false
+        },
+        {
+          "number": 2,
+          "prompt": "Create one SOLID nearly-white square TILE for mobile game UI. This is a fully filled solid opaque pale white-blue plastic card, entire face color #F5F9FF, with a very thin subtle pale blue outline at perimeter. Rounded corners radius 40 on 270x270 target canvas. Front orthographic view, uniform blank solid face from edge to edge, very slight bevel and soft small shadow outside only. Center 70% is uniform light color with no shading. Whole card inset 5 target pixels in square canvas, transparent only outside rounded card. Clean bright 3D toy UI, extremely minimal, nine-slice ready, no text, no patterns, no objects. Exact target 270x270 PNG.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-15a75e79-bd11-42af-ad25-d06dc3942ed1.png",
+          "master": "masters/T10-dialog-panel-attempt02.png",
+          "note": "Rejected: uneven dark/translucent center.",
+          "selected": false
+        },
+        {
+          "number": 3,
+          "prompt": "Use case: precise-object-edit. Recolor this existing SOLID filled pale-blue square UI tile to an almost-white dialog panel. Preserve its fully filled smooth uniform face and alpha silhouette. Replace the face with uniform near-white #F4F8FF, and the very thin outer white rim with very pale blue #DDEAFF. The face must remain OPAQUE, absolutely even and blank. No center vignette, no circular blotch, no hollow cutout, no internal shadow. All shading restricted to 2-pixel perimeter bevel and a tiny soft external shadow. Slightly larger round corners about 40px at final 270x270. Full square card with 5px transparent outer margin. Front-on, clean bright 3D UI, no text, no symbols or patterns. Keep transparent outside only. Delivery 270x270.",
+          "referenced_image_paths": [
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/masters/T4-board-frame-attempt03.png"
+          ],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-73ba25c6-d510-4427-b99f-237cd0adee48.png",
+          "master": "masters/T10-dialog-panel-attempt03.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T10-dialog-panel-attempt03.png",
+      "inputs": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/masters/T4-board-frame-attempt03.png"
+      ],
+      "delivery_path": "delivery/theme/dialog-panel.png",
+      "export": {
+        "master": "masters/T10-dialog-panel-attempt03.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          270,
+          270
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T10",
+          "path": "delivery/theme/dialog-panel.png",
+          "size": [
+            270,
+            270
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30",
+      "nine_slice_border_ltrb": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "T11",
+      "file": "theme/dialog-row.png",
+      "size": [
+        240,
+        72
+      ],
+      "alpha": true,
+      "refs": [
+        "item05-settings-ref.png"
+      ],
+      "spec": "Single shallow very pale gray-blue #E9F1FC rounded rectangle setting-row background, 10px radius, flat filled uniform center and minimal edge softness. Nine-slice asset, no decorations, no controls. Wide 10:3 shape, fully visible with 3px transparent margin.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single shallow very pale gray-blue #E9F1FC rounded rectangle setting-row background, 10px radius, flat filled uniform center and minimal edge softness. Nine-slice asset, no decorations, no controls. Wide 10:3 shape, fully visible with 3px transparent margin.\nTarget delivery canvas: 240x72 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single shallow very pale gray-blue #E9F1FC rounded rectangle setting-row background, 10px radius, flat filled uniform center and minimal edge softness. Nine-slice asset, no decorations, no controls. Wide 10:3 shape, fully visible with 3px transparent margin.\nTarget delivery canvas: 240x72 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-3a0f5f27-9a3e-446c-bb9b-7bea982d7fc1.png",
+          "master": "masters/T11-dialog-row-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T11-dialog-row-attempt01.png",
+      "delivery_path": "delivery/theme/dialog-row.png",
+      "export": {
+        "master": "masters/T11-dialog-row-attempt01.png",
+        "master_size": [
+          2172,
+          724
+        ],
+        "crop_xywh": [
+          0,
+          115,
+          2172,
+          448
+        ],
+        "size": [
+          240,
+          72
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T11",
+          "path": "delivery/theme/dialog-row.png",
+          "size": [
+            240,
+            72
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30",
+      "nine_slice_border_ltrb": [
+        18,
+        18,
+        18,
+        18
+      ]
+    },
+    {
+      "id": "T12-music",
+      "file": "theme/icon-music.png",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "refs": [
+        "item05-settings-ref.png"
+      ],
+      "spec": "One BLUE glossy musical eighth-note pair joined by a single beam, plump simple rounded easy-recognizable silhouette. Blue face with darker thin side thickness, subtle upper-right highlight. No backing tile or circle. Centered with 10% safe transparent margin.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One BLUE glossy musical eighth-note pair joined by a single beam, plump simple rounded easy-recognizable silhouette. Blue face with darker thin side thickness, subtle upper-right highlight. No backing tile or circle. Centered with 10% safe transparent margin.\nTarget delivery canvas: 96x96 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One BLUE glossy musical eighth-note pair joined by a single beam, plump simple rounded easy-recognizable silhouette. Blue face with darker thin side thickness, subtle upper-right highlight. No backing tile or circle. Centered with 10% safe transparent margin.\nTarget delivery canvas: 96x96 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-e6495aef-6dd8-45dc-9009-36fe686ec8e1.png",
+          "master": "masters/T12-music-icon-music-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T12-music-icon-music-attempt01.png",
+      "delivery_path": "delivery/theme/icon-music.png",
+      "export": {
+        "master": "masters/T12-music-icon-music-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          96,
+          96
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T12-music",
+          "path": "delivery/theme/icon-music.png",
+          "size": [
+            96,
+            96
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "T12-sound",
+      "file": "theme/icon-sound.png",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "refs": [
+        "item05-settings-ref.png"
+      ],
+      "spec": "One BLUE glossy speaker icon, plump rounded loudspeaker pointing right, with TWO separate curved sound-wave arcs at its right. Simple clean legible silhouette, small blue side thickness. No backing tile or circle. Centered with 10% clear transparent margin.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One BLUE glossy speaker icon, plump rounded loudspeaker pointing right, with TWO separate curved sound-wave arcs at its right. Simple clean legible silhouette, small blue side thickness. No backing tile or circle. Centered with 10% clear transparent margin.\nTarget delivery canvas: 96x96 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One BLUE glossy speaker icon, plump rounded loudspeaker pointing right, with TWO separate curved sound-wave arcs at its right. Simple clean legible silhouette, small blue side thickness. No backing tile or circle. Centered with 10% clear transparent margin.\nTarget delivery canvas: 96x96 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-2f31d0a4-8a95-4d39-a094-81492d5143ae.png",
+          "master": "masters/T12-sound-icon-sound-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T12-sound-icon-sound-attempt01.png",
+      "delivery_path": "delivery/theme/icon-sound.png",
+      "export": {
+        "master": "masters/T12-sound-icon-sound-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          96,
+          96
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T12-sound",
+          "path": "delivery/theme/icon-sound.png",
+          "size": [
+            96,
+            96
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 0
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "T12-light",
+      "file": "theme/icon-light.png",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "refs": [
+        "item05-settings-ref.png"
+      ],
+      "spec": "One BLUE glossy sun icon, solid round center and EIGHT short separated rounded rays equally spaced radially, simple clean silhouette, slight rounded 3D thickness. No face, no backing tile or circle. Centered within 10% clear transparent margin.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One BLUE glossy sun icon, solid round center and EIGHT short separated rounded rays equally spaced radially, simple clean silhouette, slight rounded 3D thickness. No face, no backing tile or circle. Centered within 10% clear transparent margin.\nTarget delivery canvas: 96x96 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One BLUE glossy sun icon, solid round center and EIGHT short separated rounded rays equally spaced radially, simple clean silhouette, slight rounded 3D thickness. No face, no backing tile or circle. Centered within 10% clear transparent margin.\nTarget delivery canvas: 96x96 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-3288e5b9-0eba-433f-93ef-a1a7427975ff.png",
+          "master": "masters/T12-light-icon-light-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T12-light-icon-light-attempt01.png",
+      "delivery_path": "delivery/theme/icon-light.png",
+      "export": {
+        "master": "masters/T12-light-icon-light-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          96,
+          96
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T12-light",
+          "path": "delivery/theme/icon-light.png",
+          "size": [
+            96,
+            96
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "T15",
+      "file": "theme/button-white.png",
+      "size": [
+        260,
+        88
+      ],
+      "alpha": true,
+      "refs": [
+        "item17-lose-ref.png"
+      ],
+      "spec": "One blank WHITE glossy capsule secondary button, very pale blue thin outline, gentle white upper highlight, light blue bottom lip and tiny soft shadow. Semicircular ends, front view, full shape with 4px transparent margin. Nine-slice ready, center plain with horizontally uniform shading, no localized highlight or icon.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One blank WHITE glossy capsule secondary button, very pale blue thin outline, gentle white upper highlight, light blue bottom lip and tiny soft shadow. Semicircular ends, front view, full shape with 4px transparent margin. Nine-slice ready, center plain with horizontally uniform shading, no localized highlight or icon.\nTarget delivery canvas: 260x88 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One blank WHITE glossy capsule secondary button, very pale blue thin outline, gentle white upper highlight, light blue bottom lip and tiny soft shadow. Semicircular ends, front view, full shape with 4px transparent margin. Nine-slice ready, center plain with horizontally uniform shading, no localized highlight or icon.\nTarget delivery canvas: 260x88 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-4fd98970-246e-4dad-9f44-b2a6a78f44c1.png",
+          "master": "masters/T15-button-white-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T15-button-white-attempt01.png",
+      "delivery_path": "delivery/theme/button-white.png",
+      "export": {
+        "master": "masters/T15-button-white-attempt01.png",
+        "master_size": [
+          2156,
+          729
+        ],
+        "crop_xywh": null,
+        "size": [
+          260,
+          88
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T15",
+          "path": "delivery/theme/button-white.png",
+          "size": [
+            260,
+            88
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 0
+        }
+      },
+      "delivered_date": "2026-10-30",
+      "nine_slice_border_ltrb": [
+        50,
+        30,
+        50,
+        30
+      ]
+    },
+    {
+      "id": "T16",
+      "file": "theme/button-red.png",
+      "size": [
+        390,
+        108
+      ],
+      "alpha": true,
+      "refs": [
+        "item14-revive-ref.png"
+      ],
+      "spec": "EDIT the supplied blue button by changing ONLY blue to coral RED #FF4D5A, slightly lighter red face and deeper red lower lip. Preserve exact outline, canvas, shape, position, bevel, highlights, transparency, all proportions. Blank center, no icon or text. Matching red version of original blue primary capsule, nine-slice ready.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. EDIT the supplied blue button by changing ONLY blue to coral RED #FF4D5A, slightly lighter red face and deeper red lower lip. Preserve exact outline, canvas, shape, position, bevel, highlights, transparency, all proportions. Blank center, no icon or text. Matching red version of original blue primary capsule, nine-slice ready.\nTarget delivery canvas: 390x108 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. EDIT the supplied blue button by changing ONLY blue to coral RED #FF4D5A, slightly lighter red face and deeper red lower lip. Preserve exact outline, canvas, shape, position, bevel, highlights, transparency, all proportions. Blank center, no icon or text. Matching red version of original blue primary capsule, nine-slice ready.\nTarget delivery canvas: 390x108 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/masters/T13-button-blue-attempt01.png"
+          ],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-72f6bffc-81fb-47f3-af53-279a5b52b9cb.png",
+          "master": "masters/T16-button-red-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "inputs": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/masters/T13-button-blue-attempt01.png"
+      ],
+      "selected_master": "masters/T16-button-red-attempt01.png",
+      "delivery_path": "delivery/theme/button-red.png",
+      "export": {
+        "master": "masters/T16-button-red-attempt01.png",
+        "master_size": [
+          2042,
+          770
+        ],
+        "crop_xywh": [
+          0,
+          100,
+          2042,
+          566
+        ],
+        "size": [
+          390,
+          108
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T16",
+          "path": "delivery/theme/button-red.png",
+          "size": [
+            390,
+            108
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 0
+        }
+      },
+      "delivered_date": "2026-10-30",
+      "nine_slice_border_ltrb": [
+        60,
+        36,
+        60,
+        36
+      ]
+    },
+    {
+      "id": "T17-home",
+      "file": "theme/icon-home.png",
+      "size": [
+        64,
+        64
+      ],
+      "alpha": true,
+      "refs": [
+        "item07-win-ref.png"
+      ],
+      "spec": "Single WHITE small house icon, filled triangular roof above simple squared house base, a centered doorway cutout, rounded stroke joins. Pure white face, minimal soft bevel at most, strong simple readable silhouette for blue/red button. No colored backing or border, no drop shadow, transparent exterior and doorway.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single WHITE small house icon, filled triangular roof above simple squared house base, a centered doorway cutout, rounded stroke joins. Pure white face, minimal soft bevel at most, strong simple readable silhouette for blue/red button. No colored backing or border, no drop shadow, transparent exterior and doorway.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single WHITE small house icon, filled triangular roof above simple squared house base, a centered doorway cutout, rounded stroke joins. Pure white face, minimal soft bevel at most, strong simple readable silhouette for blue/red button. No colored backing or border, no drop shadow, transparent exterior and doorway.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-0ae7dfda-3507-4bd8-9eae-fdddff2cbe2b.png",
+          "master": "masters/T17-home-icon-home-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T17-home-icon-home-attempt01.png",
+      "delivery_path": "delivery/theme/icon-home.png",
+      "export": {
+        "master": "masters/T17-home-icon-home-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          64,
+          64
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T17-home",
+          "path": "delivery/theme/icon-home.png",
+          "size": [
+            64,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 0
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "T17-replay",
+      "file": "theme/icon-replay.png",
+      "size": [
+        64,
+        64
+      ],
+      "alpha": true,
+      "refs": [
+        "item07-win-ref.png"
+      ],
+      "spec": "Single WHITE replay circular arrow icon. One almost-complete thick round stroke circle ending in one obvious triangular arrowhead, open gap near upper right. Minimal soft rounded 3D white face, crisp silhouette for a colored button, no background tile or colored border, no drop shadow. Transparent center and exterior.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single WHITE replay circular arrow icon. One almost-complete thick round stroke circle ending in one obvious triangular arrowhead, open gap near upper right. Minimal soft rounded 3D white face, crisp silhouette for a colored button, no background tile or colored border, no drop shadow. Transparent center and exterior.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single WHITE replay circular arrow icon. One almost-complete thick round stroke circle ending in one obvious triangular arrowhead, open gap near upper right. Minimal soft rounded 3D white face, crisp silhouette for a colored button, no background tile or colored border, no drop shadow. Transparent center and exterior.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-8ad30fc5-a386-4d15-b475-195b4a57c446.png",
+          "master": "masters/T17-replay-icon-replay-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T17-replay-icon-replay-attempt01.png",
+      "delivery_path": "delivery/theme/icon-replay.png",
+      "export": {
+        "master": "masters/T17-replay-icon-replay-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          64,
+          64
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T17-replay",
+          "path": "delivery/theme/icon-replay.png",
+          "size": [
+            64,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "T17-share",
+      "file": "theme/icon-share.png",
+      "size": [
+        64,
+        64
+      ],
+      "alpha": true,
+      "refs": [
+        "item17-lose-ref.png"
+      ],
+      "spec": "Single WHITE share symbol: squared U-shaped open tray outline, with one bold bent arrow emerging from its center and pointing diagonally upper-right. Simple familiar share glyph, rounded white line-face icon, no backing tile, no colored outline or drop shadow. Transparent negative spaces and exterior.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single WHITE share symbol: squared U-shaped open tray outline, with one bold bent arrow emerging from its center and pointing diagonally upper-right. Simple familiar share glyph, rounded white line-face icon, no backing tile, no colored outline or drop shadow. Transparent negative spaces and exterior.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single WHITE share symbol: squared U-shaped open tray outline, with one bold bent arrow emerging from its center and pointing diagonally upper-right. Simple familiar share glyph, rounded white line-face icon, no backing tile, no colored outline or drop shadow. Transparent negative spaces and exterior.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-96dc09c9-9d5c-4a92-a8ad-a4ce2f65e4b8.png",
+          "master": "masters/T17-share-icon-share-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T17-share-icon-share-attempt01.png",
+      "delivery_path": "delivery/theme/icon-share.png",
+      "export": {
+        "master": "masters/T17-share-icon-share-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          64,
+          64
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T17-share",
+          "path": "delivery/theme/icon-share.png",
+          "size": [
+            64,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "T17-video",
+      "file": "theme/icon-video.png",
+      "size": [
+        64,
+        64
+      ],
+      "alpha": true,
+      "refs": [
+        "item14-revive-ref.png"
+      ],
+      "spec": "Single WHITE video-play icon: small solid white horizontally rounded rectangle with a right-pointing triangular PLAY hole cut out of center, transparent triangle. Simple crisp rounded line-face glyph for red button, no other backing, no colored outline or drop shadow. Transparent exterior.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single WHITE video-play icon: small solid white horizontally rounded rectangle with a right-pointing triangular PLAY hole cut out of center, transparent triangle. Simple crisp rounded line-face glyph for red button, no other backing, no colored outline or drop shadow. Transparent exterior.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 2,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Single WHITE video-play icon: small solid white horizontally rounded rectangle with a right-pointing triangular PLAY hole cut out of center, transparent triangle. Simple crisp rounded line-face glyph for red button, no other backing, no colored outline or drop shadow. Transparent exterior.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-e3a376b5-a034-454d-a42f-7c3eafa63e96.png",
+          "master": "masters/T17-video-icon-video-attempt01.png",
+          "note": "Rejected: unexpected red circular backing; only white glyph requested.",
+          "selected": false
+        },
+        {
+          "number": 2,
+          "prompt": "Extract ONLY the white rounded rectangle video-play glyph from this image. DELETE the entire RED circular backing and all red pixels, color, reflections and shadows. The delivered icon must consist exclusively of a white softly beveled horizontal rounded rectangle with a clean transparent right-pointing triangular hole in the center. Outside the white glyph is transparent. No disc, no button, no colored element anywhere. Enlarge the isolated white glyph to occupy about 80% canvas width, center it in a square transparent canvas with safe margins. Target 64x64. Preserve crisp simple white shape, no extra text, no watermark.",
+          "referenced_image_paths": [
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/masters/T17-video-icon-video-attempt01.png"
+          ],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-0842b404-f45f-4303-8764-1f6a39cc87ba.png",
+          "master": "masters/T17-video-icon-video-attempt02.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T17-video-icon-video-attempt02.png",
+      "inputs": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/masters/T17-video-icon-video-attempt01.png"
+      ],
+      "delivery_path": "delivery/theme/icon-video.png",
+      "export": {
+        "master": "masters/T17-video-icon-video-attempt02.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          64,
+          64
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T17-video",
+          "path": "delivery/theme/icon-video.png",
+          "size": [
+            64,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "T18-settings",
+      "file": "theme/btn-settings.png",
+      "size": [
+        64,
+        64
+      ],
+      "alpha": true,
+      "refs": [
+        "item04-home-ref.png"
+      ],
+      "spec": "One pale gray-blue #AABCD3 rounded cogwheel gear icon, eight even wide teeth, circular hole in center, softly beveled 3D toy material. No backing circle or button, simple clean shape at small size, centered with transparent safe margin.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One pale gray-blue #AABCD3 rounded cogwheel gear icon, eight even wide teeth, circular hole in center, softly beveled 3D toy material. No backing circle or button, simple clean shape at small size, centered with transparent safe margin.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One pale gray-blue #AABCD3 rounded cogwheel gear icon, eight even wide teeth, circular hole in center, softly beveled 3D toy material. No backing circle or button, simple clean shape at small size, centered with transparent safe margin.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-37d114a5-be98-4c7e-8b3b-12c95c0d6728.png",
+          "master": "masters/T18-settings-btn-settings-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T18-settings-btn-settings-attempt01.png",
+      "delivery_path": "delivery/theme/btn-settings.png",
+      "export": {
+        "master": "masters/T18-settings-btn-settings-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          64,
+          64
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T18-settings",
+          "path": "delivery/theme/btn-settings.png",
+          "size": [
+            64,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "T18-codex",
+      "file": "theme/btn-codex.png",
+      "size": [
+        64,
+        64
+      ],
+      "alpha": true,
+      "refs": [
+        "item04-home-ref.png"
+      ],
+      "spec": "One BLUE open book icon with rounded blue cover edges, two WHITE blank facing pages and a blue center spine. Slight glossy toy depth, front view, very clean readable tiny icon. No text, marks, letters or page lines. No background tile or circle. Transparent margin around whole book.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One BLUE open book icon with rounded blue cover edges, two WHITE blank facing pages and a blue center spine. Slight glossy toy depth, front view, very clean readable tiny icon. No text, marks, letters or page lines. No background tile or circle. Transparent margin around whole book.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One BLUE open book icon with rounded blue cover edges, two WHITE blank facing pages and a blue center spine. Slight glossy toy depth, front view, very clean readable tiny icon. No text, marks, letters or page lines. No background tile or circle. Transparent margin around whole book.\nTarget delivery canvas: 64x64 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-9a8591f8-d2c1-4b83-b7d3-7ef3fa10f293.png",
+          "master": "masters/T18-codex-btn-codex-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T18-codex-btn-codex-attempt01.png",
+      "delivery_path": "delivery/theme/btn-codex.png",
+      "export": {
+        "master": "masters/T18-codex-btn-codex-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          64,
+          64
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T18-codex",
+          "path": "delivery/theme/btn-codex.png",
+          "size": [
+            64,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "T2",
+      "file": "theme/home-background.png",
+      "size": [
+        1080,
+        2340
+      ],
+      "alpha": false,
+      "refs": [
+        "item04-home-ref.png"
+      ],
+      "spec": "Full-bleed vertical 6:13 mobile home screen BACKGROUND, opaque pure white canvas. A few very faint, broad, soft-edged pale blue concentric circular halos centered at (50% width,38% height), behind future hero. Halos almost white, low contrast, crop naturally at left/right edges. Lower 35% almost pure white, no objects, no characters, no buttons, no text, no bubbles, no horizon. Clean flat 2D supporting background.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Full-bleed vertical 6:13 mobile home screen BACKGROUND, opaque pure white canvas. A few very faint, broad, soft-edged pale blue concentric circular halos centered at (50% width,38% height), behind future hero. Halos almost white, low contrast, crop naturally at left/right edges. Lower 35% almost pure white, no objects, no characters, no buttons, no text, no bubbles, no horizon. Clean flat 2D supporting background.\nTarget delivery canvas: 1080x2340 pixels. Fully opaque background.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Full-bleed vertical 6:13 mobile home screen BACKGROUND, opaque pure white canvas. A few very faint, broad, soft-edged pale blue concentric circular halos centered at (50% width,38% height), behind future hero. Halos almost white, low contrast, crop naturally at left/right edges. Lower 35% almost pure white, no objects, no characters, no buttons, no text, no bubbles, no horizon. Clean flat 2D supporting background.\nTarget delivery canvas: 1080x2340 pixels. Fully opaque background.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-8a56c78a-5030-411f-a944-f9589af4579a.png",
+          "master": "masters/T2-home-background-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T2-home-background-attempt01.png",
+      "delivery_path": "delivery/theme/home-background.png",
+      "export": {
+        "master": "masters/T2-home-background-attempt01.png",
+        "master_size": [
+          853,
+          1844
+        ],
+        "crop_xywh": null,
+        "size": [
+          1080,
+          2340
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T2",
+          "path": "delivery/theme/home-background.png",
+          "size": [
+            1080,
+            2340
+          ],
+          "mode": "RGB",
+          "alpha_range": [
+            255,
+            255
+          ],
+          "corner_alpha": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "outer_edge_alpha_max": 255
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "T3",
+      "file": "theme/codex-background.png",
+      "size": [
+        810,
+        1755
+      ],
+      "alpha": false,
+      "refs": [
+        "item18-codex-ref.png"
+      ],
+      "spec": "Full-bleed vertical 6:13 mobile character-codex BACKGROUND, opaque white. A few very faint broad concentric pale-blue circular halos centered at (50% width,20% height), naturally extending off left/right/top edges. Halos fade away by mid height; bottom half clean pure white, no objects, no buttons, no characters, no text, no horizon.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Full-bleed vertical 6:13 mobile character-codex BACKGROUND, opaque white. A few very faint broad concentric pale-blue circular halos centered at (50% width,20% height), naturally extending off left/right/top edges. Halos fade away by mid height; bottom half clean pure white, no objects, no buttons, no characters, no text, no horizon.\nTarget delivery canvas: 810x1755 pixels. Fully opaque background.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Full-bleed vertical 6:13 mobile character-codex BACKGROUND, opaque white. A few very faint broad concentric pale-blue circular halos centered at (50% width,20% height), naturally extending off left/right/top edges. Halos fade away by mid height; bottom half clean pure white, no objects, no buttons, no characters, no text, no horizon.\nTarget delivery canvas: 810x1755 pixels. Fully opaque background.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-6217666a-bbc0-4bf7-bb37-75d04a7143da.png",
+          "master": "masters/T3-codex-background-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/T3-codex-background-attempt01.png",
+      "delivery_path": "delivery/theme/codex-background.png",
+      "export": {
+        "master": "masters/T3-codex-background-attempt01.png",
+        "master_size": [
+          853,
+          1844
+        ],
+        "crop_xywh": null,
+        "size": [
+          810,
+          1755
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "T3",
+          "path": "delivery/theme/codex-background.png",
+          "size": [
+            810,
+            1755
+          ],
+          "mode": "RGB",
+          "alpha_range": [
+            255,
+            255
+          ],
+          "corner_alpha": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "outer_edge_alpha_max": 255
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N1",
+      "file": "logo/title-logo.png",
+      "size": [
+        1024,
+        640
+      ],
+      "alpha": true,
+      "refs": [
+        "item01-loading-ref.png"
+      ],
+      "spec": "EDIT and redesign supplied old plush wordmark into new light-theme logo. Text EXACTLY: 泡泡小队 . Exactly four Chinese characters, left to right 泡 | 泡 | 小 | 队, and no other text. Remove old subtitle banner completely. Chubby legible characters with white-to-sunny-yellow vertical gradient, thick BLUE #1767E8 outline and blue extruded depth, slightly staggered baseline, plush velvety texture. No purple or pink. Add the EXACT blue bear from second reference, same fluffy #2982F4 fur, beige muzzle/inner ears, dark brown nose/eyes, peeking cheerfully from its blue fabric flowerpot with green leaves and white appliques at lower-right of lettering. Bear max 25% composition, never cover strokes. One small translucent bubble beside bear. Complete logo on transparent canvas 8:5, 5% safe margin, upper-right soft light. Preserve bear identity; no subtitle, no stars, no slogan, no badges. All four characters must be correct and fully visible.",
+      "prompt": "Use case: logo-brand. EDIT and redesign supplied old plush wordmark into new light-theme logo. Text EXACTLY: 泡泡小队 . Exactly four Chinese characters, left to right 泡 | 泡 | 小 | 队, and no other text. Remove old subtitle banner completely. Chubby legible characters with white-to-sunny-yellow vertical gradient, thick BLUE #1767E8 outline and blue extruded depth, slightly staggered baseline, plush velvety texture. No purple or pink. Add the EXACT blue bear from second reference, same fluffy #2982F4 fur, beige muzzle/inner ears, dark brown nose/eyes, peeking cheerfully from its blue fabric flowerpot with green leaves and white appliques at lower-right of lettering. Bear max 25% composition, never cover strokes. One small translucent bubble beside bear. Complete logo on transparent canvas 8:5, 5% safe margin, upper-right soft light. Preserve bear identity; no subtitle, no stars, no slogan, no badges. All four characters must be correct and fully visible.\nTarget delivery canvas: 1024x640 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 2,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: logo-brand. EDIT and redesign supplied old plush wordmark into new light-theme logo. Text EXACTLY: 泡泡小队 . Exactly four Chinese characters, left to right 泡 | 泡 | 小 | 队, and no other text. Remove old subtitle banner completely. Chubby legible characters with white-to-sunny-yellow vertical gradient, thick BLUE #1767E8 outline and blue extruded depth, slightly staggered baseline, plush velvety texture. No purple or pink. Add the EXACT blue bear from second reference, same fluffy #2982F4 fur, beige muzzle/inner ears, dark brown nose/eyes, peeking cheerfully from its blue fabric flowerpot with green leaves and white appliques at lower-right of lettering. Bear max 25% composition, never cover strokes. One small translucent bubble beside bear. Complete logo on transparent canvas 8:5, 5% safe margin, upper-right soft light. Preserve bear identity; no subtitle, no stars, no slogan, no badges. All four characters must be correct and fully visible.\nTarget delivery canvas: 1024x640 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/HomeC-20261025/masters/logo.png",
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/delivery/creatures/blue/2982F4/idle.png"
+          ],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-0d6701c3-e5d5-4d67-be5b-f7b3bc11f1e5.png",
+          "master": "masters/N1-title-logo-attempt01.png",
+          "note": "Typography correct; revise mascot to smaller lower-right placement and more complete safe margin.",
+          "selected": false
+        },
+        {
+          "number": 2,
+          "prompt": "Use case: precise-object-edit. Adjust ONLY layout of this logo, preserving the EXACT correct Chinese lettering 泡泡小队, its yellow-white plush faces, thick blue outlines, stitches and depth. Preserve the existing blue plush bear identity and its blue flowerpot. SHRINK the complete bear-and-pot mascot to about 60% of its current size and move it DOWN to the LOWER RIGHT corner beside the last character. Mascot head should be below the top of the lettering, pot bottom slightly below the lettering baseline. Keep mascot beside letters, never hiding any stroke. Move the one bubble with the mascot, beside its head. Keep all objects inside canvas with 5% transparent margin. Remove excessive empty space at top by centering the complete wordmark+mascot composition in the 1024x640 target canvas. No other changes, no added text or ornaments. Exactly four characters 泡 泡 小 队. Transparent background.",
+          "referenced_image_paths": [
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/masters/N1-title-logo-attempt01.png"
+          ],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-cd1a2071-332e-4fe7-91c1-895e05ef5c08.png",
+          "master": "masters/N1-title-logo-attempt02.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "inputs": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/masters/N1-title-logo-attempt01.png"
+      ],
+      "selected_master": "masters/N1-title-logo-attempt02.png",
+      "delivery_path": "delivery/logo/title-logo.png",
+      "export": {
+        "master": "masters/N1-title-logo-attempt02.png",
+        "master_size": [
+          1586,
+          992
+        ],
+        "crop_xywh": null,
+        "size": [
+          1024,
+          640
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "verified character-by-character and supplemental local Vision OCR",
+        "measurements": {
+          "id": "N1",
+          "path": "delivery/logo/title-logo.png",
+          "size": [
+            1024,
+            640
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 0
+        },
+        "wordmark": {
+          "expected": "泡泡小队",
+          "verified_characters": [
+            "泡",
+            "泡",
+            "小",
+            "队"
+          ],
+          "ocr_text": "泡泡小队",
+          "ocr_confidence": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N2",
+      "file": "loading/loading-background.png",
+      "size": [
+        1080,
+        2340
+      ],
+      "alpha": false,
+      "refs": [
+        "item01-loading-ref.png"
+      ],
+      "spec": "Full-bleed opaque vertical 6:13 loading screen BACKGROUND, bright cheerful sky-blue gentle vertical gradient #83CDFF at top to #C5E8FF bottom. A soft low-contrast pattern of pale bubbles and small four-point stars, mostly lower half and edges. Leave upper-middle central logo area quiet. No scene, horizon, objects, characters, interface, logo or text.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Full-bleed opaque vertical 6:13 loading screen BACKGROUND, bright cheerful sky-blue gentle vertical gradient #83CDFF at top to #C5E8FF bottom. A soft low-contrast pattern of pale bubbles and small four-point stars, mostly lower half and edges. Leave upper-middle central logo area quiet. No scene, horizon, objects, characters, interface, logo or text.\nTarget delivery canvas: 1080x2340 pixels. Fully opaque background.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Full-bleed opaque vertical 6:13 loading screen BACKGROUND, bright cheerful sky-blue gentle vertical gradient #83CDFF at top to #C5E8FF bottom. A soft low-contrast pattern of pale bubbles and small four-point stars, mostly lower half and edges. Leave upper-middle central logo area quiet. No scene, horizon, objects, characters, interface, logo or text.\nTarget delivery canvas: 1080x2340 pixels. Fully opaque background.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-d4aa43c8-b10c-40bf-85ec-05440a11b795.png",
+          "master": "masters/N2-loading-background-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/N2-loading-background-attempt01.png",
+      "delivery_path": "delivery/loading/loading-background.png",
+      "export": {
+        "master": "masters/N2-loading-background-attempt01.png",
+        "master_size": [
+          853,
+          1844
+        ],
+        "crop_xywh": null,
+        "size": [
+          1080,
+          2340
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "N2",
+          "path": "delivery/loading/loading-background.png",
+          "size": [
+            1080,
+            2340
+          ],
+          "mode": "RGB",
+          "alpha_range": [
+            255,
+            255
+          ],
+          "corner_alpha": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "outer_edge_alpha_max": 255
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N3",
+      "file": "win/mvp-crown.png",
+      "size": [
+        200,
+        150
+      ],
+      "alpha": true,
+      "refs": [
+        "item07-win-ref.png"
+      ],
+      "spec": "One small rounded GOLDEN three-point crown, plump 3D toy golden yellow with white upper-right glints. Two or three tiny gold four-point sparkles next to it. Icon floating, no head, no text or jewels with letters. Transparent background and safe margins. Broad 4:3 composition.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One small rounded GOLDEN three-point crown, plump 3D toy golden yellow with white upper-right glints. Two or three tiny gold four-point sparkles next to it. Icon floating, no head, no text or jewels with letters. Transparent background and safe margins. Broad 4:3 composition.\nTarget delivery canvas: 200x150 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One small rounded GOLDEN three-point crown, plump 3D toy golden yellow with white upper-right glints. Two or three tiny gold four-point sparkles next to it. Icon floating, no head, no text or jewels with letters. Transparent background and safe margins. Broad 4:3 composition.\nTarget delivery canvas: 200x150 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-d3c63f51-7b61-4c95-98f2-c88e1fbc919b.png",
+          "master": "masters/N3-mvp-crown-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/N3-mvp-crown-attempt01.png",
+      "delivery_path": "delivery/win/mvp-crown.png",
+      "export": {
+        "master": "masters/N3-mvp-crown-attempt01.png",
+        "master_size": [
+          1448,
+          1086
+        ],
+        "crop_xywh": null,
+        "size": [
+          200,
+          150
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "N3",
+          "path": "delivery/win/mvp-crown.png",
+          "size": [
+            200,
+            150
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 0
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N4",
+      "file": "lose/hero-sad.png",
+      "size": [
+        512,
+        512
+      ],
+      "alpha": true,
+      "refs": [
+        "item17-lose-ref.png"
+      ],
+      "spec": "EDIT supplied existing sad blue plush bear. Preserve exact blue fuzzy bear identity, cream/beige muzzle and inner ears, brown nose, brown eyes, green felt leaves and blue fabric flowerpot with white cloud/circle appliques. Remove the question mark entirely. Lower its head, brows sadly furrowed, disappointed pout; its chin and paws rest limply on pot rim. Make an obvious jagged crack on RIGHT side of blue pot, with one matching blue fragment fallen immediately lower-right, still within canvas. Small soft white sigh puff beside mouth. Keep same realistic short plush texture, soft upper-right lighting, complete isolated character and fragment with transparent margin. No text or punctuation anywhere.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. EDIT supplied existing sad blue plush bear. Preserve exact blue fuzzy bear identity, cream/beige muzzle and inner ears, brown nose, brown eyes, green felt leaves and blue fabric flowerpot with white cloud/circle appliques. Remove the question mark entirely. Lower its head, brows sadly furrowed, disappointed pout; its chin and paws rest limply on pot rim. Make an obvious jagged crack on RIGHT side of blue pot, with one matching blue fragment fallen immediately lower-right, still within canvas. Small soft white sigh puff beside mouth. Keep same realistic short plush texture, soft upper-right lighting, complete isolated character and fragment with transparent margin. No text or punctuation anywhere.\nTarget delivery canvas: 512x512 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. EDIT supplied existing sad blue plush bear. Preserve exact blue fuzzy bear identity, cream/beige muzzle and inner ears, brown nose, brown eyes, green felt leaves and blue fabric flowerpot with white cloud/circle appliques. Remove the question mark entirely. Lower its head, brows sadly furrowed, disappointed pout; its chin and paws rest limply on pot rim. Make an obvious jagged crack on RIGHT side of blue pot, with one matching blue fragment fallen immediately lower-right, still within canvas. Small soft white sigh puff beside mouth. Keep same realistic short plush texture, soft upper-right lighting, complete isolated character and fragment with transparent margin. No text or punctuation anywhere.\nTarget delivery canvas: 512x512 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [
+            "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/references/lose-hero-current.png"
+          ],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-db756239-ca37-4af1-8adc-0553ab887bc7.png",
+          "master": "masters/N4-hero-sad-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "inputs": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/UIRefresh-20261029/references/lose-hero-current.png"
+      ],
+      "selected_master": "masters/N4-hero-sad-attempt01.png",
+      "delivery_path": "delivery/lose/hero-sad.png",
+      "export": {
+        "master": "masters/N4-hero-sad-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          512,
+          512
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "N4",
+          "path": "delivery/lose/hero-sad.png",
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N5",
+      "file": "fx/aim-ring.png",
+      "size": [
+        512,
+        512
+      ],
+      "alpha": true,
+      "refs": [
+        "item13-bomb-ref.png"
+      ],
+      "spec": "A perfectly circular very thin glowing CYAN targeting ring, four short inward radial ticks exactly at top, bottom, left, right, small plus-shaped cross at center. Center interior almost transparent faint cyan wash, thin bright rim with restrained glow. Front-on symmetric, ring diameter 88% of canvas, complete full circle, transparent exterior and nearly transparent center. No extra circles, numbers, arrows, mechanical details or text.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. A perfectly circular very thin glowing CYAN targeting ring, four short inward radial ticks exactly at top, bottom, left, right, small plus-shaped cross at center. Center interior almost transparent faint cyan wash, thin bright rim with restrained glow. Front-on symmetric, ring diameter 88% of canvas, complete full circle, transparent exterior and nearly transparent center. No extra circles, numbers, arrows, mechanical details or text.\nTarget delivery canvas: 512x512 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. A perfectly circular very thin glowing CYAN targeting ring, four short inward radial ticks exactly at top, bottom, left, right, small plus-shaped cross at center. Center interior almost transparent faint cyan wash, thin bright rim with restrained glow. Front-on symmetric, ring diameter 88% of canvas, complete full circle, transparent exterior and nearly transparent center. No extra circles, numbers, arrows, mechanical details or text.\nTarget delivery canvas: 512x512 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-68787a83-4143-4a7f-be86-029b81f28798.png",
+          "master": "masters/N5-aim-ring-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/N5-aim-ring-attempt01.png",
+      "delivery_path": "delivery/fx/aim-ring.png",
+      "export": {
+        "master": "masters/N5-aim-ring-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          512,
+          512
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "N5",
+          "path": "delivery/fx/aim-ring.png",
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N6",
+      "file": "incoming/title.png",
+      "size": [
+        720,
+        180
+      ],
+      "alpha": true,
+      "refs": [
+        "item10-incoming-ref.png"
+      ],
+      "spec": "Create only Chinese 3D game alert wordmark reading EXACTLY 泡泡来袭！ . Four Chinese characters 泡 | 泡 | 来 | 袭 followed by ONE full-width exclamation mark ！. Exactly this phrase, no other text. Thick chubby rounded highly legible Chinese lettering, gently bouncing baseline, yellow #FFD544 at top to warm orange #FF9D24 at bottom, dark deep-blue #1D3A7A outline and short extruded depth, soft upper-right light, subtle plush-toy finish. A single wide horizontal line, 4:1 composition, safe transparent margin. No arrows, rays, stars, symbols or decorative objects. Carefully form 来 and 袭 correctly.",
+      "prompt": "Use case: logo-brand. Create only Chinese 3D game alert wordmark reading EXACTLY 泡泡来袭！ . Four Chinese characters 泡 | 泡 | 来 | 袭 followed by ONE full-width exclamation mark ！. Exactly this phrase, no other text. Thick chubby rounded highly legible Chinese lettering, gently bouncing baseline, yellow #FFD544 at top to warm orange #FF9D24 at bottom, dark deep-blue #1D3A7A outline and short extruded depth, soft upper-right light, subtle plush-toy finish. A single wide horizontal line, 4:1 composition, safe transparent margin. No arrows, rays, stars, symbols or decorative objects. Carefully form 来 and 袭 correctly.\nTarget delivery canvas: 720x180 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: logo-brand. Create only Chinese 3D game alert wordmark reading EXACTLY 泡泡来袭！ . Four Chinese characters 泡 | 泡 | 来 | 袭 followed by ONE full-width exclamation mark ！. Exactly this phrase, no other text. Thick chubby rounded highly legible Chinese lettering, gently bouncing baseline, yellow #FFD544 at top to warm orange #FF9D24 at bottom, dark deep-blue #1D3A7A outline and short extruded depth, soft upper-right light, subtle plush-toy finish. A single wide horizontal line, 4:1 composition, safe transparent margin. No arrows, rays, stars, symbols or decorative objects. Carefully form 来 and 袭 correctly.\nTarget delivery canvas: 720x180 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-9c639cfe-b08b-47cd-9615-e6932105d734.png",
+          "master": "masters/N6-title-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/N6-title-attempt01.png",
+      "delivery_path": "delivery/incoming/title.png",
+      "export": {
+        "master": "masters/N6-title-attempt01.png",
+        "master_size": [
+          1983,
+          793
+        ],
+        "crop_xywh": [
+          0,
+          112,
+          1983,
+          546
+        ],
+        "size": [
+          720,
+          180
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "verified character-by-character and supplemental local Vision OCR",
+        "measurements": {
+          "id": "N6",
+          "path": "delivery/incoming/title.png",
+          "size": [
+            720,
+            180
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        },
+        "wordmark": {
+          "expected": "泡泡来袭！",
+          "verified_characters": [
+            "泡",
+            "泡",
+            "来",
+            "袭",
+            "！"
+          ],
+          "ocr_text": "泡泡来袭！",
+          "ocr_confidence": 0.5,
+          "verification": "manual glyph inspection plus OCR; four Han characters and one full-width exclamation mark"
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N7",
+      "file": "incoming/chevron.png",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "refs": [
+        "item10-incoming-ref.png"
+      ],
+      "spec": "Exactly TWO stacked downward pointing yellow chevrons, each a thick rounded V, separated by a clear gap. Sunny yellow/orange softly glossy 3D toy bevel, centered, straight front view, equal width, no extra arrows or backing. Transparent safe margin.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Exactly TWO stacked downward pointing yellow chevrons, each a thick rounded V, separated by a clear gap. Sunny yellow/orange softly glossy 3D toy bevel, centered, straight front view, equal width, no extra arrows or backing. Transparent safe margin.\nTarget delivery canvas: 96x96 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Exactly TWO stacked downward pointing yellow chevrons, each a thick rounded V, separated by a clear gap. Sunny yellow/orange softly glossy 3D toy bevel, centered, straight front view, equal width, no extra arrows or backing. Transparent safe margin.\nTarget delivery canvas: 96x96 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-b48b8db9-aae7-442b-8d45-19313ba31317.png",
+          "master": "masters/N7-chevron-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/N7-chevron-attempt01.png",
+      "delivery_path": "delivery/incoming/chevron.png",
+      "export": {
+        "master": "masters/N7-chevron-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          96,
+          96
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "N7",
+          "path": "delivery/incoming/chevron.png",
+          "size": [
+            96,
+            96
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 0
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N8",
+      "file": "slot/locked.png",
+      "size": [
+        160,
+        160
+      ],
+      "alpha": true,
+      "refs": [
+        "item19-locked-slot-ref.png"
+      ],
+      "spec": "One glossy BLUE rounded-square locked deployment-slot tile, with centered WHITE simple closed padlock glyph. At tile upper-right corner a smaller BLUE rounded video badge overlaps corner, containing one WHITE right-pointing play triangle. Exactly these two symbols. Rounded 3D depth and soft upper-right reflection, no text, numbers or extra symbols. Whole tile and badge fit fully within transparent margin.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One glossy BLUE rounded-square locked deployment-slot tile, with centered WHITE simple closed padlock glyph. At tile upper-right corner a smaller BLUE rounded video badge overlaps corner, containing one WHITE right-pointing play triangle. Exactly these two symbols. Rounded 3D depth and soft upper-right reflection, no text, numbers or extra symbols. Whole tile and badge fit fully within transparent margin.\nTarget delivery canvas: 160x160 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One glossy BLUE rounded-square locked deployment-slot tile, with centered WHITE simple closed padlock glyph. At tile upper-right corner a smaller BLUE rounded video badge overlaps corner, containing one WHITE right-pointing play triangle. Exactly these two symbols. Rounded 3D depth and soft upper-right reflection, no text, numbers or extra symbols. Whole tile and badge fit fully within transparent margin.\nTarget delivery canvas: 160x160 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-8d4629f0-d361-4556-9cbe-2c0732ab79bb.png",
+          "master": "masters/N8-locked-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/N8-locked-attempt01.png",
+      "delivery_path": "delivery/slot/locked.png",
+      "export": {
+        "master": "masters/N8-locked-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          160,
+          160
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "N8",
+          "path": "delivery/slot/locked.png",
+          "size": [
+            160,
+            160
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N10",
+      "file": "fx/rail-chevron.png",
+      "size": [
+        48,
+        48
+      ],
+      "alpha": true,
+      "refs": [
+        "item16-rail-ref.png"
+      ],
+      "spec": "Exactly TWO stacked upward pointing RED chevrons, thick rounded inverted V shapes with clear separation, small contained soft red halo for warning. Equal width, clean front view, no extra arrow stems or symbols, transparent background and safe margin. Must read clearly at 48px.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Exactly TWO stacked upward pointing RED chevrons, thick rounded inverted V shapes with clear separation, small contained soft red halo for warning. Equal width, clean front view, no extra arrow stems or symbols, transparent background and safe margin. Must read clearly at 48px.\nTarget delivery canvas: 48x48 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. Exactly TWO stacked upward pointing RED chevrons, thick rounded inverted V shapes with clear separation, small contained soft red halo for warning. Equal width, clean front view, no extra arrow stems or symbols, transparent background and safe margin. Must read clearly at 48px.\nTarget delivery canvas: 48x48 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-b9bcdada-6500-4316-95e5-e9be95e2dfb5.png",
+          "master": "masters/N10-rail-chevron-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/N10-rail-chevron-attempt01.png",
+      "delivery_path": "delivery/fx/rail-chevron.png",
+      "export": {
+        "master": "masters/N10-rail-chevron-attempt01.png",
+        "master_size": [
+          1254,
+          1254
+        ],
+        "crop_xywh": null,
+        "size": [
+          48,
+          48
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "N10",
+          "path": "delivery/fx/rail-chevron.png",
+          "size": [
+            48,
+            48
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N11",
+      "file": "fx/revive-wave.png",
+      "size": [
+        810,
+        300
+      ],
+      "alpha": true,
+      "refs": [
+        "item14-revive-success-ref.png"
+      ],
+      "spec": "One horizontal magical WATER WAVE band crossing canvas left-to-right, light aqua cyan, gentle rolling low wave crest, white foamy top with a few small bubbles and tiny white four-point glints. Bright soft 3D toy-game water, energetic yet gentle, no scene or ocean horizon. Wide 2.7:1 composition, semi-transparent water, top and bottom fade completely to transparent well before canvas edges. No characters, arrows, letters or text. Entire single wave shape visible.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One horizontal magical WATER WAVE band crossing canvas left-to-right, light aqua cyan, gentle rolling low wave crest, white foamy top with a few small bubbles and tiny white four-point glints. Bright soft 3D toy-game water, energetic yet gentle, no scene or ocean horizon. Wide 2.7:1 composition, semi-transparent water, top and bottom fade completely to transparent well before canvas edges. No characters, arrows, letters or text. Entire single wave shape visible.\nTarget delivery canvas: 810x300 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One horizontal magical WATER WAVE band crossing canvas left-to-right, light aqua cyan, gentle rolling low wave crest, white foamy top with a few small bubbles and tiny white four-point glints. Bright soft 3D toy-game water, energetic yet gentle, no scene or ocean horizon. Wide 2.7:1 composition, semi-transparent water, top and bottom fade completely to transparent well before canvas edges. No characters, arrows, letters or text. Entire single wave shape visible.\nTarget delivery canvas: 810x300 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-ad4abf0c-7fb5-4e24-bb0f-e4378df963ed.png",
+          "master": "masters/N11-revive-wave-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/N11-revive-wave-attempt01.png",
+      "delivery_path": "delivery/fx/revive-wave.png",
+      "export": {
+        "master": "masters/N11-revive-wave-attempt01.png",
+        "master_size": [
+          2058,
+          764
+        ],
+        "crop_xywh": null,
+        "size": [
+          810,
+          300
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "N11",
+          "path": "delivery/fx/revive-wave.png",
+          "size": [
+            810,
+            300
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 9
+        }
+      },
+      "delivered_date": "2026-10-30"
+    },
+    {
+      "id": "N12",
+      "file": "codex/pedestal.png",
+      "size": [
+        360,
+        90
+      ],
+      "alpha": true,
+      "refs": [
+        "item18-codex-ref.png"
+      ],
+      "spec": "One very shallow glossy round display podium seen as a wide ellipse from slightly above, white-to-pale-blue top, thin blue-white front side giving slight thickness, soft white light along rim. Plain empty top, matching existing deployment tray but larger display scale. 4:1 horizontal composition, centered with transparent margin and contained gentle glow. No scene, character, text or decoration.",
+      "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One very shallow glossy round display podium seen as a wide ellipse from slightly above, white-to-pale-blue top, thin blue-white front side giving slight thickness, soft white light along rim. Plain empty top, matching existing deployment tray but larger display scale. 4:1 horizontal composition, centered with transparent margin and contained gentle glow. No scene, character, text or decoration.\nTarget delivery canvas: 360x90 pixels. Genuine transparent background; no checkerboard.",
+      "status": "delivered",
+      "generation_count": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "prompt": "Use case: stylized-concept. Standalone production raster UI asset for a bright plush-toy bubble game, matching the delivered light-theme UI. Clean rounded 3D toy forms, very soft upper-right light, restrained bevels, smooth edges, no heavy black outlines. Palette white #FFFFFF, pale blue #E8F2FF/#CFE4FF, blue #2F7BFF to #1E5FE0, yellow #FFC93C, red #FF4D5A. No words, letters, numbers, captions, watermark, or extra symbols beyond the explicitly requested icon. Only one asset, not a screenshot or sheet. One very shallow glossy round display podium seen as a wide ellipse from slightly above, white-to-pale-blue top, thin blue-white front side giving slight thickness, soft white light along rim. Plain empty top, matching existing deployment tray but larger display scale. 4:1 horizontal composition, centered with transparent margin and contained gentle glow. No scene, character, text or decoration.\nTarget delivery canvas: 360x90 pixels. Genuine transparent background; no checkerboard.",
+          "referenced_image_paths": [],
+          "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-946103ed-bd5d-4931-9562-903f3ac8d95f.png",
+          "master": "masters/N12-pedestal-attempt01.png",
+          "selected": true
+        }
+      ],
+      "batch": "second-20261029",
+      "selected_master": "masters/N12-pedestal-attempt01.png",
+      "delivery_path": "delivery/codex/pedestal.png",
+      "export": {
+        "master": "masters/N12-pedestal-attempt01.png",
+        "master_size": [
+          1998,
+          787
+        ],
+        "crop_xywh": [
+          0,
+          154,
+          1998,
+          500
+        ],
+        "size": [
+          360,
+          90
+        ],
+        "method": "sips canvas crop if needed, then exact-size resample; original preserved"
+      },
+      "qa": {
+        "dimensions": "pass",
+        "white_background": "visually inspected",
+        "light_blue_background": "visually inspected",
+        "text": "none",
+        "measurements": {
+          "id": "N12",
+          "path": "delivery/codex/pedestal.png",
+          "size": [
+            360,
+            90
+          ],
+          "mode": "RGBA",
+          "alpha_range": [
+            0,
+            255
+          ],
+          "corner_alpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "outer_edge_alpha_max": 1
+        }
+      },
+      "delivered_date": "2026-10-30"
+    }
+  ],
+  "last_delivery_date": "2026-10-30",
+  "delivered_asset_count": 36,
+  "batches": [
+    {
+      "id": "priority-20261029",
+      "delivered_asset_count": 10,
+      "generation_count": 13
+    },
+    {
+      "id": "second-20261029",
+      "delivered_asset_count": 26,
+      "generation_count": 30,
+      "delivered_date": "2026-10-30"
+    }
+  ]
+}

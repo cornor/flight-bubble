@@ -78,6 +78,9 @@ namespace Flightbeat.Game
             if (levelPickOpen) { LevelPickTap(id); return; }   // 2026-10-19 level select page is modal
             if (settings)
             {
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+                if (ResetConfirmTap(id)) return;   // 2026-10-30: the reset confirmation is modal
+#endif
                 if (id >= 20 && id <= 22) OnBattleUi(id);
                 else if (id == 24) { settings = false; SetPaused(false); DisarmResetProgress(); audioChip.Play("ui"); }
                 else if (id == 802) TapResetProgress();

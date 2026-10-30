@@ -195,14 +195,15 @@ namespace Flightbeat.Editor
             // UI redesign 12: same glass and rounded type as the battle hints; retain the pause action.
             var pause = Action("Pause button", band, 1, 12, 6, 44, 44);
             Art("Icon", pause, "scene/pause", 2, 2, 40, 40);
-            Art("Level plaque", band, "scene/level", 66, 12, 116, 38, true, 32, 32, 16);
+            // 2026-10-29 (light theme T8): the white pill has fully round 36 px ends; slice at 36, drawn at 19 (half of 38).
+            Art("Level plaque", band, "scene/level", 66, 12, 116, 38, true, 36, 36, 19);
             RoundLabel("Lesson title", band, "泡泡课堂 {0}/2", 66, 19, 106, 15, GardenBars.Navy);
             RoundLabel("Level title", band, "第 {0} 关", 66, 18.4f, 106, 18, GardenBars.Navy).gameObject.SetActive(false);
             // 2026-10-21 10:44 (user: too much room around the number): the frame ends 14 px earlier on the right (344 -> 330).
-            Art("Progress frame", band, "scene/progress-frame", 190, 12, 330, 38, true, 32, 32, 16);
+            Art("Progress frame", band, "scene/progress-frame", 190, 12, 330, 38, true, 36, 36, 19);
             // 2026-10-21 (quality pass): the empty groove read as a dull grey bar. Now a pale frosted groove with a fine
             // inner shade along its top edge, like a channel pressed into the glass.
-            var track = Art("Progress track", band, "scene/progress-track", 201, 20, GardenBattlePage.ProgressWidth, 22, true, 16, 16, 10);
+            var track = Art("Progress track", band, "scene/progress-track", 201, 20, GardenBattlePage.ProgressWidth, 22, true, 18, 18, 11);   // T7: 18 px round ends
             // 23:33 (user: at 0 % the pale groove did not read as a bar): deeper, as on the revive dialog, with a
             // stronger inner shade.
             // 10-22 11:50 (user picked option 3): no groove inside the frame any more, only a faint lane (frame
@@ -278,26 +279,28 @@ namespace Flightbeat.Editor
                 Art("Row card", row, "plants/dialog/pause-row", 0, 0, 364, 80, true, 18, 18, 14);
                 bool icon = HasSlot(icons[i]);
                 if (icon) Art(names[i] + " icon", row, icons[i], 16, 14, 52, 52);
-                var label = RoundLabel(names[i] + " text", row, labels[i], icon ? 88 : 20, 25, 164, 26, GardenSkin.Hex(0x985318));
+                var label = RoundLabel(names[i] + " text", row, labels[i], icon ? 88 : 20, 25, 164, 26, GardenSkin.Hex(0x1D3A7A));   // 2026-10-30 light theme
                 label.centered = false; label.alternateText = labels[i];
                 Art(names[i] + " toggle", row, "ui/toggle-on", 258, 16, 96, 48);
                 if (i == 2 && HasSlot("plants/dialog/icon-pattern")) Art("Alt icon", row, "plants/dialog/icon-pattern", 16, 14, 52, 52).gameObject.SetActive(false);
             }
             // Reference row: home, restart, rewarded skip. The home settings hide all three.
-            SquareButton("Home", content, 25, 60, 638, "plants/dialog/home", "主页", GardenSkin.Hex(0x985318));
-            CapsuleButton("Retry", content, 23, 148, 638, 244, 78, "plants/dialog/pause-retry", "重新开始", GardenSkin.Hex(0x537D2F));
-            SquareButton("Skip level", content, GardenBattlePage.SkipLevelAction, 404, 638, "plants/dialog/skip", "跳过此关", GardenSkin.Hex(0x983886));
-            CapsuleButton("Resume", content, 24, 148, 740, 244, 78, "plants/win/button-next", "继续游戏", GardenSkin.Hex(0xA55410));
+            // 2026-10-29 21:07 (界面优化 9, user: 去掉跳关功能): no skip button; home + restart centred as a pair (332 wide).
+            // 2026-10-30 (light theme): white 主页 · 重新开始 pills over a wide blue 继续游戏 (完成 on the home settings).
+            ThemePill("Home", content, 25, 100, 642, 162, 62, "white", "主页");
+            ThemePill("Retry", content, 23, 278, 642, 162, 62, "white", "重新开始");
+            ThemePill("Resume", content, 24, 120, 728, 300, 80, "blue", "继续游戏");
             var close = Action("Close settings", content, 24, 457, 190, 50, 50);
             Art("Close image", close, "plants/dialog/close", 0, 0, 50, 50);
             // Home settings: a readable text link below the last toggle, with a generous hit target.
             var reset = Action("Reset progress", content, GardenBattlePage.ResetProgressAction, 140, 568, 260, 52);
-            var resetText = RoundLabel("Reset text", reset, "{0}", 0, 8, 260, 22, GardenSkin.Hex(0x8C351F));
+            // 2026-10-30 (调整 5, reference): a bold red 「重置关卡进度」.
+            var resetText = RoundLabel("Reset text", reset, "{0}", 0, 8, 260, 24, GardenSkin.Hex(0xE5484D));
             resetText.middle = true;
             reset.gameObject.SetActive(false);
             var paused = Node("Paused", root, 0, 0, 540, 960); Stretch(paused);
             var simple = Modal(paused, "休息一下", 250, 370, panelSlot: "plants/dialog/pause-panel");
-            CapsuleButton("Resume simple", simple, 1, 148, 474, 244, 78, "plants/win/button-next", "继续", GardenSkin.Hex(0xA55410));
+            ThemePill("Resume simple", simple, 1, 120, 474, 300, 80, "blue", "继续");
             paused.gameObject.SetActive(false);
             return root;
         }
@@ -317,21 +320,19 @@ namespace Flightbeat.Editor
             Label("Seeds", rewards, "收获碎片 +{0}", 70, 456, 400, 20, Ink);
             Label("Statistics", rewards, "最高连击 {0}  用时 {1} 秒", 70, 510, 400, 16, Ink);
             Label("Campaign complete", content, "全部关卡通过", 70, 566, 400, 20, Ink);
-            // Loss layout: home, centered retry, and a share placeholder.
-            SquareButton("Home", content, 41, 60, 713, "plants/dialog/home", "主页", GardenSkin.Hex(0x985318));
-            var next = CapsuleButton("Continue", content, 40, 148, 712, 244, 78, "plants/dialog/pause-retry", "下一关", GardenSkin.Hex(0x537D2F));
+            // 2026-10-29 (界面优化 7/17, user: 所有的结算都要统一): light-theme capsules. Loss: a wide blue 重新挑战 with white
+            // 返回主页 · 分享 below; win: blue 主页 · 重玩 with a wide yellow 下一关 below (the overlays draw the rest).
+            // 2026-10-30 (调整 17): positions and sizes measured from the reference pages.
+            ThemePill("Home", content, 41, 72, 752, 204, 62, "white", "返回主页", "plants/uiref/icon-home");
+            var next = ThemePill("Continue", content, 40, 97, 637, 366, 90, "blue", "下一关");
             var nextText = Find<GardenUiText>(next.gameObject, "Label");
             nextText.name = "Continue text"; nextText.alternateText = "重新挑战";
             // ID 0 consumes the tap without running a sharing action or touching the battle.
-            SquareButton("Share", content, 0, 404, 713, "plants/lose/button-share", "分享", GardenSkin.Hex(0x7736A5));
-            // 2026-10-21 (user, victory page after a reference): one row of a small square 主页, a big 下一关 and a small
-            // square 重玩 (action 42). Shown only on a win (GardenBattlePage.SetWinLayout hides Continue / Home then);
-            // the lose page keeps 主页 / 重新挑战 / 分享.
+            ThemePill("Share", content, 0, 288, 752, 200, 62, "white", "分享", "plants/uiref/icon-share");
             var winButtons = Node("Win buttons", content, 0, 0, 540, 960);
-            // Shallow molded controls match the pause page; leave room for the two-line award cards above.
-            SquareButton("Win home", winButtons, 41, 60, 744, "plants/dialog/home", "主页", GardenSkin.Hex(0x985318));
-            SquareButton("Win replay", winButtons, 42, 404, 744, "plants/win/button-replay", "重玩", GardenSkin.Hex(0x983886));
-            var winNext = CapsuleButton("Win next", winButtons, 40, 148, 744, 244, 78, "plants/dialog/pause-retry", "下一关", GardenSkin.Hex(0x537D2F));
+            ThemePill("Win home", winButtons, 41, 88, 787, 174, 52, "blue", "主页", "plants/uiref/icon-home");
+            ThemePill("Win replay", winButtons, 42, 283, 787, 175, 52, "blue", "重玩", "plants/uiref/icon-replay");
+            var winNext = ThemePill("Win next", winButtons, 40, 162, 860, 224, 62, "yellow", "下一关");
             Find<GardenUiText>(winNext.gameObject, "Label").name = "Win next text";
             winButtons.gameObject.SetActive(false);
             var lesson = Node("Lesson complete", root, 0, 0, 540, 960); Center(lesson);
@@ -348,12 +349,39 @@ namespace Flightbeat.Editor
             shade.gameObject.AddComponent<GardenUiAction>().actionId = 0;
             var content = Node("Content", parent, 0, 0, 540, 960); Center(content);
             // 2026-10-21 18:11: a white card panel when delivered (ui/panel-card.png, 9-sliced), else the blue glass panel.
-            if (panelSlot != null) Art("Panel", content, panelSlot, 58, y, 424, height, true, 36, 36, 24);
+            if (panelSlot != null) Art("Panel", content, panelSlot, 58, y, 424, height, true, 48, 48, 32);   // 2026-10-30: T10 corners
             else if (HasSlot("plants/ui/panel-card")) Art("Panel", content, "plants/ui/panel-card", 50, y, 440, height, true, 36, 36, 24);
             else Art("Panel", content, "ui/popup-panel", 50, y, 440, height, true);
             Art("Ribbon", content, "ui/popup-ribbon", 80, y - 26, 380, 60);
             Label(titleName, content, title, 80, y - 13, 380, 24, Cream, 2);
             return content;
+        }
+        // 2026-10-29 light-theme capsule (ui/button-blue, ui/button-yellow 390x108 with 54 px round ends; "white" is the white
+        // pill scene/level, 384x72, 36 px ends), 3-sliced so the ends stay round; the old green capsule if the art is missing.
+        static RectTransform ThemePill(string name, RectTransform parent, int id, float x, float y, float w, float h, string kind, string word, string icon = null)
+        {
+            string slot = kind == "white" ? (HasSlot("plants/uiref/button-white") ? "plants/uiref/button-white" : "scene/level")
+                : kind == "yellow" ? "plants/uiref/button-yellow" : "plants/uiref/button-blue";
+            if (!HasSlot(slot)) return CapsuleButton(name, parent, id, x, y, w, h, "plants/dialog/pause-retry", word, GardenSkin.Hex(0x537D2F));
+            float stored = slot == "scene/level" ? 36f : slot.EndsWith("button-white") ? 30f : 52f, size = Mathf.Min(32f, h * .4f);
+            var root = Action(name, parent, id, x, y, w, h);
+            Art("Button image", root, slot, 0, 0, w, h, true, stored, 0f, h * .5f);
+            bool light = kind == "white";
+            size = Mathf.Min(32f, h * .38f);
+            Color ink = light ? GardenSkin.Hex(0x3A4A6B) : Color.white;
+            // 2026-10-30: an optional glyph (T17) before the word, white on colour and navy-grey on white; the pair is
+            // centred (CJK words ~1 em per character). 调整 (user): clean words like the reference, no outline.
+            float shift = 0f;
+            if (icon != null && HasSlot(icon))
+            {
+                float mark = size * 1.15f, gap = size * .3f, textW = word.Length * size;
+                shift = (mark + gap) * .5f;
+                var glyph = Art("Icon", root, icon, (w - mark - gap - textW) * .5f, h * (light ? .5f : .46f) - mark * .5f, mark, mark);
+                glyph.color = ink;
+            }
+            var label = RoundLabel("Label", root, word, shift * 2f, h * (light ? .5f : .46f) - size * .5f, w - shift * 2f, size, ink);
+            label.outlineWidth = 0f;
+            return root;
         }
         static RectTransform CapsuleButton(string name, RectTransform parent, int id, float x, float y, float w, float h, string slot, string word, Color outline)
         {

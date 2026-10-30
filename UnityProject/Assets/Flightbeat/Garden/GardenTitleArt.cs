@@ -10,8 +10,9 @@ namespace Flightbeat.Garden
     public static class GardenTitleArt
     {
         public const float Size = 32f, TrackingEm = .025f, EdgeWidth = 1f, ShadowOffset = 1.6f;
-        public static readonly Color Ink = GardenSkin.Hex(0x54318C);
-        public static readonly Color Shadow = new Color(.29f, .16f, .43f, .17f);
+        // 2026-10-30 (light theme): navy titles with a blue-grey shadow (were indigo / purple).
+        public static readonly Color Ink = GardenSkin.Hex(0x1D3A7A);
+        public static readonly Color Shadow = new Color(.12f, .23f, .48f, .15f);
         static GardenSkin.Atlas data;
         static Dictionary<char, GardenSkin.Glyph> glyphs;
         public static GardenSkin.Atlas Data

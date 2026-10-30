@@ -103,7 +103,7 @@ namespace Flightbeat.Editor
                 Check(Hit(album.center.x, album.center.y) == 803 && Hit(preview.center.x, preview.center.y) == 803, "Album and partner preview retain their real input targets at " + size);
                 Check(preview.yMax < ScreenLayout.SafeBottom, "Partner preview fits above the safe bottom at " + size);
                 Check(Hit(ScreenLayout.Left + 50f, ScreenLayout.Top + 46f) == 801, "Settings stays in the top safe area at " + size);
-                Check((string)Get(game, "homeNextName") == "小霞", "Level-five preview uses the actual next partner at " + size);
+                Check((string)Get(game, "homeNextName") == "哼哼", "Level-five preview uses the actual next partner at " + size);
             }
             Capture("home-before", 1080, 1920);
             PixelWingGame.HomeWaveView(out float homeScale, out float homeX, out float homeY);
@@ -152,7 +152,7 @@ namespace Flightbeat.Editor
             Check((string)Get(game, "homeNextLine") == "小队伙伴已集齐", "A complete collection fills the same partner area with the assembled-squad state");
             profile.cleared.Clear();
             Capture("home-empty-profile", 1080, 2340);
-            Check((string)Get(game, "homeNextName") == "小天", "A fresh profile previews the tutorial koala");
+            Check((string)Get(game, "homeNextName") == "糯糯", "A fresh profile previews the tutorial koala");
             Capture("home-restored-standard", 1080, 1920);
             var background = (RawImage)Get(game.gardenPage, "homeBackground");
             Check(background.texture.name == "home-background", "Closing restores original home texture");

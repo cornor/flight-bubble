@@ -32,7 +32,7 @@ namespace Flightbeat.Game
             canvas.overrideSorting = true; canvas.sortingOrder = 40;
             canvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord1;
             gardenOverlay = overlayObject.GetComponent<PixelSurface>();
-            gardenOverlay.Paint = s => { gardenOverlayHits.Clear(); if (GardenUiActive) DrawGardenOverlay(s); };
+            gardenOverlay.Paint = s => { gardenOverlayHits.Clear(); if (GardenUiActive) DrawGardenOverlay(s); else if (InHome && settings) DrawResetConfirm(s); };
             gardenPage.Bind(this);
             RefreshGardenUi(gardenPage);
         }
@@ -80,7 +80,8 @@ namespace Flightbeat.Game
                 }
             }
             view.progressText.Present(false, Mathf.FloorToInt(Battle.Progress * 100));
-            view.tutorialHint.SetActive(teaching && !evidenceControlled);
+            // 2026-10-29 21:07 (界面优化 2, user: 底部的说明也不要): the 「看颜色 · 派队员 · 三合一」 banner is never shown.
+            view.tutorialHint.SetActive(false);
             view.propButtons.SetActive(!teaching || evidenceControlled);
             for (int i = 0; i < 3; i++)
             {

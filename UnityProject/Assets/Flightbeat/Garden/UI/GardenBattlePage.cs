@@ -186,8 +186,9 @@ namespace Flightbeat.Garden.UI
             if (resumeLabel)
             {
                 resumeLabel.text = "继续游戏"; resumeLabel.alternateText = "完成";
-                CenterButtonLabel(resumeLabel, 73f, 32f);
-                resumeLabel.outlineWidth = 2.5f;
+                float rh = ParentHeight(resumeLabel);   // 2026-10-30: the light-theme capsule is 80 high (face centre .46)
+                CenterButtonLabel(resumeLabel, rh >= 60f ? rh * .92f : 73f, rh >= 60f ? Mathf.Min(32f, rh * .38f) : 32f);
+                resumeLabel.outlineWidth = 0f;   // 2026-10-30: clean words like the reference
             }
             // GardenUiText.middle is runtime-only; centre Retry after loading
             // the prefab just as we do Resume/Done above.
@@ -195,17 +196,21 @@ namespace Flightbeat.Garden.UI
                 if (action.actionId == 23 && action.name == "Retry")
                 {
                     var retry = action.GetComponentInChildren<GardenUiText>(true);
-                    if (retry) CenterButtonLabel(retry, 73f, 32f);
+                    float h = retry ? ParentHeight(retry) : 0f;   // 2026-10-30: a 62 px white pill, centred
+                    if (retry) CenterButtonLabel(retry, h < 70f ? h : 73f, h < 70f ? Mathf.Min(32f, h * .38f) : 32f);
                 }
             foreach (var text in pausedPanel.GetComponentsInChildren<GardenUiText>(true))
                 if (text.text == "继续") { CenterButtonLabel(text, 73f, 32f); break; }
             foreach (var action in resultActions)
                 if (action.actionId == 40)
                 {
+                    // 2026-10-29: the light-theme capsules are 86 / 88 high (was 78 with a 73 face).
                     var label = action.GetComponentInChildren<GardenUiText>(true);
-                    if (label) CenterButtonLabel(label, 73f, 32f);
+                    float h = ((RectTransform)action.transform).sizeDelta.y;
+                    if (label) CenterButtonLabel(label, h * .92f, Mathf.Min(32f, h * .38f));   // 2026-10-30: any capsule height
                 }
         }
+        static float ParentHeight(GardenUiText t) => t && t.transform.parent is RectTransform p ? p.sizeDelta.y : 0f;
         // 2026-10-17 11:10: no level line under these; the bigger label is centred on its whole button.
         static void CenterButtonLabel(GardenUiText main, float buttonHeight, float size)
         {
@@ -397,7 +402,11 @@ namespace Flightbeat.Garden.UI
             if (pauseTitle) pauseTitle.Present(home);
             if (resumeLabel) resumeLabel.Present(home);
             foreach (var action in pauseActions)
-                if (action.actionId == 23 || action.actionId == 25 || action.actionId == SkipLevelAction) action.gameObject.SetActive(!home);
+            {
+                // 2026-10-29 21:07 (界面优化 9, user: 去掉跳关功能): the rewarded skip is never offered.
+                if (action.actionId == SkipLevelAction) action.gameObject.SetActive(false);
+                else if (action.actionId == 23 || action.actionId == 25) action.gameObject.SetActive(!home);
+            }
             if (resetProgress) resetProgress.SetActive(home);
         }
         public void ShowHome(bool settings)

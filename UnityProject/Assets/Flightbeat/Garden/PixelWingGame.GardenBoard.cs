@@ -100,7 +100,8 @@ namespace Flightbeat.Game
         {
             s.MapLayout = false;
             float top = PlushLayout.Y(114f) - 10f, bottom = PlushLayout.Y(562f) + 10f;
-            Asset9(s, "scene/plush-board", 2f, top, 536f, bottom - top, 27f, 27f, 18f, 18f, Color.white);
+            // 2026-10-29 (light theme T4): white frosted frame, 36 px stored corners drawn at 24.
+            Asset9(s, "scene/plush-board", 2f, top, 536f, bottom - top, 36f, 36f, 24f, 24f, Color.white);
             s.MapLayout = true;
             for (int i = 0; i < gardenBeadDraws.Count; i++) {
                 GardenBeadDraw bead = gardenBeadDraws[i];

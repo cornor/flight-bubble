@@ -170,6 +170,9 @@ namespace Flightbeat.Game
                 case 30: ShowAd("revive", Rescue); break;
 #endif
                 case 31: ConfirmStreakBreak("放弃复活", () => Battle.DeclineRevive(), true); break;
+                // 2026-10-29 (界面优化 14): the full-screen revive page offers 返回主页 / 重新挑战 instead of the close cross.
+                case 32: ConfirmStreakBreak("现在退出", ReturnToDeck, false); break;
+                case 33: ConfirmStreakBreak("重新开始", Restart, false); break;
                 case 40: if (Battle.State == Phase.Won) NextLevel(); else Restart(); break;
                 case 41: ReturnToDeck(); break;
                 case 42: Restart(); break;   // 2026-10-21: 重玩 on the victory page

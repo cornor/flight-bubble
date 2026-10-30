@@ -1,0 +1,421 @@
+{
+  "batch": "UIRefresh-B-20261030",
+  "created": "2026-10-30",
+  "generator": "built-in image_gen.imagegen",
+  "requirements": "README.md",
+  "assets": [
+    {
+      "id": "F1",
+      "selected_master": "masters/F1-v02.png",
+      "target": "delivery/lose/hero-sad.png",
+      "size": [
+        640,
+        640
+      ],
+      "export": "sips --resampleHeightWidth 640 640",
+      "qa": "exactly three detached pieces; white and #E8F2FF backgrounds checked"
+    },
+    {
+      "id": "H1",
+      "selected_master": "masters/H1-v02.png",
+      "target": "delivery/home/logo.png",
+      "size": [
+        1000,
+        300
+      ],
+      "export": "sips crop 2172x652 at x=0 y=30, then resize1000x300",
+      "text": "泡泡小队",
+      "qa": "four characters manually checked; exactly three yellow rays"
+    },
+    {
+      "id": "H2-bear-blink",
+      "selected_master": "masters/H2-bear-blink-v01.png",
+      "base_master": "masters/H2-bear-idle-v01.png",
+      "target": "delivery/home/bear-blink.png",
+      "size": [
+        1080,
+        1080
+      ],
+      "export": "sips resize then Swift pack_blink.swift: copy generated eyelid pixels only into exact idle frame; preserve idle alpha",
+      "packing_details": "qa/blink-packing.json",
+      "qa": "outside eye polygons identical to idle; alpha identical"
+    },
+    {
+      "id": "H2-bear-idle",
+      "selected_master": "masters/H2-bear-idle-v01.png",
+      "target": "delivery/home/bear-idle.png",
+      "size": [
+        1080,
+        1080
+      ],
+      "export": "sips --resampleHeightWidth 1080 1080; same canvas retained, no independent trimming or recentering"
+    },
+    {
+      "id": "H2-chick",
+      "selected_master": "masters/H2-chick-v01.png",
+      "target": "delivery/home/chick.png",
+      "size": [
+        1080,
+        1080
+      ],
+      "export": "sips --resampleHeightWidth 1080 1080; same canvas retained, no independent trimming or recentering"
+    },
+    {
+      "id": "H2-frog",
+      "selected_master": "masters/H2-frog-v01.png",
+      "target": "delivery/home/frog.png",
+      "size": [
+        1080,
+        1080
+      ],
+      "export": "sips --resampleHeightWidth 1080 1080; same canvas retained, no independent trimming or recentering"
+    },
+    {
+      "id": "L1",
+      "selected_master": "masters/L1-v01.png",
+      "target": "delivery/loading/logo-stacked.png",
+      "size": [
+        900,
+        700
+      ],
+      "export": "sips --resampleHeightWidth 700 900",
+      "text": "泡泡小队",
+      "layout": "泡泡 top / 小队 bottom, offset stacked",
+      "qa": "manual character-by-character check and Vision OCR"
+    },
+    {
+      "id": "L2",
+      "selected_master": "masters/L2-v02.png",
+      "target": "delivery/loading/background.png",
+      "size": [
+        1080,
+        2340
+      ],
+      "export": "sips --resampleHeightWidth 2340 1080",
+      "qa": "opaque, no text; full-canvas flat lighter blue staggered circles and stars"
+    },
+    {
+      "id": "P1",
+      "selected_master": "masters/P1-v01.png",
+      "target": "delivery/theme/pad.png",
+      "size": [
+        160,
+        64
+      ],
+      "export": "sips --resampleHeightWidth 64 160",
+      "qa": "white and #E8F2FF checked"
+    }
+  ],
+  "attempts": [
+    {
+      "id": "F1",
+      "attempt": 1,
+      "target": "delivery/lose/hero-sad.png",
+      "size": [
+        640,
+        640
+      ],
+      "transparent": true,
+      "refs": [
+        "qa/reference-crops/F1-hero.png"
+      ],
+      "prompt": "Reconstruct and isolate the exact sad blue plush bear-and-broken-flowerpot artwork from the supplied reference crop as a high-resolution transparent PNG. Fidelity is essential: same pose, same proportions, same slight diagonal head tilt, same camera angle, same silhouette and placement of every element. Remove only the underlying dark game screenshot background. Very large blue fluffy teddy bear head with two round ears and warm cream ear interiors, cream muzzle, little brown nose, drooping eyes, raised inner corners of eyebrows in a worried / sad inverted-V, tiny downturned pouting mouth. Both round blue paws rest on the pot rim with the chin resting just above them. The bear head is larger than the pot; do NOT shrink the bear. Exactly two bright green plush leaves left and right behind the pot rim. The squat blue plush flowerpot has stitched seams and the exact white cloud motif at front, white round patches beside it. Pot right side broken open with pale inner fracture edges, TWO OR THREE large matching blue broken shards just to its lower right as shown. One tiny white sigh puff at the bear's right. Keep the exact positions and perspective from reference, no additions. Rich fine short plush fur, soft upper-right lighting, rounded 3D. Entire bear, pot, leaves, shards and sigh fully visible within square canvas with safe clear margins. NO text, letters, watermark, unrelated bubbles, floor or scene. Fully transparent background.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-1ce8b8cd-4f09-41ba-b03b-410cc3eb0780.png",
+      "master": "masters/F1-v01.png",
+      "selected": false
+    },
+    {
+      "id": "F1",
+      "attempt": 2,
+      "target": "delivery/lose/hero-sad.png",
+      "size": [
+        640,
+        640
+      ],
+      "transparent": true,
+      "refs": [
+        "masters/F1-v01.png",
+        "qa/reference-crops/F1-hero.png"
+      ],
+      "prompt": "Make a minimal correction to the FIRST image. Preserve absolutely everything about this high-resolution transparent sad blue plush bear and pot, the pose, proportions, face, fur, lighting, cloud patches and sigh puff. Correct only the broken fragments at bottom right: leave EXACTLY THREE detached pieces total — the two large curved blue pot-wall shards and one medium triangular piece. Remove the two tiny chips at the very bottom. The broken right wall of the pot should clearly show its matching jagged missing edge. Do not change the composition or generate additional props. Second image is the original scene crop for fidelity. Fully transparent background. No text.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-05e24dfc-7458-4610-b216-c54b42a88406.png",
+      "master": "masters/F1-v02.png",
+      "selected": true
+    },
+    {
+      "id": "H1",
+      "attempt": 1,
+      "target": "delivery/home/logo.png",
+      "size": [
+        1000,
+        300
+      ],
+      "transparent": true,
+      "refs": [
+        "qa/reference-crops/H1-logo.png"
+      ],
+      "prompt": "Edit the supplied reference into a clean high-resolution transparent game wordmark. Faithfully trace/reconstruct the EXACT yellow and blue horizontal Chinese title as seen: 泡泡小队, exactly four characters in one horizontal row. Preserve the exact bubbly rounded letter silhouettes, first two identical 泡 characters with 氵 plus 包, third 小, last 队 with 阝 plus 人. No typo, no alternate letters, no additional stroke. Copy reference yellow/cream top highlights, golden yellow lower faces, thick saturated royal-blue outline and dark-blue 3D extrusion underneath. Keep the dynamic subtle tilt and varying character baseline in the reference. At upper right preserve THREE small yellow accent rays with fine blue edging, as reference. Remove ALL white and pale blue screenshot background, leave genuine alpha transparency. No bear, no pot, no characters, no bubbles, no subtitle, no added text. Only the exact four-character wordmark and three short accent rays. Wide composition, whole silhouette visible with small safe margins; destination 1000x300.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-fcef6306-260c-467d-90ff-763083c2231b.png",
+      "master": "masters/H1-v01.png",
+      "selected": false
+    },
+    {
+      "id": "H1",
+      "attempt": 2,
+      "target": "delivery/home/logo.png",
+      "size": [
+        1000,
+        300
+      ],
+      "transparent": true,
+      "refs": [
+        "masters/H1-v01.png"
+      ],
+      "prompt": "Minimal targeted edit to this exact transparent wordmark. KEEP all four Chinese characters 泡泡小队 perfectly unchanged, same shapes, same colors, same thick blue border, same placement and scale. Change ONLY the yellow accent rays at the far upper right: currently there are two, but there must be EXACTLY THREE separate small short yellow rays, arranged as a little fan pointing upward-right, right-upward, and rightward, each with a thin blue outline. Make all three compact, fully inside the canvas with transparent margin. Do not change or add any text, do not add a bear, do not alter the typography. Background remains genuinely transparent.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-373c2be1-f382-41d2-881f-d151daee77f8.png",
+      "master": "masters/H1-v02.png",
+      "selected": true
+    },
+    {
+      "id": "H2-bear-blink",
+      "attempt": 1,
+      "target": "delivery/home/bear-blink.png",
+      "size": [
+        1080,
+        1080
+      ],
+      "transparent": true,
+      "refs": [
+        "masters/H2-bear-idle-v01.png"
+      ],
+      "prompt": "Create the blink animation frame by minimally editing ONLY THE TWO EYES of this exact supplied bear sprite. Preserve the exact 1254x1254 canvas, every position, all transparent margins, every pixel of the bear outside the eyes, face contour, ears, mouth, nose, pose, raised arm, paws, fur, both leaves, pot, white pawprint, shadows, alpha silhouette and lighting. The open eyes are centered approximately at (555,370) and (720,270) in this 1254-pixel square image. Replace those two open white/brown eyes with fully closed happy curved eyelids covered in matching blue plush fur, following the bear head's tilt. No remaining white eyeballs or pupils. Preserve the smiling open mouth and all other parts exactly. No reposing, no zoom, no framing shift, no relighting, no change to pot or fur elsewhere. Fully transparent background. No words or new objects.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-e59f2608-bb1e-46f6-aed1-3cfba7727a7e.png",
+      "master": "masters/H2-bear-blink-v01.png",
+      "selected": true
+    },
+    {
+      "id": "H2-bear-idle",
+      "attempt": 1,
+      "target": "delivery/home/bear-idle.png",
+      "size": [
+        1080,
+        1080
+      ],
+      "transparent": true,
+      "refs": [
+        "masters/H2-group-v01.png"
+      ],
+      "prompt": "Layer extraction edit. Keep the SAME square canvas and exact pixel layout as the supplied image. Remove ONLY the green frog at screen left and yellow chick at screen right. Retain ONLY the exact central blue plush bear, both green leaves, entire blue flowerpot and white pawprint. Preserve every detail, expression, pose, fur, shape, color and lighting of the bear/pot. Preserve the exact size and location: do NOT zoom, recenter, enlarge or recompose after removing side characters. Reconstruct the small pot edges previously hidden by the frog/chick hands in the same blue plush material. The rest of canvas must be completely transparent. Bear looks up to screen right, screen-right arm waving, mouth open smiling. No floating bubbles, no text, no new elements. This is a registered animation layer for the original square composition.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-1aa52ce7-cdad-4dcc-94b9-914d732f78be.png",
+      "master": "masters/H2-bear-idle-v01.png",
+      "selected": true
+    },
+    {
+      "id": "H2-chick",
+      "attempt": 1,
+      "target": "delivery/home/chick.png",
+      "size": [
+        1080,
+        1080
+      ],
+      "transparent": true,
+      "refs": [
+        "masters/H2-group-v01.png"
+      ],
+      "prompt": "Layer extraction edit. Keep the SAME square canvas and exact pixel placement/scale from the supplied image. Isolate ONLY the small yellow plush chick located at lower RIGHT. Remove the blue bear, blue pot, green leaves and green frog completely, leaving alpha transparency in all their locations. Do NOT center or enlarge the chick! Chick remains at the exact original lower-right position, tuft beginning around 39 percent image height, bottom around 77 percent. Preserve the same tilt, three-feather tuft, orange open beak, brown eyes, pink cheeks, fluffy yellow body, little wing/hand around pot edge. Complete only a little hidden body at the left for overlap behind the pot; no legs, no own pot, no leaves. Generous empty transparent space at top, center and left. No text or new props. Same square dimensions as source, transparent registered companion layer.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-c7b8f784-ee06-4f35-85fb-751f3483e517.png",
+      "master": "masters/H2-chick-v01.png",
+      "selected": true
+    },
+    {
+      "id": "H2-frog",
+      "attempt": 1,
+      "target": "delivery/home/frog.png",
+      "size": [
+        1080,
+        1080
+      ],
+      "transparent": true,
+      "refs": [
+        "masters/H2-group-v01.png"
+      ],
+      "prompt": "Layer extraction edit. Keep the SAME square canvas and exact pixel placement/scale from the supplied image. Isolate ONLY the small green plush frog located at lower LEFT. Remove the blue bear, blue pot, green leaves and yellow chick completely, leaving alpha transparency in all their locations. Do NOT center or enlarge the frog! Frog must stay in its exact original lower-left position, with its eyes around 53-60 percent image height and bottom around 78 percent. Same cheerful open mouth, raised round eyes, green fuzzy face and body, rosy cheeks, little hand. Preserve visible frog pixels and silhouette faithfully. Complete a little extra body and hand on its right where hidden by the pot so it can sit behind the pot in a layered scene; no legs, no own pot, no leaves. Keep generous empty transparent space at top, center and right. No text, no new props. Output same square dimensions as input, transparent registered companion layer.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-f1e7b536-518e-4788-aef4-67a2fdc56029.png",
+      "master": "masters/H2-frog-v01.png",
+      "selected": true
+    },
+    {
+      "id": "H2-group",
+      "attempt": 1,
+      "role": "alignment and separation master, not a delivery file",
+      "transparent": true,
+      "refs": [
+        "qa/reference-crops/H2-group.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/delivery/creatures/blue/2982F4/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/delivery/creatures/green/62E18E/idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/P1/delivery/creatures/yellow/FFDF48/idle.png"
+      ],
+      "prompt": "Faithfully reconstruct the exact three-character group composition in IMAGE 1 as high-resolution game art on a transparent square canvas. This is a precise reconstruction of image 1, NOT a redesign. Images 2-4 supply the established blue plush bear, green plush frog, yellow plush chick identities and plush materials only; retain the poses, scale relationships and composition in image 1. Central large blue bear leans slightly toward screen-right, looking upward to screen-right, happy open mouth with red tongue and cream muzzle, one paw held at chest, its other arm raised diagonally toward upper-right in a waving gesture. Huge blue round ears with warm cream inner ears. Bear sits in a LARGE rounded blue flowerpot, with one WHITE PAW PRINT at center front (one big central pad, exactly four toe pads), exactly two large green leaves emerging behind rim. Frog peeks from BEHIND the pot on SCREEN LEFT, cheerful face, two raised round eyes, pale-green muzzle, little visible hand hugging the left rim. Yellow chick peeks from BEHIND pot on SCREEN RIGHT, tuft of three rounded feathers, dark expressive eyes, orange open beak, little wings/hands around the pot's right edge. Do NOT give frog or chick separate pots or their own leaves. Copy group silhouettes, relative positions, gestures and camera perspective from reference. REMOVE the floating bubble at upper right and all white/blue circular background and screen UI. No bubbles, no words or logos. Short soft realistic plush fur as in supplied character references, soft upper-right lighting, rich cheerful colors. Keep the full group entirely inside a square alpha-transparent canvas, group occupies about 92 percent canvas width and 84 percent height, with transparent margins. No floor and no background.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-adddec89-5b06-4b09-8cb6-0f90eee70d9b.png",
+      "master": "masters/H2-group-v01.png",
+      "selected": true
+    },
+    {
+      "id": "L1",
+      "attempt": 1,
+      "target": "delivery/loading/logo-stacked.png",
+      "size": [
+        900,
+        700
+      ],
+      "transparent": true,
+      "refs": [
+        "qa/reference-crops/L1-logo.png"
+      ],
+      "prompt": "Faithful high-resolution reconstruction and background removal of the exact loading title logo in the supplied image. The exact Chinese text is 泡泡小队, exactly four characters. Layout MUST remain two offset stacked rows: top row 泡泡, bottom row 小队. Copy the actual shapes of each character carefully from the supplied reference: 泡 has water radical 氵 and 包; 小 has three strokes; 队 has 阝 and 人. Do not invent strokes or substitute other characters. Preserve exact thick rounded inflated font, bright white upper characters with a hint of warm ivory/yellow gradient at bottom, cyan side extrusion, yellow to orange bottom row, broad dark purple-blue continuous outer border, staggered typography and relative scale. At lower right keep the reference small joyful blue bear emerging from the blue flowerpot with green leaves, warm cream muzzle and ears, black eyes and open happy mouth. Match the reference bear placement and size, but raise one of its hands beside its head as required while the other rests on the rim. Keep the one small glossy cyan bubble just to the bear's right, inside the purple silhouette border. Keep all reference elements, no added letters or text. ONLY REMOVE the flat sky-blue screenshot background and faint wallpaper behind the logo, leaving actual alpha transparency. Entire badge fully inside the canvas with a small margin. Aim for a compact composition fitting a 900x700 destination. No new design, no horizontal single-line layout.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-5192af6a-69f8-45d1-9ca9-325749dbdf3e.png",
+      "master": "masters/L1-v01.png",
+      "selected": true
+    },
+    {
+      "id": "L2",
+      "attempt": 1,
+      "target": "delivery/loading/background.png",
+      "size": [
+        1080,
+        2340
+      ],
+      "transparent": false,
+      "refs": [
+        "references/item01-loading-ref.png"
+      ],
+      "prompt": "Edit the supplied full loading-screen reference into the BACKGROUND ONLY, faithfully recreating its flat blue wallpaper. Remove the entire logo, bear, flowerpot, progress bar, all text and numbers, and all interface objects. Fill their regions with the exact same continuous wallpaper design. Match reference sky blue at the top gradually blending down to very pale blue at the bottom, low contrast smooth vertical gradient. Cover the FULL portrait background with a subtle regularly staggered repeat of the reference's flat round bubbles and chunky rounded four-point stars. Bubbles are simple flat blue disks or flat circle outlines with a small crescent highlight, NOT realistic, NOT transparent soap bubbles, NOT glass balls, no rainbow reflections. Pattern is a slightly LIGHTER blue than its local background, faint low contrast, same rounded icon shapes and regular spaced staggering as reference. Portrait ratio 1080:2340. No characters, no logo, no letters, no numerals, no health advisory text, no bar, no plants, no scenery, no vignette. OPAQUE edge-to-edge flat 2D background.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-985783da-2100-4cbc-96e0-8bc6ffc4f5f3.png",
+      "master": "masters/L2-v01.png",
+      "selected": false
+    },
+    {
+      "id": "L2",
+      "attempt": 2,
+      "target": "delivery/loading/background.png",
+      "size": [
+        1080,
+        2340
+      ],
+      "transparent": false,
+      "refs": [
+        "masters/L2-v01.png",
+        "references/item01-loading-ref.png"
+      ],
+      "prompt": "Correct the FIRST image's wallpaper coverage and contrast while keeping its background gradient and flat icon style. The second image is the loading screen reference. The final image is background only. REQUIRED CORRECTIONS: (1) Continue the staggered repeating circle-bubble and four-point-star pattern over the ENTIRE canvas, including the top quarter currently empty. (2) Make every circle and star a subtle slightly LIGHTER blue than the local gradient behind it, low contrast, like faint flat wallpaper. Pattern must not be darker than background. Preserve the reference's shapes: round disks with crescent mark and rounded four-point stars. Same icon size and staggered spacing all over, no random starfield. Smooth sky blue at top to pale blue at bottom. Flat 2D, no glass bubbles, no 3D. OPAQUE tall portrait 1080:2340. No logo, text, numbers, bear, pot, progress bar, health advisory or interface.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-5d72618a-7426-4536-bf90-7c198d144c2f.png",
+      "master": "masters/L2-v02.png",
+      "selected": true
+    },
+    {
+      "id": "P1",
+      "attempt": 1,
+      "target": "delivery/theme/pad.png",
+      "size": [
+        160,
+        64
+      ],
+      "transparent": true,
+      "refs": [
+        "qa/reference-crops/P1-pads.png"
+      ],
+      "prompt": "Edit the supplied reference crop into ONE standalone high-resolution game UI asset: one of these exact blue circular deployment slot trays, isolated on a completely transparent canvas. This is a faithful reconstruction, do not redesign. Copy the reference's shallow overhead ellipse, soft raised beveled front rim, rounded pill-like disk thickness, blue material, proportions and white curved highlight. Top face pale sky blue #CFE3FF to #E9F3FF; side wall medium blue #8DB6F2 to #6E9EE8. A subtle very faint contact shadow directly underneath. A single empty oval disk, no objects, no inner symbols, no feet, no text, no decoration. Wide composition with object width about 90% of image, natural width-to-total-height including shadow about 2.7:1. Clean smooth antialiased transparent edges. Match the reference exactly, soft upper-right light. Transparent background, not a white rectangle.",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-5e8d0488-f499-4b95-80ff-9d169f3fe89d.png",
+      "master": "masters/P1-v01.png",
+      "selected": true
+    }
+  ],
+  "generation_count": 13,
+  "generation_counts": {
+    "P1": 1,
+    "F1": 2,
+    "H1": 2,
+    "L2": 2,
+    "H2-bear-idle": 1,
+    "H2-frog": 1,
+    "H2-chick": 1,
+    "H2-bear-blink": 1,
+    "L1": 1,
+    "H2-group": 1
+  },
+  "delivery_count": 9,
+  "layering": {
+    "canvas": [
+      1080,
+      1080
+    ],
+    "anchor": "same canvas origin (0,0), do not trim or auto-recenter",
+    "back_to_front": [
+      "delivery/home/frog.png",
+      "delivery/home/chick.png",
+      "delivery/home/bear-idle.png"
+    ],
+    "blink": "replace only bear-idle.png with bear-blink.png",
+    "bubbles": "program-rendered, excluded from H2"
+  },
+  "qa": {
+    "backgrounds": [
+      "#FFFFFF",
+      "#E8F2FF"
+    ],
+    "wordmarks": "L1 and H1 manually verified 泡 / 泡 / 小 / 队; OCR in qa/wordmark-ocr.json",
+    "report": "qa/verification.json"
+  },
+  "reference_crops": [
+    {
+      "target": "qa/reference-crops/P1-pads.png",
+      "reference": "references/item13-bomb-ref.png",
+      "box": [
+        137,
+        710,
+        369,
+        755
+      ]
+    },
+    {
+      "target": "qa/reference-crops/F1-hero.png",
+      "reference": "references/item17-lose-ref.png",
+      "box": [
+        60,
+        106,
+        251,
+        338
+      ]
+    },
+    {
+      "target": "qa/reference-crops/L1-logo.png",
+      "reference": "references/item01-loading-ref.png",
+      "box": [
+        105,
+        433,
+        797,
+        925
+      ]
+    },
+    {
+      "target": "qa/reference-crops/H1-logo.png",
+      "reference": "references/item04-home-ref.png",
+      "box": [
+        72,
+        39,
+        341,
+        132
+      ]
+    },
+    {
+      "target": "qa/reference-crops/H2-group.png",
+      "reference": "references/item04-home-ref.png",
+      "box": [
+        36,
+        210,
+        361,
+        488
+      ]
+    }
+  ]
+}

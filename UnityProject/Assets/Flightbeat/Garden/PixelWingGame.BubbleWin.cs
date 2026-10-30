@@ -27,105 +27,105 @@ namespace Flightbeat.Game
             GardenSkin.Clock = ui;
             float L = ScreenLayout.Left, W = ScreenLayout.Width, H = ScreenLayout.Height, ox = L, oy = (H - 960f) * .5f;
             float t = ui - winShownAt, fade = Clamp01(t / .3f);
-            // Confetti behind everything else: two waves, pieces flutter (width follows the turn).
-            for (int wave = 0; wave < 2; wave++)
-                for (int k = 0; k < 34; k++)
+            // Confetti behind everything else, pieces flutter (width follows the turn). 2026-10-30 (调整, user: 全屏彩带，
+            // 一波又一波): a new wave over the whole screen every 1.1 s for as long as the page shows.
+            int lastWave = Mathf.FloorToInt(t / 1.1f);
+            for (int wave = Mathf.Max(0, lastWave - 4); wave <= lastWave; wave++)
+                for (int k = 0; k < 30; k++)
                 {
-                    float start = wave * .9f + (k * 37 % 19) * .02f, life = 3.2f + (k * 13 % 10) * .2f, u = (t - start) / life;
+                    int kk = k + wave * 7;
+                    float start = wave * 1.1f + (kk * 37 % 19) * .03f, life = 3.4f + (kk * 13 % 10) * .2f, u = (t - start) / life;
                     if (u < 0f || u >= 1f) continue;
-                    float x = L + (k * 71 % 100) / 100f * W + Mathf.Sin(u * 6f + k) * 26f + ((k * 29 % 11) - 5) * 12f * u;
-                    float py = -30f + u * (H + 80f) - (k * 53 % 9) * 20f;
+                    float x = L + (kk * 71 % 100) / 100f * W + Mathf.Sin(u * 6f + k) * 26f + ((kk * 29 % 11) - 5) * 12f * u;
+                    float py = -30f + u * (H + 80f) - (kk * 53 % 9) * 20f;
                     float turn = Mathf.Cos(ui * (3f + k % 4) + k), w = (k % 2 == 0 ? 14f : 8f) * Mathf.Abs(turn) + 1.5f, h = k % 2 == 0 ? 8f : 14f;
                     Color c = Hex(ConfettiTints[(k + wave * 3) % ConfettiTints.Length]);
                     c.a = Clamp01((1f - u) / .2f) * fade;
                     if (turn < 0f) { c.r *= .82f; c.g *= .82f; c.b *= .82f; }   // the back of the paper is a shade darker
                     s.Rect(x - w * .5f, py - h * .5f, w, h, c);
                 }
-            // ---- 2026-10-21 victory page (user, after a reference; mock-up approved): a ribbon with 挑战成功, the level's
-            // own picture rebuilt bead by bead in a white frame inside turning rays, the MVP / new member cheering on the
-            // frame's lower right corner, a purple glass line about the next new member, two small stat pills; the
-            // prefab's 主页 · 下一关 · 重玩 row sits below (y 772). Painted ribbon when delivered (win/ribbon.png).
+            // ---- 2026-10-29 (界面优化 7, user: 所有的结算都要统一; after the reference): no card or level picture. A big
+            // 「太棒了，挑战成功！」, the MVP big in the middle cheering in the light with a floating crown and a 「本局MVP」
+            // chip, 「新伙伴加入」 with this level's newcomers (已解锁 / 本关登场) or the next one (N 关后加入), and a gold-rimmed
+            // stat card. The prefab's blue 主页 · 重玩 and yellow 下一关 sit below (GardenBattleUiAssets.Result).
             bool last = levelIndex == Levels.Length - 1;
             float cx = ox + 270f;
-            const float S = 310f, F = 12f;   // 16:32: 330 -> 310, room for the members' row
-            float cardTop = oy + 200f, cardCY = cardTop + F + S * .5f, cardBottom = cardTop + S + F * 2f;
-            // 15:55: a soft blue-white spotlight behind the card over the deep indigo shade (GardenBattlePage.WinShade).
-            s.Glow(cx, cardCY, 720f, 780f, new Color(.36f, .48f, .9f, .22f * fade), 0f);
-            float cardK = OutBack(Clamp01((t - .12f) / .35f), 1.6f);
-            if (cardK > .01f) WinRays(s, cx, cardCY, t, fade * Clamp01(cardK));
-            // 16:20 (user): no 「第 N 关」 line above the ribbon.
-            if (cardK > .01f) WinPicture(s, cx, cardCY, S * cardK, F * cardK, Clamp01((t - .4f) / .6f), fade);
-            // Twinkles around the frame.
-            for (int i = 0; i < 4 && cardK > .9f; i++)
-            {
-                float ph = (ui * .9f + i * .37f) % 1f, a = Mathf.Sin(ph * Mathf.PI) * fade, r = (i % 2 == 0 ? 12f : 7f) * (.6f + .4f * a);
-                Vector2 p = new Vector2(cx + (i < 2 ? -1f : 1f) * (S * .5f + 26f - (i % 2) * 14f), cardTop + 60f + i * 83f % (S - 40f));
-                // 16:20: a soft four-point glint (two tapered beams and a glow), not a thin 「+」.
-                s.Glow(p.x, p.y, r * 2.6f, r * 2.6f, new Color(1f, .95f, .7f, .45f * a), 0f);
-                s.Glow(p.x, p.y, r * 4.2f, r * .55f, new Color(1f, 1f, 1f, a), 0f);
-                s.Glow(p.x, p.y, r * .55f, r * 4.2f, new Color(1f, 1f, 1f, a), 0f);
-                s.Glow(p.x, p.y, r * .9f, r * .9f, new Color(1f, 1f, 1f, a), 0f);
-            }
-            // 16:32 (user): the row under the card just shows the members themselves, no capsules: each stands on a soft
-            // floor light with its tag above the head: the MVP with a crown and 「MVP」, a new member with a 「新成员」
-            // chip, and the next newcomer as the rainbow bubble with 「N 关后加入」 (N <= 5). One to three, centred.
+            ResultTitle(s, last ? "全部通关，太棒了！" : "太棒了，挑战成功！", oy + 132f, 52f, t, fade);
             int mvpCount = 0;
             bool mvp = MvpEntry(out mvpHero, out mvpCount);
-            if (WinRibbon(s, cx, oy + 150f, OutBack(Clamp01(t / .35f), 2.2f), last ? "全部通关！" : "挑战成功", fade)) { }
+            bool firstClear = newMembers.Count > 0;
+            winDebut.Clear();
+            foreach (var e in Codex) if (e.level == levelIndex + 1) winDebut.Add(e);
+            bool hasHero = mvp || winDebut.Count > 0;
+            Color heroTint = mvp ? mvpHero.tint : hasHero ? winDebut[0].tint : Color.white;
+            const float heroFeet = 452f, heroCanvas = 290f;   // 2026-10-30: measured from the reference page
+            if (hasHero)
+            {
+                float age = t - .2f, a = Clamp01(age / .15f) * fade, p = OutBack(Clamp01(age / .4f), 1.8f);
+                if (age > 0f)
+                {
+                    float feet = oy + heroFeet, headTop = feet - heroCanvas * p * ArtScale(heroTint) * (FeetLine - HeadTop(heroTint));
+                    DrawBubbleHalo(s, cx, feet - heroCanvas * .42f, 420f * p, .7f * a);
+                    s.Glow(cx, feet + 4f, 230f * p, 34f * p, new Color(1f, .95f, .8f, .5f * a), 0f);
+                    bool before = GardenSkin.Celebrate; GardenSkin.Celebrate = true;
+                    Creature(s, heroTint, cx, feet, heroCanvas * p, 0, "", 0f, 12f, false, false, .04f, 1.3f);
+                    GardenSkin.Celebrate = before;
+                    if (mvp && age > .3f)   // the crown floats above the head (its own gentle bob, never "worn")
+                    {
+                        float ca = Clamp01((age - .3f) / .2f) * fade, cp = OutBack(Clamp01((age - .3f) / .3f), 2.4f);
+                        float crown = 72f * cp, bob = Mathf.Sin(ui * 2.2f) * 3f;
+                        if (Has("plants/uiref/win-crown")) Asset(s, "plants/uiref/win-crown", cx - crown * .67f, headTop - 6f - crown * .8f + bob, crown * 1.33f, crown, A(Color.white, ca));
+                        else GardenBars.Icon(s, "crown", cx, headTop - 22f - crown * .3f + bob, crown, ca);
+                    }
+                    ResultTwinkles(s, cx, feet - heroCanvas * .45f, 175f, 115f, a);
+                    float chipAge = age - .45f;
+                    if (mvp && chipAge > 0f)
+                    {
+                        float tp = OutBack(Clamp01(chipAge / .25f), 2.4f), ta = Clamp01(chipAge / .15f) * fade;
+                        WinAwardChip(s, cx, oy + 475f, 170f * tp, 38f * tp, "本局MVP", 20f * tp, ta, true);
+                    }
+                }
+            }
+            // Newcomers row (the hero is not repeated), or the next newcomer.
             int nextIn = 0;
             foreach (var e in Codex)
                 if (e.level > levelIndex + 1) { int d = e.level - (levelIndex + 1); if (nextIn == 0 || d < nextIn) nextIn = d; }
             winRow.Clear();
-            if (mvp)
-            {
-                bool alsoNew = false;
-                foreach (var m in newMembers) if (m.tint == mvpHero.tint) alsoNew = true;
-                winRow.Add((mvpHero.tint, 1 | (alsoNew ? 2 : 0), 0));
-            }
-            // 16:38 (user: this level's newcomer was missing): newMembers is filled only on a level's first clear, so a
-            // replay showed nobody. The members debuting on this level now always stand in the row: 「新成员」 on the first
-            // clear, 「本关登场」 (tag 8) on a replay.
-            bool firstClear = newMembers.Count > 0;
-            winDebut.Clear();
-            foreach (var e in Codex) if (e.level == levelIndex + 1) winDebut.Add(e);
             foreach (var m in winDebut)
-                if (winRow.Count < 3 && !(mvp && m.tint == mvpHero.tint)) winRow.Add((m.tint, firstClear ? 2 : 8, 0));
-            if (winRow.Count > 0 && mvp) foreach (var m in winDebut) if (m.tint == mvpHero.tint) winRow[0] = (winRow[0].tint, 1 | (firstClear ? 2 : 0), 0);
-            if (winDebut.Count == 0 && nextIn > 0 && nextIn <= 5 && winRow.Count < 3) winRow.Add((Color.clear, 4, nextIn));
-            float feet = cardBottom + 112f, step = 124f;   // tags clear the frame; 16:38 stats at feet + 30 (room under the feet)
-            float groupMin = float.MaxValue, groupMax = float.MinValue, groupTop = float.MaxValue; int groupLast = -1; bool groupNew = false;
-            for (int i = 0; i < winRow.Count; i++)
+                if (winRow.Count < 3 && !(hasHero && m.tint == heroTint)) winRow.Add((m.tint, firstClear ? 2 : 8, 0));
+            bool heroIsNew = hasHero && winDebut.Count > 0 && winDebut.Exists(m => m.tint == heroTint);
+            float sectionA = Clamp01((t - .8f) / .2f) * fade;
+            const float rowFeet = 622f;
+            if (winRow.Count > 0)
             {
-                float mx = cx + (i - (winRow.Count - 1) * .5f) * step;
-                WinMember(s, mx, feet, t - (.9f + i * .12f), fade, winRow[i].tint, winRow[i].tags, winRow[i].n);
-                // 17:41 (user): one mark per member, the MVP first: the MVP is left out of the group chip (an MVP that is
-                // the only newcomer shows just its 「MVP」 chip; 18:27 the crown became that chip).
-                if ((winRow[i].tags & (2 | 8)) != 0 && (winRow[i].tags & 1) == 0)
+                ResultSection(s, firstClear ? "新伙伴加入" : "本关登场", oy + 523f, sectionA);
+                for (int i = 0; i < winRow.Count; i++)
                 {
-                    groupMin = Mathf.Min(groupMin, mx); groupMax = Mathf.Max(groupMax, mx); groupLast = i; groupNew |= (winRow[i].tags & 2) != 0;
-                    // 16:52 (user: the chip covered the crown): the chip goes above the highest head / crown of the group.
-                    float head = feet - 96f * ArtScale(winRow[i].tint) * (FeetLine - HeadTop(winRow[i].tint)) - ((winRow[i].tags & 1) != 0 ? 17f : 0f);
-                    groupTop = Mathf.Min(groupTop, head);
+                    float mx = cx + (i - (winRow.Count - 1) * .5f) * 124f, age = t - (.9f + i * .12f);
+                    if (age <= 0f) continue;
+                    float a = Clamp01(age / .12f) * fade, p = OutBack(Clamp01(age / .32f), 1.8f);
+                    s.Glow(mx, oy + rowFeet + 2f, 90f * p, 18f * p, new Color(1f, .95f, .8f, .4f * a), 0f);
+                    bool before = GardenSkin.Celebrate; GardenSkin.Celebrate = true;
+                    Creature(s, winRow[i].tint, mx, oy + rowFeet, 104f * p, 0, "", 0f, 12f, false, false, .04f, mx * .013f);
+                    GardenSkin.Celebrate = before;
+                    ResultChip(s, firstClear ? "已解锁" : "本关登场", mx, oy + rowFeet + 19f, Clamp01((age - .2f) / .15f) * fade);
                 }
             }
-            if (groupLast >= 0)   // one chip over the newcomers: 新伙伴加入！ (first clear) or 本关登场 (replay)
+            else if (heroIsNew)
+                ResultSection(s, firstClear ? "新伙伴加入小队！" : "本关登场", oy + 523f, sectionA);
+            else if (nextIn > 0 && nextIn <= 5)
             {
-                float age = t - (.9f + groupLast * .12f) - .25f, tagA = Clamp01(age / .15f) * fade, tp = OutBack(Clamp01(age / .25f), 2.4f);
-                if (tagA > 0f)
+                ResultSection(s, "下一位伙伴", oy + 523f, sectionA);
+                float age = t - .9f;
+                if (age > 0f)
                 {
-                    string w = groupNew ? "新伙伴加入!" : "本关登场";   // narrow "!" keeps the chip text centred
-                    float gy = Mathf.Max(groupTop - 22f, cardBottom + 17f);   // 16:53 (user): still, no bobbing
-                    WinAwardChip(s, (groupMin + groupMax) * .5f, gy, (GardenBarArt.TextWidth(w, 16f) + 34f) * tp,
-                        30f * tp, w, 16f * tp, tagA);
+                    float a = Clamp01(age / .12f) * fade, p = OutBack(Clamp01(age / .32f), 1.8f), ah = 104f * p, aw = ah * ArtAspect, bob = Mathf.Sin(ui * 2.4f) * 2f;
+                    Asset(s, "plants/mystery-bubble", cx - aw * .5f, oy + rowFeet + bob - ah * FeetLine, aw, ah, new Color(1f, 1f, 1f, a));
+                    ResultChip(s, nextIn + " 关后加入", cx, oy + rowFeet + 19f, Clamp01((age - .2f) / .15f) * fade);
                 }
             }
-            float y = winRow.Count > 0 ? feet + 44f : cardBottom + 68f;
             if (t > 1.1f)
-            {
-                float a = Clamp01((t - 1.1f) / .2f) * fade;
-                WinStat(s, cx - 102f, y, a, true, "最高连击", Battle.BestCombo.ToString());
-                WinStat(s, cx + 102f, y, a, false, "用时", ResultRound(Battle.Time) + " 秒");
-            }
+                ResultStats(s, oy + 716f, Clamp01((t - 1.1f) / .2f) * fade, Battle.BestCombo.ToString(), ResultRound(Battle.Time) + " 秒");
             s.MapLayout = mapped;
         }
         static readonly Color winInk = Hex(0x753B26), winRibbonInk = Hex(0x8C2822);

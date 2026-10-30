@@ -103,7 +103,10 @@ namespace Flightbeat.Game
             }
             // 2026-10-22 11:29 (user: the home buttons with the others): the words were 10-13 px in the old thin font;
             // now the rounded type of the other buttons, 16 px, white with a navy edge.
-            GardenBarArt.TextOutline(s, label, cx, y + size + 1f, size >= 80f ? 23f : 18f, Color.white, Hex(0x54318C), 2.2f);
+            // 2026-10-30 (light theme): navy words under the icon, a little bolder instead of the white-with-edge type.
+            float ls = size >= 80f ? 20f : 16f;
+            GardenBarArt.Text(s, label, cx, y + size + 1f, ls, true, Hex(0x1D3A7A));
+            GardenBarArt.Text(s, label, cx + .6f, y + size + 1f, ls, true, Hex(0x1D3A7A));
         }
 
         // ---- codex page: cloud album; all 22 independent colors, in their actual debut order.
@@ -111,31 +114,32 @@ namespace Flightbeat.Game
         int codexSelected = -1;
         float codexPickedAt = -9f;
         static readonly System.Collections.Generic.Dictionary<string, string[]> CodexBlurb = new System.Collections.Generic.Dictionary<string, string[]> {
-            { "小蓝", new[] { "队长", "泡泡小队的队长，挺胸一喊，大家就出发！" } },
-            { "小天", new[] { "悠闲", "考拉的大耳朵软乎乎，慢慢来，也能吹出好泡泡。" } },
-            { "小橙", new[] { "调皮", "最爱蹦高高，总想第一个冲出去。" } },
-            { "小金", new[] { "神气", "小狮子的鬃毛蓬松松，一声招呼，伙伴都来啦！" } },
-            { "小绿", new[] { "憨厚", "软软的青蛙脸，鼓起腮帮就想吹泡泡。" } },
-            { "小紫", new[] { "爱笑", "大耳朵轻轻扇，小鼻子吹出彩虹泡泡。" } },
-            { "小黄", new[] { "机灵", "眨眨眼，就能吹出一串彩虹泡泡。" } },
-            { "小白", new[] { "认真", "绒绒的猫耳朵，做事总是一丝不苟。" } },
-            { "小红", new[] { "热情", "狐狸耳朵竖起来，见到伙伴就开心。" } },
-            { "小黑", new[] { "酷", "小企鹅拍拍软翅膀，黑白绒毛里藏着暖暖的心。" } },
-            { "小靛", new[] { "机敏", "小浣熊戴着绒绒眼罩，总能找到泡泡的空隙。" } },
-            { "小冰", new[] { "好奇", "小海豹晃晃圆脑袋，胡须一动，泡泡就来啦。" } },
-            { "小雾", new[] { "爱做梦", "小河马打个软软的哈欠，梦里也在吹泡泡。" } },
-            { "小玫", new[] { "傲娇", "小鹿晃晃软绒角，抬起头来，从不服输。" } },
-            { "小棕", new[] { "活泼", "小猴子的圆耳朵动一动，好点子又冒出来啦。" } },
-            { "小晶", new[] { "聪明", "猫头鹰睁着圆圆的大眼睛，每一发都想得仔细。" } },
-            { "小荧", new[] { "好动", "小刺猬的绒刺软软的，精神满满，随时出发。" } },
-            { "小碧", new[] { "稳当", "小乌龟背着软软的壳，一步一步，也能赢。" } },
-            { "小翠", new[] { "勇敢", "小鳄鱼露出两颗软牙，长长嘴巴也能吹圆泡泡。" } },
-            { "小粉", new[] { "甜甜", "两只软软的兔耳朵，最爱黏着大家。" } },
-            { "小霞", new[] { "温和", "蜜桃色的小猪拱拱圆鼻子，笑起来像棉花糖。" } },
-            { "小清", new[] { "害羞", "小绵羊裹着软软的卷毛，轻轻一吹，就是泡泡。" } },
+            { "啵啵", new[] { "队长", "泡泡小队的队长，挺胸一喊，大家就出发！" } },
+            { "糯糯", new[] { "悠闲", "考拉的大耳朵软乎乎，慢慢来，也能吹出好泡泡。" } },
+            { "豚豚", new[] { "调皮", "最爱蹦高高，总想第一个冲出去。" } },
+            { "卷卷", new[] { "神气", "小狮子的鬃毛蓬松松，一声招呼，伙伴都来啦！" } },
+            { "呱呱", new[] { "憨厚", "软软的青蛙脸，鼓起腮帮就想吹泡泡。" } },
+            { "朵朵", new[] { "爱笑", "大耳朵轻轻扇，小鼻子吹出彩虹泡泡。" } },
+            { "叽叽", new[] { "机灵", "眨眨眼，就能吹出一串彩虹泡泡。" } },
+            { "绵绵", new[] { "认真", "绒绒的猫耳朵，做事总是一丝不苟。" } },
+            { "桃桃", new[] { "热情", "狐狸耳朵竖起来，见到伙伴就开心。" } },
+            { "团团", new[] { "酷", "小企鹅拍拍软翅膀，黑白绒毛里藏着暖暖的心。" } },
+            { "豆豆", new[] { "机敏", "小浣熊戴着绒绒眼罩，总能找到泡泡的空隙。" } },
+            { "啾啾", new[] { "好奇", "小海豹晃晃圆脑袋，胡须一动，泡泡就来啦。" } },
+            { "芋芋", new[] { "爱做梦", "小河马打个软软的哈欠，梦里也在吹泡泡。" } },
+            { "栗栗", new[] { "傲娇", "小鹿晃晃软绒角，抬起头来，从不服输。" } },
+            { "皮皮", new[] { "活泼", "小猴子的圆耳朵动一动，好点子又冒出来啦。" } },
+            { "咕咕", new[] { "聪明", "猫头鹰睁着圆圆的大眼睛，每一发都想得仔细。" } },
+            { "球球", new[] { "好动", "小刺猬的绒刺软软的，精神满满，随时出发。" } },
+            { "慢慢", new[] { "稳当", "小乌龟背着软软的壳，一步一步，也能赢。" } },
+            { "咔咔", new[] { "勇敢", "小鳄鱼露出两颗软牙，长长嘴巴也能吹圆泡泡。" } },
+            { "糖糖", new[] { "甜甜", "两只软软的兔耳朵，最爱黏着大家。" } },
+            { "哼哼", new[] { "温和", "蜜桃色的小猪拱拱圆鼻子，笑起来像棉花糖。" } },
+            { "咩咩", new[] { "害羞", "小绵羊裹着软软的卷毛，轻轻一吹，就是泡泡。" } },
         };
         // Cloud album, 2026-10-22: the approved page concept with live collection data and original character art.
-        static readonly Color CodexInk = Hex(0x54318C), CodexMuted = Hex(0x88739A), CodexSilhouette = Hex(0xB7A2CD);
+        // 2026-10-30 (界面优化 6/18/20, light theme): navy ink and blue-grey silhouettes / cards on the white album.
+        static readonly Color CodexInk = Hex(0x1D3A7A), CodexMuted = Hex(0x6B7A99), CodexSilhouette = Hex(0xB9CBE6);
         static void CodexRound(PixelSurface s, float x, float y, float w, float h, float radius, Color color)
             => s.GardenRoundedRect(x, y, w, h, radius, color, color);
         static void CodexLock(PixelSurface s, float cx, float cy, float size)
@@ -183,9 +187,23 @@ namespace Flightbeat.Game
             // Keep the small collection label single-pass so dense strokes stay distinct.
             GardenSkin.Text(s, "已收集 " + got + " / " + n, 270f, headerY + 86f, 20f, true, CodexInk);
             CodexRound(s, 163f, headerY + 110f, 214f, 19f, 9.5f, Hex(0xF5FCFF));
-            s.GardenRoundedRect(165f, headerY + 112f, 210f, 15f, 7.5f, Hex(0xD5C1E9), Hex(0xE7D9F2));
+            s.GardenRoundedRect(165f, headerY + 112f, 210f, 15f, 7.5f, Hex(0xD3E1F5), Hex(0xE6EEF9));
             float fill = 210f * got / Mathf.Max(1, n);
             if (fill > 0f) s.GardenRoundedRect(165f, headerY + 112f, fill, 15f, 7.5f, Hex(0xBDEB9B), Hex(0x6BC75F));
+            if (got == n && n > 0)   // 2026-10-30 (调整 20): the full bar ends in a gold check, with a twinkle each side
+            {
+                float kx = 375f, ky = headerY + 119.5f;
+                CodexRound(s, kx - 13f, ky - 13f, 26f, 26f, 13f, Color.white);
+                CodexRound(s, kx - 11f, ky - 11f, 22f, 22f, 11f, Hex(0xFFC23A));
+                s.Segment(new Vector2(kx - 5f, ky), new Vector2(kx - 1.5f, ky + 4f), 2.6f, Color.white);
+                s.Segment(new Vector2(kx - 1.5f, ky + 4f), new Vector2(kx + 6f, ky - 4f), 2.6f, Color.white);
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    float twk = .6f + .4f * Mathf.Sin(ui * 3f + side), sx = 270f + side * 128f, sy = headerY + 100f;
+                    s.Glow(sx, sy, 16f * twk, 3f, new Color(1f, .85f, .3f, twk), 0f);
+                    s.Glow(sx, sy, 3f, 16f * twk, new Color(1f, .85f, .3f, twk), 0f);
+                }
+            }
 
             var entry = list[codexSelected];
             bool have = CodexObtained(entry);
@@ -196,9 +214,17 @@ namespace Flightbeat.Game
             // Reserve a gap below the meter, including the selection bounce and the largest breathing pose.
             float headSpan = ArtScale(entry.tint) * Mathf.Max(.1f, FeetLine - HeadTop(entry.tint)) * 1.1f;
             float heroHeight = Mathf.Min(282f, Mathf.Max(80f, feet - headerY - 143f) / headSpan);
-            s.Glow(cx, oy + 253f, 330f, 320f, new Color(.85f, .99f, 1f, .85f), 0f);
+            // 2026-10-30 (调整 6/18: 圆圈跟图片不一样): big pale concentric circles centred on the hero, as in the reference.
+            float ringY = feet - 95f;
+            for (int ring = 0; ring < 3; ring++)
+            {
+                float rr = ring == 0 ? 330f : ring == 1 ? 245f : 165f;
+                Color rc = ring == 0 ? new Color(.86f, .92f, 1f, .45f) : ring == 1 ? new Color(.93f, .96f, 1f, .7f) : new Color(.98f, .99f, 1f, .85f);
+                s.GardenRoundedRect(cx - rr, ringY - rr, rr * 2f, rr * 2f, rr, rc, rc);
+            }
             s.Glow(cx, feet + 7f, 242f, 45f, new Color(.33f, .65f, .88f, .3f), 0f);
-            Asset(s, "scene/plot", cx - 113f, feet - 19f, 226f, 43f, Color.white);
+            if (!Asset(s, "plants/uiref/codex-pedestal", cx - 125f, feet - 22f, 250f, 62.5f, Color.white))   // N12
+                Asset(s, "scene/plot", cx - 113f, feet - 19f, 226f, 43f, Color.white);
             for (int i = 0; i < 3; i++)
             {
                 float bx = i == 1 ? 397f : i == 0 ? 150f : 137f;
@@ -218,16 +244,16 @@ namespace Flightbeat.Game
                 CodexLock(s, cx, oy + 265f, 34f);
             }
             string[] blurb = CodexBlurb.TryGetValue(entry.name, out var b) ? b : new[] { "", "" };
-            string title = have ? entry.name : "？？？";
-            float nameWidth = GardenBarArt.TextWidth(title, 36f), tagWidth = have ? GardenBarArt.TextWidth(blurb[0], 15f) + 18f : 0f;
+            string title = have ? entry.name : "神秘伙伴";
+            float nameWidth = GardenBarArt.TextWidth(title, 30f), tagWidth = have ? GardenBarArt.TextWidth(blurb[0], 15f) + 18f : 0f;
             float groupWidth = nameWidth + (have ? 12f + tagWidth : 0f), nameLeft = cx - groupWidth * .5f;
-            GardenBarArt.TextOutline(s, title, nameLeft + nameWidth * .5f, oy + 362f, 36f,
-                have ? Hex(0xFFD56C) : CodexInk, have ? Hex(0x985C27) : Color.white, have ? 1.3f : 2f);
+            GardenBarArt.Text(s, title, nameLeft, oy + 364f, 30f, false, CodexInk);
+            GardenBarArt.Text(s, title, nameLeft + .8f, oy + 364f, 30f, false, CodexInk);
             if (have)
             {
                 float tagX = nameLeft + nameWidth + 12f;
-                s.GardenRoundedRect(tagX, oy + 372f, tagWidth, 24f, 12f, Hex(0xB08ADE), Hex(0x8F65C2));
-                GardenBarArt.TextOutline(s, blurb[0], tagX + tagWidth * .5f, oy + 375f, 15f, Color.white, Hex(0x684097), .7f);
+                s.GardenRoundedRect(tagX, oy + 371f, tagWidth, 24f, 12f, Hex(0xC9B2F6), Hex(0xB59AF0));
+                GardenBarArt.Text(s, blurb[0], tagX + tagWidth * .5f, oy + 374f, 15f, true, Color.white);
                 // At most two lines; wrap after a clause so the title and unlock note keep stable positions.
                 string story = blurb[1];
                 int split = story.LastIndexOf('，');
@@ -242,8 +268,13 @@ namespace Flightbeat.Game
             }
             else
             {
-                GardenSkin.Text(s, "还没遇见它", cx, oy + 410f, 18f, true, CodexInk);
-                GardenSkin.Text(s, "通过第 " + entry.level + " 关就能获得", cx, oy + 445f, 16f, true, CodexMuted);
+                // 「通关第 N 关解锁」 with 第 N 关 in blue
+                string pre = "通关", lv = "第 " + entry.level + " 关", post = "解锁";
+                float tw = GardenBarArt.TextWidth(pre + lv + post, 19f), tx = cx - tw * .5f;
+                GardenBarArt.Text(s, pre, tx, oy + 410f, 19f, false, CodexMuted); tx += GardenBarArt.TextWidth(pre, 19f);
+                GardenBarArt.Text(s, lv, tx, oy + 410f, 19f, false, Hex(0x2F7BFF)); GardenBarArt.Text(s, lv, tx + .6f, oy + 410f, 19f, false, Hex(0x2F7BFF));
+                tx += GardenBarArt.TextWidth(lv, 19f);
+                GardenBarArt.Text(s, post, tx, oy + 410f, 19f, false, CodexMuted);
             }
             GardenBarArt.Text(s, "伙伴一览", 24f, oy + 472f, 23f, false, CodexInk);
             GardenBarArt.Text(s, "点击卡片查看", 516f - GardenBarArt.TextWidth("点击卡片查看", 13f), oy + 481f, 13f, false, CodexMuted);
@@ -257,16 +288,16 @@ namespace Flightbeat.Game
                 float x = 24f + i % cols * (cw + columnGap), y = gy + i / cols * (ch + rowGap), mid = x + cw * .5f;
                 HitBox(s, CodexCardAction + i, x, y, cw, ch);
                 CodexRound(s, x, y + 2f, cw, ch, 11f, new Color(.27f, .55f, .76f, .13f));
-                CodexRound(s, x, y, cw, ch, 11f, selected ? Hex(0xFFBD34) : Hex(0xCFB5EF));
+                CodexRound(s, x, y, cw, ch, 11f, selected ? Hex(0xFFBD34) : Hex(0xC9DAF2));
                 s.GardenRoundedRect(x + 1.1f, y + 1.1f, cw - 2.2f, ch - 2.2f, 10f,
-                    selected ? Hex(0xFFFEF5) : Hex(0xFFFFFF), selected ? Hex(0xFFF5DA) : Hex(0xF3EAFB));
+                    selected ? Hex(0xFFFEF5) : Hex(0xFFFFFF), selected ? Hex(0xFFF5DA) : Hex(0xEEF4FC));
                 if (owned) Creature(s, c.tint, mid, y + 69f, 88f, 0, "", 0f, 12f, false, false, selected ? .018f : 0f, i * 1.3f);
                 else
                 {
                     CodexSilhouetteArt(s, c.tint, mid, y + 69f, 88f);
                     CodexLock(s, mid, y + 42f, 17f);
                 }
-                DialogText(s, owned ? c.name : "第" + c.level + "关", mid, y + 75f, 14f, owned ? CodexInk : Hex(0x8C739E));
+                DialogText(s, owned ? c.name : "第" + c.level + "关", mid, y + 75f, 14f, owned ? CodexInk : Hex(0x7F8FAD));
                 if (selected)
                 {
                     float checkX = x + cw - 13f, checkY = y + 12f;
@@ -275,7 +306,14 @@ namespace Flightbeat.Game
                     s.Segment(new Vector2(checkX - 1f, checkY + 3f), new Vector2(checkX + 5f, checkY - 3f), 2.4f, Color.white);
                 }
             }
-            DialogText(s, got == n ? "伙伴全部到齐啦！" : "通关新关卡，认识更多伙伴", cx, oy + 929f, 14f, CodexMuted);
+            if (got == n)   // 2026-10-30 (调整 20): 「伙伴全部集齐啦！」 between two gold stars
+            {
+                const string done = "伙伴全部集齐啦！";
+                float dw = GardenBarArt.TextWidth(done, 16f);
+                GardenBarArt.Text(s, done, cx, oy + 920f, 16f, true, CodexInk);
+                for (int side = -1; side <= 1; side += 2) GardenBars.Icon(s, "star", cx + side * (dw * .5f + 16f), oy + 929f, 18f);
+            }
+            else DialogText(s, "通关新关卡，解锁更多伙伴", cx, oy + 929f, 14f, CodexMuted);
             s.MapLayout = mapped;
         }
         void SelectCodex(int index)

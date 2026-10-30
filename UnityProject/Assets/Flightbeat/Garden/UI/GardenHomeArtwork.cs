@@ -16,7 +16,7 @@ namespace Flightbeat.Garden.UI
         static readonly string[] Poses = { "idle", "attack", "blink" };
         readonly RawImage[] portraits = new RawImage[5], shadows = new RawImage[5];
         readonly GardenSkin.Slot[,] frames = new GardenSkin.Slot[4, 3];
-        RawImage title;
+        RawImage title, frog, chick;
         Texture2D creatures, atlas, bearIdle, bearBlink;
         GardenSkin.Slot halo;
         bool initialized;
@@ -41,12 +41,16 @@ namespace Flightbeat.Garden.UI
             lookup.TryGetValue("home/halo", out halo);
             title = Layer("Cream title and subtitle");
             title.texture = Resources.Load<Texture2D>("GardenR1/home-wave-title");
+            // 2026-10-30 16:10 (调整 4, 方案B): the frog and chick layers of the redrawn group, behind the bear.
+            frog = Layer("Group frog"); frog.texture = Resources.Load<Texture2D>("GardenR1/home-wave-frog");
+            chick = Layer("Group chick"); chick.texture = Resources.Load<Texture2D>("GardenR1/home-wave-chick");
+            frog.enabled = frog.texture; chick.enabled = chick.texture;
             for (int i = 0; i < 4; i++)
                 for (int p = 0; p < 3; p++) lookup.TryGetValue("plants/plush-home/" + Colors[i] + "/" + Poses[p], out frames[i, p]);
             foreach (int i in PaintOrder)
             {
                 shadows[i] = Layer(Colors[i] + " contact shadow");
-                shadows[i].color = new Color(.32f, .16f, .47f, .14f);
+                shadows[i].color = new Color(.16f, .3f, .55f, .12f);   // 2026-10-30: blue-grey on the light home
                 portraits[i] = Layer(Colors[i] + " animated portrait");
             }
         }
@@ -74,12 +78,27 @@ namespace Flightbeat.Garden.UI
             if (gameObject.activeSelf != show) gameObject.SetActive(show);
             if (!show) return;
             if (!initialized) Initialize();
-            Place(title, PixelWingGame.HomeWaveRect(90f, 94f, 385f, 139f));
+            // 2026-10-30 (界面优化 4, N1): the 泡泡小队 wordmark with the bear in its pot, kept at its own aspect.
+            Texture tt = title.texture;
+            float th = tt ? 400f * tt.height / Mathf.Max(1f, tt.width) : 139f;
+            // 2026-10-30 16:10 (调整 4): the reference's one-line wordmark (batch 3, H1, ~10:3) centred under the top bar.
+            bool wide = tt && tt.width >= tt.height * 2.6f;
+            Place(title, tt && tt.width < tt.height * 2f ? PixelWingGame.HomeWaveRect(70f, 268f - th, 400f, th)
+                : wide ? PixelWingGame.HomeWaveRect(95f, 88f, 360f, 360f * tt.height / tt.width) : PixelWingGame.HomeWaveRect(90f, 94f, 385f, 139f));
+            bool group = PixelWingGame.HomeGroupArt;
+            if (group)
+            {
+                Rect g = game.HomeWaveMemberRect(4);
+                float t = Time.unscaledTime, k = g.width / 480f;
+                Place(frog, new Rect(g.x, g.y + Mathf.Sin(t * 2.1f) * 2.5f * k, g.width, g.height));
+                Place(chick, new Rect(g.x, g.y + Mathf.Sin(t * 2.4f + 1.7f) * 2.5f * k, g.width, g.height));
+            }
             foreach (int i in PaintOrder)
             {
+                if (group) { shadows[i].enabled = false; if (i != 4) { portraits[i].enabled = false; continue; } }
                 Rect r = game.HomeWaveMemberRect(i);
                 float bottom = i == 4 ? r.yMax - r.height * .025f : r.y + r.height * (212f / 256f);
-                AtlasFrame(shadows[i], halo, new Rect(r.center.x - r.width * .36f, bottom - r.height * .025f, r.width * .72f, r.height * .09f), false);
+                if (!group) AtlasFrame(shadows[i], halo, new Rect(r.center.x - r.width * .36f, bottom - r.height * .025f, r.width * .72f, r.height * .09f), false);
                 int pose = game.HomeWavePose(i);
                 if (i < 4) AtlasFrame(portraits[i], frames[i, pose], r);
                 else { portraits[i].texture = pose == 2 && bearBlink ? bearBlink : bearIdle; Place(portraits[i], r); }

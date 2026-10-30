@@ -30,28 +30,28 @@ namespace Flightbeat.Garden {
         }
         public static string Name(int rgb) {
             switch (rgb) {
-                case 0x2982F4: return "小蓝";
-                case 0x42A9FF: return "小天";
-                case 0xFF7E27: return "小橙";
-                case 0xFF9D30: return "小金";
-                case 0x62E18E: return "小绿";
-                case 0xBD80FF: return "小紫";
-                case 0xFFDF48: return "小黄";
-                case 0xFFFFFF: return "小白";
-                case 0xFF525B: return "小红";
-                case 0x2D2D2D: return "小黑";
-                case 0x696CAF: return "小靛";
-                case 0x46D9FF: return "小冰";
-                case 0xC8C5FF: return "小雾";
-                case 0x9C225E: return "小玫";
-                case 0x65392D: return "小棕";
-                case 0xB672FD: return "小晶";
-                case 0x92EF4D: return "小荧";
-                case 0x30D183: return "小碧";
-                case 0x0C7E1C: return "小翠";
-                case 0xFFC5E0: return "小粉";
-                case 0xFFCAA9: return "小霞";
-                case 0xC5FFE4: return "小清";
+                case 0x2982F4: return "啵啵";
+                case 0x42A9FF: return "糯糯";
+                case 0xFF7E27: return "豚豚";
+                case 0xFF9D30: return "卷卷";
+                case 0x62E18E: return "呱呱";
+                case 0xBD80FF: return "朵朵";
+                case 0xFFDF48: return "叽叽";
+                case 0xFFFFFF: return "绵绵";
+                case 0xFF525B: return "桃桃";
+                case 0x2D2D2D: return "团团";
+                case 0x696CAF: return "豆豆";
+                case 0x46D9FF: return "啾啾";
+                case 0xC8C5FF: return "芋芋";
+                case 0x9C225E: return "栗栗";
+                case 0x65392D: return "皮皮";
+                case 0xB672FD: return "咕咕";
+                case 0x92EF4D: return "球球";
+                case 0x30D183: return "慢慢";
+                case 0x0C7E1C: return "咔咔";
+                case 0xFFC5E0: return "糖糖";
+                case 0xFFCAA9: return "哼哼";
+                case 0xC5FFE4: return "咩咩";
                 default: return "队员";
             }
         }

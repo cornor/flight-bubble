@@ -32,19 +32,7 @@ namespace Flightbeat.Game
             float time = intro ? Battle.IntroTime : duration;
             float warningAt = duration * .4f, readyAt = duration * .66f;
             if (intro && time >= warningAt && time < readyAt) DrawOpeningWarning(s, (time - warningAt) / (readyAt - warningAt));
-            if (intro && time >= readyAt)
-            {
-                float e = time - readyAt, alpha = Clamp01(e * 5f), size = 26f + (1f - Clamp01(e * 4f)) * 12f;
-                // 2026-10-20 (UI redesign 10, review: sky, not gold, so it is not mistaken for 困难关卡): a sky-edged
-                // glass bar with a gold star that settles from a little larger.
-                float h = size * 2f;
-                bool mapped = s.MapLayout;
-                float cy = GardenBars.ScreenY(s, OpeningReadyY);
-                s.MapLayout = false;
-                GardenBars.Bar(s, 270f, cy, GardenBars.Width("准备出战", size, h, "star"), h, GardenBars.Sky, "star", "准备出战", size,
-                    GardenBars.Navy, alpha, 1f, GardenBars.Deco.One, e);
-                s.MapLayout = mapped;
-            }
+            // 2026-10-30 (界面优化 11, user: 「准备出战」去掉): the ready bar is no longer drawn; the debut chips still show.
             if (debutBattle != Battle) { debutBattle = Battle; debutStart = -1f; }
             if (debutStart < 0f && (!intro || time >= readyAt)) debutStart = ui;
             if (debutStart >= 0f) DrawDebutChips(s, ui - debutStart);
@@ -57,6 +45,9 @@ namespace Flightbeat.Game
             const float top = 124f;
             float x0 = 270f + slide + shake;
             int difficulty = Battle.Level.difficulty;
+            // 2026-10-30 (界面优化 10, after the reference): normal levels get the big 「泡泡来袭！」 wordmark (N6) popping in over
+            // the empty pad row with a yellow double chevron (N7) bouncing down on each side; hard levels keep their bars.
+            if (difficulty == 0 && Has("plants/uiref/incoming-title")) { DrawIncomingTitle(s, t); return; }
             string text = difficulty == 2 ? "超难关卡" : difficulty == 1 ? "困难关卡" : "泡泡来袭！";
             // 2026-10-20 (UI redesign 07-09): a glass bar replaces the generic WARNING and hazard stripes: sky with a bubble cluster
             // (泡泡来袭！), gold with two stars and brown ink (困难关卡), purple with three stars (超难关卡).
@@ -70,6 +61,27 @@ namespace Flightbeat.Game
             s.MapLayout = mapped;
         }
 
+        void DrawIncomingTitle(PixelSurface s, float t)
+        {
+            float alpha = Clamp01(t * 6f) * Clamp01((1f - t) * 6f);
+            if (alpha <= .01f) return;
+            float p = OutBack(Clamp01(t * 3.2f), 2.6f), w = 380f * p, h = w * .25f;
+            bool mapped = s.MapLayout;
+            float cy = GardenBars.ScreenY(s, 600f);
+            s.MapLayout = false;
+            try
+            {
+                s.Glow(270f, cy, 460f, 120f, new Color(1f, .85f, .4f, .22f * alpha), 0f);
+                Asset(s, "plants/uiref/incoming-title", 270f - w * .5f, cy - h * .5f, w, h, new Color(1f, 1f, 1f, alpha));
+                if (Has("plants/uiref/incoming-chevron") && t > .12f)
+                    for (int side = -1; side <= 1; side += 2)
+                    {
+                        float bounce = Mathf.Abs(Mathf.Sin(ui * 7f)) * 7f, c = 46f, x = 270f + side * (w * .5f + 34f);
+                        Asset(s, "plants/uiref/incoming-chevron", x - c * .5f, cy - c * .5f - 4f + bounce, c, c, new Color(1f, 1f, 1f, alpha * Clamp01((t - .12f) * 8f)));
+                    }
+            }
+            finally { s.MapLayout = mapped; }
+        }
         // Lane of the front-most queued member with this color (any row, hidden mystery rows included).
         int DebutLane(int rgb)
         {

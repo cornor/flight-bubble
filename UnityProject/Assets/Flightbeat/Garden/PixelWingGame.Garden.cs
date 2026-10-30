@@ -123,6 +123,9 @@ namespace Flightbeat.Game
             float age = ui - toastAt;
             if (age > 2.2f || toast.Length == 0) return;
             string text = GardenWords(toast).Replace("获得 ", "获得");   // 2026-10-20: 「获得泡泡炸弹 ×1」, no space
+            // 2026-10-30 (调整 13, after the reference): a bomb reward floats up over the board as the rainbow bomb and
+            // 「泡泡炸弹 +1」 in white with a navy edge instead of a bar.
+            if (text.Contains("获得") && text.Contains("泡泡炸弹")) { BombRewardFloat(s, age); return; }
             float size = Mathf.Clamp(440f / Mathf.Max(1, text.Length), 14f, 17f), w = Mathf.Clamp(TextWidth(text, size) + 70f, 160f, 510f);
             float alpha = Clamp01(age / .15f) * Clamp01((2.2f - age) / .3f);
             bool refusal = toastTint.r > toastTint.g + .3f;
@@ -138,16 +141,31 @@ namespace Flightbeat.Game
                 Avoid(GardenBars.ScreenY(s, 145f) - 25f, GardenBars.ScreenY(s, 145f) + 25f);
             if (selection == 2)
                 Avoid(GardenBars.ScreenY(s, 140f) - 22f, GardenBars.ScreenY(s, 140f) + 22f);
-            if (lesson != null && Battle.State != Phase.Intro && Battle.State != Phase.Won && Battle.State != Phase.Lost
-                && !settings && selection == 0 && !finaleGuide)
-                Avoid(GardenBars.ScreenY(s, 104f) - 20f,
-                    GardenBars.ScreenY(s, 180f) + 52f);
+            // 2026-10-29 21:07: the teaching dialogue card at the top is gone (GardenGuide), nothing to avoid there now.
             if (Battle != null && Battle.AdvanceHeld > 0f && selection == 0)
                 Avoid(GardenBars.ScreenY(s, 240f) - 34f, GardenBars.ScreenY(s, 240f) + 34f);
             if (Battle != null && Battle.Stalled && selection == 0 && !settings && Battle.State == Phase.Playing)
                 Avoid(GardenBars.ScreenY(s, StallHintY) - StallHintHeight * .5f, GardenBars.ScreenY(s, StallHintY) + StallHintHeight * .5f);
             s.MapLayout = false;
-            try { HintCapsule(s, text, cy, w, 38f, size, edge, ink, alpha, 1f, icon, GardenBars.Deco.None, age); }
+            // 2026-10-29 21:07 (界面优化 12, user: one style for the prompts): the 80 % black bar with bold white words.
+            try { DarkBar(s, text, cy, age, icon, Clamp01((2.2f - age) / .3f), 18f); }
+            finally { s.MapLayout = mapped; }
+        }
+        void BombRewardFloat(PixelSurface s, float age)
+        {
+            float a = Clamp01(age / .15f) * Clamp01((2.2f - age) / .4f), p = OutBack(Clamp01(age / .3f), 2.2f);
+            if (a <= .01f) return;
+            bool mapped = s.MapLayout;
+            float cy = GardenBars.ScreenY(s, 300f) - Mathf.Clamp01(age / 2.2f) * 26f;
+            s.MapLayout = false;
+            try
+            {
+                const string word = "泡泡炸弹 +1";
+                float size = 30f * p, icon = 52f * p, tw = GardenBarArt.TextWidth(word, size), left = 270f - (icon + 8f + tw) * .5f;
+                s.Glow(270f, cy, tw + icon + 90f, 80f, new Color(.4f, .7f, 1f, .25f * a), 0f);
+                GardenBars.Icon(s, "bomb", left + icon * .5f, cy, icon, a);
+                GardenBarArt.TextOutline(s, word, left + icon + 8f + tw * .5f, cy - size * .55f, size, A(Color.white, a), A(Hex(0x1D3A7A), a), size * .08f);
+            }
             finally { s.MapLayout = mapped; }
         }
         // Shared painted glass, fixed end reflections and stretchable centre; see-through fill keeps the rim.
@@ -203,7 +221,9 @@ namespace Flightbeat.Game
         // Keep the original action id and bottom-band layout map, clear of the aimable board above the rail.
         void BombConfirmButton(PixelSurface s)
         {
-            const float x = 158f, y = 742f, w = 224f, h = 64f;
+            // 2026-10-30 (界面优化 13, user after the reference): a yellow capsule just under the board (pad row), so it
+            // no longer sits on the dimmed queue.
+            const float x = 150f, y = 584f, w = 240f, h = 64f;
             const int id = 9;
             HitBox(s, id, x, y, w, h);
             float k = 1f - PressPulse(id) * .05f, bw = w * k, bh = h * k;
@@ -211,11 +231,11 @@ namespace Flightbeat.Game
             bool mapped = s.MapLayout; s.MapLayout = false;
             try
             {
-                if (!Asset9(s, "plants/win/button-next", bx, by, bw, bh, 64f, 0f, bh * 64f / 126f, 0f, Color.white))
+                if (!Asset9(s, "plants/uiref/button-yellow", bx, by, bw, bh, 52f, 0f, bh * .5f, 0f, Color.white)
+                    && !Asset9(s, "plants/win/button-next", bx, by, bw, bh, 64f, 0f, bh * 64f / 126f, 0f, Color.white))
                     GardenPanel(s, bx, by, bw, bh);
                 float size = 26f * k, cy = by + bh * .46f;
-                GardenBarArt.TextOutline(s, "确认使用", x + w * .5f, cy - size * .55f, size,
-                    Color.white, Hex(0xA55410), 1.8f * k);
+                ButtonWord(s, "确认使用", x + w * .5f - GardenBarArt.TextWidth("确认使用", size) * .5f, cy, size, Color.white, true);   // 2026-10-30: no edge
             }
             finally { s.MapLayout = mapped; }
         }
@@ -280,6 +300,18 @@ namespace Flightbeat.Game
                     bool mapped = s.MapLayout; s.MapLayout = false;
                     float padY = PlushLayout.Y(647f) - GardenPadLift(), padH = plotW * .4f;
                     Asset(s, "scene/plot", cx - plotW / 2, padY - padH / 2, plotW, padH, Color.white);
+                    // 2026-10-30 (界面优化 19, N8): the blue lock tile with its own video badge, standing on the pad.
+                    if (Has("plants/uiref/slot-locked"))
+                    {
+                        // Hidden while the opening 「泡泡来袭！」 crosses the pad row, then fading in.
+                        float duration = Battle.Level.introDuration > 0f ? Battle.Level.introDuration : 4.6f;
+                        float lockA = Battle.State == Phase.Intro ? Clamp01((Battle.IntroTime - duration * .66f) * 4f) : 1f;
+                        float tile = plotW * .92f, bob = Mathf.Sin(ui * 2f + bay) * 1.5f;
+                        if (lockA > .01f)
+                            Asset(s, "plants/uiref/slot-locked", cx - tile * .5f, padY - tile * .86f + bob, tile, tile, new Color(1f, 1f, 1f, lockA));
+                        s.MapLayout = mapped;
+                        continue;
+                    }
                     float lockSize = plotW * .75f, lockTop = padY - lockSize - 4f;
                     Asset(s, "scene/plot-lock-bubble", cx - lockSize / 2, lockTop, lockSize, lockSize, Color.white);
                     // A small translucent corner badge sits with the lock's soft glass treatment.
@@ -306,8 +338,9 @@ namespace Flightbeat.Game
                     float cardY = top + row * rowH;
                     bool selectable = row < reserve.Count && (row == 0 || selection == 1);
                     if (selectable) {
-                        s.GardenRoundedRect(qx - w / 2 - 1f, cardY - 1f, w + 2f, rowH - 4f, 12f, Hex(0xF4D58A), Hex(0xD8B660));
-                        s.GardenRoundedRect(qx - w / 2 + 1f, cardY + 1f, w - 2f, rowH - 8f, 10f, Hex(0xC5A6E4), Hex(0xD8C1F0));
+                        // 2026-10-29 (light theme): white card with the gold rim (was lavender inside the gold).
+                        s.GardenRoundedRect(qx - w / 2 - 1f, cardY - 1f, w + 2f, rowH - 4f, 12f, Hex(0xF6D98E), Hex(0xE8C266));
+                        s.GardenRoundedRect(qx - w / 2 + 1f, cardY + 1f, w - 2f, rowH - 8f, 10f, Hex(0xFFFFFF), Hex(0xEEF5FF));
                     } else Asset9(s, "scene/queue-panel", qx - w / 2, cardY, w, rowH - 6f, 18f, 18f, 10f, 10f,
                         new Color(1f, 1f, 1f, row < reserve.Count ? .65f : .28f));
                 }
@@ -507,7 +540,8 @@ namespace Flightbeat.Game
                         float sizeS = 1f / ArtScale(queueTint);
                         // 20:21 (user): the seedling twice as big, grown up from its own stem base.
                         const float SproutSize = 2f;
-                        Vector2 stemBase = new Vector2(GardenSkin.SproutStemX(queueTint), 146f);
+                        GardenSkin.SproutPoints(queueTint, out float rimY, out float stemX, out float stemY);   // 2026-10-30: per member
+                        Vector2 stemBase = new Vector2(stemX, stemY);
                         // 20:58 (user): bigger nearer the front (QueueSproutSize, grows on moving up a row); a slower +-6 deg
                         // sway that runs across the queue as a wave, like wind over a row of seedlings.
                         if (row > 0) {
@@ -520,7 +554,7 @@ namespace Flightbeat.Game
                                 : 1f + 2.4f * Mathf.Pow(lt - 1f, 3f) + 1.4f * Mathf.Pow(lt - 1f, 2f);   // ease-out-back
                             // The body rises out of the pot (in front of its soil, cut at the front rim), then the leaves.
                             GardenSkin.DrawSproutBody(s, queueTint, at.x, feetY, queueCanvas, sizeS, lk);
-                            GardenSkin.DrawSproutLayer(s, queueTint, "leaves", at.x, feetY, queueCanvas, sizeS, new Vector2(112f, 150f),
+                            GardenSkin.DrawSproutLayer(s, queueTint, "leaves", at.x, feetY, queueCanvas, sizeS, new Vector2(stemX, rimY + 2f),
                                 .25f + .75f * lk, .4f + .6f * lk, 0f, Mathf.Clamp01(lk * 3f));
                             // 17:57: the seedling shrinks into the soil and fades within .1 s (stretching up, it ghosted over the face).
                             float sk = Mathf.Clamp01((wake - .1f) / .1f), sway = wake < .1f ? 8f * Mathf.Sin(wake / .1f * Mathf.PI * 2f) : 0f;
@@ -532,7 +566,10 @@ namespace Flightbeat.Game
                     // size and plays while the pot jiggles (0-.18 s): the pot pops open, then the member grows in plain view.
                     // Centred a little below the rim (canvas y 158) so the seedling's two leaves stay visible as it wiggles.
                     if (sprouting && wake < .18f)
-                        GardenFx.Burst(s, "impact-dust", new Vector2(at.x, feetY - queueCanvas * (212f - 158f) / 256f), queueCanvas * .4f, wake, .18f);
+                    {
+                        GardenSkin.SproutPoints(queueTint, out float dustRim, out _, out _);
+                        GardenFx.Burst(s, "impact-dust", new Vector2(at.x, feetY - queueCanvas * (212f - dustRim - 10f) / 256f), queueCanvas * .4f, wake, .18f);
+                    }
                     if (sprouting && wake >= .42f && wake < .72f) QueueTwirlSparkle(s, at.x, QueueDisplayY(at.y) + 12f - queueCanvas * .75f, queueCanvas, wake - .42f);
                     // 2026-10-21 12:26 (user): hidden members show no number pill (was a "?" pill); the bubble art carries the "?".
                     // 2026-10-21: a hidden member reaching the front bursts out of its bubble.
@@ -562,11 +599,13 @@ namespace Flightbeat.Game
             if (Battle.State != Phase.ReviveOffer) feedback.DrawGardenFeedback(s, GardenColor);
             // Third batch: bubble finale; the original routines still run muted for their cues, hit regions and clocks.
             DrawBubbleFinaleButton(s); DrawBubbleFinale(s);
-            if (selection == 1) HintCapsule(s, "选择前三排任意队员", 512f, 330f, 48f, 21f, GardenBars.Sky, GardenBars.Navy, 1f, 1f, "pick", GardenBars.Deco.One, BarAge(1));   // 11:12: glass capsule
+            // 2026-10-29 21:07 (界面优化 12): black bar; 2026-10-30 (调整 12: it covered the picture) between the pads and the queue.
+            if (selection == 1) DarkBar(s, "选择前三排任意队员", 674f, BarAge(1));
             if (selection == 2) {
                 DrawBombAim(s);
                 // 11:16 (user): see-through glass (fill 45 %) so the picture under it stays visible while aiming.
-                HintCapsule(s, "拖动选择泡泡，双击确认", 140f, 340f, 44f, 19f, GardenBars.Sky, GardenBars.Navy, 1f, .45f, "crosshair", GardenBars.Deco.None, BarAge(2));
+                // 2026-10-29 21:07 (界面优化 12/13): the same black bar, worded like the reference.
+                DarkBar(s, "拖动选择范围，双击确认", 140f, BarAge(2));
                 // 2026-10-18 22:21 (user): the confirm button sat right over the rail, i.e. on the bottom rows players
                 // bomb most, hiding the reticle and catching drags. While aiming, the queue cannot be used anyway, so
                 // the queue area is dimmed and holds 确认使用 (id 9); the bomb prop (id 12) handles cancellation.
@@ -579,19 +618,20 @@ namespace Flightbeat.Game
                 }
                 BombConfirmButton(s);
             }
-            if (Battle.State == Phase.Ready && tutorialStep < 0) {
-                DrawGardenReadyHint(s);
-            }
+            // 2026-10-29 21:07 (界面优化 11, user: 不要这个提示): no 「点下方队员，开始出战」 capsule; the suggested member's
+            // hops (GardenStartHintLane) already show where to start.
             if (Battle.Stalled && selection == 0 && !settings && Battle.State == Phase.Playing) {
                 DrawGardenStallHint(s);
             }
             if (Battle.NoticeTime > 0 && selection == 0 && !settings && Battle.Notice != "已解锁战机位") {
                 // 2026-10-20 (UI redesign 13/14/17): the model's notices (重排, 解锁, 出战位已满) as short bars.
                 string notice = GardenWords(Battle.Notice);
+                if (notice.Contains("重排")) notice = "队伍已重新排列";   // 2026-10-29 21:07 (界面优化 16): the reference's words
                 MessageStyle(notice, false, out Color nEdge, out Color nInk, out string nIcon);
                 // 2026-10-21 (user): at y 872 the bar sat under the prop buttons; now just above the pad members' heads
                 // (board bottom), clear of the ready hint at 592 and of the buttons.
-                HintCapsule(s, notice, 536f, 160f, 34f, 16f, nEdge, nInk, 1f, 1f, nIcon, GardenBars.Deco.None, BarAge(4));
+                // 2026-10-30 (调整 16): between the pads and the queue, clear of the picture.
+                DarkBar(s, notice, 674f, BarAge(4), nIcon, Clamp01(Battle.NoticeTime / .3f), 18f);
             }
             DrawHeldBadge(s);
             if (lesson != null && Battle.State != Phase.Intro && Battle.State != Phase.Won && Battle.State != Phase.Lost && !settings && selection == 0 && !finaleGuide) DrawGardenTutorial(s);
@@ -608,6 +648,11 @@ namespace Flightbeat.Game
             else if (!settings && finaleGuide) DrawBubbleFinaleGuide(s);
             if (streakPrompt) DrawGardenStreakPrompt(s);   // 2026-10-21 20:51: card dialog (PixelWingGame.GardenDialogs.cs)
             if (energyOpen) DrawGardenEnergy(s);
+            // 2026-10-30 (调整 2/3/8): the teaching guide over everything, with its full-screen mask.
+            if (lesson != null && Battle.State != Phase.Intro && Battle.State != Phase.Won && Battle.State != Phase.Lost
+                && Battle.State != Phase.ReviveOffer && !settings && selection == 0 && !finaleGuide)
+            { DrawGuideMask(s); s.MapLayout = true; DrawGardenGuide(s); }
+            DrawReviveSuccess(s);   // 2026-10-30 (界面优化 15)
             DrawGardenToast(s);   // 2026-10-19 11:12: glass capsule (was the wide jelly panel over the combo counter)
             DrawGardenTransition(s);
         }
@@ -656,36 +701,22 @@ namespace Flightbeat.Game
             }
         }
         void DrawGardenTutorial(PixelSurface s) {
-            int topic = narration == null ? 0 : (int)narration.Topic;
-            string face = lesson.Complete || topic == 2 ? "ui/guide-happy" : topic == 3 || topic == 6 ? "ui/guide-worried" : "ui/guide-explain";
-            // Keep both teaching rows below the header and above the small training formation.
-            DrawGardenDialogue(s, face, Narration(topic), 194f, compact: true);
-            if (!lesson.Complete) {
-                // 2026-10-20 (UI redesign 27); 14:24 (user): no target icon on every step's goal, just the words.
-                HintCapsule(s, Goal(lesson.Step), 140f, 320f, 26f, 16f, GardenBars.Sky, GardenBars.Navy, 1f, 1f, null, GardenBars.Deco.One, BarAge(3));
-                // 2026-10-21 (user): the practice-step 「提示」 button is gone. It only skipped the wait: the same glow and
-                // arrow on the suggested member still come by themselves (FlightLesson.HintLevel, from 6 s in practice).
-                if (lesson.SuggestedLane >= 0 && lesson.HintLevel > 0) {
-                    float x = Battle.QueuePositionX(lesson.SuggestedLane);
-                    if (lesson.HintLevel >= 3) {
-                        // Bouncing gold arrow above the creature (the glow is drawn in DrawGarden).
-                        float bounce = Mathf.Abs(Mathf.Sin(ui * 5f)) * 5f;
-                        Asset(s, "fx/arrow", x - 14, 662 - bounce, 28, 28, Color.white);
-                    }
-                }
-            }
-            // 2026-10-20 (UI redesign 29): a small gold tag with the shield.
+            // 2026-10-29 21:07 (界面优化 2/3/8, user: 新手引导简化，直接引导上手就好): no dialogue card, goal capsule or old
+            // arrow; a speech bubble and a pointing hand on the member to tap (PixelWingGame.GardenGuide).
+            // 2026-10-20 (UI redesign 29): a small gold tag with the shield (under the guide bubble, which may reach it).
             float tagW = GardenBars.Width("课堂保护中", 14f, 28f, "shield");
             bool tagMapped = s.MapLayout;
             float tagY = tagMapped ? PlushLayout.Y(538f) : 538f;
             s.MapLayout = false;
             GardenBars.Bar(s, Mathf.Min(466f, 528f - tagW * .5f), tagY, tagW, 28f, GardenBars.Gold, "shield", "课堂保护中", 14f, GardenBars.Brown);
             s.MapLayout = tagMapped;
+            // 2026-10-30: the guide (mask, bubble, hand) moved to the overlay layer (DrawGardenOverlay).
         }
         // Same gating as DrawGardenTutorial: the hint only shows while the tutorial overlay does.
         bool GardenHintLane(out int lane) {
             lane = -1;
-            if (lesson == null || lesson.Complete || lesson.SuggestedLane < 0 || lesson.HintLevel <= 0) return false;
+            // 2026-10-29 21:07: the guided steps (GuideLane) glow at once; elsewhere the glow waits for HintLevel as before.
+            if (lesson == null || lesson.Complete || lesson.SuggestedLane < 0 || lesson.HintLevel <= 0 && GuideLane < 0) return false;
             if (Battle.State == Phase.Intro || Battle.State == Phase.Won || Battle.State == Phase.Lost || settings || selection != 0 || finaleGuide) return false;
             lane = lesson.SuggestedLane;
             return true;

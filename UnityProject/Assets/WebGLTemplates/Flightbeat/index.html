@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>泡泡小队</title>
-  <link rel="preload" as="image" href="TemplateData/loading-B-mascot-v2.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="TemplateData/loading-bg.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="TemplateData/loading-logo.webp" fetchpriority="high">
   <style>
     *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0b2238;color:#fff;font:13px system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
     main{height:100%;display:flex;align-items:center;justify-content:center}
@@ -13,24 +14,27 @@
     #broadcast-status{display:none}
     /* Fill the same stage as the game canvas, including on wide browser windows.
        Use the selected artwork without a second, narrower portrait container. */
-    #loading{position:absolute;inset:0;z-index:3;overflow:hidden;background:#eff8eb;color:#12535a;transition:opacity .45s ease}
+    /* 2026-10-30 (界面优化 1): sky-blue bubble background, the 泡泡小队 wordmark, a blue capsule bar with a green fill. */
+    #loading{position:absolute;inset:0;z-index:3;overflow:hidden;background:#79c6fb;color:#fff;transition:opacity .45s ease}
     #loading.out{opacity:0;pointer-events:none}
-    #lg-scene{position:relative;width:100%;height:100%;overflow:hidden;background:#eff8eb}
-    #lg-art,#lg-art img{position:absolute;inset:0;display:block;width:100%;height:100%}
-    #lg-art img{object-fit:fill}
+    #lg-scene{position:relative;width:100%;height:100%;overflow:hidden;background:#79c6fb url(TemplateData/loading-bg.webp) center/cover no-repeat}
+    #lg-logo{position:absolute;left:5%;width:90%;top:25%;display:block;animation:lg-float 3.2s ease-in-out infinite}
+    /* the stacked wordmark (art batch 3, L1: 泡泡 over 小队 with the bear) sits like the reference */
+    #lg-logo.stacked{left:12%;width:78%;top:22%}
+    @keyframes lg-float{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(var(--u)*-6))}}
     /* Live progress and health advisory stay independent of the illustration.
        The footer starts below the pot and blends into the mint field. */
-    #lg-bottom{position:absolute;left:0;right:0;top:81%;bottom:0;padding:calc(var(--u)*16) 4% max(1.5%,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:calc(var(--u)*10);z-index:2;background:linear-gradient(100deg,#edf7e9,#f5faef)}
-    #lg-bottom:before{content:"";position:absolute;left:0;right:0;bottom:100%;height:calc(var(--u)*18);background:linear-gradient(0deg,#f0f8ec,transparent);pointer-events:none}
-    #lg-bar-wrap{width:68.7%}
-    #lg-text{text-align:center;font-weight:700;font-size:calc(var(--u)*23);line-height:1.2;letter-spacing:.015em;margin-bottom:calc(var(--u)*10);white-space:nowrap;text-shadow:0 calc(var(--u)*1) 0 #fff9}
-    #lg-bar{height:calc(var(--u)*26);padding:calc(var(--u)*1);border:max(1.5px,calc(var(--u)*2)) solid #579783;border-radius:999px;background:#fffdf0;box-shadow:0 calc(var(--u)*1) calc(var(--u)*2) #416f5d20}
-    #lg-track{height:100%;overflow:hidden;border-radius:999px;background:linear-gradient(#e0ebd9,#f3f6e6);box-shadow:inset 0 calc(var(--u)*1) calc(var(--u)*2) #416f5d26}
-    #lg-fill{position:relative;width:0;height:100%;border-radius:999px;background:linear-gradient(#8be8bd,#6eddb1)}
-    #lg-health{text-align:center;width:100%;font-size:max(9px,calc(var(--u)*14));line-height:1.25;color:#466c68;text-shadow:0 1px 0 #fff4}
+    #lg-bottom{position:absolute;left:0;right:0;top:78%;bottom:0;padding:calc(var(--u)*16) 4% max(1.5%,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:calc(var(--u)*10);z-index:2}
+    /* 2026-10-30 (调整 1): the reference bar - thick violet-navy frame, green fill, the percentage inside it. */
+    #lg-bar-wrap{width:75%;position:relative}
+    #lg-text{position:absolute;left:0;right:0;top:0;height:calc(var(--u)*40);display:flex;align-items:center;justify-content:center;z-index:2;font-weight:800;font-size:calc(var(--u)*19);letter-spacing:.02em;white-space:nowrap;color:#fff;text-shadow:0 calc(var(--u)*1) calc(var(--u)*2) #1d1660aa;pointer-events:none}
+    #lg-bar{height:calc(var(--u)*40);padding:calc(var(--u)*4);border-radius:calc(var(--u)*12);background:linear-gradient(#6f6be8,#4d48c9);box-shadow:0 calc(var(--u)*3) 0 #2d2a8a,0 calc(var(--u)*5) calc(var(--u)*8) #1d3a7a55}
+    #lg-track{height:100%;overflow:hidden;border-radius:calc(var(--u)*8);background:linear-gradient(#3b32a8,#4a40bd);box-shadow:inset 0 calc(var(--u)*2) calc(var(--u)*3) #00000045}
+    #lg-fill{position:relative;width:0;height:100%;border-radius:calc(var(--u)*8);background:linear-gradient(#8af27a,#2fc23e);box-shadow:inset 0 calc(var(--u)*3) 0 #ffffff70}
+    #lg-health{text-align:center;width:100%;font-size:max(9px,calc(var(--u)*14));line-height:1.25;color:#fff;font-weight:600;text-shadow:0 0 3px #1d3a7acc,0 1px 2px #1d3a7acc}
     #lg-health h2{margin:0 0 calc(var(--u)*4);font-size:max(10px,calc(var(--u)*15));font-weight:800;line-height:1.2}
     #lg-health p{margin:0}
-    #loading.failed #lg-text{font-size:calc(var(--u)*20);color:#853e17}
+    #loading.failed #lg-text{font-size:calc(var(--u)*20);color:#ffe08a}
     #lg-bar.done{animation:lg-flash .4s ease-out}
     @keyframes lg-flash{0%{filter:brightness(1.4)}100%{filter:brightness(1)}}
     @media(prefers-reduced-motion:reduce){#lg-bar.done{animation:none}#loading{transition:none}}
@@ -42,12 +46,10 @@
       <canvas id="unity-canvas" tabindex="-1" aria-label="泡泡小队游戏画面"></canvas>
       <div id="loading" aria-label="泡泡小队加载页">
         <div id="lg-scene">
-        <picture id="lg-art">
-          <img src="TemplateData/loading-B-mascot-v2.webp" alt="泡泡小队：毛绒蓝熊在蓝色云朵花盆中微笑，抬手追逐泡泡" fetchpriority="high" decoding="async">
-        </picture>
+        <img id="lg-logo" src="TemplateData/loading-logo.webp" alt="泡泡小队" fetchpriority="high" decoding="async" onload="if(this.naturalHeight>this.naturalWidth*.7)this.classList.add('stacked')">
         <div id="lg-bottom">
           <div id="lg-bar-wrap">
-            <div id="lg-text" role="status" aria-live="polite">加载中… 0%</div>
+            <div id="lg-text" role="status" aria-live="polite">0%</div>
             <div id="lg-bar" role="progressbar" aria-label="游戏加载进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
               <div id="lg-track"><div id="lg-fill"></div></div>
             </div>
@@ -77,7 +79,7 @@
       const p=Math.min(shown,1),percent=Math.round(p*100);
       fill.style.width=p*100+'%';
       if(percent!==lastPercent){
-        text.textContent='加载中… '+percent+'%';
+        text.textContent=percent+'%';
         bar.setAttribute('aria-valuenow',String(percent));lastPercent=percent;
       }
       // Unity's download callback reaches at most 96%; 100% requires successful engine startup.

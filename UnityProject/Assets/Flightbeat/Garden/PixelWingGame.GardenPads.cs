@@ -313,6 +313,15 @@ namespace Flightbeat.Game
             Vector2 c = PlushLayout.Point(aim);
             float pulse = Mathf.Sin(ui * 5f) * .5f + .5f, r = BombRadius * (1f + .015f * pulse);
             Vector2 Rim(float angle, float radius) => c + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+            // 2026-10-30 (界面优化 13, N5): the painted cyan ring (ring at .86 of the half frame) breathing a little.
+            if (Has("plants/uiref/aim-ring"))
+            {
+                s.Glow(c.x, c.y, r * 2.1f, r * 2.1f, new Color(.4f, .9f, 1f, .12f + .06f * pulse), 0f);
+                float size = r * 2f / .86f;
+                Asset(s, "plants/uiref/aim-ring", c.x - size * .5f, c.y - size * .5f, size, size, Color.white);
+                s.MapLayout = mapped;
+                return;
+            }
             s.Glow(c.x, c.y, r * 2.2f, r * 2.2f, new Color(1f, .45f, .3f, .28f + .1f * pulse), 0f);
             for (int pass = 0; pass < 2; pass++)
             {

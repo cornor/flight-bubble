@@ -27,6 +27,15 @@ namespace Flightbeat.Game
             new Rect(-23f, 475f, 206f, 235f), new Rect(357f, 513f, 196f, 224f),
             new Rect(110f, 282f, 335f, 402f)
         };
+        // 2026-10-30 16:10 (调整 4, 方案B): the redrawn group (art batch 3, H2) - bear in the paw-print pot, the frog and
+        // the chick peeking from behind - painted on one 1080 square canvas; when it is present the four side partners
+        // are hidden and only the bear (the whole group) can be poked. Authored over the reference at 540 × 1026.
+        static int homeGroupArt = -1;
+        internal static bool HomeGroupArt
+        {
+            get { if (homeGroupArt < 0) homeGroupArt = Resources.Load<Texture2D>("GardenR1/home-wave-frog") ? 1 : 0; return homeGroupArt == 1; }
+        }
+        static readonly Rect HomeGroupFrame = new Rect(20f, 236f, 500f, 500f);   // the art fills its canvas edge to edge
         internal float HomeWaveAge(int member)
         {
             float age = ui - homePokeAt[member];
@@ -43,7 +52,7 @@ namespace Flightbeat.Game
         }
         internal Rect HomeWaveMemberRect(int member)
         {
-            Rect frame = HomeWaveFrames[member];
+            Rect frame = member == 4 && HomeGroupArt ? HomeGroupFrame : HomeWaveFrames[member];
             float breathe = 1f + .008f * Mathf.Sin(ui * 2.2f + HomePhase[member]);
             float h = frame.height * breathe, w = frame.width / breathe;
             return HomeWaveRect(frame.center.x - w * .5f, frame.yMax - h, w, h);
@@ -54,7 +63,9 @@ namespace Flightbeat.Game
             HomeWaveView(out float k, out float ox, out float oy);
             // Quiet decoration: the formerly oversized upper-right bubble is now
             // 42 logical px (about one third of the reference) at 32% opacity.
-            WaveBubble(s, 435f, 290f, 42f, .32f, 0);
+            // 2026-10-30 (调整 4): the reference's big rainbow bubble beside the bear's raised paw.
+            if (HomeGroupArt) WaveBubble(s, 418f, 270f, 104f, .9f, 0);
+            else WaveBubble(s, 435f, 290f, 42f, .32f, 0);
             WaveBubble(s, 270f, 96f, 26f, .35f, 1);
             WaveBubble(s, 159f, 301f, 24f, .28f, 2);
             WaveBubble(s, 505f, 380f, 23f, .25f, 3);
@@ -62,6 +73,7 @@ namespace Flightbeat.Game
             // Match the painting order in GardenHomeArtwork, including hit precedence.
             foreach (int i in Garden.UI.GardenHomeArtwork.PaintOrder)
             {
+                if (i != 4 && HomeGroupArt) continue;
                 Rect r = HomeWaveMemberRect(i);
                 HitBox(s, HomeMemberAction + i, r.x + r.width * .08f, r.y + r.height * .08f, r.width * .84f, r.height * .86f);
                 float age = HomeWaveAge(i);
@@ -69,7 +81,8 @@ namespace Flightbeat.Game
                 // Double the restored blown-bubble diameter, retaining its opacity and timing.
                 float drift = Mathf.Max(0f, age - .6f), size = (24f + i * 2f) * 2f * k * Mathf.Clamp01(age / .6f);
                 Vector2 at;
-                if (i == 4) at = new Vector2(r.xMax - 13f * k, r.y + 67f * k);
+                if (i == 4 && HomeGroupArt) at = new Vector2(r.x + r.width * .7f, r.y + r.height * .2f);   // over the raised paw
+                else if (i == 4) at = new Vector2(r.xMax - 13f * k, r.y + 67f * k);
                 else {
                     Vector2 m = MouthCanvas(Hex(HomeSquadColor[i]));
                     at = new Vector2(r.x + r.width * m.x / 224f, r.y + r.height * m.y / 256f);
@@ -79,8 +92,9 @@ namespace Flightbeat.Game
             }
             DrawWaveStart(s);
             HomeIconButton(s, 801, ScreenLayout.Left + 20f, ScreenLayout.Top + 16f, "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 60f);
-            Rect album = HomeWaveRect(448f, 745f, 70f, 70f);
-            HomeIconButton(s, CodexOpenAction, album.x, album.y, "plants/home/btn-codex", "图鉴", Hex(0xFFB347), album.width);
+            // 2026-10-30 (界面优化 4, after the reference): 伙伴图鉴 in the top-right corner, opposite 设置.
+            // 2026-10-30 16:10 (调整 4): exactly where the reference has it - at the right edge, level with the bubble.
+            HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 80f, Mathf.Max(ScreenLayout.Top + 96f, HomeWaveRect(0f, 296f, 0f, 0f).y), "plants/home/btn-codex", "伙伴图鉴", Hex(0xFFB347), 60f);
             DrawWavePartner(s, k, ox, oy);
             s.MapLayout = true;
             DrawLevelPick(s);
@@ -90,18 +104,23 @@ namespace Flightbeat.Game
             Rect r = HomeWaveRect(x, y + Mathf.Sin(ui * .55f + seed) * 2f, size, size);
             SoapBubble(s, new Vector2(r.x, r.y), r.width, Color.white, opacity, seed);
         }
+        // 2026-10-30 (界面优化 4, after the reference): under the squad a white 「下一位伙伴」 card (opens the album), then the
+        // level line 「第 N 关」 and the big blue 开始游戏 capsule at the bottom.
         void DrawWaveStart(PixelSurface s)
         {
             int level = NextBubbleLevel() + 1;
             if (level != homeLabelLevel) { homeLabelLevel = level; homeLabel = "第 " + level + " 关"; }
-            Rect r = HomeWaveRect(105f, 736f, 330f, 110f);
+            Rect label = HomeWaveRect(170f, 862f, 200f, 30f);
+            float lk = label.height / 30f;
+            GardenBarArt.Text(s, homeLabel, label.center.x, label.y, 22f * lk, true, Hex(0x1D3A7A));
+            Rect r = HomeWaveRect(100f, 896f, 340f, 96f);
             HitBox(s, 800, r.x, r.y, r.width, r.height);
-            float k = r.width / 330f * (1f - PressPulse(800) * .04f);
-            float w = 330f * k, h = 110f * k, x = r.center.x - w * .5f, y = r.center.y - h * .5f;
-            Asset9(s, "plants/win/button-next", x, y, w, h, 64f, 0f, h * 64f / 126f, 0f, Color.white);
-            Asset(s, "plants/home/level-plate", r.center.x - 70f * k, y + 67f * k, 140f * k, 30f * k, Color.white);
-            GardenBarArt.TextOutline(s, "开始游戏", r.center.x, y + 13f * k, 42f * k, Color.white, Hex(0xA55410), 2.5f * k);
-            GardenBarArt.TextOutline(s, homeLabel, r.center.x, y + 68f * k, 24f * k, Color.white, Hex(0xA55410), 1.5f * k);
+            float k = r.width / 340f * (1f - PressPulse(800) * .04f);
+            float w = 340f * k, h = 96f * k, x = r.center.x - w * .5f, y = r.center.y - h * .5f;
+            if (!Asset9(s, "plants/uiref/button-blue", x, y, w, h, 52f, 0f, h * .5f, 0f, Color.white))
+                Asset9(s, "plants/win/button-next", x, y, w, h, 64f, 0f, h * 64f / 126f, 0f, Color.white);
+            float ts = 36f * k;   // 2026-10-30: clean white words like the reference
+            ButtonWord(s, "开始游戏", r.center.x - GardenBarArt.TextWidth("开始游戏", ts) * .5f, y + h * .46f, ts, Color.white, true);
         }
         void DrawWavePartner(PixelSurface s, float k, float ox, float oy)
         {
@@ -109,25 +128,33 @@ namespace Flightbeat.Game
             CodexEntry next = default; bool found = false;
             foreach (var e in Codex) { if (CodexObtained(e)) continue; next = e; found = true; break; }
             if (!found) next = new CodexEntry { name = "", tint = Hex(0x2982F4), level = current };
-            int left = Mathf.Max(1, next.level - current + 1);
             if (homeNextLevel != current || homeNextName != next.name)
             {
                 homeNextLevel = current; homeNextName = next.name;
-                homeNextLine = !found ? "小队伙伴已集齐" : left == 1 ? "通关这一关就来啦！" : "再通关 " + left + " 关就来啦！";
+                homeNextLine = !found ? "小队伙伴已集齐" : "通关第 " + next.level + " 关解锁";
             }
-            Rect row = HomeWaveRect(86f, 865f, 427f, 140f);
-            HitBox(s, CodexOpenAction, row.x, row.y, row.width, row.height);
-            float gx = ox + 168f * k, gy = oy + (935f + Mathf.Sin(ui * 1.8f) * 2f) * k;
-            float d = 142f * k;
-            SoapBubble(s, new Vector2(gx, gy), d, Color.white, .28f, 7);
+            Rect card = HomeWaveRect(66f, 762f, 408f, 84f);
+            HitBox(s, CodexOpenAction, card.x, card.y, card.width, card.height);
+            float press = 1f - PressPulse(CodexOpenAction) * .03f, cw = card.width * press, ch = card.height * press;
+            float cx0 = card.center.x - cw * .5f, cy0 = card.center.y - ch * .5f, rr = 20f * k;
+            WinRoundRect(s, cx0 + 1f, cy0 + 4f * k, cw, ch, rr, new Color(.12f, .25f, .55f, .1f));
+            WinRoundRect(s, cx0 - 2f * k, cy0 - 2f * k, cw + 4f * k, ch + 4f * k, rr + 2f * k, Hex(0xBFD6F7));
+            WinRoundRect(s, cx0, cy0, cw, ch, rr, Color.white);
+            // The partner itself in a soft bubble at the left.
+            float gx = cx0 + 52f * k, gy = card.center.y + Mathf.Sin(ui * 1.8f) * 1.5f * k;
+            s.Glow(gx, gy, 74f * k, 74f * k, new Color(.6f, .82f, 1f, .45f), 0f);
             bool before = GardenSkin.Celebrate; GardenSkin.Celebrate = true;
-            Creature(s, next.tint, gx, gy + 53f * k, 135f * k, 0, "", 0f, 12f, false, false, .03f, 1.3f);
+            Creature(s, next.tint, gx, gy + 30f * k, 74f * k, 0, "", 0f, 12f, false, false, .03f, 1.3f);
             GardenSkin.Celebrate = before;
-            SoapBubble(s, new Vector2(gx, gy), d, Color.white, .12f, 7);
-            float tx = ox + 255f * k;
-            GardenBarArt.TextOutline(s, found ? "新伙伴" : "全员集结", tx, oy + 902f * k, 22f * k, Color.white, Outline, 1.8f * k, false);
-            if (found) GardenBarArt.TextOutline(s, homeNextName, tx + 73f * k, oy + 895f * k, 29f * k, Gold, Outline, 2f * k, false);
-            GardenBarArt.TextOutline(s, homeNextLine, tx, oy + 945f * k, 21f * k, Color.white, Outline, 1.6f * k, false);
+            float tx = cx0 + 104f * k;
+            string head = found ? "下一位伙伴" : "全员集结";
+            GardenBarArt.Text(s, head, tx, card.center.y - 30f * k, 22f * k, false, Hex(0x1D3A7A));
+            GardenBarArt.Text(s, head, tx + .7f, card.center.y - 30f * k, 22f * k, false, Hex(0x1D3A7A));
+            GardenBarArt.Text(s, homeNextLine, tx, card.center.y + 3f * k, 17f * k, false, Hex(0x5A6B8C));
+            // chevron
+            float vx = cx0 + cw - 30f * k, vy = card.center.y;
+            s.Segment(new Vector2(vx - 5f * k, vy - 8f * k), new Vector2(vx + 3f * k, vy), 3f * k, Hex(0x2F7BFF));
+            s.Segment(new Vector2(vx + 3f * k, vy), new Vector2(vx - 5f * k, vy + 8f * k), 3f * k, Hex(0x2F7BFF));
         }
     }
 }

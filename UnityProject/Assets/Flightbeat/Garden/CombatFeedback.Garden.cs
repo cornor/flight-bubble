@@ -650,6 +650,28 @@ namespace Flightbeat.Feedback
                 bool revive = wave.kind == RepelKind.Revive;
                 float y = (revive ? 574 : FrontScreenY) - t * (revive ? 260 : 50);
                 float h = revive ? 180 : 60;
+                // 2026-10-30 (调整 15, user: 重点看泡泡阵下沿的效果): the painted foam band (N11) clings to the bottom edge of the
+                // bubble field (following it as it is pushed up), with sparkles and small rainbow bubbles along it,
+                // instead of a wave sweeping up the whole board.
+                if (revive && GardenSkin.Has("plants/uiref/revive-wave"))
+                {
+                    float edge = FrontScreenY + 8f, k = Mathf.Clamp01(wave.age / .2f) * Mathf.Clamp01((1f - t) / .35f);
+                    float bob = Mathf.Sin(wave.age * 5f) * 3f;
+                    s.Glow(270, edge, 640, 120, new Color(.55f, .95f, 1f, .45f * k), 0f);
+                    GardenSkin.Asset(s, "plants/uiref/revive-wave", -20, edge - 80f + bob, 580, 160f, new Color(1, 1, 1, k));
+                    for (int i = 0; i < 18; i++)
+                    {
+                        float ph = (wave.age * (.6f + (i % 5) * .12f) + i * .37f) % 1f, x = 20f + (i * 97 % 500), yy = edge - 10f - ph * 46f + Mathf.Sin(i * 1.7f) * 8f;
+                        float tw = Mathf.Sin(ph * Mathf.PI) * k;
+                        if (i % 3 == 0) { s.Glow(x, yy, 22f, 3.5f, new Color(1, 1, 1, tw), 0f); s.Glow(x, yy, 3.5f, 22f, new Color(1, 1, 1, tw), 0f); }
+                        else
+                        {
+                            Color bc = Color.HSVToRGB((i * .13f) % 1f, .45f, 1f); bc.a = .8f * tw;
+                            GardenSkin.Shot(s, bc, new Vector2(x, yy), 7f + (i % 4) * 2f, tw);
+                        }
+                    }
+                }
+                else
                 GardenFx.Draw(s, revive ? "revive-wave" : "repel-gust", new Vector2(270, y - h * .5f), 540, h,
                     new Color(1, 1, 1, (revive ? .85f : .65f) * (1 - t)));
             }

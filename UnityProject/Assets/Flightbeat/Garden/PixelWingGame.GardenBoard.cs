@@ -100,8 +100,13 @@ namespace Flightbeat.Game
         {
             s.MapLayout = false;
             float top = PlushLayout.Y(114f) - 10f, bottom = PlushLayout.Y(562f) + 10f;
-            // 2026-10-29 (light theme T4): white frosted frame, 36 px stored corners drawn at 24.
-            Asset9(s, "scene/plush-board", 2f, top, 536f, bottom - top, 36f, 36f, 24f, 24f, Color.white);
+            // 2026-10-31 00:05 (user: 泡泡托盘的颜色照参考图): a recessed blue glass tray, darker than the page - a thin
+            // light lip, a darker inner edge, then the fill from #ACC8F3 at the top to #B5D2F9 at the bottom (measured
+            // off the reference). Was the white frosted frame (scene/plush-board, light theme T4).
+            float bx = 4f, bw = 532f, bh = bottom - top;
+            s.GardenRoundedRect(bx - 3f, top - 3f, bw + 6f, bh + 6f, 23f, Hex(0xE2EFFE), Hex(0xD9EAFD));
+            s.GardenRoundedRect(bx, top, bw, bh, 20f, Hex(0xA2BEEC), Hex(0xAAC6F2));
+            s.GardenRoundedRect(bx + 1.5f, top + 1.5f, bw - 3f, bh - 3f, 18.5f, Hex(0xACC8F3), Hex(0xB5D2F9));
             s.MapLayout = true;
             for (int i = 0; i < gardenBeadDraws.Count; i++) {
                 GardenBeadDraw bead = gardenBeadDraws[i];

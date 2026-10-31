@@ -40,8 +40,9 @@ namespace Flightbeat.Game
                 float ra = Clamp01((t - .35f) / .2f) * fade;
                 ReviveTile(s, 186f, oy + 500f, false, ra);
                 ReviveTile(s, 362f, oy + 500f, true, ra);
-                ResultSubtitle(s, "清除前排泡泡", oy + 586f, 21f, Color.white, ra);
-                ResultSubtitle(s, "泡泡上推，继续挑战", oy + 618f, 21f, Color.white, ra);
+                // 2026-10-31: regular weight, soft white (was bold pure white, competing with the tiles and buttons).
+                GardenBarArt.Text(s, "清除前排泡泡", 270f, oy + 586f - 21f * .55f, 21f, true, A(Hex(0xE4EAF3), ra));
+                GardenBarArt.Text(s, "泡泡上推，继续挑战", 270f, oy + 618f - 21f * .55f, 21f, true, A(Hex(0xE4EAF3), ra));
                 ResultPill(s, 30, 115f, oy + 667f, 315f, 76f, "red", "看视频复活", Has("plants/uiref/icon-video") ? "plants/uiref/icon-video" : "plants/dialog/video", Has("plants/uiref/button-red") ? (Color?)null : new Color(1f, .45f, .42f));
                 ResultPill(s, 32, 80f, oy + 770f, 185f, 60f, "blue", "返回主页");
                 ResultPill(s, 33, 280f, oy + 770f, 183f, 60f, "white", "重新挑战");
@@ -51,22 +52,24 @@ namespace Flightbeat.Game
         float reviveShownAt = -1f;
         Flightbeat.Model.Battle reviveBattle;
         // One reward on a dark rounded tile: the open-lock pad (+1 出战位) or the rainbow bomb (+1 泡泡炸弹), 「+1」 beside it.
+        // 2026-10-31 00:11 (user, after the reference): dark frosted glass - only a shade lighter than the page shade and
+        // hiding what is behind it - with a thin light rim all round (was a milky tile with a white bar along the top:
+        // its full-size rim fill showed through the translucent face). Bigger icons, the lock on a lilac pad.
         void ReviveTile(PixelSurface s, float cx, float cy, bool bomb, float a)
         {
             if (a <= .01f) return;
             const float w = 157f, h = 95f;
-            WinRoundRect(s, cx - w * .5f - 1.5f, cy - h * .5f - 1.5f, w + 3f, h + 3f, 19f, A(new Color(1f, 1f, 1f, .28f), a));
-            WinRoundRect(s, cx - w * .5f, cy - h * .5f, w, h, 18f, A(new Color(.62f, .7f, .9f, .16f), a));
-            s.Rect(cx - w * .5f + 16f, cy - h * .5f + 2f, w - 32f, 1.5f, A(new Color(1f, 1f, 1f, .25f), a));
-            float ix = cx - 26f;
-            if (bomb) GardenBars.Icon(s, "bomb", ix, cy, 54f, a);
+            WinRoundRect(s, cx - w * .5f, cy - h * .5f, w, h, 18f, A(new Color(.37f, .40f, .46f, .96f), a));   // rim #5E6573
+            WinRoundRect(s, cx - w * .5f + 2f, cy - h * .5f + 2f, w - 4f, h - 4f, 16f, A(new Color(.245f, .28f, .345f, .96f), a));   // face #3E4758
+            float ix = cx - 30f;
+            if (bomb) GardenBars.Icon(s, "bomb", ix, cy, 62f, a);
             else
             {
-                Asset(s, "scene/plot", ix - 30f, cy + 6f, 60f, 24f, A(Color.white, a));
-                GardenBars.Icon(s, "unlock", ix, cy - 8f, 38f, a);
+                Asset(s, "scene/plot", ix - 35f, cy + 8f, 70f, 28f, A(new Color(.87f, .69f, .95f, 1f), a));
+                GardenBars.Icon(s, "unlock", ix, cy - 6f, 56f, a);
             }
-            GardenBarArt.Text(s, "+1", cx + 22f, cy - 17f, 30f, false, A(Color.white, a));
-            GardenBarArt.Text(s, "+1", cx + 22.8f, cy - 17f, 30f, false, A(Color.white, a));
+            GardenBarArt.Text(s, "+1", cx + 12f, cy - 18f, 32f, false, A(Color.white, a));
+            GardenBarArt.Text(s, "+1", cx + 12.8f, cy - 18f, 32f, false, A(Color.white, a));
         }
 
         static void ReviveEffectHint(PixelSurface s, float y)

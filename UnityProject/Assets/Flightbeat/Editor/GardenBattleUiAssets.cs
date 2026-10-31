@@ -212,7 +212,10 @@ namespace Flightbeat.Editor
             var shade = Node("Progress track shade", band, 199, 23.5f, GardenBattlePage.ProgressWidth - 18f, 2f);
             var shadeImage = shade.gameObject.AddComponent<Image>(); shadeImage.raycastTarget = false;
             shadeImage.color = new Color(.09f, .2f, .38f, 0f);
-            Image fill = Art("Progress fill", band, "scene/progress-fill", 201, 20, GardenBattlePage.ProgressWidth * .35f, 22, true, 16, 16, 10);
+            // 2026-10-31 10:22 (user: 有进度的时候位置没有摆对): the fill lies inside the groove of the light-theme track
+            // (its channel is 7.5 px in from each end and 5-15.5 px down the 22 px track), a green capsule with round ends.
+            Image fill = Art("Progress fill", band, "scene/progress-fill", 201f + GardenBattlePage.ProgressInset, 20f + 4.9f,
+                GardenBattlePage.ProgressFillWidth * .35f, GardenBattlePage.ProgressFillHeight, true, 16, 16, GardenBattlePage.ProgressFillHeight * .5f);
             fill.color = Color.white;   // 2026-10-21: cyan-blue as in the design; mint stays for success hints
             // A soft spark rides the head of the fill (moved by PixelWingGame.GardenUi).
             Image spark = Art("Progress spark", band, "fx/glow", 190, 15, 30, 32);

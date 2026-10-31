@@ -91,10 +91,10 @@ namespace Flightbeat.Game
                 SoapBubble(s, at, size, Color.white, Mathf.Clamp01((2.5f - age) / .3f) * .8f, i);
             }
             DrawWaveStart(s);
-            HomeIconButton(s, 801, ScreenLayout.Left + 20f, ScreenLayout.Top + 16f, "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 60f);
+            HomeIconButton(s, 801, ScreenLayout.Left + 24f, ScreenLayout.Top + 18f, "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 48f);
             // 2026-10-30 (界面优化 4, after the reference): 伙伴图鉴 in the top-right corner, opposite 设置.
             // 2026-10-30 16:10 (调整 4): exactly where the reference has it - at the right edge, level with the bubble.
-            HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 80f, Mathf.Max(ScreenLayout.Top + 96f, HomeWaveRect(0f, 296f, 0f, 0f).y), "plants/home/btn-codex", "伙伴图鉴", Hex(0xFFB347), 60f);
+            HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 70f, Mathf.Max(ScreenLayout.Top + 96f, HomeWaveRect(0f, 300f, 0f, 0f).y), "plants/home/btn-codex", "伙伴图鉴", Hex(0xFFB347), 48f);
             DrawWavePartner(s, k, ox, oy);
             s.MapLayout = true;
             DrawLevelPick(s);
@@ -132,29 +132,43 @@ namespace Flightbeat.Game
             {
                 homeNextLevel = current; homeNextName = next.name;
                 homeNextLine = !found ? "小队伙伴已集齐" : "通关第 " + next.level + " 关解锁";
+                homeNextMid = "第 " + next.level + " 关";
             }
             Rect card = HomeWaveRect(66f, 762f, 408f, 84f);
             HitBox(s, CodexOpenAction, card.x, card.y, card.width, card.height);
             float press = 1f - PressPulse(CodexOpenAction) * .03f, cw = card.width * press, ch = card.height * press;
             float cx0 = card.center.x - cw * .5f, cy0 = card.center.y - ch * .5f, rr = 20f * k;
-            WinRoundRect(s, cx0 + 1f, cy0 + 4f * k, cw, ch, rr, new Color(.12f, .25f, .55f, .1f));
-            WinRoundRect(s, cx0 - 2f * k, cy0 - 2f * k, cw + 4f * k, ch + 4f * k, rr + 2f * k, Hex(0xBFD6F7));
+            // 2026-10-31 11:49 (user: 字的颜色和描述、边框没有依照示意图), measured off the reference: a 2 px pale-blue rim
+            // (#C7DEFA) with only a whisper of shadow, the partner in a round pale-cyan badge, the heading deep navy
+            // (#16285A), the line under it grey (#6B7589) with 「第 N 关」 in bright blue (#1A6DF8, bolder), and a
+            // thicker blue chevron.
+            WinRoundRect(s, cx0, cy0 + 3f * k, cw, ch, rr, new Color(.12f, .25f, .55f, .06f));
+            WinRoundRect(s, cx0 - 2f * k, cy0 - 2f * k, cw + 4f * k, ch + 4f * k, rr + 2f * k, Hex(0xC7DEFA));
             WinRoundRect(s, cx0, cy0, cw, ch, rr, Color.white);
-            // The partner itself in a soft bubble at the left.
-            float gx = cx0 + 52f * k, gy = card.center.y + Mathf.Sin(ui * 1.8f) * 1.5f * k;
-            s.Glow(gx, gy, 74f * k, 74f * k, new Color(.6f, .82f, 1f, .45f), 0f);
+            float gx = cx0 + 52f * k, gy = card.center.y, br = 31f * k;
+            s.GardenRoundedRect(gx - br, gy - br, br * 2f, br * 2f, br, Hex(0xE8F7FF), Hex(0xCBEBFB));
             bool before = GardenSkin.Celebrate; GardenSkin.Celebrate = true;
-            Creature(s, next.tint, gx, gy + 30f * k, 74f * k, 0, "", 0f, 12f, false, false, .03f, 1.3f);
+            Creature(s, next.tint, gx, gy + 27f * k + Mathf.Sin(ui * 1.8f) * 1.2f * k, 62f * k, 0, "", 0f, 12f, false, false, .03f, 1.3f);
             GardenSkin.Celebrate = before;
             float tx = cx0 + 104f * k;
             string head = found ? "下一位伙伴" : "全员集结";
-            GardenBarArt.Text(s, head, tx, card.center.y - 30f * k, 22f * k, false, Hex(0x1D3A7A));
-            GardenBarArt.Text(s, head, tx + .7f, card.center.y - 30f * k, 22f * k, false, Hex(0x1D3A7A));
-            GardenBarArt.Text(s, homeNextLine, tx, card.center.y + 3f * k, 17f * k, false, Hex(0x5A6B8C));
-            // chevron
+            Color navy = Hex(0x16285A), grey = Hex(0x6B7589), blue = Hex(0x1A6DF8);
+            GardenBarArt.Text(s, head, tx, card.center.y - 30f * k, 22f * k, false, navy);
+            GardenBarArt.Text(s, head, tx + .7f, card.center.y - 30f * k, 22f * k, false, navy);
+            float ly = card.center.y + 3f * k, ls = 17f * k;
+            if (!found) GardenBarArt.Text(s, homeNextLine, tx, ly, ls, false, grey);
+            else
+            {
+                string mid = homeNextMid;
+                float x = tx;
+                GardenBarArt.Text(s, "通关", x, ly, ls, false, grey); x += GardenBarArt.TextWidth("通关", ls) + 3f * k;
+                GardenBarArt.Text(s, mid, x, ly, ls, false, blue); GardenBarArt.Text(s, mid, x + .7f, ly, ls, false, blue);
+                x += GardenBarArt.TextWidth(mid, ls) + 3f * k;
+                GardenBarArt.Text(s, "解锁", x, ly, ls, false, grey);
+            }
             float vx = cx0 + cw - 30f * k, vy = card.center.y;
-            s.Segment(new Vector2(vx - 5f * k, vy - 8f * k), new Vector2(vx + 3f * k, vy), 3f * k, Hex(0x2F7BFF));
-            s.Segment(new Vector2(vx + 3f * k, vy), new Vector2(vx - 5f * k, vy + 8f * k), 3f * k, Hex(0x2F7BFF));
+            s.Segment(new Vector2(vx - 5f * k, vy - 8f * k), new Vector2(vx + 3f * k, vy), 4f * k, blue);
+            s.Segment(new Vector2(vx + 3f * k, vy), new Vector2(vx - 5f * k, vy + 8f * k), 4f * k, blue);
         }
     }
 }

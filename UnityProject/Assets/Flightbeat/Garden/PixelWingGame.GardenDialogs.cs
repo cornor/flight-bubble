@@ -75,13 +75,11 @@ namespace Flightbeat.Game
             s.Rect(cx - tw * .5f, y + size * 1.12f, tw, 1.2f, new Color(ink.r, ink.g, ink.b, .55f));
         }
 
-        // 21:07 (user: some words were not crisp): small body text gets a second pass .6 px to the right, like the key
-        // words in the dialogue bubble, so the thin strokes of the rounded type read solid on the white card.
+        // The rounded atlas already includes its optical weight; small copy needs open counters, not offset overdraw.
         void DialogText(PixelSurface s, string text, float cx, float y, float size, Color? ink = null)
         {
             Color c = ink ?? GardenBars.Navy;
             GardenBarArt.Text(s, text, cx, y, size, true, c);
-            if (size <= 20f) GardenBarArt.Text(s, text, cx + .6f, y, size, true, c);
         }
 
         // ---- 连胜中断 (ids 511 keep going / 510 break the streak)

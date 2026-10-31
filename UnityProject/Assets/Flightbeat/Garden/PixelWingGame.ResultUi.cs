@@ -16,20 +16,19 @@ namespace Flightbeat.Game
         static readonly Color ResultNavy = Hex(0x1D3A7A), ResultGold = Hex(0xFFD45C), ResultSub = Hex(0xDCE8FF);
 
         // Headline: white rounded letters with a navy edge and a soft dark glow, popping in over .35 s.
-        void ResultTitle(PixelSurface s, string text, float cy, float size, float t, float a)
+        void ResultTitle(PixelSurface s, string text, float cy, float size, float t, float a, Color? edge = null)
         {
             float p = OutBack(Clamp01(t / .35f), 2.2f);
             if (p <= .01f) return;
             float sz = size * p;
-            sz = Mathf.Min(sz, 500f / Mathf.Max(.01f, GardenBarArt.TextWidth(text, 1f)));
-            s.Glow(270f, cy, GardenBarArt.TextWidth(text, sz) + 120f, sz + 50f, new Color(.02f, .05f, .16f, .45f * a), 0f);
-            GardenBarArt.TextOutline(s, text, 270f, cy - sz * .55f, sz, A(Color.white, a), A(ResultNavy, a), sz * .075f);
+            sz = Mathf.Min(sz, 500f / Mathf.Max(.01f, GardenTitleArt.TextWidth(text, 1f)));
+            s.Glow(270f, cy, GardenTitleArt.TextWidth(text, sz) + 120f, sz + 50f, new Color(.02f, .05f, .16f, .28f * a), 0f);
+            GardenTitleArt.TextOutline(s, text, 270f, cy - sz * .55f, sz, A(Color.white, a), A(edge ?? ResultNavy, a), sz * .042f);
         }
         void ResultSubtitle(PixelSurface s, string text, float cy, float size, Color ink, float a)
         {
             if (a <= .01f) return;
             GardenBarArt.Text(s, text, 270f, cy - size * .55f, size, true, A(ink, a));
-            GardenBarArt.Text(s, text, 270.7f, cy - size * .55f, size, true, A(ink, a));
         }
         // A light-theme capsule button drawn on the surface (the revive page; win / lose use the prefab ones): the art
         // 3-sliced with fully round ends, an optional icon slot before the word.
@@ -54,7 +53,7 @@ namespace Flightbeat.Game
             if (icon != null) Asset(s, icon, left, cy - mark * .5f, mark, mark, light ? ink : Color.white);
             ButtonWord(s, word, left + mark + gap, cy, size, ink, !light);
         }
-        // Bold rounded word (drawn twice .7 px apart) with an optional soft dark shadow 1.5 px below.
+        // The atlas is already bold; one ink pass avoids closing counters with offset overdraw.
         static void ButtonWord(PixelSurface s, string word, float left, float cy, float size, Color ink, bool shadow)
         {
             float y = cy - size * .55f;
@@ -62,10 +61,8 @@ namespace Flightbeat.Game
             {
                 Color sh = new Color(0f, .05f, .2f, .22f * ink.a);
                 GardenBarArt.Text(s, word, left, y + 1.6f, size, false, sh);
-                GardenBarArt.Text(s, word, left + .7f, y + 1.6f, size, false, sh);
             }
             GardenBarArt.Text(s, word, left, y, size, false, ink);
-            GardenBarArt.Text(s, word, left + .7f, y, size, false, ink);
         }
         // Night-blue stat card with a gold rim: 最高连击 | 通关用时, icon, small label and the big value per half.
         void ResultStats(PixelSurface s, float cy, float a, string combo, string time)
@@ -81,16 +78,15 @@ namespace Flightbeat.Game
             {
                 if (flame) GardenBars.Icon(s, "flame", left + 20f, cy, 44f, a);
                 else if (Has("plants/win/icon-clock")) Asset(s, "plants/win/icon-clock", left, cy - 20f, 40f, 40f, A(Color.white, a));
-                GardenBarArt.Text(s, label, left + 54f, cy - 32f, 16f, false, A(ResultSub, a));
+                GardenBarArt.Text(s, label, left + 54f, cy - 32f, 18f, false, A(ResultSub, a));
                 float sv = Mathf.Min(36f, 130f / Mathf.Max(.01f, GardenBarArt.TextWidth(value, 1f)));
                 GardenBarArt.Text(s, value, left + 54f, cy - 8f, sv, false, A(ResultGold, a));
-                GardenBarArt.Text(s, value, left + 54.8f, cy - 8f, sv, false, A(ResultGold, a));
             }
         }
         // Small rounded chip (已解锁 / 本关登场 / N 关后加入) under a member.
         void ResultChip(PixelSurface s, string text, float cx, float cy, float a)
         {
-            const float size = 15f, h = 28f;
+            const float size = 17f, h = 30f;
             float w = Mathf.Max(95f, GardenBarArt.TextWidth(text, size) + 26f);
             WinRoundRect(s, cx - w * .5f - 1f, cy - h * .5f - 1f, w + 2f, h + 2f, h * .5f + 1f, A(new Color(1f, 1f, 1f, .22f), a));
             WinRoundRect(s, cx - w * .5f, cy - h * .5f, w, h, h * .5f, A(new Color(.12f, .17f, .36f, .92f), a));

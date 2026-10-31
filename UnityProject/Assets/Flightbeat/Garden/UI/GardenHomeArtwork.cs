@@ -16,7 +16,7 @@ namespace Flightbeat.Garden.UI
         static readonly string[] Poses = { "idle", "attack", "blink" };
         readonly RawImage[] portraits = new RawImage[5], shadows = new RawImage[5];
         readonly GardenSkin.Slot[,] frames = new GardenSkin.Slot[4, 3];
-        RawImage title, frog, chick;
+        RawImage title, frog, chick, rings;
         Texture2D creatures, atlas, bearIdle, bearBlink;
         GardenSkin.Slot halo;
         bool initialized;
@@ -39,6 +39,8 @@ namespace Flightbeat.Garden.UI
             var lookup = new Dictionary<string, GardenSkin.Slot>();
             foreach (var slot in GardenSkin.Data.slots) lookup[slot.id] = slot;
             lookup.TryGetValue("home/halo", out halo);
+            // 2026-10-30 23:26 (user: 首页背景的圆圈, like the partner game): crisp pale-blue rings behind everything.
+            rings = Layer("Rings"); rings.texture = Resources.Load<Texture2D>("GardenR1/home-wave-rings"); rings.enabled = rings.texture;
             title = Layer("Cream title and subtitle");
             title.texture = Resources.Load<Texture2D>("GardenR1/home-wave-title");
             // 2026-10-30 16:10 (调整 4, 方案B): the frog and chick layers of the redrawn group, behind the bear.
@@ -85,6 +87,7 @@ namespace Flightbeat.Garden.UI
             bool wide = tt && tt.width >= tt.height * 2.6f;
             Place(title, tt && tt.width < tt.height * 2f ? PixelWingGame.HomeWaveRect(70f, 268f - th, 400f, th)
                 : wide ? PixelWingGame.HomeWaveRect(95f, 88f, 360f, 360f * tt.height / tt.width) : PixelWingGame.HomeWaveRect(90f, 94f, 385f, 139f));
+            if (rings.enabled) Place(rings, PixelWingGame.HomeWaveRect(270f - 320f, 465f - 320f, 640f, 640f));
             bool group = PixelWingGame.HomeGroupArt;
             if (group)
             {

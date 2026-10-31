@@ -1,0 +1,222 @@
+{
+  "batch": "ReviveSuccess-20261031",
+  "date": "2026-10-31",
+  "generator": "built-in image_gen.imagegen",
+  "generation_count": 5,
+  "generation_counts": {
+    "V1": 1,
+    "V2": 1,
+    "V3": 2,
+    "V4": 1
+  },
+  "delivery_count": 4,
+  "status": "delivered",
+  "requirements": "README.md",
+  "reference_policy": {
+    "authoritative": "references/revive-success-ref.png",
+    "title_and_arrow": "references/revive-title-arrows-ref-zoom.png",
+    "ribbon": "references/revive-ribbon-ref-zoom.png",
+    "comparison_only_not_generation_input": "references/revive-success-current.png"
+  },
+  "attempts": [
+    {
+      "id": "V1",
+      "attempt": 1,
+      "target": "delivery/title.png",
+      "size": [
+        720,
+        200
+      ],
+      "refs": [
+        "references/revive-title-arrows-ref-zoom.png"
+      ],
+      "prompt": "Use case: background-extraction and faithful high-resolution reconstruction. Edit the supplied reference into ONLY the exact Chinese title wordmark on genuine alpha transparency. Text verbatim: 复活成功！ — exactly five characters in this order: 复 / 活 / 成 / 功 / ！. Four Hanzi plus one exclamation mark. Faithfully match the reference typography: chunky round bold Chinese glyphs, solid WHITE front faces, thick vivid blue outline approximately #2B6BE8, a deeper blue #1743A6 extrusion immediately below the outline for light 3D thickness. Preserve the compact slightly playful dynamic word shape, readable intact strokes. Do not change characters, duplicate words, use traditional characters, or drop the exclamation dot. This is one horizontal row, destination 720x200; wordmark fills most of the wide canvas with a small clear margin, no edge clipping. Keep the white letter faces mostly flat and clean as reference, no metallic shine, gold or extra ornamental bevel. Remove ALL screenshot background, both arrows, every sparkle/star/glow decoration, and every colored bubble. ONLY the five-character white/blue wordmark. No stars, no sparkles, no background, no watermark. Static single frame, clean antialiased alpha edges.",
+      "generator": "built-in image_gen.imagegen",
+      "transparent_background": true,
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-70485292-ed9f-4c3a-a3f1-6792d8649416.png",
+      "master": "masters/V1-v01.png",
+      "selected": true,
+      "master_sha256": "f4c7d5edc7ae8f9c65289081db87cefdade0fe934a10b5f5838fe6a6af62ec72"
+    },
+    {
+      "id": "V2",
+      "attempt": 1,
+      "target": "delivery/arrow.png",
+      "size": [
+        160,
+        320
+      ],
+      "refs": [
+        "references/revive-title-arrows-ref-zoom.png"
+      ],
+      "prompt": "Use case: precise-object-edit and background-extraction. Extract and faithfully reconstruct ONLY the LEFT upward pushing arrow from the supplied reference, as a high-resolution single transparent game-effect sprite. Match the actual left arrow shape, not the right mirror. Tall narrow composition destined for 160x320. At the upper right of this sprite is ONE SOLID filled triangular arrowhead pointing UP (very slight rightward lean), pale cyan to white, NOT a hollow chevron or an outlined arrow. From its base a continuous translucent ribbon tail curves gently DOWN AND LEFT. The tail becomes WIDER, MORE DIFFUSE and MORE TRANSPARENT as it descends toward the lower-left, fading completely away. A slim brighter WHITE luminous core runs through the middle, following the same graceful curve; very soft cyan glow around it. Upper tip relatively bright, lower tail translucent and soft; no hard solid block at bottom. Copy the reference restrained light cyan/white glow and silhouette. Entire arrowhead visible with safe margins, tail fading to transparent before edges. Remove title text, stars, sparkles, the other arrow, bubbles and blue screenshot background. Only ONE arrow. No particles, no text, no extra arrows, no floor. Genuine alpha transparency, preserving semitransparent light ribbon and glow. Static single frame.",
+      "generator": "built-in image_gen.imagegen",
+      "transparent_background": true,
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-3f4e5888-7847-4ddc-8c18-da55ae366794.png",
+      "master": "masters/V2-v01.png",
+      "selected": true,
+      "master_sha256": "069ed9049b0eaec70e9c9f41a135d1046b4a8754fe0cc4ac72dcc5e44dddd17c"
+    },
+    {
+      "id": "V3",
+      "attempt": 1,
+      "target": "delivery/ribbon.png",
+      "size": [
+        1080,
+        200
+      ],
+      "refs": [
+        "references/revive-ribbon-ref-zoom.png"
+      ],
+      "prompt": "Use case: precise-object-edit / background-extraction. Faithfully reconstruct ONLY the horizontal clearing-effect ribbon from the supplied reference as a transparent game VFX texture strip, final intended aspect 1080:200 (5.4:1). The effect is a flowing wavy GOLD-WHITE luminous band with exactly TWO thin bright filaments weaving gently together. Follow the reference's fine luminous flowing lines rather than a solid opaque banner. Around the lines are many TINY delicate transparent white foam bubble rings, light wisps and small white foam specks, plus a SPARSE scattering of small orange, yellow and blue round bubbles, and a few small GOLDEN FOUR-POINT sparkles. Keep the colorful bubbles small and secondary; no large balls. Subtle cyan light immediately beneath the gold-white glow as seen in reference. The entire effect is a thin airy horizontal wave, soft top and bottom falloff into alpha transparency. IMPORTANT: this strip must TILE SEAMLESSLY LEFT TO RIGHT. Continue the wave, both filaments, color, glow and foam naturally through both image edges at EXACTLY matching vertical heights, tangent angles and opacity. One full periodic wave cycle across width. Do not fade out the left or right ends; the effect reaches both horizontal edges. Top and bottom are transparent with safe margins. Very wide composition; if the canvas has extra height, place this 5.4:1 strip centered vertically with empty transparent padding above and below. Remove the game board, rows of arranged background bubbles, tray border, text label, all words and UI. ONLY the isolated flowing light ribbon and attached tiny foam/bubble/sparkle particles, static one frame. Genuine alpha transparency, no black, white, blue or checkerboard background.",
+      "generator": "built-in image_gen.imagegen",
+      "transparent_background": true,
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-40ae63b7-ba33-48cf-8abb-173749e4b674.png",
+      "master": "masters/V3-v01.png",
+      "selected": false,
+      "master_sha256": "3f245dd4d6d1528bc24c97cfc1f4952d4f9709ccb5dbd0e1ed2125a2d93dc839"
+    },
+    {
+      "id": "V3",
+      "attempt": 2,
+      "target": "delivery/ribbon.png",
+      "size": [
+        1080,
+        200
+      ],
+      "refs": [
+        "masters/V3-v01.png"
+      ],
+      "prompt": "Precise targeted edit of this generated transparent ribbon texture. Keep exactly its material, gold-white brightness, two fine intertwining glowing filaments, subtle cyan underglow, tiny white foam ring bubbles, sparse small orange yellow blue bubbles and few gold four-point glints. Correct ONLY the large-scale wave path to make a SINGLE FULL PERIODIC CYCLE across the entire canvas width. Current image has two crests and one trough, which is NOT periodic at the edges. Required center path: at LEFT EDGE y=50 percent, moving UPWARD toward a single crest at x=25 percent,y=40 percent; cross middle height at x=50 percent; a single trough at x=75 percent,y=60 percent; arrive at RIGHT EDGE at y=50 percent moving UPWARD with exactly same slope as left edge. ONE crest and ONE trough total. Left and right endpoints must have matching color, thickness, brightness, alpha, vertical position and tangent, continuing without any corner or cut when tiled. Keep all surrounding particles within a slim band; whole visible effect approximately 5.4 times as wide as tall, with ample fully transparent padding above/below if necessary. Do not flatten the wave into a straight line, do not add a second crest. DO NOT fade horizontal ends. Preserve genuine alpha. No text, no board background, no arranged rows of bubbles. Static single-frame VFX strip.",
+      "generator": "built-in image_gen.imagegen",
+      "transparent_background": true,
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-a4151dca-c94f-4260-aa12-731bf643747b.png",
+      "master": "masters/V3-v02.png",
+      "selected": true,
+      "master_sha256": "b0f65f59961ee31df9b95a5f52c52a9d5892ce6f9200c0d052cb7ac3c28d12d2"
+    },
+    {
+      "id": "V4",
+      "attempt": 1,
+      "target": "delivery/sparkle.png",
+      "size": [
+        96,
+        96
+      ],
+      "refs": [
+        "references/revive-success-ref.png",
+        "references/revive-title-arrows-ref-zoom.png"
+      ],
+      "prompt": "Use case: background-extraction and precise-object-edit. Extract and faithfully reconstruct ONE of the small golden-white FOUR-POINT star glints around the revive title in the supplied reference. Only ONE sparkle, centered in a square transparent canvas, intended 96x96. Bright warm WHITE center, four slender elongated tapered points (up, down, left, right), slightly longer vertical points, concave curved sides between points, pale lemon GOLD near the tips. Very faint soft gold halo close around the star; halo gently fades completely to transparent well before canvas boundaries. Match reference soft delicate luminous game sparkle, rounded friendly lightweight 3D UI lighting. No five-point star, no eight-point star, no diagonal secondary rays, no extra small stars, no particles, no lens flare streaks. Remove ALL screen background, text, arrows, bubbles, characters and interface. Exactly one isolated golden-white four-point glint on genuine alpha transparency. Static single frame. Keep all tips safely inside canvas.",
+      "generator": "built-in image_gen.imagegen",
+      "transparent_background": true,
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-bd9e993a-d34f-4034-903c-0d936c6b082c.png",
+      "master": "masters/V4-v01.png",
+      "selected": true,
+      "master_sha256": "9beb430ef99955aecbe88855e1268090b18618e6b91d950220e0139f7a8aa6c9"
+    }
+  ],
+  "assets": [
+    {
+      "id": "V1",
+      "target": "delivery/title.png",
+      "size": [
+        720,
+        200
+      ],
+      "selected_master": "masters/V1-v01.png",
+      "export": {
+        "tool": "sips",
+        "crop": [
+          0,
+          60,
+          2172,
+          603
+        ],
+        "resize": [
+          720,
+          200
+        ]
+      },
+      "text_verbatim": "复活成功！",
+      "manual_character_check": [
+        "复",
+        "活",
+        "成",
+        "功",
+        "！"
+      ],
+      "notes": "白字、亮蓝描边、下方深蓝厚度；字标不含星光"
+    },
+    {
+      "id": "V2",
+      "target": "delivery/arrow.png",
+      "size": [
+        160,
+        320
+      ],
+      "selected_master": "masters/V2-v01.png",
+      "export": {
+        "tool": "sips",
+        "resize": [
+          160,
+          320
+        ]
+      },
+      "notes": "左箭头，实心头部；尾部下宽上窄、向左下弯、逐渐淡出；右箭头由程序镜像"
+    },
+    {
+      "id": "V3",
+      "target": "delivery/ribbon.png",
+      "size": [
+        1080,
+        200
+      ],
+      "selected_master": "masters/V3-v02.png",
+      "export": {
+        "tool": "sips + Swift periodic edge packing",
+        "crop": [
+          0,
+          170,
+          1995,
+          500
+        ],
+        "resize": [
+          1080,
+          200
+        ],
+        "periodic_boundary": "48 pixels per side, cosine-weighted premultiplied RGBA crossfade",
+        "script": "qa/pack_ribbon.swift"
+      },
+      "notes": "金白双光线、细碎透明白泡沫、少量橙黄蓝泡泡与金色四角星光；左右端连续，上下淡出"
+    },
+    {
+      "id": "V4",
+      "target": "delivery/sparkle.png",
+      "size": [
+        96,
+        96
+      ],
+      "selected_master": "masters/V4-v01.png",
+      "export": {
+        "tool": "sips",
+        "resize": [
+          96,
+          96
+        ]
+      },
+      "notes": "单颗金白四角星光、白亮芯、细长尖角和淡金色光晕"
+    }
+  ],
+  "qa": {
+    "backgrounds": [
+      "#B5D2F9",
+      "colored bubbles from supplied reference"
+    ],
+    "report": "qa/verification.json",
+    "wordmark_ocr": "qa/wordmark-ocr.json",
+    "all_assets_preview": "qa/all-assets-backgrounds.png",
+    "ribbon_three_tile_preview": "qa/ribbon-three-tiles.png",
+    "static_assembly_preview": "qa/overview.png"
+  }
+}

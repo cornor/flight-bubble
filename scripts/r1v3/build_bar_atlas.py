@@ -12,10 +12,29 @@ EXTRA_ART = ROOT / 'Art/R1/ui-bars-assets-20261020/remaining-v1'
 OUT = ROOT / 'UnityProject/Assets/Flightbeat/Resources/GardenR1'
 FONT = ROOT / 'Art/fonts/ChillRoundF/ChillRoundFBold.ttf'
 SIZE, FONT_SIZE, CELL = 2048, 48, 56
-# 2026-10-30: 96 -> 80 px (titles are drawn at 32 logical px, still 2.5x) so the 31 title glyphs keep fitting
-# while the main glyph block grows; they are packed into any free cells below it (see build()).
-TITLE_SIZE, TITLE_CELL, TITLE_STROKE = 80, 90, 1
-TITLES = ('设置', '暂停一下', '休息一下', '泡泡全打光啦！', '失败了', '泡泡碰到护栏啦', '复活', '连胜中断', '体力', '泡泡图鉴')
+# Result headings no longer magnify the 48 px body font. Keep the title font's light optical stroke.
+# Tight packing keeps the larger title glyphs in the existing texture without moving the glass or body glyphs.
+TITLE_SIZE, TITLE_STROKE = 90, 1
+TITLES = ('设置', '暂停一下', '休息一下', '泡泡全打光啦！', '失败了', '泡泡碰到护栏啦', '复活', '连胜中断', '体力', '泡泡图鉴',
+          '挑战失败', '太棒了，挑战成功！', '全部通关，太棒了！', '差一点就成功了！', '复活成功！')
+
+
+def subtract_rect(free, used):
+    """Split free rectangles around an occupied rectangle, discarding contained duplicates."""
+    x, y, w, h = used
+    remaining = []
+    for fx, fy, fw, fh in free:
+        if x >= fx + fw or x + w <= fx or y >= fy + fh or y + h <= fy:
+            remaining.append((fx, fy, fw, fh))
+            continue
+        if x > fx: remaining.append((fx, fy, x - fx, fh))
+        if x + w < fx + fw: remaining.append((x + w, fy, fx + fw - x - w, fh))
+        if y > fy: remaining.append((fx, fy, fw, y - fy))
+        if y + h < fy + fh: remaining.append((fx, y + h, fw, fy + fh - y - h))
+    return [a for i, a in enumerate(remaining) if not any(
+        i != j and a[0] >= b[0] and a[1] >= b[1] and a[0] + a[2] <= b[0] + b[2]
+        and a[1] + a[3] <= b[1] + b[3] and (a != b or j < i)
+        for j, b in enumerate(remaining))]
 
 
 def build(out=OUT):
@@ -89,32 +108,30 @@ def build(out=OUT):
         art.save(EXTRA_ART / (name + '.png'))
         slots.append(dict(id=name, atlas=2, x=dx, y=dy, w=art.width, h=height,
                           fw=art.width, fh=height, ox=0, oy=0))
-    # Title-only glyphs: rounded bold at 96 px. A 1 px optical stroke here is only ~0.33 logical px,
-    # half the previous atlas's expansion, so dense counters stay open while headings retain weight.
-    # Use the empty area beside/below the ring, keeping all existing UVs and the WebGL sampler count unchanged.
+    # Pack title ink bounds (plus 4 px sampling gutters) beside/below the glass assets.
     title_font = ImageFont.truetype(str(FONT), TITLE_SIZE)
     title_chars = sorted(set(''.join(TITLES)))
     title_glyphs = []
     title_missing = bytes(title_font.getmask('\uffff'))
-    # 2026-10-30: free TITLE_CELL cells below the glyph block that touch no slot (4 px margin), row by row.
-    def free_cell(cx, cy):
-        return cx + TITLE_CELL <= SIZE and cy + TITLE_CELL <= SIZE and all(
-            cx + TITLE_CELL + 4 <= s['x'] or cx - 4 >= s['x'] + s['w'] or cy + TITLE_CELL + 4 <= s['y'] or cy - 4 >= s['y'] + s['h']
-            for s in slots)
-    cells = [(cx, cy) for cy in range(art_top, SIZE - TITLE_CELL + 1, TITLE_CELL)
-             for cx in range(0, SIZE - TITLE_CELL + 1, TITLE_CELL) if free_cell(cx, cy)]
-    assert len(cells) >= len(title_chars), ('title glyphs do not fit', len(cells), len(title_chars), art_top)
-    for i, c in enumerate(title_chars):
+    free = [(0, art_top, SIZE, SIZE - art_top)]
+    for slot in slots:
+        free = subtract_rect(free, (slot['x'] - 4, slot['y'] - 4, slot['w'] + 8, slot['h'] + 8))
+    boxes = [(c, title_font.getbbox(c, anchor='ls', stroke_width=TITLE_STROKE)) for c in title_chars]
+    boxes.sort(key=lambda item: -(item[1][3] - item[1][1]))
+    for c, box in boxes:
         assert bytes(title_font.getmask(c)) != title_missing, f'Missing rounded title glyph: {c}'
-        box = title_font.getbbox(c, anchor='ls', stroke_width=TITLE_STROKE)
         w, h = box[2] - box[0], box[3] - box[1]
-        x, ty = cells[i][0] + 4, cells[i][1] + 4
-        assert w + 8 <= TITLE_CELL and h + 8 <= TITLE_CELL and ty + h + 4 <= SIZE, (c, box, ty)
+        candidates = [r for r in free if r[2] >= w + 8 and r[3] >= h + 8]
+        assert candidates, ('title glyphs do not fit', c, TITLE_SIZE, art_top)
+        cell = min(candidates, key=lambda r: (min(r[2] - w - 8, r[3] - h - 8), r[1], r[0]))
+        x, ty = cell[0] + 4, cell[1] + 4
+        free = subtract_rect(free, (cell[0], cell[1], w + 8, h + 8))
         ImageDraw.Draw(image).text((x - box[0], ty - box[1]), c, font=title_font, fill='white', anchor='ls',
                                   stroke_width=TITLE_STROKE, stroke_fill='white')
         title_glyphs.append(dict(code=ord(c), x=x, y=ty, w=w, h=h,
                                  advance=title_font.getlength(c) / TITLE_SIZE,
                                  bearingX=box[0] / TITLE_SIZE, bearingY=box[1] / TITLE_SIZE))
+    title_glyphs.sort(key=lambda g: g['code'])
     (out / 'titles.json').write_text(json.dumps(dict(size=SIZE, fontSize=TITLE_SIZE,
         characters=''.join(title_chars), glyphs=title_glyphs, slots=[], titles=TITLES), ensure_ascii=False))
     image.save(out / 'bars.png')

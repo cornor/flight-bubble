@@ -650,25 +650,79 @@ namespace Flightbeat.Feedback
                 bool revive = wave.kind == RepelKind.Revive;
                 float y = (revive ? 574 : FrontScreenY) - t * (revive ? 260 : 50);
                 float h = revive ? 180 : 60;
-                // 2026-10-30 (调整 15, user: 重点看泡泡阵下沿的效果): the painted foam band (N11) clings to the bottom edge of the
-                // bubble field (following it as it is pushed up), with sparkles and small rainbow bubbles along it,
-                // instead of a wave sweeping up the whole board.
-                if (revive && GardenSkin.Has("plants/uiref/revive-wave"))
+                // 2026-10-31 00:27 (user, after the reference): no blue water any more - a wavy gold-and-white light ribbon in
+                // the gap under the bubble field (following its edge as it is pushed up), a band of small foam bubbles,
+                // coloured bubbles popping out of it and gold glints. All of it stays inside the tray (logical y <= 568).
+                if (revive)
                 {
-                    float edge = FrontScreenY + 8f, k = Mathf.Clamp01(wave.age / .2f) * Mathf.Clamp01((1f - t) / .35f);
-                    float bob = Mathf.Sin(wave.age * 5f) * 3f;
-                    s.Glow(270, edge, 640, 120, new Color(.55f, .95f, 1f, .45f * k), 0f);
-                    GardenSkin.Asset(s, "plants/uiref/revive-wave", -20, edge - 80f + bob, 580, 160f, new Color(1, 1, 1, k));
-                    for (int i = 0; i < 18; i++)
+                    const float floor = 568f;
+                    float edge = Mathf.Min(FrontScreenY + 16f, floor - 12f);
+                    float k = Mathf.Clamp01(wave.age / .2f) * Mathf.Clamp01((1f - t) / .35f), ph = wave.age * 3.2f;
+                    s.Glow(270, edge, 640, 70, new Color(1f, .93f, .7f, .4f * k), 0f);
+                    // 10:53: the painted ribbon (ReviveSuccess V3) when present: across the tray, bobbing gently,
+                    // with the coloured bubbles below still rising out of it.
+                    bool painted = GardenSkin.Has("scene/revive-ribbon");
+                    if (painted)
                     {
-                        float ph = (wave.age * (.6f + (i % 5) * .12f) + i * .37f) % 1f, x = 20f + (i * 97 % 500), yy = edge - 10f - ph * 46f + Mathf.Sin(i * 1.7f) * 8f;
-                        float tw = Mathf.Sin(ph * Mathf.PI) * k;
-                        if (i % 3 == 0) { s.Glow(x, yy, 22f, 3.5f, new Color(1, 1, 1, tw), 0f); s.Glow(x, yy, 3.5f, 22f, new Color(1, 1, 1, tw), 0f); }
-                        else
+                        // 11:11 (checked against the reference): fuller and longer - a third taller, holding at full
+                        // strength until the last fifth of the wave (it had faded before the title was even settled).
+                        const float rw = 532f, rh = rw * 200f / 1080f * 1.33f;
+                        float kr = Mathf.Clamp01(wave.age / .15f) * Mathf.Clamp01((1f - t) / .2f);
+                        float ry = Mathf.Min(edge, floor - rh * .32f) + Mathf.Sin(wave.age * 4f) * 2.5f;
+                        GardenSkin.Asset(s, "scene/revive-ribbon", 4f, ry - rh * .5f, rw, rh, new Color(1f, 1f, 1f, kr));
+                    }
+                    Vector2 prevA = default, prevB = default;
+                    for (int i = 0; i <= (painted ? -1 : 45); i++)
+                    {
+                        float x = -12f + i * 12.8f;
+                        var a = new Vector2(x, edge + Mathf.Sin(x * .016f + ph) * 7f);
+                        var b = new Vector2(x, edge + Mathf.Sin(x * .016f + ph + 2.3f) * 5f + 2f);
+                        if (i > 0)
                         {
-                            Color bc = Color.HSVToRGB((i * .13f) % 1f, .45f, 1f); bc.a = .8f * tw;
-                            GardenSkin.Shot(s, bc, new Vector2(x, yy), 7f + (i % 4) * 2f, tw);
+                            s.GlowLine(prevA, a, 26f, new Color(1f, .82f, .35f, .35f * k));
+                            s.GlowLine(prevA, a, 6f, new Color(1f, .9f, .55f, .95f * k));
+                            s.GlowLine(prevB, b, 4f, new Color(1f, 1f, 1f, .9f * k));
                         }
+                        prevA = a; prevB = b;
+                    }
+                    for (int i = 0; i < (painted ? 0 : 46); i++)   // foam: small white bubbles hugging the ribbon
+                    {
+                        float x = (i * 53.7f + 11f) % 540f, yy = edge - 14f + (i * 37 % 26) + Mathf.Sin(wave.age * 4f + i) * 2f;
+                        GardenSkin.Shot(s, Color.white, new Vector2(x, Mathf.Min(yy, floor)), 5f + (i % 4) * 1.6f, .55f * k);
+                    }
+                    if (painted)
+                    {
+                        // 11:46 (user: 按建议 - the art band plus the preview's extras): clear soap bubbles in the foam and
+                        // gold stars twinkling along the band, over the painted ribbon.
+                        float kr2 = Mathf.Clamp01(wave.age / .15f) * Mathf.Clamp01((1f - t) / .2f);
+                        bool soap = GardenSkin.Has("plants/home/soap-bubble");
+                        for (int i = 0; i < 12 && soap; i++)
+                        {
+                            float d = 12f + (i % 4) * 5f, x = (i * 83f + 30f) % 530f + 5f;
+                            float yy = Mathf.Min(edge - 12f - (i * 29 % 30) - Mathf.Sin(wave.age * 2.5f + i) * 3f, floor - d * .5f);
+                            GardenSkin.Asset(s, "plants/home/soap-bubble", x - d * .5f, yy - d * .5f, d, d, new Color(1f, 1f, 1f, .85f * kr2));
+                        }
+                        for (int i = 0; i < 16; i++)
+                        {
+                            float tw = .55f + .45f * Mathf.Sin(wave.age * 6f + i * 1.9f), d = (14f + (i % 3) * 8f) * (.6f + .4f * tw);
+                            float x = 15f + i * 34f + (i % 3) * 6f, yy = Mathf.Min(edge - 10f + Mathf.Sin(i * 2.1f) * 20f, floor - d * .5f);
+                            GardenSkin.Asset(s, "scene/revive-sparkle", x - d * .5f, yy - d * .5f, d, d, new Color(1f, 1f, 1f, kr2 * (.45f + .55f * tw)));
+                        }
+                    }
+                    for (int i = 0; i < (painted ? 30 : 20); i++)   // coloured bubbles popping up out of the band
+                    {
+                        float u = (wave.age * (.7f + (i % 5) * .1f) + i * .23f) % 1f, x = 14f + (i * 97 % 512);
+                        float yy = Mathf.Min(edge + 6f - u * 42f + Mathf.Sin(i * 1.7f) * 6f, floor), tw = Mathf.Sin(u * Mathf.PI) * k;
+                        Color bc = (i % 3) switch { 0 => new Color(1f, .58f, .2f), 1 => new Color(1f, .85f, .25f), _ => new Color(.25f, .6f, 1f) };
+                        GardenSkin.Shot(s, bc, new Vector2(x, yy), 8f + (i % 3) * 2.5f, .9f * tw);
+                    }
+                    for (int i = 0; i < (painted ? 0 : 9); i++)   // gold glints (the painted ribbon has its own)
+                    {
+                        float u = (wave.age * 1.3f + i * .31f) % 1f, tw = Mathf.Sin(u * Mathf.PI) * k;
+                        float x = 30f + i * 60f, yy = Mathf.Min(edge - 8f + Mathf.Sin(i * 2.1f) * 16f, floor - 4f), r = i % 2 == 0 ? 11f : 7f;
+                        s.Glow(x, yy, r * 2.6f, r * 2.6f, new Color(1f, .9f, .5f, .45f * tw), 0f);
+                        s.Glow(x, yy, r * 3.6f, r * .5f, new Color(1f, .97f, .8f, tw), 0f);
+                        s.Glow(x, yy, r * .5f, r * 3.6f, new Color(1f, .97f, .8f, tw), 0f);
                     }
                 }
                 else
@@ -692,34 +746,12 @@ namespace Flightbeat.Feedback
                 GardenBombBlast(s, ScreenLayout.EnemyPoint(lastStrike.X, lastStrike.Y), lastStrike.RadiusX * ScreenLayout.EnemyScaleX, superAge);
             }
         }
-        // f53915 DrawPurge: same six columns, timing and front line. Rescue bubbles drop from the top onto the
-        // front row (the art points up, so it is drawn rotated 180 degrees), then burst into foam there.
-        void DrawBubblePurge(PixelSurface s) {
-            foreach (PurgeFx purge in purges) {
-                for (int i = 0; i < 6; i++) {
-                    float x = i * 88 + 50, t = Mathf.Clamp01((purge.age - i * .04f) * 4f);
-                    if (t < 1f) {
-                        float y = Mathf.Min(t * t, 1f) * (purge.front - 120f) + 120f;
-                        // Bubble centre sits 20 px from the frame centre (y 56 of 192 in the art); rotated, it leads downward.
-                        GardenFx.Draw(s, "rescue-bubble", new Vector2(x, y - 20f), 48f, 72f, Color.white, 0, 180f);
-                    }
-                    GardenFx.Burst(s, "impact-dust", new Vector2(x, purge.front), 110f, purge.age - .25f - i * .06f, .6f);
-                }
-                float age = purge.age;
-                if (!(age > .3f && age < 1.5f)) continue;
-                float alpha = Mathf.Clamp01((1.5f - age) / .4f), q = age < .3f ? 1f : 1f - Mathf.Min((age - .3f) * 4f, 1f);
-                float size = 11f * ((q * q * q) * 1.2f + 1.8f);
-                // 2026-10-20 (UI redesign 25): a mint-edged bar with the reinforcement icon; it still swells in.
-                string line = "泡泡援军 ×" + purge.count;
-                float bh = size * 1.75f;
-                bool mapped = s.MapLayout;
-                float by = GardenBars.ScreenY(s, purge.front - 72f);
-                s.MapLayout = false;
-                GardenBars.Bar(s, 270f, by, GardenBars.Width(line, size, bh, "reinforce"), bh, GardenBars.Mint, "reinforce", line, size,
-                    GardenBars.Navy, alpha, 1f, GardenBars.Deco.Many, age - .3f);
-                s.MapLayout = mapped;
-            }
-        }
+        // f53915 DrawPurge: same six columns, timing and front line.
+        // 2026-10-31 (user, revive reference): the revive shows the light ribbon (DrawGardenFeedback) - the rescue
+        // bubbles that dropped from the top onto the front row and the 「泡泡援军 ×N」 bar (it sat on the ribbon) are
+        // gone.
+        // 10:22 (user screenshot): the foam bursts spilled below the tray as big white clusters - gone too.
+        void DrawBubblePurge(PixelSurface s) { }
 
         // 2026-10-16 (user item 1): the original combo counter f53835, redrawn in bubble style. Same records and
         // rules: shown from 5 hits, a punch on every hit (comboPunch < .12 s), band colours (ComboColor), the

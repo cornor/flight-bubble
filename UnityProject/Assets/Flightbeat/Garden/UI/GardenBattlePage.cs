@@ -10,6 +10,8 @@ namespace Flightbeat.Garden.UI
     public sealed class GardenBattlePage : MonoBehaviour
     {
         public const float ProgressWidth = 256f;   // 2026-10-21: 266 -> 256, room for the larger percent
+        // 2026-10-31: the green fill sits inside the track's groove: 7.5 px in from each end, 10.6 px tall.
+        public const float ProgressInset = 7.5f, ProgressFillWidth = ProgressWidth - 2f * ProgressInset, ProgressFillHeight = 10.6f;
         [Header("Layers and responsive containers")]
         public GameObject background, header, controls, pauseDialog, resultDialog;
         public RectTransform backgroundTop, backgroundField, backgroundBottom, headerBand, controlsBand;
@@ -320,7 +322,7 @@ namespace Flightbeat.Garden.UI
         // Home key art background (Art/R1/home-v1 H2): a full-screen image over the battle background bands,
         // shown only on the home page. The source is 1080x2340 with the 9:16 core picture at y 210-2130; the
         // core stays vertically centred on screen and taller screens reveal the extra sky and cloud sea.
-        RawImage homeBackground;
+        RawImage homeBackground, codexRings;
         GardenHomeArtwork homeArtwork;
         Texture2D homeBackgroundTexture, codexBackgroundTexture;
         bool homeBackgroundChecked;
@@ -338,6 +340,16 @@ namespace Flightbeat.Garden.UI
                     rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = rect.offsetMax = Vector2.zero;
                     homeBackground = go.GetComponent<RawImage>();
                     homeBackground.texture = texture; homeBackground.raycastTarget = false;
+                    // 2026-10-30 23:26 (user: 图鉴页背景的圆圈, like the partner game): the album's rings, the same crisp
+                    // layer as the home's, centred on the selected partner (album centre 270, y 236 of its 960 frame).
+                    var rings = Resources.Load<Texture2D>("GardenR1/home-wave-rings");
+                    if (rings)
+                    {
+                        var rg = new GameObject("Album rings", typeof(RectTransform), typeof(RawImage));
+                        var rr = (RectTransform)rg.transform; rr.SetParent(rect, false);
+                        rr.anchorMin = rr.anchorMax = rr.pivot = new Vector2(0f, 1f);
+                        codexRings = rg.GetComponent<RawImage>(); codexRings.texture = rings; codexRings.raycastTarget = false;
+                    }
                     var art = new GameObject("Waving bear home artwork", typeof(RectTransform), typeof(GardenHomeArtwork));
                     var ar = (RectTransform)art.transform; ar.SetParent(rect, false);
                     ar.anchorMin = Vector2.zero; ar.anchorMax = Vector2.one; ar.offsetMin = ar.offsetMax = Vector2.zero;
@@ -365,6 +377,16 @@ namespace Flightbeat.Garden.UI
                     float scale = Mathf.Max(ScreenLayout.Width / 540f, ScreenLayout.Height / 1026f);
                     float uw = ScreenLayout.Width / (540f * scale), uh = ScreenLayout.Height / (1026f * scale);
                     homeBackground.uvRect = new Rect((1f - uw) * .5f, (1f - uh) * .5f, uw, uh);
+                }
+            }
+            if (codexRings)
+            {
+                codexRings.enabled = show && album;
+                if (codexRings.enabled)
+                {
+                    float top = (ScreenLayout.Height - 960f) * .5f;
+                    codexRings.rectTransform.anchoredPosition = new Vector2(270f - 320f - ScreenLayout.Left, -(top + 236f - 320f));
+                    codexRings.rectTransform.sizeDelta = new Vector2(640f, 640f);
                 }
             }
             if (homeArtwork) homeArtwork.Present(owner, show && !album);

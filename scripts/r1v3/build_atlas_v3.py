@@ -82,7 +82,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     files += [p for p in (PAD_COMBAT_ART / 'mouths.json', PAD_COMBAT_ART / 'coverage.json') if p.exists()]
@@ -444,6 +444,13 @@ THEME_SLOTS = {'scene/plush-board': 'theme/board-frame.png', 'scene/progress-tra
                'plants/ui/icon-music': 'theme/icon-music.png', 'plants/ui/icon-sound': 'theme/icon-sound.png',
                'plants/ui/icon-light': 'theme/icon-light.png', 'plants/home/btn-settings': 'theme/btn-settings.png',
                'plants/home/btn-codex': 'theme/btn-codex.png'}
+# 2026-10-31 10:53 (user: 复活成功的效果交给美术): the revive-success art (Art/PlushToy/ReviveSuccess-20261031) on the
+# main atlas at half size - the wordmark, the rising arrow (mirrored in code for the right side), the light ribbon
+# under the bubble field and the gold sparkle.
+REVIVE_ART = ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery'
+for _sid, _rel in (('scene/revive-title', 'title.png'), ('scene/revive-arrow', 'arrow.png'),
+                   ('scene/revive-ribbon', 'ribbon.png'), ('scene/revive-sparkle', 'sparkle.png')):
+    if (REVIVE_ART / _rel).is_file(): SLOTS.append((_sid, str(REVIVE_ART / _rel), .5, None))
 # (applied just before the tiles are packed, so slots added further down - home buttons - are covered too)
 for _sid, _rel in (('plants/uiref/guide-hand', 'guide/hand.png'), ('plants/uiref/button-blue', 'theme/button-blue.png'), ('plants/uiref/button-yellow', 'theme/button-yellow.png'),
                    ('plants/uiref/button-red', 'theme/button-red.png'), ('plants/uiref/win-crown', 'win/mvp-crown.png'), ('plants/uiref/lose-hero-sad', 'lose/hero-sad.png'),
@@ -644,8 +651,33 @@ if missing:
 cursor_y = ((len(chars) + cols - 1) // cols) * CELL
 glyph_mode = 'source-preserved+' + str(len(missing))
 
+# 2026-10-31 10:22 (user: 顶部的进度条有进度的时候位置没有摆对): the old purple-rimmed fill was taller than the light
+# theme's groove and spilled over its white rim. A plain green capsule (round 16 px ends, white gloss along the top,
+# deeper green below) that the header lays inside the groove (GardenBattleUiAssets).
+def progress_fill_theme(w=128, h=32, k=4):
+    import numpy as np
+    W, H = w * k, h * k
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    r = H / 2
+    cx = np.clip(xx, r, W - r)
+    inside = (np.hypot(xx - cx, yy - r) <= r).astype(np.float32)
+    t = yy / (H - 1)
+    top, bottom = np.array([150, 240, 120], np.float32), np.array([44, 190, 66], np.float32)
+    rgb = top[None, None, :] * (1 - t[..., None]) + bottom[None, None, :] * t[..., None]
+    gloss = ((yy > H * .14) & (yy < H * .36) & (np.hypot(xx - cx, (yy - r) * 1.0) <= r * .78)).astype(np.float32) * .55
+    rgb = rgb * (1 - gloss[..., None]) + 255 * gloss[..., None]
+    rgba = np.dstack([rgb, inside * 255]).reshape(h, k, w, k, 4).mean(axis=(1, 3))
+    return Image.fromarray(np.clip(rgba + .5, 0, 255).astype(np.uint8), 'RGBA')
+progress_fill_theme().save(GEN / 'ui/progress-fill-theme.png')
+SLOTS[:] = [(e[0], str(GEN / 'ui/progress-fill-theme.png'), 1.0, *e[3:]) if e[0] == 'scene/progress-fill' else e for e in SLOTS]
+# 2026-10-31 11:50 (user: 设置、图鉴的icon太丑，完全参照原图重新生成): the redrawn home corner buttons, stored at 128 px
+# (the old ones were 64 px drawn at 60, hence soft), placed after the theme overrides below.
+HOME_ICONS = ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery'
 # 2026-10-30: the light-theme overrides (THEME_SLOTS), after every slot has been listed.
 SLOTS[:] = [(e[0], str(_ur(THEME_SLOTS[e[0]])), _ur_scale(THEME_SLOTS[e[0]]), *e[3:]) if e[0] in THEME_SLOTS and _ur(THEME_SLOTS[e[0]]).is_file() else e
+            for e in SLOTS]
+SLOTS[:] = [(e[0], str(HOME_ICONS / (e[0].rsplit('/', 1)[1] + '.png')), 128 / Image.open(HOME_ICONS / (e[0].rsplit('/', 1)[1] + '.png')).width, *e[3:])
+            if e[0] in ('plants/home/btn-settings', 'plants/home/btn-codex') and (HOME_ICONS / (e[0].rsplit('/', 1)[1] + '.png')).is_file() else e
             for e in SLOTS]
 # ---- tiles
 tiles, placeholder, delivered = [], [], []
@@ -731,6 +763,15 @@ else:
 if (UIREF / 'theme/battle-background.png').is_file():   # 2026-10-29: light theme (T1), white to pale blue
     _t1 = UIREF / 'theme/battle-background.png'
     background = Image.open(_t1).convert('RGB'); bg_src = 'UIRefresh T1:' + hashlib.sha256(_t1.read_bytes()).hexdigest()
+# 2026-10-31 00:05 (user: 托盘、背景、排队框的颜色照参考图): one even mid-light blue page, a touch deeper at the very
+# top (measured off the reference: #C4DBFC at the top, #D3E5FC from the middle, #DAEAFD at the bottom).
+def battle_plate(size=BG_SIZE, stops=((0.0, (196, 219, 252)), (.12, (204, 225, 252)), (.45, (211, 229, 252)), (1.0, (218, 234, 253)))):
+    import numpy as np
+    t = np.linspace(0.0, 1.0, size[1])
+    rgb = np.stack([np.interp(t, [p for p, _ in stops], [c[i] for _, c in stops]) for i in range(3)], axis=1)
+    rows = np.repeat(rgb[:, None, :], size[0], axis=1)
+    return Image.fromarray(np.clip(rows + .5, 0, 255).astype(np.uint8), 'RGB')
+background = battle_plate(); bg_src = 'battle plate 2026-10-31 (#C4DBFC-#D3E5FC-#DAEAFD)'
 background.resize(BG_SIZE, Image.LANCZOS).save(OUT / 'background.png')
 # Home background (H2): its own texture, 1080x2340 stored at 0.75 (core 9:16 picture at y 210-2130 of the source).
 _home_bg = DEL / '../../home-v1/delivery/background.png'
@@ -768,6 +809,36 @@ if (PLUSH_FULL / 'home/codex-background.png').exists():
     Image.open(PLUSH_FULL / 'home/codex-background.png').convert('RGB').resize((810,1755),Image.Resampling.LANCZOS).save(OUT / 'codex-background.png')
 if (UIREF / 'theme/codex-background.png').exists():   # 2026-10-30 light theme (T3)
     Image.open(UIREF / 'theme/codex-background.png').convert('RGB').resize((810,1755),Image.Resampling.LANCZOS).save(OUT / 'codex-background.png')
+# 2026-10-30 23:26 (user: 首页、图鉴页背景的圆圈没做好; done the way the partner game does it, but still): the
+# light plates are flat near-white, and the rings are one crisp transparent layer (home-wave-rings, 1024 px for 640
+# logical units) that the home centres on the squad and the album on the selected partner. Like the references and
+# the partner game's img_circle set: three pale-blue bands of one width, evenly spaced, hard-edged, fading out
+# towards the bottom.
+RING_FLAT = (251, 253, 254)
+RING_BANDS = ((74, 124), (172, 221), (268, 316))   # logical radii, measured off the home reference
+def ring_layer(size=1024, units=640, color=(232, 242, 253), fade=(40, 240, .28)):
+    import numpy as np
+    k = 3                                                   # supersampling for clean edges
+    n = size * k; c = (n - 1) / 2; u = units / n
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float32)
+    dy = (yy - c) * u; r = np.hypot(xx - c, yy - c) * u
+    band = np.zeros((n, n), np.float32)
+    for r0, r1 in RING_BANDS: band[(r >= r0) & (r < r1)] = 1.0
+    f0, f1, low = fade
+    band *= np.clip(1.0 - (dy - f0) / (f1 - f0) * (1.0 - low), low, 1.0)
+    a = band.reshape(size, k, size, k).mean(axis=(1, 3))
+    rgba = np.zeros((size, size, 4), np.uint8); rgba[..., 0], rgba[..., 1], rgba[..., 2] = color
+    rgba[..., 3] = np.clip(a * 255 + .5, 0, 255).astype(np.uint8)
+    return Image.fromarray(rgba, 'RGBA')
+for _plate in ('home-background.png', 'codex-background.png'):
+    Image.new('RGB', (810, 1755), RING_FLAT).save(OUT / _plate)
+ring_layer().save(OUT / 'home-wave-rings.png')
+_meta = OUT / 'home-wave-rings.png.meta'
+if not _meta.exists():
+    import re, hashlib
+    _settings = (OUT / 'home-background.png.meta').read_text()
+    _settings = re.sub(r'guid: [0-9a-f]{32}', 'guid: ' + hashlib.md5(b'GardenR1/home-wave-rings').hexdigest(), _settings, count=1)
+    _meta.write_text(_settings.replace('alphaUsage: 0', 'alphaUsage: 1').replace('alphaIsTransparency: 0', 'alphaIsTransparency: 1'))
 # 2026-10-17 loading page (WebGL template, shown before the game downloads, so kept small: ~300 KB in all).
 # Softened home sky, the title logo, Xiao Lan blowing a bubble (H15 when delivered, otherwise its cheer pose) and
 # the halo soap bubble that grows with the download progress. Anchor = where the bubble starts, in the hero image.

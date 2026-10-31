@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Flightbeat.Garden
 {
-    // Modal and album headings use native bold glyphs at 96 px in spare space of the existing bars texture.
+    // Modal, album and result headings share high-resolution native bold glyphs in the existing bars texture.
     // Share the style with prefab text; ordinary rounded labels keep their original glyphs and UVs.
     public static class GardenTitleArt
     {
@@ -56,6 +56,17 @@ namespace Flightbeat.Garden
                 Paint(surface, text, x + Mathf.Cos(angle) * EdgeWidth, baseline + Mathf.Sin(angle) * EdgeWidth, size, Color.white);
             }
             Paint(surface, text, x, baseline, size, Ink);
+        }
+        public static void TextOutline(PixelSurface surface, string text, float cx, float top, float size,
+            Color ink, Color edge, float thickness)
+        {
+            float x = cx - TextWidth(text, size) * .5f;
+            for (int i = 0; i < 8; i++)
+            {
+                float angle = i * Mathf.PI / 4f;
+                Paint(surface, text, x + Mathf.Cos(angle) * thickness, top + Mathf.Sin(angle) * thickness, size, edge);
+            }
+            Paint(surface, text, x, top, size, ink);
         }
         static void Paint(PixelSurface surface, string text, float x, float top, float size, Color ink)
         {

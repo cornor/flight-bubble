@@ -55,7 +55,7 @@ namespace Flightbeat.Game
         // 2026-10-17 (user: a reason to come back). Under the start button: the next member still to join, its name,
         // how many more clears it takes and pips from the last member to this one. Tapping it opens the codex.
         int homeNextLevel = -1;
-        string homeNextName = "", homeNextLine = "";
+        string homeNextName = "", homeNextLine = "", homeNextMid = "";
         void DrawHomeNextMember(PixelSurface s, float y)
         {
             int current = NextBubbleLevel() + 1;   // the 1-based level the start button opens
@@ -104,9 +104,9 @@ namespace Flightbeat.Game
             // 2026-10-22 11:29 (user: the home buttons with the others): the words were 10-13 px in the old thin font;
             // now the rounded type of the other buttons, 16 px, white with a navy edge.
             // 2026-10-30 (light theme): navy words under the icon, a little bolder instead of the white-with-edge type.
-            float ls = size >= 80f ? 20f : 16f;
-            GardenBarArt.Text(s, label, cx, y + size + 1f, ls, true, Hex(0x1D3A7A));
-            GardenBarArt.Text(s, label, cx + .6f, y + size + 1f, ls, true, Hex(0x1D3A7A));
+            // 2026-10-31 (reference): small grey words under the icon (#56627A, 14 px), not the big navy ones.
+            float ls = size >= 80f ? 20f : size >= 56f ? 16f : 14f;
+            GardenBarArt.Text(s, label, cx, y + size + 3f, ls, true, Hex(0x56627A));
         }
 
         // ---- codex page: cloud album; all 22 independent colors, in their actual debut order.
@@ -139,7 +139,7 @@ namespace Flightbeat.Game
         };
         // Cloud album, 2026-10-22: the approved page concept with live collection data and original character art.
         // 2026-10-30 (界面优化 6/18/20, light theme): navy ink and blue-grey silhouettes / cards on the white album.
-        static readonly Color CodexInk = Hex(0x1D3A7A), CodexMuted = Hex(0x6B7A99), CodexSilhouette = Hex(0xB9CBE6);
+        static readonly Color CodexInk = Hex(0x1D3A7A), CodexMuted = Hex(0x4D6284), CodexSilhouette = Hex(0xB9CBE6);
         static void CodexRound(PixelSurface s, float x, float y, float w, float h, float radius, Color color)
             => s.GardenRoundedRect(x, y, w, h, radius, color, color);
         static void CodexLock(PixelSurface s, float cx, float cy, float size)
@@ -214,14 +214,8 @@ namespace Flightbeat.Game
             // Reserve a gap below the meter, including the selection bounce and the largest breathing pose.
             float headSpan = ArtScale(entry.tint) * Mathf.Max(.1f, FeetLine - HeadTop(entry.tint)) * 1.1f;
             float heroHeight = Mathf.Min(282f, Mathf.Max(80f, feet - headerY - 143f) / headSpan);
-            // 2026-10-30 (调整 6/18: 圆圈跟图片不一样): big pale concentric circles centred on the hero, as in the reference.
-            float ringY = feet - 95f;
-            for (int ring = 0; ring < 3; ring++)
-            {
-                float rr = ring == 0 ? 330f : ring == 1 ? 245f : 165f;
-                Color rc = ring == 0 ? new Color(.86f, .92f, 1f, .45f) : ring == 1 ? new Color(.93f, .96f, 1f, .7f) : new Color(.98f, .99f, 1f, .85f);
-                s.GardenRoundedRect(cx - rr, ringY - rr, rr * 2f, rr * 2f, rr, rc, rc);
-            }
+            // 2026-10-30 23:26: the concentric rings behind the hero are a background layer now (GardenBattlePage, "Album
+            // rings", centred at y 236 = feet - 95), so they no longer wash over the header.
             s.Glow(cx, feet + 7f, 242f, 45f, new Color(.33f, .65f, .88f, .3f), 0f);
             if (!Asset(s, "plants/uiref/codex-pedestal", cx - 125f, feet - 22f, 250f, 62.5f, Color.white))   // N12
                 Asset(s, "scene/plot", cx - 113f, feet - 19f, 226f, 43f, Color.white);
@@ -245,15 +239,14 @@ namespace Flightbeat.Game
             }
             string[] blurb = CodexBlurb.TryGetValue(entry.name, out var b) ? b : new[] { "", "" };
             string title = have ? entry.name : "神秘伙伴";
-            float nameWidth = GardenBarArt.TextWidth(title, 30f), tagWidth = have ? GardenBarArt.TextWidth(blurb[0], 15f) + 18f : 0f;
+            float nameWidth = GardenBarArt.TextWidth(title, 30f), tagWidth = have ? GardenBarArt.TextWidth(blurb[0], 17f) + 18f : 0f;
             float groupWidth = nameWidth + (have ? 12f + tagWidth : 0f), nameLeft = cx - groupWidth * .5f;
             GardenBarArt.Text(s, title, nameLeft, oy + 364f, 30f, false, CodexInk);
-            GardenBarArt.Text(s, title, nameLeft + .8f, oy + 364f, 30f, false, CodexInk);
             if (have)
             {
                 float tagX = nameLeft + nameWidth + 12f;
                 s.GardenRoundedRect(tagX, oy + 371f, tagWidth, 24f, 12f, Hex(0xC9B2F6), Hex(0xB59AF0));
-                GardenBarArt.Text(s, blurb[0], tagX + tagWidth * .5f, oy + 374f, 15f, true, Color.white);
+                GardenBarArt.Text(s, blurb[0], tagX + tagWidth * .5f, oy + 373f, 17f, true, Hex(0x283F70));
                 // At most two lines; wrap after a clause so the title and unlock note keep stable positions.
                 string story = blurb[1];
                 int split = story.LastIndexOf('，');
@@ -264,7 +257,7 @@ namespace Flightbeat.Game
                     GardenSkin.Text(s, story.Substring(split + 1), cx, oy + 426f, 17f, true, CodexInk);
                 }
                 else GardenSkin.Text(s, story, cx, oy + 414f, 17f, true, CodexInk);
-                DialogText(s, "第 " + entry.level + " 关加入队伍", cx, oy + 450f, 14f, CodexMuted);
+                DialogText(s, "第 " + entry.level + " 关加入队伍", cx, oy + 448f, 17f, CodexMuted);
             }
             else
             {
@@ -272,12 +265,12 @@ namespace Flightbeat.Game
                 string pre = "通关", lv = "第 " + entry.level + " 关", post = "解锁";
                 float tw = GardenBarArt.TextWidth(pre + lv + post, 19f), tx = cx - tw * .5f;
                 GardenBarArt.Text(s, pre, tx, oy + 410f, 19f, false, CodexMuted); tx += GardenBarArt.TextWidth(pre, 19f);
-                GardenBarArt.Text(s, lv, tx, oy + 410f, 19f, false, Hex(0x2F7BFF)); GardenBarArt.Text(s, lv, tx + .6f, oy + 410f, 19f, false, Hex(0x2F7BFF));
+                GardenBarArt.Text(s, lv, tx, oy + 410f, 19f, false, Hex(0x2F7BFF));
                 tx += GardenBarArt.TextWidth(lv, 19f);
                 GardenBarArt.Text(s, post, tx, oy + 410f, 19f, false, CodexMuted);
             }
             GardenBarArt.Text(s, "伙伴一览", 24f, oy + 472f, 23f, false, CodexInk);
-            GardenBarArt.Text(s, "点击卡片查看", 516f - GardenBarArt.TextWidth("点击卡片查看", 13f), oy + 481f, 13f, false, CodexMuted);
+            GardenBarArt.Text(s, "点击卡片查看", 516f - GardenBarArt.TextWidth("点击卡片查看", 16f), oy + 478f, 16f, false, CodexMuted);
             const int cols = 6;
             const float cw = 77f, ch = 94f, columnGap = 6f, rowGap = 8f;
             float gy = oy + 507f + slide;
@@ -297,7 +290,7 @@ namespace Flightbeat.Game
                     CodexSilhouetteArt(s, c.tint, mid, y + 69f, 88f);
                     CodexLock(s, mid, y + 42f, 17f);
                 }
-                DialogText(s, owned ? c.name : "第" + c.level + "关", mid, y + 75f, 14f, owned ? CodexInk : Hex(0x7F8FAD));
+                DialogText(s, owned ? c.name : "第" + c.level + "关", mid, y + 75f, 16f, owned ? CodexInk : CodexMuted);
                 if (selected)
                 {
                     float checkX = x + cw - 13f, checkY = y + 12f;
@@ -313,7 +306,7 @@ namespace Flightbeat.Game
                 GardenBarArt.Text(s, done, cx, oy + 920f, 16f, true, CodexInk);
                 for (int side = -1; side <= 1; side += 2) GardenBars.Icon(s, "star", cx + side * (dw * .5f + 16f), oy + 929f, 18f);
             }
-            else DialogText(s, "通关新关卡，解锁更多伙伴", cx, oy + 929f, 14f, CodexMuted);
+            else DialogText(s, "通关新关卡，解锁更多伙伴", cx, oy + 927f, 17f, CodexMuted);
             s.MapLayout = mapped;
         }
         void SelectCodex(int index)

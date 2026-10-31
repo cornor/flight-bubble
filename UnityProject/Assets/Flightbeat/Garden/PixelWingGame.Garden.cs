@@ -308,7 +308,9 @@ namespace Flightbeat.Game
                         float lockA = Battle.State == Phase.Intro ? Clamp01((Battle.IntroTime - duration * .66f) * 4f) : 1f;
                         float tile = plotW * .92f, bob = Mathf.Sin(ui * 2f + bay) * 1.5f;
                         if (lockA > .01f)
-                            Asset(s, "plants/uiref/slot-locked", cx - tile * .5f, padY - tile * .86f + bob, tile, tile, new Color(1f, 1f, 1f, lockA));
+                            // 2026-10-31 10:36 (user: 压住卡槽了，往上一点): the tile's visible foot (143/160 of the art) stands on the pad's
+                            // upper half instead of covering its front (was .86 -> foot just below the pad centre).
+                            Asset(s, "plants/uiref/slot-locked", cx - tile * .5f, padY - tile * 1.0f + bob, tile, tile, new Color(1f, 1f, 1f, lockA));
                         s.MapLayout = mapped;
                         continue;
                     }
@@ -337,12 +339,19 @@ namespace Flightbeat.Game
                 for (int row = 0; row < 3; row++) {
                     float cardY = top + row * rowH;
                     bool selectable = row < reserve.Count && (row == 0 || selection == 1);
+                    // 2026-10-31 00:05 (user: 排队框内的颜色照参考图): recessed blue glass cells, darker than the page - a
+                    // light top lip and a darker bottom one, the fill darker at the top; empty cells a shade lighter. The
+                    // tappable front cell keeps the same blue and only gains the gold rim (was a white card).
+                    float cx0 = qx - w / 2, ch = rowH - 6f;
+                    bool filled = row < reserve.Count;
                     if (selectable) {
-                        // 2026-10-29 (light theme): white card with the gold rim (was lavender inside the gold).
-                        s.GardenRoundedRect(qx - w / 2 - 1f, cardY - 1f, w + 2f, rowH - 4f, 12f, Hex(0xF6D98E), Hex(0xE8C266));
-                        s.GardenRoundedRect(qx - w / 2 + 1f, cardY + 1f, w - 2f, rowH - 8f, 10f, Hex(0xFFFFFF), Hex(0xEEF5FF));
-                    } else Asset9(s, "scene/queue-panel", qx - w / 2, cardY, w, rowH - 6f, 18f, 18f, 10f, 10f,
-                        new Color(1f, 1f, 1f, row < reserve.Count ? .65f : .28f));
+                        s.GardenRoundedRect(cx0 - 1.5f, cardY - 1.5f, w + 3f, ch + 3f, 13.5f, Hex(0xF3E6BE), Hex(0xE8C979));
+                        s.GardenRoundedRect(cx0 + 1f, cardY + 1f, w - 2f, ch - 2f, 11f, Hex(0xBFD3F4), Hex(0xD0E3FB));
+                    } else {
+                        s.GardenRoundedRect(cx0, cardY, w, ch, 12f, Hex(0xEBF5FE), Hex(0xBBD0F4));
+                        s.GardenRoundedRect(cx0 + 1.5f, cardY + 1.5f, w - 3f, ch - 3.5f, 10.5f,
+                            filled ? Hex(0xB2C8ED) : Hex(0xBCD2F1), filled ? Hex(0xCDE0FA) : Hex(0xCDE0F9));
+                    }
                 }
                 s.MapLayout = mapped;
                 if (GardenHintLane(out int hint) && hint == lane && reserve.Count > 0) {

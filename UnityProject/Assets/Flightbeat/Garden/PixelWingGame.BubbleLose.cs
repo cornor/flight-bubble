@@ -32,11 +32,21 @@ namespace Flightbeat.Game
                 ResultSubtitle(s, "再给小队一次机会", oy + 218f, 26f, ResultGold, Clamp01((t - .15f) / .2f) * fade);
                 float hp = OutBack(Clamp01((t - .1f) / .4f), 1.8f), bob = Mathf.Sin(ui * 2.6f) * 3f;
                 float lightA = fade * (.85f + .15f * Mathf.Sin(ui * 1.7f));
-                s.GlowLine(new Vector2(270f, oy + 150f), new Vector2(270f, oy + 430f), 300f, new Color(1f, .9f, .65f, .10f * lightA));
-                s.Glow(270f, oy + 345f, 420f * hp, 330f * hp, new Color(1f, .8f, .55f, .30f * lightA), 0f);
-                s.Glow(270f, oy + 345f, 240f * hp, 200f * hp, new Color(1f, .55f, .55f, .30f * lightA), 0f);
+                // 2026-10-31 16:26 (user: 爱心底下有那种好看的金光, reference): a golden radiance behind and under the heart -
+                // a soft beam falling from above, a wide warm glow, a hot core under the heart and a glow pooling below
+                // it - and gold four-point stars twinkling round it (were faint warm washes and white glints).
+                s.GlowLine(new Vector2(270f, oy + 140f), new Vector2(270f, oy + 470f), 260f, new Color(1f, .86f, .42f, .2f * lightA));
+                s.Glow(270f, oy + 350f, 400f * hp, 340f * hp, new Color(1f, .8f, .32f, .5f * lightA), 0f);
+                s.Glow(270f, oy + 368f, 240f * hp, 200f * hp, new Color(1f, .92f, .58f, .6f * lightA), 0f);
+                s.Glow(270f, oy + 452f, 300f * hp, 64f * hp, new Color(1f, .84f, .42f, .5f * lightA), 0f);
                 Asset(s, "plants/dialog/revive-heart", 270f - 150f * hp, oy + 345f - 120f * hp + bob, 300f * hp, 240f * hp, A(Color.white, fade));
-                ResultTwinkles(s, 270f, oy + 345f, 165f, 95f, fade);
+                if (Has("scene/revive-sparkle"))
+                    for (int j = 0; j < HeartStars.Length; j += 3)
+                    {
+                        float k = .55f + .45f * Mathf.Sin(ui * 4.5f + j * .9f), d = HeartStars[j + 2] * (.6f + .4f * k) * hp;
+                        Asset(s, "scene/revive-sparkle", 270f + HeartStars[j] - d * .5f, oy + 345f + HeartStars[j + 1] - d * .5f, d, d, A(Color.white, fade * (.5f + .5f * k)));
+                    }
+                else ResultTwinkles(s, 270f, oy + 345f, 165f, 95f, fade);
                 float ra = Clamp01((t - .35f) / .2f) * fade;
                 ReviveTile(s, 186f, oy + 500f, false, ra);
                 ReviveTile(s, 362f, oy + 500f, true, ra);
@@ -44,8 +54,8 @@ namespace Flightbeat.Game
                 GardenBarArt.Text(s, "清除前排泡泡", 270f, oy + 586f - 21f * .55f, 21f, true, A(Hex(0xE4EAF3), ra));
                 GardenBarArt.Text(s, "泡泡上推，继续挑战", 270f, oy + 618f - 21f * .55f, 21f, true, A(Hex(0xE4EAF3), ra));
                 ResultPill(s, 30, 115f, oy + 667f, 315f, 76f, "red", "看视频复活", Has("plants/uiref/icon-video") ? "plants/uiref/icon-video" : "plants/dialog/video", Has("plants/uiref/button-red") ? (Color?)null : new Color(1f, .45f, .42f));
-                ResultPill(s, 32, 80f, oy + 770f, 185f, 60f, "blue", "返回主页");
-                ResultPill(s, 33, 280f, oy + 770f, 183f, 60f, "white", "重新挑战");
+                ResultPill(s, 32, 80f, oy + 770f, 185f, 60f, "blue", "返回主页", Has("plants/uiref/icon-home") ? "plants/uiref/icon-home" : null);
+                ResultPill(s, 33, 280f, oy + 770f, 183f, 60f, "white", "重新挑战", Has("plants/uiref/icon-replay") ? "plants/uiref/icon-replay" : null);
             }
             finally { s.MapLayout = mapped; }
         }
@@ -55,12 +65,18 @@ namespace Flightbeat.Game
         // 2026-10-31 00:11 (user, after the reference): dark frosted glass - only a shade lighter than the page shade and
         // hiding what is behind it - with a thin light rim all round (was a milky tile with a white bar along the top:
         // its full-size rim fill showed through the translucent face). Bigger icons, the lock on a lilac pad.
+        // Gold star spots round the revive heart (dx, dy from its centre, size): bottom corners as in the reference, sides, top.
+        static readonly float[] HeartStars = { -118f, 78f, 34f, 112f, 84f, 30f, -168f, 4f, 20f, 170f, -14f, 24f, -60f, -112f, 16f, 74f, -104f, 20f, 0f, 112f, 18f };
         void ReviveTile(PixelSurface s, float cx, float cy, bool bomb, float a)
         {
             if (a <= .01f) return;
             const float w = 157f, h = 95f;
-            WinRoundRect(s, cx - w * .5f, cy - h * .5f, w, h, 18f, A(new Color(.37f, .40f, .46f, .96f), a));   // rim #5E6573
-            WinRoundRect(s, cx - w * .5f + 2f, cy - h * .5f + 2f, w - 4f, h - 4f, 16f, A(new Color(.245f, .28f, .345f, .96f), a));   // face #3E4758
+            // 2026-11-01 09:46 (user: 两个道具框加一点透明度): the glass lets the board show through - rim .5 and face .55
+            // (where they overlap ~.78, was ~1).
+            // 09:54 (user: 参照图是灰黑，透明度再大点): back to the reference's grey-black (rim #5E6573, face #3E4758),
+            // more see-through - rim .35, face .42 (~.62 where they overlap).
+            WinRoundRect(s, cx - w * .5f, cy - h * .5f, w, h, 18f, A(new Color(.37f, .40f, .46f, .35f), a));   // rim #5E6573
+            WinRoundRect(s, cx - w * .5f + 2f, cy - h * .5f + 2f, w - 4f, h - 4f, 16f, A(new Color(.245f, .28f, .345f, .42f), a));   // face #3E4758
             float ix = cx - 30f;
             if (bomb) GardenBars.Icon(s, "bomb", ix, cy, 62f, a);
             else

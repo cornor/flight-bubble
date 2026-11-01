@@ -1,0 +1,274 @@
+{
+  "project": "啵啵冲刺角色零件",
+  "date": "2026-10-31",
+  "tool": "built-in image_gen",
+  "canvas": [
+    512,
+    512
+  ],
+  "generation_count": 8,
+  "generations": [
+    {
+      "asset": "D1",
+      "part": "body",
+      "attempt": 1,
+      "prompt": "Use case: identity-preserve. Asset D1 body for a six-layer 2D puppet rig, called Bobo Dash.\nInput image 1 is the authoritative home Bobo design: vivid royal blue plush teddy bear, cream plush inner ears and big cream double-lobed muzzle, brown plush nose, blue plush pot with ONE large white paw-print applique. Image 2 is supporting character identity only. Match image 1's realistic dense soft furry 3D plush, blue fur, cream muzzle and upper-right soft studio light exactly. Do not copy any unrelated bucket character.\nCreate ONE isolated body layer on a square fully transparent canvas, equivalent to a 512x512 sprite. Target occupied bounds approximately x100..412, y45..425. Leave transparent margins for detached arms and legs that will be added later. Show the whole head, torso, two big green felt leaves and the whole blue pot. Bear is seated in the pot, no hands, no arms, no legs, no feet anywhere. Body leaning subtly forward in an eager friendly dash posture, almost front-facing three-quarter view so both sides remain readable. Both eyes closed into joyful upward-bowed crescent smiles, brown nose, CLOSED smiling mouth (thin small curved smile entirely around x240..280 y235..252; NOT an open mouth). Keep a small joyful face, not a grimace.\nThe blue pot should span about x135..385, y310..425, with a softly rounded base and the exact home-reference white paw applique. Two large green leaves overlap the lower torso above the pot, like the reference. The blue shoulder areas near x164,y282 and x350,y282 should be solid continuous fur for back-layer arm joints; no sockets, cut-outs or painted joint markings. Pot must be intact and solid so back-layer legs can emerge underneath later.\nONLY head/torso/leaves/pot, no limbs. No floor, no cast shadow, no ambient glow, no speed lines, no particles, no background, no text, no grid, no frames. Genuine transparent alpha outside the furry silhouette. Crisp premium plush toy asset, not a bubble suit, not plastic.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/references/bear-home-idle.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/references/bear-2982F4-idle.png"
+      ],
+      "master": "masters/D1-body-01.png",
+      "status": "accepted",
+      "tool": "built-in image_gen"
+    },
+    {
+      "asset": "D2",
+      "part": "arm-l",
+      "attempt": 1,
+      "prompt": "Use case: stylized-concept, identity matching. Asset D2, ONE detached puppet limb only for Bobo Dash. Reference image 1 is the registered body layer at 512x512. Image 2 is Bobo's original home appearance and blue fur/hand shape reference. Do NOT include the reference body in the output.\nCreate LEFT (viewer-left) blue furry toy arm and round little mitten paw. Upper end is a FULL rounded spherical shoulder cap, about 24px radius, centered at (183,253). Arm points down and gently outwards to the left; paw center about (138,331). Entire limb about 54px wide and 124px tall, bounds roughly x112..207 y229..353. A small softly curled paw matching Bobo, not human fingers. Shoulder round end must be complete even though body will hide it. No sleeve, no socket, no flat cut.\nUse the SAME 512x512 square transparent coordinate space as image 1; draw this isolated limb only in its assembled position described above; rest of canvas completely transparent. If rendering at larger resolution scale these coordinates proportionally. Full rounded joint end with plush volume and generous overlap for ±40 degree rotation behind the body. Match the vivid royal blue fur hue, soft dense realistic plush fibers, rounded 3D toy shape and upper-right soft lighting exactly. Preserve fluffy edge detail. No pot, leaves, torso, head, face, other limbs, detached fur patches, cast shadows, text, joint circles, props, background or visual effects. This is a complete single continuous limb including round attachment cap and paw.",
+      "status": "failed",
+      "error": "Image tool rejected output: moderation_blocked (sexual), request 04da5c06-7997-4017-969f-39d61305ffc3; no image returned.",
+      "references": [
+        "delivery/body.png",
+        "references/bear-home-idle.png"
+      ],
+      "tool": "built-in image_gen"
+    },
+    {
+      "asset": "D3",
+      "part": "arm-r",
+      "attempt": 1,
+      "prompt": "Use case: stylized-concept, identity matching. Asset D3, ONE detached puppet limb only for Bobo Dash. Reference image 1 is the registered body layer at 512x512. Image 2 is Bobo's original home appearance and blue fur/hand shape reference. Do NOT include the reference body in the output.\nCreate RIGHT (viewer-right) blue furry toy arm and round little mitten paw. Upper end is a FULL rounded spherical shoulder cap, about 24px radius, centered at (354,252). Arm points down and gently outwards to the right; paw center about (398,330). Entire limb about 54px wide and 124px tall, bounds roughly x330..426 y228..352. Small softly curled paw matching Bobo, not human fingers. Shoulder round end must be complete even though body will hide it. No sleeve, no socket, no flat cut.\nUse the SAME 512x512 square transparent coordinate space as image 1; draw this isolated limb only in its assembled position described above; rest of canvas completely transparent. If rendering at larger resolution scale these coordinates proportionally. Full rounded joint end with plush volume and generous overlap for ±40 degree rotation behind the body. Match the vivid royal blue fur hue, soft dense realistic plush fibers, rounded 3D toy shape and upper-right soft lighting exactly. Preserve fluffy edge detail. No pot, leaves, torso, head, face, other limbs, detached fur patches, cast shadows, text, joint circles, props, background or visual effects. This is a complete single continuous limb including round attachment cap and paw.",
+      "status": "accepted",
+      "master": "masters/D3-arm-r-01.png",
+      "references": [
+        "delivery/body.png",
+        "references/bear-home-idle.png"
+      ],
+      "tool": "built-in image_gen"
+    },
+    {
+      "asset": "D2",
+      "part": "arm-l",
+      "attempt": 2,
+      "prompt": "Use case: stylized-concept. Production sprite for a family-friendly blue stuffed TEDDY BEAR toy. Sewn fabric toy accessory, NOT a real body part. The references show the toy's exact blue fur, light direction and finish. Image 1 supplies the matching square coordinate space; image 2 supplies the fuzzy toy identity. Render exactly ONE complete soft stuffed-fabric toy piece, nothing else.\nLEFT (viewer-left) blue furry toy arm and round little mitten paw. Upper end is a FULL rounded spherical shoulder cap, about 24px radius, centered at (183,253). Arm points down and gently outwards to the left; paw center about (138,331). Entire limb about 54px wide and 124px tall, bounds roughly x112..207 y229..353. A small softly curled paw matching Bobo, not human fingers. Shoulder round end must be complete even though body will hide it. No sleeve, no socket, no flat cut.\nThis is a removable sewn plush toy animation piece with a soft round fabric attachment end (not an exposed cut surface), long enough to overlap behind the toy body when digitally assembled. Draw only the requested piece, all its edges intact. Same extremely soft vivid cobalt-blue fur as the reference, realistic fibers, generous padded toy volume, soft upper-right light. On a square fully transparent canvas corresponding to 512x512, at the described assembled coordinates. No complete bear, no pot, no leaves, no face, no additional accessories, no ground/shadow, no effects, no text, no diagrams. Preserve real transparency.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/delivery/body.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/references/bear-home-idle.png"
+      ],
+      "master": "masters/D2-arm-l-02.png",
+      "status": "accepted",
+      "tool": "built-in image_gen"
+    },
+    {
+      "asset": "D5",
+      "part": "leg-r",
+      "attempt": 1,
+      "prompt": "Use case: stylized-concept. Production sprite for a family-friendly blue stuffed TEDDY BEAR toy. Sewn fabric toy accessory, NOT a real body part. The references show the toy's exact blue fur, light direction and finish. Image 1 supplies the matching square coordinate space; image 2 supplies the fuzzy toy identity. Render exactly ONE complete soft stuffed-fabric toy piece, nothing else.\nRIGHT (viewer-right) SHORT blue furry teddy leg and round chubby foot. A FULL rounded spherical blue hip cap centered at (309,396), radius about 20px; short leg descends to a plump foot centered about (319,469). Cream fuzzy sole visible on the underside of foot, subtle three rounded toes, no claws. Bounds around x282..346 y375..490. The leg is about 60px wide and 112px tall, toy-like and stubby, NOT long or skinny. Entire rounded hip cap complete, not a flat cutoff.\nThis is a removable sewn plush toy animation piece with a soft round fabric attachment end (not an exposed cut surface), long enough to overlap behind the toy body when digitally assembled. Draw only the requested piece, all its edges intact. Same extremely soft vivid cobalt-blue fur as the reference, realistic fibers, generous padded toy volume, soft upper-right light. On a square fully transparent canvas corresponding to 512x512, at the described assembled coordinates. No complete bear, no pot, no leaves, no face, no additional accessories, no ground/shadow, no effects, no text, no diagrams. Preserve real transparency.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/delivery/body.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/references/bear-home-idle.png"
+      ],
+      "master": "masters/D5-leg-r-01.png",
+      "status": "accepted",
+      "tool": "built-in image_gen"
+    },
+    {
+      "asset": "D4",
+      "part": "leg-l",
+      "attempt": 1,
+      "prompt": "Use case: stylized-concept. Production sprite for a family-friendly blue stuffed TEDDY BEAR toy. Sewn fabric toy accessory, NOT a real body part. The references show the toy's exact blue fur, light direction and finish. Image 1 supplies the matching square coordinate space; image 2 supplies the fuzzy toy identity. Render exactly ONE complete soft stuffed-fabric toy piece, nothing else.\nLEFT (viewer-left) SHORT blue furry teddy leg and round chubby foot. A FULL rounded spherical blue hip cap centered at (214,396), radius about 20px; short leg descends to a plump foot centered about (204,469). Cream fuzzy sole visible on the underside of foot, subtle three rounded toes, no claws. Bounds around x178..242 y375..490. The leg is about 60px wide and 112px tall, toy-like and stubby, NOT long or skinny. Entire rounded hip cap complete, not a flat cutoff.\nThis is a removable sewn plush toy animation piece with a soft round fabric attachment end (not an exposed cut surface), long enough to overlap behind the toy body when digitally assembled. Draw only the requested piece, all its edges intact. Same extremely soft vivid cobalt-blue fur as the reference, realistic fibers, generous padded toy volume, soft upper-right light. On a square fully transparent canvas corresponding to 512x512, at the described assembled coordinates. No complete bear, no pot, no leaves, no face, no additional accessories, no ground/shadow, no effects, no text, no diagrams. Preserve real transparency.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/delivery/body.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/references/bear-home-idle.png"
+      ],
+      "status": "failed",
+      "error": "Image tool rejected output: moderation_blocked (sexual), request 9c7df995-f086-46ef-90d3-d089fa4645f8; no image returned.",
+      "tool": "built-in image_gen"
+    },
+    {
+      "asset": "D4",
+      "part": "leg-l",
+      "attempt": 2,
+      "prompt": "Use case: precise-object-edit. Make the viewer-LEFT matching toy foot accessory of this approved viewer-right stuffed teddy bear foot piece. Reference image 1 is the blue stuffed-fabric RIGHT toy leg accessory to match. Reference image 2 is Bobo's body for matching hue and light. Draw only ONE left-side sewn blue plush teddy leg with the same cream padded foot sole, rounded toes, very short stubby blue fabric shin and rounded blue stuffed attachment cap. The leg points down, the foot turns gently left. Keep upper-right illumination (do not just flip the light). Same furry toy materials, proportions and details as the approved right leg. Full soft rounded cap at the upper end for rig overlap. This is a cute miniature stuffed toy animation sprite.\nSquare fully transparent canvas. No pot, torso, head, mouth, other objects or other limbs, no symbols, no shadows, no background. Do not create any decorative effects. Only the small complete blue plush toy foot-and-short-leg unit.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/masters/D5-leg-r-01.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/delivery/body.png"
+      ],
+      "status": "accepted",
+      "master": "masters/D4-leg-l-02.png",
+      "tool": "built-in image_gen"
+    },
+    {
+      "asset": "D6",
+      "part": "mouth-open",
+      "attempt": 1,
+      "prompt": "Use case: stylized-concept / matching replacement mouth sprite for a smiling blue teddy bear toy. Input image 1 is the exact assembled D1 body to fit. Input image 2 is the original toy's open-mouth expression to match.\nOutput ONLY one small OPEN HAPPY LAUGHING MOUTH cutout, with the same dark warm-brown plush mouth edge, dark red soft fabric interior and little rounded pink-red felt tongue as the home bear. No teeth. No nose, eyes, head, torso, beard or large cream muzzle. Only a very narrow cream-fur lip edge (1-2px at final size) is okay to blend over the closed smile. The open mouth is a wide rounded U / joyful open smile, upper edge slightly curved, tilted about 12 degrees counterclockwise to fit the slightly tilted head. It must cover the entire existing closed smile when placed over it. Keep the original body unchanged; output only the replacement mouth as its own layer.\nSquare canvas with genuine transparent alpha. In equivalent 512x512 coordinates mouth occupied bounds approximately x278..320 y152..191, center near x299 y172. Empty transparent elsewhere. Use the toy's soft right-upper lighting and tactile plush/felt finish. No text, no background, no shadows, no effects.",
+      "references": [
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/delivery/body.png",
+        "/Users/yangdage/aitools/flight/flight-bubble/Art/PlushToy/DashTransition-20261031/references/bear-home-idle.png"
+      ],
+      "status": "accepted",
+      "master": "masters/D6-mouth-open-01.png",
+      "tool": "built-in image_gen"
+    }
+  ],
+  "export": {
+    "method": "Premultiplied-alpha Lanczos uniform resize and translation only; no redrawing; toy design from image_gen.",
+    "parts": {
+      "body": {
+        "master": "masters/D1-body-01.png",
+        "sourceCrop": [
+          209,
+          118,
+          1044,
+          1207
+        ],
+        "exportSize": [
+          288,
+          376
+        ],
+        "pasteXY": [
+          112,
+          42
+        ]
+      },
+      "arm-l": {
+        "master": "masters/D2-arm-l-02.png",
+        "sourceCrop": [
+          265,
+          271,
+          950,
+          1032
+        ],
+        "exportSize": [
+          112,
+          124
+        ],
+        "pasteXY": [
+          106,
+          225
+        ],
+        "sourcePivot": [
+          773,
+          445
+        ],
+        "pivot": [
+          189,
+          253
+        ]
+      },
+      "arm-r": {
+        "master": "masters/D3-arm-r-01.png",
+        "sourceCrop": [
+          476,
+          375,
+          968,
+          901
+        ],
+        "exportSize": [
+          116,
+          124
+        ],
+        "pasteXY": [
+          320,
+          224
+        ],
+        "sourcePivot": [
+          600,
+          493
+        ],
+        "pivot": [
+          349,
+          252
+        ]
+      },
+      "leg-l": {
+        "master": "masters/D4-leg-l-02.png",
+        "sourceCrop": [
+          289,
+          229,
+          933,
+          1079
+        ],
+        "exportSize": [
+          86,
+          114
+        ],
+        "pasteXY": [
+          156,
+          366
+        ],
+        "sourcePivot": [
+          725,
+          426
+        ],
+        "pivot": [
+          214,
+          392
+        ]
+      },
+      "leg-r": {
+        "master": "masters/D5-leg-r-01.png",
+        "sourceCrop": [
+          377,
+          245,
+          986,
+          1045
+        ],
+        "exportSize": [
+          87,
+          114
+        ],
+        "pasteXY": [
+          280,
+          366
+        ],
+        "sourcePivot": [
+          579,
+          428
+        ],
+        "pivot": [
+          309,
+          392
+        ]
+      },
+      "mouth-open": {
+        "master": "masters/D6-mouth-open-01.png",
+        "sourceCrop": [
+          337,
+          417,
+          925,
+          906
+        ],
+        "exportSize": [
+          43,
+          36
+        ],
+        "pasteXY": [
+          276,
+          150
+        ]
+      }
+    },
+    "drawOrderBackToFront": [
+      "leg-l",
+      "leg-r",
+      "arm-l",
+      "arm-r",
+      "body",
+      "mouth-open (optional)"
+    ],
+    "angles": "Positive angle counterclockwise in these QA images; pivots measured from canvas top left."
+  },
+  "successful_image_count": 6,
+  "failed_call_count": 2,
+  "attempts_by_asset": {
+    "D1": 1,
+    "D2": 2,
+    "D3": 1,
+    "D4": 2,
+    "D5": 1,
+    "D6": 1
+  }
+}

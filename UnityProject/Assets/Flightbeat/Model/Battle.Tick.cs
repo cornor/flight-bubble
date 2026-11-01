@@ -142,8 +142,10 @@ namespace Flightbeat.Model
                             }
                             float spread = 0f;
                             int tier = fighter.Tier;
-                            if (tier <= 1)
-                                spread = OriginalMath.Binary32((OriginalMath.Binary32(OriginalMath.Binary32((float)barrel) + OriginalMath.Binary32(OriginalMath.Binary32((float)((tier == 1 ? 1 : 0) << 1)) * -.5f))) * 7f);
+                            // R1 2026-10-31 23:36 (user: Ⅰ 2 道, same firing speed): Ⅰ fires 2 a volley (was 3) every .48 x the
+                            // interval (was .72), so it still fires 2 / .48 = 3 / .72 shots per interval; barrels at -3.5 / +3.5.
+                            if (tier == 1)
+                                spread = OriginalMath.Binary32(OriginalMath.Binary32(OriginalMath.Binary32((float)barrel) - .5f) * 7f);
                             // WAT 923..975; 1141981184 is exactly 581f, not DefenseLine.
                             shot.Y = 581f;
                             shot.X = OriginalMath.Binary32(fleetX + spread);
@@ -187,7 +189,7 @@ namespace Flightbeat.Model
                                 }
                             }
                             barrel = unchecked(barrel + 1);
-                            if (barrel >= (fighter.Tier == 1 ? 3 : 1)) break;
+                            if (barrel >= (fighter.Tier == 1 ? 2 : 1)) break;   // R1 2026-10-31: Ⅰ 2 a volley (was 3)
                         }
                         if (firedCount > 0)
                         {
@@ -196,7 +198,7 @@ namespace Flightbeat.Model
                             float cooldown = OriginalMath.Max(fighter.Cooldown, -dt); // WAT 1281 / f70691
                             int tier = fighter.Tier;
                             float interval = Level.shotInterval; // LevelData +0x5C
-                            float factor = tier > 2 ? .13f : tier == 2 ? .18f : tier == 1 ? .72f : .82f;
+                            float factor = tier > 2 ? .13f : tier == 2 ? .18f : tier == 1 ? .48f : .82f;   // R1 2026-10-31: Ⅰ .48 (was .72)
                             fighter.Cooldown = OriginalMath.Binary32(cooldown + (bonus == 0f ? OriginalMath.Binary32(interval * factor) : OriginalMath.Binary32(OriginalMath.WasmMax(OriginalMath.Binary32(interval * factor), .02f) / divisor))); // WAT 1291..1344
                             Cue?.Invoke(tier > 2 ? "shot-rocket" : tier == 2 ? "shot-max" : tier == 1 ? "shot-twin" : "shot"); // WAT 1393
                         }

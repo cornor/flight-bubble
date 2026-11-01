@@ -41,17 +41,29 @@ namespace Flightbeat.Game
                 : kind == "yellow" ? "plants/uiref/button-yellow"
                 : kind == "red" ? (Has("plants/uiref/button-red") ? "plants/uiref/button-red" : "plants/uiref/button-yellow") : "plants/uiref/button-blue";
             if (kind == "red" && slot.EndsWith("button-red")) tint = null;   // the painted red needs no tint
-            float stored = slot == "scene/level" ? 36f : slot.EndsWith("button-white") ? 30f : 52f;   // trimmed round ends
+            float stored = slot == "scene/level" ? 36f : 52f;   // 2026-10-31: the flat capsules all have 52 px round ends
             Color face = tint ?? Color.white;
+            s.Glow(bx + bw * .5f, by + bh * .9f, bw * 1.06f, bh * .8f, new Color(0f, .02f, .12f, .38f), 0f);   // 10-31: soft shadow (reference)
             if (!Asset9(s, slot, bx, by, bw, bh, stored, 0f, bh * .5f, 0f, face))
                 WinRoundRect(s, bx, by, bw, bh, bh * .5f, kind == "white" ? Color.white : Hex(0x2F7BFF));
             bool light = kind == "white";
             Color ink = light ? Hex(0x3A4A6B) : Color.white;
-            float size = Mathf.Min(30f, bh * .38f), cy = by + bh * (light ? .5f : .46f);
-            float mark = icon != null ? size * 1.15f : 0f, gap = icon != null ? size * .3f : 0f, tw = GardenBarArt.TextWidth(word, size);
+            float size = Mathf.Min(32f, bh * .46f, (bw - 30f) / (word.Length + (icon != null ? 1.5f : 0f))), cy = by + bh * .47f;   // the face sits above the 6 % lip; words ~half the height
+            float mark = icon != null ? size * 1.2f : 0f, gap = icon != null ? size * .3f : 0f, tw = GardenBarArt.TextWidth(word, size);
             float left = x + (w - mark - gap - tw) * .5f;
             if (icon != null) Asset(s, icon, left, cy - mark * .5f, mark, mark, light ? ink : Color.white);
-            ButtonWord(s, word, left + mark + gap, cy, size, ink, !light);
+            ButtonInk(s, word, left + mark + gap, cy, size, kind);
+        }
+        // 2026-10-31 15:54 (user: 按钮风格以示意图为准): the words as on the reference - plain white bold on blue and red,
+        // white with a warm orange edge on yellow (#CE720A), navy-grey on white; no shadow.
+        static void ButtonInk(PixelSurface s, string word, float left, float cy, float size, string kind)
+        {
+            if (kind == "yellow")
+            {
+                float tw = GardenBarArt.TextWidth(word, size);
+                GardenBarArt.TextOutline(s, word, left + tw * .5f, cy - size * .55f, size, Color.white, Hex(0xCE720A), size * .1f);
+            }
+            else ButtonWord(s, word, left, cy, size, kind == "white" ? Hex(0x3A4A6B) : Color.white, false);
         }
         // The atlas is already bold; one ink pass avoids closing counters with offset overdraw.
         static void ButtonWord(PixelSurface s, string word, float left, float cy, float size, Color ink, bool shadow)

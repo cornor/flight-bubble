@@ -53,7 +53,9 @@ PLUSH_POT = ROOT / 'Art/PlushToy/PotSprout-20261029/delivery'
 # Put PLUSH_BACK back into PLUSH_ROOTS to bring the back views back.
 # 2026-10-30 09:29 (user): the pot sprout for the other 18 members (same four states).
 PLUSH_POT_ALL = ROOT / 'Art/PlushToy/PotSprout-All-20261030/delivery'
-PLUSH_ROOTS = (PLUSH_REACH, PLUSH_POT, PLUSH_POT_ALL, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
+# 2026-10-31 16:28 (user: 胜利时MVP是欢呼的状态，每个玩具都要出欢呼的图): one cheer pose per member (Cheer-20261031).
+PLUSH_CHEER = ROOT / 'Art/PlushToy/Cheer-20261031/delivery'
+PLUSH_ROOTS = (PLUSH_CHEER, PLUSH_REACH, PLUSH_POT, PLUSH_POT_ALL, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
 SPROUT_POINTS = {k.upper(): v for k, v in json.loads((PLUSH_POT_ALL / 'sprout-points.json').read_text()).items()} \
     if (PLUSH_POT_ALL / 'sprout-points.json').is_file() else {}
 # 2026-10-29 21:07: light theme and new UI art (界面优化); slot overrides below (THEME_SLOTS) and the battle background.
@@ -82,7 +84,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/DashTransition-20261031/delivery', ROOT / 'Art/PlushToy/DashArms-20261031/delivery', ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     files += [p for p in (PAD_COMBAT_ART / 'mouths.json', PAD_COMBAT_ART / 'coverage.json') if p.exists()]
@@ -165,7 +167,7 @@ for entry in color_data['colors']:
         # 2026-10-30: the queue sprout layers are only ever drawn at queue size (<= ~94 px of the 256 frame), so they are
         # stored at half scale; this keeps room on the creature atlas for all 22 members' sprouts.
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png',
-                      CREATURE * .5 if st in ('pot', 'body', 'sprout', 'leaves') else CREATURE, None))
+                      CREATURE * .5 if st in ('pot', 'body', 'sprout', 'leaves') else CREATURE * .85 if st == 'cheer' else CREATURE, None))   # cheer: room on the atlas for 22
 # Mystery reserves reveal neither their palette nor their optional animation.
 # Art item 76 delivers only idle: a mystery member never attacks while hidden, so the other states reuse it.
 for st in ['idle', 'attack', 'spent']:
@@ -448,9 +450,57 @@ THEME_SLOTS = {'scene/plush-board': 'theme/board-frame.png', 'scene/progress-tra
 # main atlas at half size - the wordmark, the rising arrow (mirrored in code for the right side), the light ribbon
 # under the bubble field and the gold sparkle.
 REVIVE_ART = ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery'
+# 2026-10-31 16:52 (user: 转场做成沙画那种小水桶人冲): 啵啵's runner parts (DashTransition-20261031), all on one 512 canvas
+# in their assembled places, at half size; parts.json gives the turning points (canvas px) -> slot pivotX / pivotY (0..1).
+DASH_ART = ROOT / 'Art/PlushToy/DashTransition-20261031/delivery'
+# 17:19 (user: 不需要腿，通过花盆的形象蹦蹦跳跳替代): the legs are delivered but not used.
+DASH_PARTS = {'scene/dash-body': 'body.png', 'scene/dash-arm-l': 'arm-l.png', 'scene/dash-arm-r': 'arm-r.png',
+              'scene/dash-mouth': 'mouth-open.png'}
+# 2026-11-01 08:55 (user picked E): the transition swaps the in-game 啵啵's idle / cheer frames; the rigged parts
+# (body, arms, mouth) are no longer packed.
+DASH_PARTS = {}
+DASH_PIVOTS = {}
+if (DASH_ART / 'parts.json').is_file():
+    for _k, _v in json.loads((DASH_ART / 'parts.json').read_text()).items():
+        DASH_PIVOTS['scene/dash-' + _k] = (float(_v[0]) / 512, float(_v[1]) / 512)
+# 23:08 (user picked option D: 手从肩膀伸出，跳起时举手欢呼): the arms redrawn growing from the shoulders
+# (DashArms-20261031) replace the pot-side ones, with their own shoulder pivots, once delivered.
+DASH_ARMS = ROOT / 'Art/PlushToy/DashArms-20261031/delivery'
+DASH_SRC = {}
+for _sid, _rel in DASH_PARTS.items():
+    _src = DASH_ARMS if 'arm' in _sid and (DASH_ARMS / _rel).is_file() else DASH_ART
+    if (_src / _rel).is_file(): SLOTS.append((_sid, str(_src / _rel), .5, None)); DASH_SRC[_sid] = _src
+if (DASH_ARMS / 'parts.json').is_file():
+    for _k, _v in json.loads((DASH_ARMS / 'parts.json').read_text()).items():
+        if DASH_SRC.get('scene/dash-' + _k) == DASH_ARMS:
+            DASH_PIVOTS['scene/dash-' + _k] = (float(_v[0]) / 512, float(_v[1]) / 512)
 for _sid, _rel in (('scene/revive-title', 'title.png'), ('scene/revive-arrow', 'arrow.png'),
                    ('scene/revive-ribbon', 'ribbon.png'), ('scene/revive-sparkle', 'sparkle.png')):
     if (REVIVE_ART / _rel).is_file(): SLOTS.append((_sid, str(REVIVE_ART / _rel), .5, None))
+# 2026-10-31 15:54 (user: 以这个示意图里面按钮的风格为准，所有弹框统一，包括首页的进入游戏按钮): flat capsules like the
+# reference instead of the thick jelly art - a soft top-to-bottom gradient, a thin darker lip along the bottom (6 %), a faint
+# sheen in the upper half, true round ends (52 px at 104 tall), no outline. Blue and yellow measured off the reference;
+# red and white in the same manner. Drawn at 4x and reduced, so the edges stay clean.
+def flat_capsule(top, bottom, lip, w=390, h=104, lipw=6, sheen=.16, k=4):
+    import numpy as np
+    W, H, L = w * k, h * k, lipw * k
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    def inside(y0, y1):
+        rr = (y1 - y0) / 2; cy = (y0 + y1) / 2; cx = np.clip(xx, rr, W - rr)
+        return (np.hypot(xx - cx, yy - cy) <= rr).astype(np.float32)
+    full, body = inside(0, H), inside(0, H - L)
+    t = np.clip(yy / (H - L), 0, 1)[..., None]
+    rgb = np.array(top, np.float32) * (1 - t) + np.array(bottom, np.float32) * t
+    glow = inside(H * .06, (H - L) * .62) * np.clip(1 - yy / ((H - L) * .5), 0, 1) ** 1.5 * sheen
+    rgb = rgb * (1 - glow[..., None]) + 255 * glow[..., None]
+    out = np.where(body[..., None] > 0, rgb, np.array(lip, np.float32)[None, None, :])
+    img = np.dstack([out, full * 255]).reshape(h, k, w, k, 4).mean(axis=(1, 3))
+    return Image.fromarray(np.clip(img + .5, 0, 255).astype(np.uint8), 'RGBA')
+FLAT_BUTTONS = {'blue': ((47, 146, 255), (24, 128, 252), (19, 101, 198)), 'yellow': ((253, 217, 41), (253, 177, 7), (235, 134, 1)),
+                'red': ((255, 108, 108), (240, 56, 63), (196, 36, 48)), 'white': ((255, 255, 255), (236, 242, 250), (201, 214, 232))}
+(GEN / 'ui').mkdir(parents=True, exist_ok=True)
+for _k, _c in FLAT_BUTTONS.items():
+    flat_capsule(*_c).save(GEN / f'ui/button-{_k}-flat.png')
 # (applied just before the tiles are packed, so slots added further down - home buttons - are covered too)
 for _sid, _rel in (('plants/uiref/guide-hand', 'guide/hand.png'), ('plants/uiref/button-blue', 'theme/button-blue.png'), ('plants/uiref/button-yellow', 'theme/button-yellow.png'),
                    ('plants/uiref/button-red', 'theme/button-red.png'), ('plants/uiref/win-crown', 'win/mvp-crown.png'), ('plants/uiref/lose-hero-sad', 'lose/hero-sad.png'),
@@ -461,6 +511,8 @@ for _sid, _rel in (('plants/uiref/guide-hand', 'guide/hand.png'), ('plants/uiref
                    ('plants/uiref/revive-wave', 'fx/revive-wave.png')):
     # 2026-10-29: result pages, guide and the second batch, on the roomier creature atlas (plants/ prefix); the aim ring
     # is drawn at most ~280 px wide, so it is stored at half size.
+    if _sid.startswith('plants/uiref/button-') and _sid.rsplit('-', 1)[1] in FLAT_BUTTONS:   # 15:54: the flat capsules
+        SLOTS.append((_sid, str(GEN / f"ui/button-{_sid.rsplit('-', 1)[1]}-flat.png"), 1.0, None)); continue
     if _ur(_rel).is_file(): SLOTS.append((_sid, str(_ur(_rel)), _ur_scale(_rel, .5 if _sid.endswith('aim-ring') else 1.0), None))
 
 if (_HOME / 'delivery/celebrate-halo.png').exists():
@@ -673,12 +725,65 @@ SLOTS[:] = [(e[0], str(GEN / 'ui/progress-fill-theme.png'), 1.0, *e[3:]) if e[0]
 # 2026-10-31 11:50 (user: 设置、图鉴的icon太丑，完全参照原图重新生成): the redrawn home corner buttons, stored at 128 px
 # (the old ones were 64 px drawn at 60, hence soft), placed after the theme overrides below.
 HOME_ICONS = ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery'
+# 2026-10-31 16:33 (user: 设置页的样式跟参照图不一样): the reference's flat look for the dialog rows (white rounded cards
+# with a fine pale-blue rim) and the setting icons (solid bright blue #1E7BF5 note / speaker / sun), drawn here at 4x.
+import math as _m
+from PIL import ImageDraw as _ID
+def _settings_art():
+    math, ImageDraw = _m, _ID
+    BLUE=(30,123,245,255)
+    def icon(kind, n=96, k=4):
+        N=n*k; im=Image.new('RGBA',(N,N),(0,0,0,0)); d=ImageDraw.Draw(im)
+        S=lambda v: v*k
+        if kind=='music':
+            def head(cx,cy):
+                l=Image.new('RGBA',(N,N),(0,0,0,0)); dd=ImageDraw.Draw(l)
+                dd.ellipse([S(cx-14),S(cy-10),S(cx+14),S(cy+10)],fill=BLUE); l=l.rotate(20,center=(S(cx),S(cy)),resample=Image.BICUBIC); im.alpha_composite(l)
+            head(30,72); head(68,64)
+            d.rectangle([S(38),S(22),S(44),S(72)],fill=BLUE); d.rectangle([S(76),S(14),S(82),S(64)],fill=BLUE)
+            d.polygon([(S(38),S(22)),(S(82),S(12)),(S(82),S(26)),(S(38),S(36))],fill=BLUE)
+        elif kind=='sound':
+            d.rounded_rectangle([S(12),S(36),S(32),S(60)],radius=S(4),fill=BLUE)
+            d.polygon([(S(30),S(36)),(S(52),S(18)),(S(52),S(78)),(S(30),S(60))],fill=BLUE)
+            d.rounded_rectangle([S(46),S(18),S(54),S(78)],radius=S(4),fill=BLUE)
+            for r in (16,30):
+                d.arc([S(56-r),S(48-r),S(56+r),S(48+r)],-48,48,fill=BLUE,width=S(7))
+        elif kind=='light':
+            d.ellipse([S(30),S(30),S(66),S(66)],fill=BLUE)
+            for i in range(8):
+                a=i*math.pi/4; x0,y0=48+math.cos(a)*26,48+math.sin(a)*26; x1,y1=48+math.cos(a)*38,48+math.sin(a)*38
+                d.line([S(x0),S(y0),S(x1),S(y1)],fill=BLUE,width=S(7))
+                for x,y in ((x0,y0),(x1,y1)): d.ellipse([S(x-3.5),S(y-3.5),S(x+3.5),S(y+3.5)],fill=BLUE)
+        return im.resize((n,n),Image.LANCZOS)
+    def row(w=240,h=64,r=18,k=4):
+        import numpy as np
+        W,H,R=w*k,h*k,r*k
+        yy,xx=np.mgrid[0:H,0:W].astype(np.float32)
+        def rr(x0,y0,x1,y1,rad):
+            cx=np.clip(xx,x0+rad,x1-rad); cy=np.clip(yy,y0+rad,y1-rad)
+            return (np.hypot(xx-cx,yy-cy)<=rad).astype(np.float32)
+        outer=rr(0,0,W,H,R); inner=rr(1.5*k,1.5*k,W-1.5*k,H-3.5*k,R-1.5*k)
+        t=(yy/H)[...,None]
+        face=np.array([255,255,255],np.float32)*(1-t)+np.array([246,249,255],np.float32)*t
+        rim=np.array([214,226,244],np.float32)
+        rgb=np.where(inner[...,None]>0,face,rim[None,None,:])
+        img=np.dstack([rgb,outer*255]).reshape(h,k,w,k,4).mean(axis=(1,3))
+        return Image.fromarray(np.clip(img+.5,0,255).astype(np.uint8),'RGBA')
+    (GEN / 'ui').mkdir(parents=True, exist_ok=True)
+    row().save(GEN / 'ui/dialog-row-flat.png')
+    for _k in ('music', 'sound', 'light'): icon(_k).save(GEN / f'ui/icon-{_k}-flat.png')
+_settings_art()
+FLAT_SETTINGS = {'plants/dialog/pause-row': 'ui/dialog-row-flat.png', 'plants/dialog/row': 'ui/dialog-row-flat.png',
+                 'plants/dialog/icon-music': 'ui/icon-music-flat.png', 'plants/ui/icon-music': 'ui/icon-music-flat.png',
+                 'plants/dialog/icon-sound': 'ui/icon-sound-flat.png', 'plants/ui/icon-sound': 'ui/icon-sound-flat.png',
+                 'plants/dialog/icon-light': 'ui/icon-light-flat.png', 'plants/ui/icon-light': 'ui/icon-light-flat.png'}
 # 2026-10-30: the light-theme overrides (THEME_SLOTS), after every slot has been listed.
 SLOTS[:] = [(e[0], str(_ur(THEME_SLOTS[e[0]])), _ur_scale(THEME_SLOTS[e[0]]), *e[3:]) if e[0] in THEME_SLOTS and _ur(THEME_SLOTS[e[0]]).is_file() else e
             for e in SLOTS]
 SLOTS[:] = [(e[0], str(HOME_ICONS / (e[0].rsplit('/', 1)[1] + '.png')), 128 / Image.open(HOME_ICONS / (e[0].rsplit('/', 1)[1] + '.png')).width, *e[3:])
             if e[0] in ('plants/home/btn-settings', 'plants/home/btn-codex') and (HOME_ICONS / (e[0].rsplit('/', 1)[1] + '.png')).is_file() else e
             for e in SLOTS]
+SLOTS[:] = [(e[0], str(GEN / FLAT_SETTINGS[e[0]]), 1.0, *e[3:]) if e[0] in FLAT_SETTINGS else e for e in SLOTS]   # 16:33 flat rows / icons
 # ---- tiles
 tiles, placeholder, delivered = [], [], []
 for entry in SLOTS:
@@ -1013,6 +1118,7 @@ for atlas_id in [0, 1]:
         # 2026-10-30: the queue sprout's front rim and stem base per member (PotSprout-All-20261030), on the pot slot.
         if sid.endswith('/pot') and sid.split('/')[-2].upper() in SPROUT_POINTS:
             slot.update({k: float(v) for k, v in SPROUT_POINTS[sid.split('/')[-2].upper()].items() if k in ('rimY', 'stemX', 'stemY')})
+        if sid in DASH_PIVOTS: slot.update(pivotX=DASH_PIVOTS[sid][0], pivotY=DASH_PIVOTS[sid][1])   # 2026-10-31 runner joints
         slots.append(slot)
     heights.append(top)
     atlas_image.save(OUT / ('atlas.png' if atlas_id == 0 else 'creatures.png'))

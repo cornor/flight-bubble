@@ -59,6 +59,7 @@ namespace Flightbeat.Game
             bool hasHero = mvp || winDebut.Count > 0;
             Color heroTint = mvp ? mvpHero.tint : hasHero ? winDebut[0].tint : Color.white;
             const float heroFeet = 452f, heroCanvas = 290f;   // 2026-10-30: measured from the reference page
+            bool heroIsNew = hasHero && winDebut.Count > 0 && winDebut.Exists(m => m.tint == heroTint);
             if (hasHero)
             {
                 float age = t - .2f, a = Clamp01(age / .15f) * fade, p = OutBack(Clamp01(age / .4f), 1.8f);
@@ -79,10 +80,10 @@ namespace Flightbeat.Game
                     }
                     ResultTwinkles(s, cx, feet - heroCanvas * .45f, 175f, 115f, a);
                     float chipAge = age - .45f;
-                    if (mvp && chipAge > 0f)
+                    if ((mvp || heroIsNew) && chipAge > 0f)   // 2026-10-31: a new (non-MVP) hero gets its own chip
                     {
                         float tp = OutBack(Clamp01(chipAge / .25f), 2.4f), ta = Clamp01(chipAge / .15f) * fade;
-                        WinAwardChip(s, cx, oy + 475f, 170f * tp, 38f * tp, "本局MVP", 20f * tp, ta, true);
+                        WinAwardChip(s, cx, oy + 475f, 170f * tp, 38f * tp, mvp ? "本局MVP" : "新伙伴加入", 20f * tp, ta, true);
                     }
                 }
             }
@@ -93,7 +94,6 @@ namespace Flightbeat.Game
             winRow.Clear();
             foreach (var m in winDebut)
                 if (winRow.Count < 3 && !(hasHero && m.tint == heroTint)) winRow.Add((m.tint, firstClear ? 2 : 8, 0));
-            bool heroIsNew = hasHero && winDebut.Count > 0 && winDebut.Exists(m => m.tint == heroTint);
             float sectionA = Clamp01((t - .8f) / .2f) * fade;
             const float rowFeet = 622f;
             if (winRow.Count > 0)
@@ -111,9 +111,7 @@ namespace Flightbeat.Game
                     ResultChip(s, firstClear ? "已解锁" : "本关登场", mx, oy + rowFeet + 19f, Clamp01((age - .2f) / .15f) * fade);
                 }
             }
-            else if (heroIsNew)
-                ResultSection(s, firstClear ? "新伙伴加入小队！" : "本关登场", oy + 523f, sectionA);
-            else if (nextIn > 0 && nextIn <= 5)
+            else if (!heroIsNew && nextIn > 0 && nextIn <= 5)
             {
                 ResultSection(s, "下一位伙伴", oy + 523f, sectionA);
                 float age = t - .9f;
@@ -123,6 +121,30 @@ namespace Flightbeat.Game
                     Asset(s, "plants/mystery-bubble", cx - aw * .5f, oy + rowFeet + bob - ah * FeetLine, aw, ah, new Color(1f, 1f, 1f, a));
                     ResultChip(s, nextIn + " 关后加入", cx, oy + rowFeet + 19f, Clamp01((age - .2f) / .15f) * fade);
                 }
+            }
+            else
+            {
+                // 2026-10-31 15:29 (user: 没有新成员加入时，那个区域空掉了): with no newcomer to show (the hero itself is
+                // new, or no partner is due within five levels), the row shows this level's squad - the members who
+                // popped the most bubbles after the hero, each with a 「消除 N」 chip.
+                if (t > .8f) BuildWinSquad(hasHero, heroTint);
+                if (winSquad.Count > 0)
+                {
+                    ResultSection(s, "本局小队", oy + 523f, sectionA);
+                    for (int i = 0; i < winSquad.Count; i++)
+                    {
+                        float mx = cx + (i - (winSquad.Count - 1) * .5f) * 124f, age = t - (.9f + i * .12f);
+                        if (age <= 0f) continue;
+                        float a = Clamp01(age / .12f) * fade, p = OutBack(Clamp01(age / .32f), 1.8f);
+                        s.Glow(mx, oy + rowFeet + 2f, 90f * p, 18f * p, new Color(1f, .95f, .8f, .4f * a), 0f);
+                        bool before = GardenSkin.Celebrate; GardenSkin.Celebrate = true;
+                        Creature(s, winSquad[i].tint, mx, oy + rowFeet, 104f * p, 0, "", 0f, 12f, false, false, .04f, mx * .013f);
+                        GardenSkin.Celebrate = before;
+                        ResultChip(s, winSquad[i].chip, mx, oy + rowFeet + 19f, Clamp01((age - .2f) / .15f) * fade);
+                    }
+                }
+                else if (heroIsNew)
+                    ResultSection(s, firstClear ? "新伙伴加入小队！" : "本关登场", oy + 523f, sectionA);
             }
             if (t > 1.1f)
                 ResultStats(s, oy + 716f, Clamp01((t - 1.1f) / .2f) * fade, Battle.BestCombo.ToString(), ResultRound(Battle.Time) + " 秒");
@@ -441,6 +463,30 @@ namespace Flightbeat.Game
         Flightbeat.Model.Battle mvpBattle;
         bool[] mvpAlive;
         int[] mvpKills;
+        // This level's squad for the victory row (up to three, most bubbles popped first, the hero left out); built once.
+        readonly System.Collections.Generic.List<(Color tint, string chip)> winSquad = new System.Collections.Generic.List<(Color tint, string chip)>();
+        Flightbeat.Model.Battle winSquadFor;
+        void BuildWinSquad(bool hasHero, Color heroTint)
+        {
+            if (winSquadFor == Battle) return;
+            winSquadFor = Battle; winSquad.Clear();
+            if (mvpKills == null || mvpBattle != Battle) return;
+            var order = new System.Collections.Generic.List<int>();
+            for (int c = 0; c < mvpKills.Length; c++) if (mvpKills[c] > 0) order.Add(c);
+            order.Sort((x, y) => mvpKills[y].CompareTo(mvpKills[x]));
+            var p = Battle.Level.palette;
+            foreach (int c in order)
+            {
+                string name = GardenColorCatalog.Name((p[c * 3] << 16) | (p[c * 3 + 1] << 8) | p[c * 3 + 2]);
+                foreach (var e in Codex)
+                {
+                    if (e.name != name) continue;
+                    if (!(hasHero && e.tint == heroTint)) winSquad.Add((e.tint, "消除 " + mvpKills[c]));
+                    break;
+                }
+                if (winSquad.Count == 3) break;
+            }
+        }
         int mvpRemaining = -1, mvpLineCount = -1;
         string mvpLine = "";
         CodexEntry mvpHero;

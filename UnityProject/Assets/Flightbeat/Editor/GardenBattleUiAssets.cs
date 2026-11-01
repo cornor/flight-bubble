@@ -196,9 +196,11 @@ namespace Flightbeat.Editor
             var pause = Action("Pause button", band, 1, 12, 6, 44, 44);
             Art("Icon", pause, "scene/pause", 2, 2, 40, 40);
             // 2026-10-29 (light theme T8): the white pill has fully round 36 px ends; slice at 36, drawn at 19 (half of 38).
+            // 2026-10-31 (user: 第x关、百分比的字没有居中): the labels span the whole plaque and sit on the centre of its face
+            // (the pill has a thicker lower rim, so its face centre is ~3.5 px above the middle of the 38 px box).
             Art("Level plaque", band, "scene/level", 66, 12, 116, 38, true, 36, 36, 19);
-            RoundLabel("Lesson title", band, "泡泡课堂 {0}/2", 66, 19, 106, 15, GardenBars.Navy);
-            RoundLabel("Level title", band, "第 {0} 关", 66, 18.4f, 106, 18, GardenBars.Navy).gameObject.SetActive(false);
+            RoundLabel("Lesson title", band, "泡泡课堂 {0}/2", 66, 16, 116, 15, GardenBars.Navy);
+            RoundLabel("Level title", band, "第 {0} 关", 66, 15f, 116, 18, GardenBars.Navy).gameObject.SetActive(false);
             // 2026-10-21 10:44 (user: too much room around the number): the frame ends 14 px earlier on the right (344 -> 330).
             Art("Progress frame", band, "scene/progress-frame", 190, 12, 330, 38, true, 36, 36, 19);
             // 2026-10-21 (quality pass): the empty groove read as a dull grey bar. Now a pale frosted groove with a fine
@@ -221,7 +223,7 @@ namespace Flightbeat.Editor
             Image spark = Art("Progress spark", band, "fx/glow", 190, 15, 30, 32);
             spark.color = new Color(1f, 1f, 1f, .8f);
             // 2026-10-21: the percent a size larger (16 -> 18) and closer to the groove.
-            RoundLabel("Progress percent", band, "{0}%", 459, 18.6f, 54, 18, GardenSkin.Hex(0x3F248A));
+            RoundLabel("Progress percent", band, "{0}%", 459, 15f, 54, 18, GardenSkin.Hex(0x3F248A));   // 10-31: centred on the pill face (was ~3.5 px low)
             return root;
         }
         static RectTransform Controls()
@@ -290,9 +292,9 @@ namespace Flightbeat.Editor
             // Reference row: home, restart, rewarded skip. The home settings hide all three.
             // 2026-10-29 21:07 (界面优化 9, user: 去掉跳关功能): no skip button; home + restart centred as a pair (332 wide).
             // 2026-10-30 (light theme): white 主页 · 重新开始 pills over a wide blue 继续游戏 (完成 on the home settings).
-            ThemePill("Home", content, 25, 100, 642, 162, 62, "white", "主页");
-            ThemePill("Retry", content, 23, 278, 642, 162, 62, "white", "重新开始");
-            ThemePill("Resume", content, 24, 120, 728, 300, 80, "blue", "继续游戏");
+            ThemePill("Home", content, 25, 100, 642, 162, 62, "white", "主页", "plants/uiref/icon-home");
+            ThemePill("Retry", content, 23, 278, 642, 162, 62, "white", "重新开始", "plants/uiref/icon-replay");
+            ThemePill("Resume", content, 24, 120, 736, 300, 80, "blue", "继续游戏");   // 10-31: 8 px more air under the panel
             var close = Action("Close settings", content, 24, 457, 190, 50, 50);
             Art("Close image", close, "plants/dialog/close", 0, 0, 50, 50);
             // Home settings: a readable text link below the last toggle, with a generous hit target.
@@ -300,6 +302,10 @@ namespace Flightbeat.Editor
             // 2026-10-30 (调整 5, reference): a bold red 「重置关卡进度」.
             var resetText = RoundLabel("Reset text", reset, "{0}", 0, 8, 260, 24, GardenSkin.Hex(0xE5484D));
             resetText.middle = true;
+            // 2026-10-31 16:33 (settings reference): a fine divider between the toggles and 「重置关卡进度」 (home only, with it).
+            var divider = Node("Divider", reset, -52, -6, 364, 2);
+            var dividerImage = divider.gameObject.AddComponent<Image>(); dividerImage.raycastTarget = false;
+            dividerImage.color = GardenSkin.Hex(0xDCE6F5);
             reset.gameObject.SetActive(false);
             var paused = Node("Paused", root, 0, 0, 540, 960); Stretch(paused);
             var simple = Modal(paused, "休息一下", 250, 370, panelSlot: "plants/dialog/pause-panel");
@@ -366,24 +372,29 @@ namespace Flightbeat.Editor
             string slot = kind == "white" ? (HasSlot("plants/uiref/button-white") ? "plants/uiref/button-white" : "scene/level")
                 : kind == "yellow" ? "plants/uiref/button-yellow" : "plants/uiref/button-blue";
             if (!HasSlot(slot)) return CapsuleButton(name, parent, id, x, y, w, h, "plants/dialog/pause-retry", word, GardenSkin.Hex(0x537D2F));
-            float stored = slot == "scene/level" ? 36f : slot.EndsWith("button-white") ? 30f : 52f, size = Mathf.Min(32f, h * .4f);
+            float stored = slot == "scene/level" ? 36f : 52f, size = Mathf.Min(32f, h * .4f);   // 2026-10-31: flat capsules, 52 px ends
             var root = Action(name, parent, id, x, y, w, h);
+            // 2026-10-31 16:11 (button check against the reference): a soft dark shadow under the capsule, bigger words
+            // (about half the button height) and icons a fifth larger than the words.
+            if (HasSlot("fx/glow")) { var sh = Art("Shadow", root, "fx/glow", -w * .04f, h * .42f, w * 1.08f, h * .9f); sh.color = new Color(0f, .02f, .12f, .38f); }
             Art("Button image", root, slot, 0, 0, w, h, true, stored, 0f, h * .5f);
             bool light = kind == "white";
-            size = Mathf.Min(32f, h * .38f);
+            size = Mathf.Min(32f, h * .48f, (w - 30f) / (word.Length + (icon != null ? 1.5f : 0f)));   // fits the word (and icon)
             Color ink = light ? GardenSkin.Hex(0x3A4A6B) : Color.white;
             // 2026-10-30: an optional glyph (T17) before the word, white on colour and navy-grey on white; the pair is
             // centred (CJK words ~1 em per character). 调整 (user): clean words like the reference, no outline.
             float shift = 0f;
             if (icon != null && HasSlot(icon))
             {
-                float mark = size * 1.15f, gap = size * .3f, textW = word.Length * size;
+                float mark = size * 1.2f, gap = size * .3f, textW = word.Length * size;
                 shift = (mark + gap) * .5f;
-                var glyph = Art("Icon", root, icon, (w - mark - gap - textW) * .5f, h * (light ? .5f : .46f) - mark * .5f, mark, mark);
+                var glyph = Art("Icon", root, icon, (w - mark - gap - textW) * .5f, h * .47f - mark * .5f, mark, mark);
                 glyph.color = ink;
             }
-            var label = RoundLabel("Label", root, word, shift * 2f, h * (light ? .5f : .46f) - size * .5f, w - shift * 2f, size, ink);
+            var label = RoundLabel("Label", root, word, shift * 2f, h * .47f - size * .5f, w - shift * 2f, size, ink);
             label.outlineWidth = 0f;
+            // 2026-10-31 (reference 下一关): white words with a warm orange edge on the yellow capsule.
+            if (kind == "yellow") { label.outlineColor = GardenSkin.Hex(0xCE720A); label.outlineWidth = size * .1f; }
             return root;
         }
         static RectTransform CapsuleButton(string name, RectTransform parent, int id, float x, float y, float w, float h, string slot, string word, Color outline)

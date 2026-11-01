@@ -60,7 +60,7 @@ namespace Flightbeat.Model
                 float ratio = 1f;
                 foreach (Fighter ship in group)
                 {
-                    float factor = ship.Tier > 2 ? .13f : ship.Tier == 2 ? .18f : ship.Tier == 1 ? .72f : .82f;
+                    float factor = ship.Tier > 2 ? .13f : ship.Tier == 2 ? .18f : ship.Tier == 1 ? .48f : .82f;   // R1 2026-10-31: Ⅰ .48 (was .72)
                     float interval = OriginalMath.Binary32(Level.shotInterval * factor);
                     ratio = OriginalMath.Min(ratio, OriginalMath.Max(0f, OriginalMath.Binary32(ship.Cooldown / interval)));
                 }
@@ -90,7 +90,7 @@ namespace Flightbeat.Model
                     LastFired = lastFired
                 };
                 // WAT f32.mul twice: base*factor first, then ratio*interval.
-                float newFactor = tier > 2 ? .13f : tier == 2 ? .18f : tier == 1 ? .72f : .82f;
+                float newFactor = tier > 2 ? .13f : tier == 2 ? .18f : tier == 1 ? .48f : .82f;   // R1 2026-10-31: Ⅰ .48 (was .72)
                 fused.Cooldown = OriginalMath.Binary32(ratio * (OriginalMath.Binary32(Level.shotInterval * newFactor)));
                 Fleet.Insert(Math.Min(index, Fleet.Count), fused);
                 Fused?.Invoke(fused, group, Math.Min(index, unchecked(Fleet.Count - 1)));

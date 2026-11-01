@@ -113,14 +113,17 @@ namespace Flightbeat.Game
             Rect label = HomeWaveRect(170f, 862f, 200f, 30f);
             float lk = label.height / 30f;
             GardenBarArt.Text(s, homeLabel, label.center.x, label.y, 22f * lk, true, Hex(0x1D3A7A));
-            Rect r = HomeWaveRect(100f, 896f, 340f, 96f);
+            // 2026-10-31 16:26 (user: 开始游戏和设置里的按钮不像一种样式): the same capsule, words and proportions as the
+            // dialog buttons (300x80, 32 px words, the face at .47) - it was a chunkier 340x96 with 36 px words.
+            Rect r = HomeWaveRect(110f, 904f, 320f, 80f);
             HitBox(s, 800, r.x, r.y, r.width, r.height);
-            float k = r.width / 340f * (1f - PressPulse(800) * .04f);
-            float w = 340f * k, h = 96f * k, x = r.center.x - w * .5f, y = r.center.y - h * .5f;
+            float k = r.width / 320f * (1f - PressPulse(800) * .04f);
+            float w = 320f * k, h = 80f * k, x = r.center.x - w * .5f, y = r.center.y - h * .5f;
+            s.Glow(r.center.x, y + h * .9f, w * 1.04f, h * .78f, new Color(.08f, .28f, .7f, .26f), 0f);   // 2026-10-31: the dialog buttons' soft shadow, in blue on the light page
             if (!Asset9(s, "plants/uiref/button-blue", x, y, w, h, 52f, 0f, h * .5f, 0f, Color.white))
                 Asset9(s, "plants/win/button-next", x, y, w, h, 64f, 0f, h * 64f / 126f, 0f, Color.white);
-            float ts = 36f * k;   // 2026-10-30: clean white words like the reference
-            ButtonWord(s, "开始游戏", r.center.x - GardenBarArt.TextWidth("开始游戏", ts) * .5f, y + h * .46f, ts, Color.white, true);
+            float ts = 32f * k;   // 2026-10-30: clean white words like the reference
+            ButtonWord(s, "开始游戏", r.center.x - GardenBarArt.TextWidth("开始游戏", ts) * .5f, y + h * .47f, ts, Color.white, false);
         }
         void DrawWavePartner(PixelSurface s, float k, float ox, float oy)
         {

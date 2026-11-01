@@ -14,7 +14,7 @@ namespace Flightbeat.Garden
         public static readonly Color Ink = Hex(0x2A3B55), Paper = Hex(0xF6FAFF), Soil = Hex(0x9FD4FF), Wood = Hex(0x5A80B8), Leaf = Hex(0x86A67E), Field = Hex(0x8C919C);
         public static bool HideOriginalParticles;
         // v2: trimmed slots keep their full frame (fw, fh) and the trimmed offset (ox, oy) in stored pixels.
-        [Serializable] public sealed class Slot { public string id; public int atlas; public float x, y, w, h, ox, oy, fw, fh; public float headTop = -1f; public float potCenterX = .5f; public float rimY = -1f, stemX = -1f, stemY = -1f; }
+        [Serializable] public sealed class Slot { public string id; public int atlas; public float x, y, w, h, ox, oy, fw, fh; public float headTop = -1f; public float potCenterX = .5f; public float rimY = -1f, stemX = -1f, stemY = -1f; public float pivotX = -1f, pivotY = -1f; }
         [Serializable] public sealed class Glyph { public int code; public float x, y, w, h, advance, bearingX, bearingY; }
         [Serializable] public sealed class Atlas { public string characters; public int size, cell, fontSize, creatureWidth, creatureHeight; public Slot[] slots; public Glyph[] glyphs; }
         static Atlas atlas;
@@ -42,6 +42,14 @@ namespace Flightbeat.Garden
             Color32 c = color; return GardenColorCatalog.Name((c.r << 16) | (c.g << 8) | c.b);
         }
         public static bool Has(string id) => Data != null && slots.ContainsKey(id);
+        // 2026-10-31: a part's turning point (fraction of its canvas; the transition runner's arms and legs), centre if unset.
+        public static void SlotPivot(string id, out float px, out float py)
+        {
+            px = py = .5f;
+            if (Data == null || !slots.TryGetValue(id, out var slot)) return;
+            if (slot.pivotX >= 0f) px = slot.pivotX;
+            if (slot.pivotY >= 0f) py = slot.pivotY;
+        }
         // Visible (trimmed) part of a slot as fractions of its full frame: x, y, width, height in 0..1.
         public static bool Content(string id, out Rect content) {
             content = new Rect(0, 0, 1, 1);
@@ -659,7 +667,7 @@ namespace Flightbeat.Garden
             float numberTop = feet + 2f - numberLift;
             if (ammo.Length > 0) {
                 if (badge) {
-                    bool coin = showTier && tier > 0 && tier < 3;
+                    bool coin = showTier && tier > 0;   // 2026-11-01 (user: 加个 MAX 金币): MAX gets the coin too
                     // 2026-10-21 10:26 (user): as in the original (rank tag in the corner, count always centred), the pill
                     // stays centred under the feet whatever the tier; the tier coin hangs off its left end, overlapping
                     // the rim a little, instead of the coin + pill pair being centred (that pushed the count ~10 px right).
@@ -687,7 +695,13 @@ namespace Flightbeat.Garden
                             float c = bh * 1.1f, coinX = cx - bw * .5f - c * .2f;
                             if (!Asset(s, "scene/tier-coin", coinX - c / 2, cy - c / 2, c, c, Color.white))
                                 s.Rect(coinX - c / 2, cy - c / 2, c, c, Gold);
-                            Text(s, tier == 1 ? "Ⅰ" : "Ⅱ", coinX, cy - c / 2 + c * .14f, c * .62f, true, Hex(0x7A4A00));
+                            // 2026-11-01 09:49 (user: MAX 字有点糊，只显示一个 M): MAX shows a single "M", sized like Ⅰ / Ⅱ
+                            // (fitted to the coin's inner width).
+                            if (tier >= 3) {
+                                float ms = Mathf.Min(c * .56f, c * .62f / Mathf.Max(.01f, GardenBarArt.TextWidth("M", 1f)));
+                                Text(s, "M", coinX, cy - c / 2 + c * .14f + (c * .62f - ms) * .5f, ms, true, Hex(0x7A4A00));
+                            }
+                            else Text(s, tier == 1 ? "Ⅰ" : "Ⅱ", coinX, cy - c / 2 + c * .14f, c * .62f, true, Hex(0x7A4A00));
                         }
                     } finally { s.MapLayout = mapped; }
                 } else GardenBarArt.TextOutline(s, ammo, centerX, numberTop, numberSize, Color.white, Outline, Mathf.Max(1.2f, numberSize * .1f));
@@ -695,9 +709,15 @@ namespace Flightbeat.Garden
             if (showTier && tier >= 3) {
                 // 2026-10-21 10:39 (user): back to the earlier crown + gold MAX (the glass chip did not suit it).
                 // 2026-10-24: keep a modest lift over the original; the 1.5x mark dominated the plush bodies.
-                const float markScale = 1.2f, markDrop = 4f;
+                // 2026-11-01 (user: MAX 金币, 皇冠还是放头上): "MAX" moved to the coin by the count; the crown alone stays.
+                // 00:25 (user: 太挤了，皇冠高一点，挨着花环了): with the flower ring `top` is the ring's top, and the crown
+                // brought down 16 px sat on the ring; now it floats ~11 px clear above it (2 px lower than with the word).
+                // Where no coin is drawn (no count pill) the word stays under the crown as before.
+                bool onCoin = badge && ammo.Length > 0;
+                const float markScale = 1.2f;
+                float markDrop = onCoin ? 6f : 4f;
                 Asset(s, "scene/crown", crownX - 12f * markScale, top - 32f * markScale + markDrop, 24f * markScale, 18f * markScale, Color.white);
-                TextOutline(s, "MAX", crownX, top - 19f * markScale + markDrop, 14f * markScale, Gold, Outline, 1.5f * markScale);
+                if (!onCoin) TextOutline(s, "MAX", crownX, top - 19f * markScale + markDrop, 14f * markScale, Gold, Outline, 1.5f * markScale);
             } else if (showTier && tier > 0 && !badge) TextOutline(s, tier == 1 ? "Ⅰ" : "Ⅱ", centerX + aw * .3f, top, 15f, Gold, Outline, 1.5f);   // 2026-10-21: earlier style
             } finally {
                 if (plushMapped) { LastMouth.y = PlushLayout.InverseY(LastMouth.y); s.MapLayout = true; }

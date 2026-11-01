@@ -189,7 +189,7 @@ namespace Flightbeat.Garden.UI
             {
                 resumeLabel.text = "继续游戏"; resumeLabel.alternateText = "完成";
                 float rh = ParentHeight(resumeLabel);   // 2026-10-30: the light-theme capsule is 80 high (face centre .46)
-                CenterButtonLabel(resumeLabel, rh >= 60f ? rh * .92f : 73f, rh >= 60f ? Mathf.Min(32f, rh * .38f) : 32f);
+                CenterButtonLabel(resumeLabel, rh >= 60f ? rh * .92f : 73f, rh >= 60f ? Mathf.Min(32f, rh * .48f) : 32f);
                 resumeLabel.outlineWidth = 0f;   // 2026-10-30: clean words like the reference
             }
             // GardenUiText.middle is runtime-only; centre Retry after loading
@@ -199,17 +199,18 @@ namespace Flightbeat.Garden.UI
                 {
                     var retry = action.GetComponentInChildren<GardenUiText>(true);
                     float h = retry ? ParentHeight(retry) : 0f;   // 2026-10-30: a 62 px white pill, centred
-                    if (retry) CenterButtonLabel(retry, h < 70f ? h : 73f, h < 70f ? Mathf.Min(32f, h * .38f) : 32f);
+                    if (retry) CenterButtonLabel(retry, h < 70f ? h : 73f, h < 70f ? retry.fontSize : 32f);   // keep the prefab's fitted size
                 }
             foreach (var text in pausedPanel.GetComponentsInChildren<GardenUiText>(true))
                 if (text.text == "继续") { CenterButtonLabel(text, 73f, 32f); break; }
+            // 2026-10-31 16:11 (button check): words about half the capsule height, as on the reference (were .38).
             foreach (var action in resultActions)
                 if (action.actionId == 40)
                 {
                     // 2026-10-29: the light-theme capsules are 86 / 88 high (was 78 with a 73 face).
                     var label = action.GetComponentInChildren<GardenUiText>(true);
                     float h = ((RectTransform)action.transform).sizeDelta.y;
-                    if (label) CenterButtonLabel(label, h * .92f, Mathf.Min(32f, h * .38f));   // 2026-10-30: any capsule height
+                    if (label) CenterButtonLabel(label, h * .92f, Mathf.Min(32f, h * .48f));   // 2026-10-30: any capsule height
                 }
         }
         static float ParentHeight(GardenUiText t) => t && t.transform.parent is RectTransform p ? p.sizeDelta.y : 0f;
@@ -410,8 +411,10 @@ namespace Flightbeat.Garden.UI
         {
             if (!resumeRect) return;
             float extraRow = levelSetShown ? LevelSetRow : 0f;
-            if (settingsPanelArt) settingsPanelArt.sizeDelta = new Vector2(settingsPanelArt.sizeDelta.x, panelHeight + extraRow + (homeMode ? 24f : 0f));
-            resumeRect.anchoredPosition = new Vector2(resumeRect.anchoredPosition.x, resumeY - extraRow + (homeMode ? 90f : 0f));
+            // 2026-10-31 16:33 (user: 设置页的样式跟参照图不一样): on the home settings the 完成 button sits inside the panel,
+            // under the divider and 「重置关卡进度」, as in the reference (it hung below the panel, half under its shadow).
+            if (settingsPanelArt) settingsPanelArt.sizeDelta = new Vector2(settingsPanelArt.sizeDelta.x, panelHeight + extraRow + (homeMode ? 115f : 0f));
+            resumeRect.anchoredPosition = new Vector2(resumeRect.anchoredPosition.x, resumeY - extraRow + (homeMode ? 110f : 0f));
             if (resetProgress)
             {
                 var r = (RectTransform)resetProgress.transform;

@@ -14,15 +14,15 @@ namespace Flightbeat.Model
             Id = id;
             Ammo = ammo;
         }
-        // f54955: only Tier 1 has a volley of three, including invalid signed tiers.
-        public int Volley => Tier == 1 ? 3 : 1;
+        // f54955: only Tier 1 has a volley (R1 2026-10-31: two, was three), including invalid signed tiers.
+        public int Volley => Tier == 1 ? 2 : 1;
         // f54956: multiply AFTER choosing the exact f32 multiplier.
-        public float Interval(float baseInterval) => OriginalMath.Binary32((Tier > 2 ? .13f : Tier == 2 ? .18f : Tier == 1 ? .72f : .82f) * baseInterval);
+        public float Interval(float baseInterval) => OriginalMath.Binary32((Tier > 2 ? .13f : Tier == 2 ? .18f : Tier == 1 ? .48f : .82f) * baseInterval);
         // f54957: WAT multiplies the denominator BEFORE division.
         public float DPS(float baseInterval)
         {
-            float factor = Tier > 2 ? .13f : Tier == 2 ? .18f : Tier == 1 ? .72f : .82f;
-            float count = Tier > 2 ? 8f : Tier == 1 ? 3f : 1f;
+            float factor = Tier > 2 ? .13f : Tier == 2 ? .18f : Tier == 1 ? .48f : .82f;
+            float count = Tier > 2 ? 8f : Tier == 1 ? 2f : 1f;
             return OriginalMath.Binary32(count / (OriginalMath.Binary32(factor * baseInterval)));
         }
     }

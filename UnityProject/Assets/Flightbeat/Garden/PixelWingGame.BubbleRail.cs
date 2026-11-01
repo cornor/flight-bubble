@@ -86,7 +86,7 @@ namespace Flightbeat.Game
             bool mapped = s.MapLayout;
             // 2026-10-30 (调整 16, user after the reference): a glowing red line along the bottom edge of the bubble field
             // (the rail), red chevrons under it at both ends holding it up, and the black bar just below.
-            float lineY = GardenBars.ScreenY(s, 562f), cy = GardenBars.ScreenY(s, 592f);
+            float lineY = GardenBars.ScreenY(s, 562f);
             s.MapLayout = false;
             try
             {
@@ -100,8 +100,21 @@ namespace Flightbeat.Game
                         float lift = (1f - railPulse) * 4f, x = 270f + side * 236f;
                         Asset(s, "plants/uiref/rail-chevron", x - 13f, lineY + 3f - lift, 26f, 26f, new Color(1f, 1f, 1f, a * beat));
                     }
-                DarkBar(s, "泡泡压到护栏了！", cy, 1f, "warn", a, 17f);
             }
+            finally { s.MapLayout = mapped; }
+        }
+        // 2026-10-31 15:28 (user: 泡泡压到护栏那个条被挡住了): the members on the pads were drawn after the bar and
+        // covered it. The bar now goes on the overlay (above everything, DrawGardenOverlay) and hugs the rail - just under
+        // the red line, as in the reference - instead of sitting in the pad row.
+        void DrawRailWarningBar(PixelSurface s)
+        {
+            if (Battle == null || Battle.Level.lesson > 0 || settings || selection != 0 || Battle.State != Phase.Playing) return;
+            float a = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((railRed - .5f) / .2f));
+            if (a <= .01f) return;
+            bool mapped = s.MapLayout;
+            float cy = PlushLayout.Y(562f) + 24f;
+            s.MapLayout = false;
+            try { DarkBar(s, "泡泡压到护栏了！", cy, 1f, "warn", a, 17f); }
             finally { s.MapLayout = mapped; }
         }
 

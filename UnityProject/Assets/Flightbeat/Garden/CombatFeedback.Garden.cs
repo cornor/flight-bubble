@@ -1,5 +1,6 @@
 #if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using Flightbeat.Game;
 using Flightbeat.Model;
 using Flightbeat.Rendering;
@@ -70,6 +71,19 @@ namespace Flightbeat.Feedback
         readonly System.Collections.Generic.List<GardenPop> gardenPops = new System.Collections.Generic.List<GardenPop>();
         readonly System.Collections.Generic.Queue<float> gardenHitTimes = new System.Collections.Generic.Queue<float>();
         bool gardenPopsHooked;
+        // 2026-10-31 23:36: Ⅱ / MAX streams - per member, the latest target of each stream and when it was set (Battle.Time).
+        sealed class GardenStreams { public int next; public readonly Vector2[] to = new Vector2[4]; public readonly float[] at = { -10f, -10f, -10f, -10f }; }
+        readonly Dictionary<int, GardenStreams> streams = new Dictionary<int, GardenStreams>();
+        Flightbeat.Model.Battle streamsBattle;
+        static int StreamCount(int tier) => tier > 2 ? 4 : 3;
+        void GardenOnFired(Shot shot) {
+            if (shot.Tier < 2 || shot.Rocket) return;
+            if (!streams.TryGetValue(shot.FighterId, out var st)) streams[shot.FighterId] = st = new GardenStreams();
+            int k = st.next % StreamCount(shot.Tier);
+            st.next = (k + 1) % StreamCount(shot.Tier);
+            st.to[k] = new Vector2(shot.TargetX, shot.TargetY);
+            st.at[k] = battle.Time;
+        }
         int gardenPopSeed;
         // Ordinary tiers and MAX's splash attack share one visual admission path.
         // Copy values at impact: the model releases/reuses Shot immediately afterwards.
@@ -564,17 +578,33 @@ namespace Flightbeat.Feedback
                 gardenPopsHooked = true;
                 battle.Hit += GardenOnHit;
                 battle.Impacted += GardenOnImpact;
+                battle.Fired += GardenOnFired;
             }
+            if (streamsBattle != battle) { streamsBattle = battle; streams.Clear(); }
             foreach (var ship in battle.Fleet) {
                 if (ship.Tier < 2 || ship.BeamLife <= 0) continue;
                 int slot = battle.Fleet.IndexOf(ship);
-                var from = MouthOr(ship.Id, Position(ship.Id, slot));
-                var to = ShownPoint(ship.BeamX, ship.BeamY);
+                var mouth = MouthOr(ship.Id, Position(ship.Id, slot));
                 // 2026-10-18 23:40 (user: Ⅱ bullets too small). Stream balls are .48-.62 of the width, so width 10 made
                 // 5-6 px balls next to the 12 px Ⅰ shots; now Ⅱ 18 (9-11 px balls) and MAX 22 (11-14 px).
                 // 2026-10-22 10:51 (user): sizes as they were, except MAX now uses the Ⅱ width (18, was 22).
                 Color streamTint = color(ship.Color);
-                GardenFx.BubbleStream(s, from, to, 18, streamTint, time, GardenSkin.HasFlowerRing(streamTint));
+                bool ring = GardenSkin.HasFlowerRing(streamTint);
+                // 2026-10-31 23:36 (user: Ⅱ 3 道, MAX 4 道, same firing speed): the shots themselves are unchanged
+                // (one target each, at the original rate); they are dealt round to 3 / 4 streams, each stream holding
+                // on its own latest target for the beam's life (.18 s), so the member sprays several bubbles at once.
+                if (streams.TryGetValue(ship.Id, out var st)) {
+                    int n = StreamCount(ship.Tier);
+                    for (int k = 0; k < n; k++) {
+                        float since = battle.Time - st.at[k];
+                        if (!(since >= 0f && since < .18f)) continue;
+                        var from = mouth + new Vector2((k - (n - 1) * .5f) * 5f, 0f);
+                        // 2026-11-01: fanned apart in the air (3: -48 / 0 / +48, 4: -60 / -20 / +20 / +60) so they read as separate streams.
+                        float fan = (k - (n - 1) * .5f) * (n > 3 ? 40f : 48f);
+                        GardenFx.BubbleStream(s, from, ShownPoint(st.to[k].x, st.to[k].y), 18, streamTint, time + k * .13f, ring, ship.Tier, fan, true, k == 0);
+                    }
+                }
+                else GardenFx.BubbleStream(s, mouth, ShownPoint(ship.BeamX, ship.BeamY), 18, streamTint, time, ring, ship.Tier);
             }
             foreach (var f in flights) {
                 var shot = f.shot;
@@ -586,7 +616,7 @@ namespace Flightbeat.Feedback
                 // All shots of a volley start at the mouth; side barrels and rockets only spread a few pixels.
                 var from = MouthOr(shot.FighterId, f.from);
                 if (shot.Rocket) from.x += shot.X < 270f ? -7f : 7f;
-                else if (shot.Tier == 1) from.x += (shot.Barrel - 1) * 5f;
+                else if (shot.Tier == 1) from.x += (shot.Barrel - .5f) * 8f;   // 2026-10-31: Ⅰ fires 2 a volley (was 3)
                 // v3 (UI spec v3 4.4, user decision 2026-10-15 20:28): every projectile is a SOLID glossy ball in the
                 // shooter's color (the bead texture), 12 px, with smaller solid after-images. No see-through bubble.
                 // 2026-10-21 10:12 (user: the shots cover the face; small at the mouth, growing). Each ball is sized by
@@ -602,7 +632,7 @@ namespace Flightbeat.Feedback
                     float age = shot.Age - g * .018f;
                     if (g > 0 && age <= 0f) continue;
                     float tq = Mathf.Clamp01(age / shot.Duration);
-                    var q = blown ? GardenSkin.BlownCurve(from, to, GardenSkin.BlownEase(tq), (shot.Barrel - 1) * 7f) : Vector2.Lerp(from, to, tq);
+                    var q = blown ? GardenSkin.BlownCurve(from, to, GardenSkin.BlownEase(tq), shot.Tier == 1 ? (shot.Barrel - .5f) * 10f : (shot.Barrel - 1) * 7f) : Vector2.Lerp(from, to, tq);
                     float size = 12f - g * 2.2f, dist = (q - from).magnitude;
                     if (blown) {
                         if (g > 0 && dist < GardenSkin.BlownCondense + GardenSkin.BlownCondenseSpan) continue;   // no trailing images of the bubble

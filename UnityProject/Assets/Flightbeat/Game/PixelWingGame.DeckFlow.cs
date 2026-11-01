@@ -59,7 +59,12 @@ namespace Flightbeat.Game
                 catch (Exception error) { Debug.LogException(error); }
                 if (!InHome && Battle != null) SetPaused(true);
             }
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            // 2026-10-31 (user): going home is the quick sweep only (.72 s, was .92); levels keep 1.97 s.
+            if (!(transitionAge >= (transitionKind == TransitionKind.Home ? (GardenUiActive || InHome ? HomeTransitionEnd : .92f) : 1.97f))) return;
+#else
             if (!(transitionAge >= (transitionKind == TransitionKind.Home ? .92f : 1.97f))) return;
+#endif
             transitionActive = false;
             if (!InHome && Battle != null) SetPaused(false);
         }

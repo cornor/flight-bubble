@@ -1,0 +1,151 @@
+{
+  "canvas": [
+    512,
+    512
+  ],
+  "format": "RGBA PNG",
+  "pivotCoordinates": "pixels, top-left origin",
+  "rotationRange": [
+    -40,
+    40
+  ],
+  "rotationStep": 1,
+  "parts": {
+    "body": {
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "alphaBounds": [
+        112,
+        42,
+        400,
+        418
+      ],
+      "transparentPixels": 181106
+    },
+    "arm-l": {
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "alphaBounds": [
+        106,
+        225,
+        218,
+        349
+      ],
+      "transparentPixels": 254955
+    },
+    "arm-r": {
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "alphaBounds": [
+        320,
+        224,
+        436,
+        348
+      ],
+      "transparentPixels": 254815
+    },
+    "leg-l": {
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "alphaBounds": [
+        156,
+        366,
+        242,
+        480
+      ],
+      "transparentPixels": 255764
+    },
+    "leg-r": {
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "alphaBounds": [
+        280,
+        366,
+        367,
+        480
+      ],
+      "transparentPixels": 255738
+    },
+    "mouth-open": {
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "alphaBounds": [
+        276,
+        150,
+        319,
+        186
+      ],
+      "transparentPixels": 261123
+    }
+  },
+  "joints": {
+    "arm-l": {
+      "pivot": [
+        189,
+        253
+      ],
+      "opaqueJointCoreRadius": 8,
+      "testedAngles": 81,
+      "minimumOpaqueOverlapPixels": 2451,
+      "clipped": false,
+      "coreCoveredAtEveryAngle": true
+    },
+    "arm-r": {
+      "pivot": [
+        349,
+        252
+      ],
+      "opaqueJointCoreRadius": 8,
+      "testedAngles": 81,
+      "minimumOpaqueOverlapPixels": 3150,
+      "clipped": false,
+      "coreCoveredAtEveryAngle": true
+    },
+    "leg-l": {
+      "pivot": [
+        214,
+        392
+      ],
+      "opaqueJointCoreRadius": 8,
+      "testedAngles": 81,
+      "minimumOpaqueOverlapPixels": 2017,
+      "clipped": false,
+      "coreCoveredAtEveryAngle": true
+    },
+    "leg-r": {
+      "pivot": [
+        309,
+        392
+      ],
+      "opaqueJointCoreRadius": 8,
+      "testedAngles": 81,
+      "minimumOpaqueOverlapPixels": 2104,
+      "clipped": false,
+      "coreCoveredAtEveryAngle": true
+    }
+  },
+  "visualChecks": {
+    "whiteBackground": "Passed: no rectangular background, no dark fringe or cast shadow; open/closed smile aligns.",
+    "blueBackground": "Passed on #2F86FF: intact fluffy edges and cream soles; silhouette remains readable.",
+    "individualExtremes": "Inspected all eight single-limb poses; body covers joint ends, no visible cracks.",
+    "notes": "Art rig QA only. No game code or transition animation integration in this delivery."
+  }
+}

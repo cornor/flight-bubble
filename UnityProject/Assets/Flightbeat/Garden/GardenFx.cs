@@ -90,11 +90,78 @@ namespace Flightbeat.Garden
             float u = Mathf.Clamp01(distance / 34f);
             return .25f + .75f * u * u * (3f - 2f * u);
         }
-        public static void BubbleStream(PixelSurface s, Vector2 from, Vector2 to, float width, Color tint, float age, bool blown = false)
+        // 2026-11-01 (user: with Ⅱ 3 / MAX 4 streams the solid part still read as one thick band): `fan` bows a stream
+        // sideways (a quadratic bow across the from-to line, on the flower-ring curve or the straight one) so the streams of one
+        // member spread apart in the air and meet again at their targets.
+        static Vector2 StreamAt(Vector2 from, Vector2 to, float u, bool blown, float fan = 0f)
+        {
+            Vector2 p = blown ? GardenSkin.BlownCurve(from, to, u, 0f) : Vector2.Lerp(from, to, u);
+            if (fan == 0f) return p;
+            Vector2 d = to - from; float len = d.magnitude;
+            return len < .001f ? p : p + new Vector2(-d.y, d.x) / len * (fan * 2f * u * (1f - u));
+        }
+        // 2026-10-31 12:30 (user: Ⅰ's several bubbles flying together felt good; Ⅱ and MAX's single stream had less
+        // atmosphere). Presentation only, on top of the one stream: a soft glow along it (MAX also a white core), side
+        // strands of smaller bubbles braiding round it - Ⅱ two, MAX four (an inner and an outer pair) - meeting again
+        // at the mouth and the target, gold glints riding along, and a fuller splash where it lands (MAX: a pulsing light).
+        static void StreamExtras(PixelSurface s, Vector2 from, Vector2 to, float length, float width, Color tint, float age, bool blown, int tier, float fan, bool multi, bool lead)
+        {
+            bool max = tier >= 3;
+            Color g = Color.Lerp(tint, Color.white, .55f); g.a = multi ? (max ? .18f : .13f) : max ? .3f : .2f;
+            float gw = width * (multi ? 1.2f : max ? 2.4f : 1.7f);
+            int segs = blown || fan != 0f ? 10 : 1;
+            Vector2 prev = StreamAt(from, to, Mathf.Min(1f, 22f / length), blown, fan);
+            for (int i = 1; i <= segs; i++)
+            {
+                Vector2 p = StreamAt(from, to, (float)i / segs, blown, fan);
+                s.GlowLine(prev, p, gw, g);
+                if (max && !multi) s.GlowLine(prev, p, 4f, new Color(1f, 1f, 1f, .32f));
+                prev = p;
+            }
+            int strands = multi ? 0 : max ? 4 : 2;   // the braided strands stood in for several streams; not with real ones
+            float sstep = width * .62f * 1.25f, flow = (age * 150f) % sstep;
+            Color side = max ? Color.Lerp(tint, Color.white, .25f) : tint;
+            for (int j = 0; j < strands; j++)
+            {
+                bool outer = j >= 2;
+                float amp = outer ? 15f : 8f, freq = outer ? .035f : .05f, phase = j * Mathf.PI + (outer ? Mathf.PI * .5f : 0f);
+                int n = 0;
+                for (float d = 24f + flow + j * 3f; d < length - 6f; d += sstep, n++)
+                {
+                    float u = d / length;
+                    Vector2 c = StreamAt(from, to, u, blown, fan), c2 = StreamAt(from, to, Mathf.Min(1f, u + .01f), blown, fan);
+                    Vector2 tan = (c2 - c).sqrMagnitude > 1e-6f ? (c2 - c).normalized : (to - from) / length, nrm = new Vector2(-tan.y, tan.x);
+                    float env = Mathf.Clamp01((d - 20f) / 50f) * Mathf.Clamp01((length - d) / 60f);
+                    Vector2 at = c + nrm * (amp * env * Mathf.Sin(d * freq - age * 8f + phase));
+                    if (blown && (at - from).magnitude < GardenSkin.BlownCondense) continue;
+                    float size = width * (outer ? .3f : .36f) * (.85f + .15f * Mathf.Sin(n * 2.1f + j));
+                    GardenSkin.Shot(s, side, at, size * MouthGrow(d), outer ? .8f : .92f);
+                }
+            }
+            if (GardenSkin.Has("scene/revive-sparkle"))
+            {
+                int glints = multi ? (max ? 2 : 1) : max ? 6 : 3;
+                for (int i = 0; i < glints; i++)
+                {
+                    float d = (age * 170f + i * length / glints) % length;
+                    if (d < 30f) continue;
+                    Vector2 c = StreamAt(from, to, d / length, blown, fan) + new Vector2(Mathf.Sin(i * 2.7f) * 12f, Mathf.Cos(i * 1.9f) * 6f);
+                    float tw = .5f + .5f * Mathf.Sin(age * 9f + i * 1.7f), sz = (max ? 16f : 12f) * (.6f + .4f * tw);
+                    GardenSkin.Asset(s, "scene/revive-sparkle", c.x - sz * .5f, c.y - sz * .5f, sz, sz, new Color(1f, 1f, 1f, .85f * tw * Mathf.Clamp01((length - d) / 40f)));
+                }
+            }
+            if (max && lead)
+            {
+                Color pulse = Color.Lerp(tint, Color.white, .6f); pulse.a = .3f + .15f * Mathf.Sin(age * 10f);
+                s.Glow(to.x, to.y, width * 3.2f, width * 3.2f, pulse, 0f);
+            }
+        }
+        public static void BubbleStream(PixelSurface s, Vector2 from, Vector2 to, float width, Color tint, float age, bool blown = false, int tier = 2, float fan = 0f, bool multi = false, bool lead = true)
         {
             var delta = to - from; float length = delta.magnitude;
             if (length <= .001f) return;
             var dir = delta / length;
+            if (tier >= 2) StreamExtras(s, from, to, length, width, tint, age, blown, tier, fan, multi, lead);
             float step = width * .62f, flow = (age * 140f) % step;
             // 2026-10-21 10:39 (user: balls in the stream kept shrinking and growing). The size pattern was indexed from the
             // first ball, so every time a new ball entered at the mouth all the others shifted pattern; it now follows the
@@ -109,7 +176,7 @@ namespace Flightbeat.Garden
                 float size = width * (m == 0 ? .62f : m == 1 ? .48f : .55f);
                 // 2026-10-28 (user): from the flower ring, soap bubbles turning into the solid balls (GardenSkin.BlownShot).
                 if (blown) {
-                    Vector2 at = GardenSkin.BlownCurve(from, to, d / length, 0f);   // rises first, then bends to the target
+                    Vector2 at = StreamAt(from, to, d / length, true, fan);   // rises first, then bends to the target
                     // 2026-10-29 14:36 (user: the clear-to-solid joint of the tier-2 stream looked off, tiers 0/1 fine). The
                     // balls follow each other ~11 px apart, so the single shot's look (1.7x bubble, a 14 px blink and a
                     // white glint) became a fixed seam where a ring flashed on every ball and the big bubbles piled up.
@@ -119,15 +186,16 @@ namespace Flightbeat.Garden
                     GardenSkin.BlownShot(s, tint, at, size * 1.3f, size, (at - from).magnitude, 1f, false,
                         GardenSkin.BlownCondense - 8f + jitter, 30f);
                 }
-                else GardenSkin.Shot(s, tint, from + dir * d, size * MouthGrow(d), 1f);
+                else GardenSkin.Shot(s, tint, fan == 0f ? from + dir * d : StreamAt(from, to, d / length, false, fan), size * MouthGrow(d), 1f);
             }
             // 2026-10-19 09:34 (user picked C): no big pulsing ball at the hit point any more; a small splash keeps
             // spraying there instead: 7 droplets in the stream's color fly out in a ring (each with its own cycle, a
             // fresh angle every cycle, a little gravity), shrinking and fading as they go.
-            for (int k = 0; k < 7; k++) {
-                float cycle = age * 2.6f + k / 7f, u = cycle - Mathf.Floor(cycle);
+            int drops = multi ? 5 : tier >= 3 ? 12 : tier == 2 ? 9 : 7;   // 2026-10-31: a fuller splash for Ⅱ and MAX
+            for (int k = 0; k < drops; k++) {
+                float cycle = age * 2.6f + k / (float)drops, u = cycle - Mathf.Floor(cycle);
                 float seed = Mathf.Floor(cycle) * 1.618f + k * .9f;
-                float a = (k / 7f) * Mathf.PI * 2f + Mathf.Sin(seed * 12.9898f) * .5f;
+                float a = (k / (float)drops) * Mathf.PI * 2f + Mathf.Sin(seed * 12.9898f) * .5f;
                 float reach = width * (.35f + 1.25f * u) * (.85f + .3f * Mathf.Abs(Mathf.Sin(seed * 7.3f)));
                 Vector2 p = to + new Vector2(Mathf.Cos(a), Mathf.Sin(a) * .8f) * reach + new Vector2(0f, width * 1.1f * u * u);
                 GardenSkin.Shot(s, tint, p, width * (.36f - .2f * u), 1f - u * u);

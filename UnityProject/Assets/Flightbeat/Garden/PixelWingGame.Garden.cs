@@ -231,11 +231,12 @@ namespace Flightbeat.Game
             bool mapped = s.MapLayout; s.MapLayout = false;
             try
             {
+                s.Glow(bx + bw * .5f, by + bh * .9f, bw * 1.06f, bh * .8f, new Color(0f, .02f, .12f, .3f), 0f);
                 if (!Asset9(s, "plants/uiref/button-yellow", bx, by, bw, bh, 52f, 0f, bh * .5f, 0f, Color.white)
                     && !Asset9(s, "plants/win/button-next", bx, by, bw, bh, 64f, 0f, bh * 64f / 126f, 0f, Color.white))
                     GardenPanel(s, bx, by, bw, bh);
-                float size = 26f * k, cy = by + bh * .46f;
-                ButtonWord(s, "确认使用", x + w * .5f - GardenBarArt.TextWidth("确认使用", size) * .5f, cy, size, Color.white, true);   // 2026-10-30: no edge
+                float size = 30f * k, cy = by + bh * .47f;
+                ButtonInk(s, "确认使用", x + w * .5f - GardenBarArt.TextWidth("确认使用", size) * .5f, cy, size, "yellow");   // 2026-10-31: the reference yellow (white, orange edge)
             }
             finally { s.MapLayout = mapped; }
         }
@@ -662,20 +663,11 @@ namespace Flightbeat.Game
                 && Battle.State != Phase.ReviveOffer && !settings && selection == 0 && !finaleGuide)
             { DrawGuideMask(s); s.MapLayout = true; DrawGardenGuide(s); }
             DrawReviveSuccess(s);   // 2026-10-30 (界面优化 15)
+            DrawRailWarningBar(s);   // 2026-10-31: above the pad members (BubbleRail)
             DrawGardenToast(s);   // 2026-10-19 11:12: glass capsule (was the wide jelly panel over the combo counter)
             DrawGardenTransition(s);
         }
-        void DrawGardenTransition(PixelSurface s) {
-            if (!transitionActive) return;
-            HitBlock(s);
-            bool mapped = s.MapLayout; s.MapLayout = false;
-            float hold = transitionKind == TransitionKind.Home ? 0 : 1.05f;
-            float alpha = transitionAge < .42f ? Clamp01(transitionAge / .42f)
-                : transitionAge < hold + .42f ? 1 : 1 - Clamp01((transitionAge - hold - .42f) / .5f);
-            s.Rect(ScreenLayout.Left, 0, ScreenLayout.Width, ScreenLayout.Height, A(Soil, alpha));
-            Text(s, transitionKind == TransitionKind.Home ? "返回主页" : "前往第 " + (transitionLevel + 1) + " 关", 270, ScreenLayout.Height / 2 - 12, 25, true, A(Ink, alpha));
-            s.MapLayout = mapped;
-        }
+        // DrawGardenTransition: PixelWingGame.GardenTransition.cs (2026-10-31, the 啵啵 dash).
         // 2026-10-20 (UI review board 14): "战机位" first, or "已解锁战机位" became "已解锁队员位".
         static string GardenWords(string text) => text.Replace("战机位", "出战位").Replace("战机", "队员").Replace("机位", "出战位").Replace("敌阵", "泡泡阵").Replace("敌人", "泡泡").Replace("出击", "出战").Replace("火力", "攻击").Replace("超级炸弹", "泡泡炸弹");
         // UI spec v3 3: queue rows display at 721 / 779 / 837 instead of the logical 725 / 775 / 825.

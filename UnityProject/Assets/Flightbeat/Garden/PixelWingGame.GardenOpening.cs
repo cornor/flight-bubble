@@ -48,6 +48,9 @@ namespace Flightbeat.Game
             // 2026-10-30 (界面优化 10, after the reference): normal levels get the big 「泡泡来袭！」 wordmark (N6) popping in over
             // the empty pad row with a yellow double chevron (N7) bouncing down on each side; hard levels keep their bars.
             if (difficulty == 0 && Has("plants/uiref/incoming-title")) { DrawIncomingTitle(s, t); return; }
+            // 2026-11-01 22:28 (user: the hard / super-hard bars go; use the 「泡泡来袭！」 look with its own colours): hard and
+            // super-hard levels use the same pop-in wordmark and bouncing chevrons, in orange-red / purple.
+            if (difficulty > 0 && Has("plants/uiref/incoming-title")) { DrawIncomingTitle(s, t, difficulty); return; }
             string text = difficulty == 2 ? "超难关卡" : difficulty == 1 ? "困难关卡" : "泡泡来袭！";
             // 2026-10-20 (UI redesign 07-09): a glass bar replaces the generic WARNING and hazard stripes: sky with a bubble cluster
             // (泡泡来袭！), gold with two stars and brown ink (困难关卡), purple with three stars (超难关卡).
@@ -61,7 +64,10 @@ namespace Flightbeat.Game
             s.MapLayout = mapped;
         }
 
-        void DrawIncomingTitle(PixelSurface s, float t)
+        // difficulty 0: 「泡泡来袭！」 in gold; 1: 「困难关卡」 orange-red with rising embers; 2: 「超难关卡」 purple with two
+        // flickering bolts, twinkles and the screen dimmed a little round the glow. Until the hard wordmarks are delivered
+        // (HardTitle-20261101) their text is drawn in the matching colours.
+        void DrawIncomingTitle(PixelSurface s, float t, int difficulty = 0)
         {
             float alpha = Clamp01(t * 6f) * Clamp01((1f - t) * 6f);
             if (alpha <= .01f) return;
@@ -71,16 +77,98 @@ namespace Flightbeat.Game
             s.MapLayout = false;
             try
             {
-                s.Glow(270f, cy, 460f, 120f, new Color(1f, .85f, .4f, .22f * alpha), 0f);
-                Asset(s, "plants/uiref/incoming-title", 270f - w * .5f, cy - h * .5f, w, h, new Color(1f, 1f, 1f, alpha));
-                if (Has("plants/uiref/incoming-chevron") && t > .12f)
+                string key = difficulty == 2 ? "super" : "hard";
+                string title = difficulty == 0 ? "plants/uiref/incoming-title" : "plants/uiref/incoming-" + key;
+                string chevron = difficulty > 0 && Has("plants/uiref/incoming-chevron-" + key) ? "plants/uiref/incoming-chevron-" + key : "plants/uiref/incoming-chevron";
+                Color glow = difficulty == 2 ? new Color(.67f, .27f, 1f, .42f) : difficulty == 1 ? new Color(1f, .43f, .2f, .35f) : new Color(1f, .85f, .4f, .22f);
+                if (difficulty == 2) s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, new Color(.16f, .04f, .31f, .16f * alpha));
+                s.Glow(270f, cy, 460f, 120f, A(glow, alpha), 0f);
+                if (difficulty == 2) s.Glow(270f, cy, 300f, 80f, A(new Color(.9f, .55f, 1f, .25f), alpha), 0f);
+                if (difficulty == 1) IncomingEmbers(s, cy, t, alpha);
+                if (difficulty == 2) IncomingBolts(s, cy, w, t, alpha);
+                if (Has(title)) Asset(s, title, 270f - w * .5f, cy - h * .5f, w, h, new Color(1f, 1f, 1f, alpha));
+                else
+                {
+                    string text = difficulty == 2 ? "超难关卡" : "困难关卡";
+                    float size = h * .62f;
+                    Color fill = difficulty == 2 ? Hex(0xD27BFF) : Hex(0xFF9A3C), ink = difficulty == 2 ? Hex(0x2A0B57) : Hex(0x6E1414);
+                    GardenBarArt.TextOutline(s, text, 270f, cy - size * .55f, size, A(fill, alpha), A(ink, alpha), Mathf.Max(2f, size * .12f));
+                }
+                if (Has(chevron) && t > .12f)
                     for (int side = -1; side <= 1; side += 2)
                     {
                         float bounce = Mathf.Abs(Mathf.Sin(ui * 7f)) * 7f, c = 46f, x = 270f + side * (w * .5f + 34f);
-                        Asset(s, "plants/uiref/incoming-chevron", x - c * .5f, cy - c * .5f - 4f + bounce, c, c, new Color(1f, 1f, 1f, alpha * Clamp01((t - .12f) * 8f)));
+                        Asset(s, chevron, x - c * .5f, cy - c * .5f - 4f + bounce, c, c, new Color(1f, 1f, 1f, alpha * Clamp01((t - .12f) * 8f)));
                     }
             }
             finally { s.MapLayout = mapped; }
+        }
+        // 困难关卡: warm sparks drifting up through the glow, each on its own loop.
+        void IncomingEmbers(PixelSurface s, float cy, float t, float alpha)
+        {
+            for (int i = 0; i < 18; i++)
+            {
+                float u = Mathf.Repeat(ui * (.55f + (i % 5) * .08f) + i * .37f, 1f);
+                float x = 70f + Mathf.Repeat(i * 97.3f, 400f) + Mathf.Sin(ui * 2f + i) * 8f, y = cy + 70f - u * 150f;
+                float k = alpha * Mathf.Sin(u * Mathf.PI), r = 2.2f + (i % 3) * .9f;
+                s.Glow(x, y, r * 5f, r * 5f, new Color(1f, .55f, .2f, .45f * k), 0f);
+                s.GardenRoundedRect(x - r, y - r, r * 2f, r * 2f, r, new Color(1f, .9f, .55f, k), new Color(1f, .6f, .25f, k));
+            }
+        }
+        // 超难关卡: a bolt strikes down each side of the wordmark - twice in quick succession, then a pause (.7 s cycle) -
+        // with a faint purple flash over the screen on each strike. 2026-11-02 (user: the drawn bolts looked fake): the six
+        // white frames from HardBolt-20261102 when delivered (cycled at 15 fps, a purple-tinted larger copy behind as the
+        // glow, the right side three frames on); until then a tapering procedural bolt with two side branches.
+        void IncomingBolts(PixelSurface s, float cy, float w, float t, float alpha)
+        {
+            if (t < .1f) return;
+            float cyc = Mathf.Repeat(ui, .7f);
+            bool strike = cyc < .1f || cyc > .16f && cyc < .26f;
+            if (strike)
+            {
+                s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, new Color(.85f, .6f, 1f, .07f * alpha));
+                bool art = Has("plants/uiref/incoming-bolt-0");
+                int frame = Mathf.FloorToInt(ui * 15f);
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    float bx = 270f + side * (w * .5f + 64f), top = cy - 92f, bh = 176f, bw = bh * .5f;
+                    if (art)
+                    {
+                        string id = "plants/uiref/incoming-bolt-" + ((frame + (side > 0 ? 3 : 0)) % 6);
+                        Asset(s, id, bx - bw * .65f, top - bh * .08f, bw * 1.3f, bh * 1.16f, new Color(.72f, .34f, 1f, .55f * alpha));
+                        Asset(s, id, bx - bw * .5f, top, bw, bh, new Color(1f, 1f, 1f, alpha));
+                    }
+                    else ProceduralBolt(s, bx, top, bh, frame * 7 + side * 3, side, alpha);
+                }
+            }
+            if (!Has("scene/revive-sparkle")) return;
+            for (int i = 0; i < 7; i++)
+            {
+                float tw = .5f + .5f * Mathf.Sin(ui * 8f + i * 1.9f), sz = (14f + (i % 3) * 6f) * tw;
+                float x = 80f + Mathf.Repeat(i * 71.7f, 380f), y = cy - 60f + Mathf.Repeat(i * 37.1f, 110f);
+                Asset(s, "scene/revive-sparkle", x - sz * .5f, y - sz * .5f, sz, sz, new Color(1f, 1f, 1f, alpha * tw));
+            }
+        }
+        // Fallback bolt: eight jittered steps that thin out as they go down, two short branches, a purple glow under a white core.
+        void ProceduralBolt(PixelSurface s, float x, float top, float height, int seed, int side, float alpha)
+        {
+            float R(int n) { float v = Mathf.Sin(n * 12.9898f + seed * 78.233f) * 43758.5453f; return v - Mathf.Floor(v); }
+            Vector2 prev = new Vector2(x, top);
+            for (int k = 1; k <= 8; k++)
+            {
+                float u = k / 8f;
+                var next = new Vector2(x + (R(k) - .5f) * 34f + side * Mathf.Sin(u * 3f) * 6f, top + u * height);
+                float width = Mathf.Lerp(5.5f, 1.6f, u);
+                s.GlowLine(prev, next, width * 4f, new Color(.72f, .34f, 1f, .5f * alpha));
+                s.GlowLine(prev, next, width, new Color(1f, 1f, 1f, alpha));
+                if (k == 3 || k == 5)
+                {
+                    var tip = next + new Vector2(side * (14f + R(k + 20) * 16f), 16f + R(k + 30) * 12f);
+                    s.GlowLine(next, tip, width * 2.6f, new Color(.72f, .34f, 1f, .35f * alpha));
+                    s.GlowLine(next, tip, width * .55f, new Color(1f, 1f, 1f, .8f * alpha));
+                }
+                prev = next;
+            }
         }
         // Lane of the front-most queued member with this color (any row, hidden mystery rows included).
         int DebutLane(int rgb)

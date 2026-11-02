@@ -31,7 +31,8 @@ namespace Flightbeat.Game
         // fall hard (stronger gravity) and land with a bigger squash. Shots aim at the drawn bead, so a held bead is
         // still the one hit. No holding while the board is near the rail (railRed > .25), during the intro, a finale,
         // bomb aiming or out of battle, and a release is forced as soon as any bead is held 3 rows above its place.
-        const float SandBatch = .92f;                       // ~2 beats of the 130 BPM level music
+        // 2026-11-02 11:13 (user: three beats): 1.38 s (was .92 s, two beats).
+        const float SandBatch = 1.38f;                      // ~3 beats of the 130 BPM level music
         float[] sandHoldX, sandHoldY;
         bool[] sandSmash;
         float sandReleaseAt;

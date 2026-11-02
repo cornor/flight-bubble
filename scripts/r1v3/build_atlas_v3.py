@@ -55,7 +55,13 @@ PLUSH_POT = ROOT / 'Art/PlushToy/PotSprout-20261029/delivery'
 PLUSH_POT_ALL = ROOT / 'Art/PlushToy/PotSprout-All-20261030/delivery'
 # 2026-10-31 16:28 (user: 胜利时MVP是欢呼的状态，每个玩具都要出欢呼的图): one cheer pose per member (Cheer-20261031).
 PLUSH_CHEER = ROOT / 'Art/PlushToy/Cheer-20261031/delivery'
-PLUSH_ROOTS = (PLUSH_CHEER, PLUSH_REACH, PLUSH_POT, PLUSH_POT_ALL, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
+# 2026-11-01 21:13 (user: 第一排还是现在这样，2、3 排是背面): the back views come back (BackView-20261029 for the
+# first four, BackView-All-20261101 for the other 18 once delivered); members with a back view no longer use the sprout.
+PLUSH_BACK_ALL = ROOT / 'Art/PlushToy/BackView-All-20261101/delivery'
+# 2026-11-02 10:00: with all 22 back views the creature atlas overflowed ("Atlas 1 full"); every member now has a back
+# view, so the pot-sprout art (pot / body / sprout / leaves) is unused and left out to make room. Put PLUSH_POT and
+# PLUSH_POT_ALL back here to bring it back.
+PLUSH_ROOTS = (PLUSH_CHEER, PLUSH_BACK, PLUSH_BACK_ALL, PLUSH_REACH, PLUSH_UNIQUE, PLUSH_FULL, PLUSH_FIRST_FIVE, PLUSH)
 SPROUT_POINTS = {k.upper(): v for k, v in json.loads((PLUSH_POT_ALL / 'sprout-points.json').read_text()).items()} \
     if (PLUSH_POT_ALL / 'sprout-points.json').is_file() else {}
 # 2026-10-29 21:07: light theme and new UI art (界面优化); slot overrides below (THEME_SLOTS) and the battle background.
@@ -84,7 +90,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/DashTransition-20261031/delivery', ROOT / 'Art/PlushToy/DashArms-20261031/delivery', ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/DashTransition-20261031/delivery', ROOT / 'Art/PlushToy/DashArms-20261031/delivery', ROOT / 'Art/PlushToy/HardTitle-20261101/delivery', ROOT / 'Art/PlushToy/HardBolt-20261102/delivery', ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     files += [p for p in (PAD_COMBAT_ART / 'mouths.json', PAD_COMBAT_ART / 'coverage.json') if p.exists()]
@@ -167,7 +173,7 @@ for entry in color_data['colors']:
         # 2026-10-30: the queue sprout layers are only ever drawn at queue size (<= ~94 px of the 256 frame), so they are
         # stored at half scale; this keeps room on the creature atlas for all 22 members' sprouts.
         SLOTS.append((f'plants/{internal}/{h}/{st}', f'creatures/{cid}/{h}/{st}.png',
-                      CREATURE * .5 if st in ('pot', 'body', 'sprout', 'leaves') else CREATURE * .85 if st == 'cheer' else CREATURE, None))   # cheer: room on the atlas for 22
+                      CREATURE * .5 if st in ('pot', 'body', 'sprout', 'leaves') else CREATURE * .85 if st == 'cheer' else CREATURE, None))   # cheer: room on the atlas for 22; back (2026-11-02): full size again once the unused slots were dropped
 # Mystery reserves reveal neither their palette nor their optional animation.
 # Art item 76 delivers only idle: a mystery member never attacks while hidden, so the other states reuse it.
 for st in ['idle', 'attack', 'spent']:
@@ -507,13 +513,32 @@ for _sid, _rel in (('plants/uiref/guide-hand', 'guide/hand.png'), ('plants/uiref
                    ('plants/uiref/button-white', 'theme/button-white.png'), ('plants/uiref/icon-home', 'theme/icon-home.png'), ('plants/uiref/icon-replay', 'theme/icon-replay.png'),
                    ('plants/uiref/icon-share', 'theme/icon-share.png'), ('plants/uiref/icon-video', 'theme/icon-video.png'), ('plants/uiref/slot-locked', 'slot/locked.png'),
                    ('plants/uiref/rail-chevron', 'fx/rail-chevron.png'), ('plants/uiref/aim-ring', 'fx/aim-ring.png'), ('plants/uiref/codex-pedestal', 'codex/pedestal.png'),
-                   ('plants/uiref/incoming-title', 'incoming/title.png'), ('plants/uiref/incoming-chevron', 'incoming/chevron.png'),
-                   ('plants/uiref/revive-wave', 'fx/revive-wave.png')):
+                   ('plants/uiref/incoming-title', 'incoming/title.png'), ('plants/uiref/incoming-chevron', 'incoming/chevron.png')):
+    # 2026-11-02: plants/uiref/revive-wave (810x284, no longer drawn - the revive wave is the ribbon now) left out for room.
     # 2026-10-29: result pages, guide and the second batch, on the roomier creature atlas (plants/ prefix); the aim ring
     # is drawn at most ~280 px wide, so it is stored at half size.
     if _sid.startswith('plants/uiref/button-') and _sid.rsplit('-', 1)[1] in FLAT_BUTTONS:   # 15:54: the flat capsules
         SLOTS.append((_sid, str(GEN / f"ui/button-{_sid.rsplit('-', 1)[1]}-flat.png"), 1.0, None)); continue
     if _ur(_rel).is_file(): SLOTS.append((_sid, str(_ur(_rel)), _ur_scale(_rel, .5 if _sid.endswith('aim-ring') else 1.0), None))
+
+# 2026-11-01 22:28 (user: 困难/超难关卡改成跟「泡泡来袭！」一样的表现，字和配色单独设计): the hard / super-hard openings
+# reuse the incoming layout - their wordmarks (HardTitle-20261101, when delivered) and the double chevron recoloured
+# orange-red / purple here (its shading kept as the light-dark ramp of the new colour).
+HARD_TITLE = ROOT / 'Art/PlushToy/HardTitle-20261101/delivery'
+# 2026-11-02 10:25 (user picked A: the drawn bolts looked fake): six white bolt frames (HardBolt-20261102) cycled beside
+# the super-hard wordmark, tinted purple in code; on the creature atlas at .75.
+HARD_BOLT = ROOT / 'Art/PlushToy/HardBolt-20261102/delivery'
+for _i in range(6):
+    if (HARD_BOLT / f'bolt-{_i + 1}.png').is_file(): SLOTS.append((f'plants/uiref/incoming-bolt-{_i}', str(HARD_BOLT / f'bolt-{_i + 1}.png'), .75, None))
+for _sid, _rel in (('plants/uiref/incoming-hard', 'title-hard.png'), ('plants/uiref/incoming-super', 'title-super.png')):
+    if (HARD_TITLE / _rel).is_file(): SLOTS.append((_sid, str(HARD_TITLE / _rel), 1.0, None))
+if _ur('incoming/chevron.png').is_file():
+    from PIL import ImageOps as _IO
+    _chev = Image.open(_ur('incoming/chevron.png')).convert('RGBA')
+    for _k, (_light, _dark) in (('hard', ((255, 178, 60), (226, 64, 30))), ('super', ((229, 139, 255), (138, 53, 232)))):
+        _col = _IO.colorize(_IO.grayscale(_chev.convert('RGB')), _dark, _light).convert('RGBA'); _col.putalpha(_chev.split()[3])
+        _col.save(GEN / f'ui/incoming-chevron-{_k}.png')
+        SLOTS.append((f'plants/uiref/incoming-chevron-{_k}', str(GEN / f'ui/incoming-chevron-{_k}.png'), _ur_scale('incoming/chevron.png', 1.0), None))
 
 if (_HOME / 'delivery/celebrate-halo.png').exists():
     (_HOME / 'generated').mkdir(exist_ok=True)
@@ -1071,6 +1096,26 @@ for sid, im, src in tiles:
     if sid.startswith(('bugs/', 'fx/')) or sid in ('scene/background', 'scene/field', 'scene/pad-swirl', 'scene/tray', 'scene/plush-board'): bb = (0, 0, fw, fh)
     trimmed.append((sid, im.crop(bb), src, bb[0], bb[1], fw, fh))
 tiles = trimmed
+# 2026-11-02 (user: 检查图集，没用的就撤下来): slots nothing draws any more, left out (the art stays on disk):
+#  - plush-home portraits (+ outlines): the home uses the redrawn group layers (home-wave-*) when they exist;
+#  - pad-combat poses and the reach pose: every member wears the flower ring (GardenSkin.FlowerRing), which replaces them;
+#  - old jelly-era buttons, panels and icons superseded by the flat theme / prefab sprites, the lose-page fallback hero,
+#    and unused placeholder strips and bar icons. Each id was checked for no literal or built reference in the code.
+UNUSED_SLOTS = {
+    'plants/lose/ribbon', 'plants/home/start-button', 'plants/win/button-next-blue', 'plants/dialog/pause-resume',
+    'plants/dialog/primary', 'plants/dialog/resume', 'plants/dialog/panel', 'plants/dialog/row', 'plants/dialog/home',
+    'plants/lose/button-share', 'plants/win/button-home', 'plants/win/button-replay', 'plants/ui/icon-light',
+    'plants/ui/icon-sound', 'plants/ui/icon-music', 'plants/ui/icon-pattern', 'plants/lose/hero',
+    'scene/ceiling', 'scene/fence', 'scene/fence-red', 'ui/banner-hint', 'ui/banner-warning', 'ui/popup-panel-gold',
+    'ui/speech-bubble', 'ui/guide-proud', 'ui/guide-explain', 'scene/queue-panel', 'scene/plot-locked', 'scene/badge-ammo',
+    'ui/bar-icon-target', 'ui/bar-icon-chip-wait', 'ui/bar-icon-reinforce', 'ui/bar-icon-chip-done'}
+def _unused(sid):
+    if sid in UNUSED_SLOTS: return True
+    if sid.startswith('plants/plush-home/') and (OUT / 'home-wave-frog.png').exists(): return True
+    return sid.startswith('plants/') and sid.rsplit('/', 1)[-1] in ('combat-inhale', 'combat-blow', 'combat-rebound', 'reach')
+_dropped = [t[0] for t in tiles if _unused(t[0])]
+tiles = [t for t in tiles if not _unused(t[0])]
+print(f'unused slots left out: {len(_dropped)}', file=sys.stderr)
 tiles.sort(key=lambda t: (-max(t[1].size), -t[1].width * t[1].height, t[0]))
 free = [(0, cursor_y, SIZE, SIZE - cursor_y)]
 def place(w, h):

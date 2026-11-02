@@ -1,0 +1,66 @@
+{
+  "date": "2026-11-01",
+  "result": "pass",
+  "files": {
+    "title-hard.png": {
+      "size": [
+        720,
+        180
+      ],
+      "mode": "RGBA",
+      "alpha_bbox_gt8": [
+        66,
+        8,
+        654,
+        173
+      ],
+      "outer_edge_max_alpha": 0,
+      "fully_transparent_pixels": 50267,
+      "transparent_pixels_rgb_max": 0,
+      "connected_components_gt8": 1,
+      "components_area": [
+        79320
+      ],
+      "sha256": "fb7d414ff7237be44f0052e64d7e2552c192bd2fab97c8d932ec7284b47ec41e"
+    },
+    "title-super.png": {
+      "size": [
+        720,
+        180
+      ],
+      "mode": "RGBA",
+      "alpha_bbox_gt8": [
+        69,
+        7,
+        651,
+        173
+      ],
+      "outer_edge_max_alpha": 0,
+      "fully_transparent_pixels": 52048,
+      "transparent_pixels_rgb_max": 0,
+      "connected_components_gt8": 1,
+      "components_area": [
+        77539
+      ],
+      "sha256": "a9b835b63b39dbcaf9c83069bab62192cf5278c73f88ec6c0ac96a644e2a8e54"
+    }
+  },
+  "text_check": "qa/text-check.json",
+  "visual_checks": {
+    "three_titles_share_round_inflated_lettering": true,
+    "same_upper_left_gloss_and_downward_outline_depth": true,
+    "visible_alpha_gt8_heights_px": {
+      "reference": 165,
+      "T1": 165,
+      "T2": 166
+    },
+    "four_characters_centered": true,
+    "no_exclamation_mark_in_deliveries": true,
+    "no_arrows_stars_lightning_glows_or_particles": true,
+    "light_blue_background": "#B5D2F9: clear text and dark outlines, clean edges, no white matte or clipped depth.",
+    "white_background": "Clean edges without stray pixels or cropping.",
+    "side_by_side_preview": "qa/titles-side-by-side-light-blue.png"
+  },
+  "master_copy_sha256_verified": true,
+  "generation_count": 4
+}

@@ -1,0 +1,187 @@
+{
+  "task": "HardTitle-20261101",
+  "date": "2026-11-01",
+  "status": "delivered",
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "generation_count": 4,
+  "generation_counts": {
+    "T1": 2,
+    "T2": 2
+  },
+  "references": [
+    {
+      "path": "references/incoming-title-current.png",
+      "role": "Strict master for rounded letterforms, outline weight, highlights and extruded depth",
+      "sha256": "b842dc02db5f335197059e7598a5d1edc73b18b944282e02a202c44d18bbe1bc"
+    },
+    {
+      "path": "references/incoming-options-mock.png",
+      "role": "Palette and mood only; not its angular system font or program effects",
+      "sha256": "e466ec7a58b6120327fad488fc558e6462e02546e6c0022f67833b6a2c5dd6ab"
+    }
+  ],
+  "palette_targets": {
+    "T1": {
+      "top": "#FFD25A",
+      "bottom": "#FF5A2E",
+      "outline": "#6E1414"
+    },
+    "T2": {
+      "top": "#FF9BEA",
+      "bottom": "#9B3CFF",
+      "outline": "#2A0B57"
+    }
+  },
+  "attempts": [
+    {
+      "id": "T1",
+      "attempt": 1,
+      "prompt": "Use case: text-localization.\nAsset type: transparent Chinese mobile puzzle game title sprite, final delivery canvas 720 × 180.\nInput image 1: the exact typography and rendering reference, current title “泡泡来袭！”. Edit this wordmark into a matching sibling in the VERY SAME lettering family. Keep the round plump hand-drawn Chinese letter shapes, inflated smooth candy-like 3D faces, soft rounded stroke endings, thick rounded outer outline, short downward extruded outline depth, upper-left specular highlights and inner soft shading from this reference. Treat the supplied reference as the strict style master, not loose inspiration.\nText (verbatim): “困难关卡”.\nEXACTLY FOUR simplified Chinese characters, left to right: 困 / 难 / 关 / 卡. 困 is an enclosed 木 within 囗; 难 has 又 and 隹; 关 and 卡 must be fully legible. No punctuation and no exclamation mark. No extra text.\nChange only the wording and color family. Front letter faces: bright yellow #FFD25A at the top, smoothly vertically grading through vivid orange to orange-red #FF5A2E at the bottom. Deep wine-red #6E1414 thick continuous outer outlines, a darker red lower extrusion. Preserve the reference's relative outline thickness, rounded depth and shiny highlights. High-quality soft sculpted lettering, not an angular system font, not flat vector type.\nFour plump glyphs form one centered horizontal line with slight natural lively variation as in the reference; almost fill the wide canvas while keeping every outline and bottom depth fully inside. Match reference text height and visual weight. Clean readable character counters; generously round terminals; width-to-height of complete wordmark about 4.1:1.\nGenuinely transparent RGBA background, no white matte, no opaque background. Keep all background and holes transparent. Only the four-character wordmark. No arrows, backdrop glow, sparks, lightning, stars, bubbles, decorations, badge, banner, floating particles, cast shadow detached from lettering, watermark or logo.",
+      "master": "masters/T1-title-hard-v01.png",
+      "references": [
+        "references/incoming-title-current.png"
+      ],
+      "delivery": "delivery/title-hard.png",
+      "status": "superseded",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-a6be099a-ca4c-4d79-9554-b3c5f1623337.png",
+      "selected": false,
+      "master_size": [
+        1983,
+        793
+      ],
+      "master_sha256": "37ec9a3c93464dc17213f5b234c065a0b5f80ed5416e8b0e4923df8ee386bec8",
+      "original_copy_verified": true,
+      "superseded_reason": "Narrow left radical in the second character was ambiguous; corrected with clear crossed strokes in v02."
+    },
+    {
+      "id": "T1",
+      "attempt": 2,
+      "prompt": "Use case: precise-object-edit / text-localization.\nInput image 1 is the EDIT TARGET: the transparent finished wordmark “困难关卡”.\nInput image 2 is a supporting type-family reference only: the game's original “泡泡来袭！” wordmark.\nONE precise correction only. In the SECOND character 难, correct and clarify its LEFT component 又. The current left radical is too narrow and bulbous and OCR misreads it as the three-dot water radical 氵, giving 淮. It MUST unambiguously be 难, NOT 淮.\nDraw the left 又 as exactly TWO clear intersecting thick round strokes: (1) a DISTINCT nearly horizontal top bar leading into a long diagonal stroke descending down-left (横撇), (2) a second continuous diagonal sweeping from upper-left to lower-right (捺), with a clear central crossing. Its lower half must visibly read as an X / crossed fork, not three staggered droplets. Give that top horizontal bar enough width and retain an obvious triangular negative space between the top bar and the crossing. Both strokes stay plump and rounded, but their intersecting structure is unmistakable. Keep this 又 sufficiently wide for legibility at a final 720×180 image size. Preserve the right component 隹 of 难.\nText remains EXACTLY “困难关卡”, four simplified Chinese characters, no punctuation. Do not replace 难 with traditional 難. No other wording changes.\nKEEP EVERYTHING ELSE from image 1 as exactly unchanged as possible: all three other glyphs, rounded candy-like type family, letter height and width, layout, baseline, original color gradient, dark thick outline, short solid downward extruded depth, sculpted highlights, edge lighting, spacing, transparent background. No extra objects or effects. Do not add arrows, stars, sparkles, glow, exclamation mark or watermark. Genuinely transparent RGBA with clean edges.\nThis is NOT a full redesign. Repair the ambiguous 又 in 难 only; preserve the rest of the artwork.",
+      "master": "masters/T1-title-hard-v02.png",
+      "references": [
+        "masters/T1-title-hard-v01.png",
+        "references/incoming-title-current.png"
+      ],
+      "delivery": "delivery/title-hard.png",
+      "status": "selected",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-70428082-6366-487f-8c4b-7ed393422a7f.png",
+      "selected": true,
+      "master_size": [
+        1983,
+        793
+      ],
+      "master_sha256": "885671e527136c4b868010430c1291cfc7fc34d9060020e575364f8f9eae9fb9",
+      "original_copy_verified": true,
+      "correction": "Clarified the top horizontal stroke and central crossing of the left radical in the second character while preserving the lettering style."
+    },
+    {
+      "id": "T2",
+      "attempt": 1,
+      "prompt": "Use case: text-localization.\nAsset type: transparent Chinese mobile game title sprite. Final delivery 720 × 180, a matching purple sibling of the supplied hard-level title.\nInput image 1 (edit target and primary geometry/style master): freshly created “困难关卡” title in orange-red, provided with transparency.\nInput image 2 (supporting strict type-family reference): the game's original “泡泡来袭！” title.\nPrimary request: Starting from image 1, change ONLY the first character 困 into 超 and recolor the whole four-character title into the purple difficulty palette. Keep the three shared characters 难关卡 as precisely identical as possible: same plump round glyph outlines, same proportions, same spacing, same relative position, same thick rounded dark contour and downward solid extruded depth, same top-left curved white highlights and smooth sculpted soft 3D shading. It must look like another member of exactly the same typeface and series as BOTH references.\nText (verbatim): “超难关卡”.\nEXACTLY FOUR simplified Chinese characters in order: 超 / 难 / 关 / 卡. The first glyph 超 must clearly contain 走 and 召 (刀 over 口), retain all distinguishing strokes and counters despite the plump round style. Then 难 / 关 / 卡 exactly as in image 1. No punctuation. No exclamation mark. No extra text.\nPalette: letter faces have a vertical gradient, light pink-purple #FF9BEA at the TOP through luminous violet to saturated deeper purple #9B3CFF at the BOTTOM. Thick deep purple-black #2A0B57 outlines, short darker-purple downward extrusion, very same relative contour weight as image 1 and the original reference. Keep small rounded shiny edge highlights, upper-left lighting; no glow outside the lettering.\nComposition: single centered horizontal four-character line; same text height and visual weight as the first image, round swollen hand-sculpted cartoon Chinese type, gently lively posture, entire glyphs and depth inside canvas. Never angular square system text. Background genuinely transparent RGBA, preserve clean transparent edges and counters; no matte. No arrows, light burst, sparks, stars, lightning, bubbles, banner, particles, detached drop shadow, decorations or watermarks.",
+      "master": "masters/T2-title-super-v01.png",
+      "references": [
+        "masters/T1-title-hard-v01.png",
+        "references/incoming-title-current.png"
+      ],
+      "delivery": "delivery/title-super.png",
+      "status": "superseded",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-a114865b-75bb-46cb-af15-b74ac0e12970.png",
+      "selected": false,
+      "master_size": [
+        1983,
+        793
+      ],
+      "master_sha256": "4051690389078f25d81f19ee04aabc0d0f17f39d20cfc6af8447400f0d631cd0",
+      "original_copy_verified": true,
+      "superseded_reason": "Narrow left radical in the second character was ambiguous; corrected with clear crossed strokes in v02."
+    },
+    {
+      "id": "T2",
+      "attempt": 2,
+      "prompt": "Use case: precise-object-edit / text-localization.\nInput image 1 is the EDIT TARGET: the transparent finished wordmark “超难关卡”.\nInput image 2 is a supporting type-family reference only: the game's original “泡泡来袭！” wordmark.\nONE precise correction only. In the SECOND character 难, correct and clarify its LEFT component 又. The current left radical is too narrow and bulbous and OCR misreads it as the three-dot water radical 氵, giving 淮. It MUST unambiguously be 难, NOT 淮.\nDraw the left 又 as exactly TWO clear intersecting thick round strokes: (1) a DISTINCT nearly horizontal top bar leading into a long diagonal stroke descending down-left (横撇), (2) a second continuous diagonal sweeping from upper-left to lower-right (捺), with a clear central crossing. Its lower half must visibly read as an X / crossed fork, not three staggered droplets. Give that top horizontal bar enough width and retain an obvious triangular negative space between the top bar and the crossing. Both strokes stay plump and rounded, but their intersecting structure is unmistakable. Keep this 又 sufficiently wide for legibility at a final 720×180 image size. Preserve the right component 隹 of 难.\nText remains EXACTLY “超难关卡”, four simplified Chinese characters, no punctuation. Do not replace 难 with traditional 難. No other wording changes.\nKEEP EVERYTHING ELSE from image 1 as exactly unchanged as possible: all three other glyphs, rounded candy-like type family, letter height and width, layout, baseline, original color gradient, dark thick outline, short solid downward extruded depth, sculpted highlights, edge lighting, spacing, transparent background. No extra objects or effects. Do not add arrows, stars, sparkles, glow, exclamation mark or watermark. Genuinely transparent RGBA with clean edges.\nThis is NOT a full redesign. Repair the ambiguous 又 in 难 only; preserve the rest of the artwork.",
+      "master": "masters/T2-title-super-v02.png",
+      "references": [
+        "masters/T2-title-super-v01.png",
+        "references/incoming-title-current.png"
+      ],
+      "delivery": "delivery/title-super.png",
+      "status": "selected",
+      "source": "/Users/yangdage/.codex/generated_images/01a187d5-df75-7d30-a70c-9d0983633942/exec-24ddd702-b44c-4415-a003-16f5eb8fd3e2.png",
+      "selected": true,
+      "master_size": [
+        1983,
+        793
+      ],
+      "master_sha256": "88b4479a468ade1dc96176c32b41dcb43daaf64b900cd107cf6acfb1b611972f",
+      "original_copy_verified": true,
+      "correction": "Clarified the top horizontal stroke and central crossing of the left radical in the second character while preserving the lettering style."
+    }
+  ],
+  "delivery": [
+    {
+      "id": "T1",
+      "text": "困难关卡",
+      "path": "delivery/title-hard.png",
+      "master": "masters/T1-title-hard-v02.png",
+      "size": [
+        720,
+        180
+      ],
+      "mode": "RGBA",
+      "alpha_bbox_gt8": [
+        66,
+        8,
+        654,
+        173
+      ],
+      "outer_edge_max_alpha": 0,
+      "fully_transparent_pixels": 50267,
+      "transparent_pixels_rgb_max": 0,
+      "connected_components_gt8": 1,
+      "components_area": [
+        79320
+      ],
+      "sha256": "fb7d414ff7237be44f0052e64d7e2552c192bd2fab97c8d932ec7284b47ec41e"
+    },
+    {
+      "id": "T2",
+      "text": "超难关卡",
+      "path": "delivery/title-super.png",
+      "master": "masters/T2-title-super-v02.png",
+      "size": [
+        720,
+        180
+      ],
+      "mode": "RGBA",
+      "alpha_bbox_gt8": [
+        69,
+        7,
+        651,
+        173
+      ],
+      "outer_edge_max_alpha": 0,
+      "fully_transparent_pixels": 52048,
+      "transparent_pixels_rgb_max": 0,
+      "connected_components_gt8": 1,
+      "components_area": [
+        77539
+      ],
+      "sha256": "a9b835b63b39dbcaf9c83069bab62192cf5278c73f88ec6c0ac96a644e2a8e54"
+    }
+  ],
+  "postprocess": {
+    "script": "qa/render_assets.swift",
+    "config": "qa/export-config.json",
+    "method": "Uniform fit to centered 720x180 RGBA canvas, premultiplied alpha resampling, alpha <= 8 faint noise cleared. No code-drawn or rearranged glyphs.",
+    "masters": "Untouched generated PNGs copied and archived with SHA256 equality verified."
+  },
+  "qa": {
+    "pixel_check": "qa/pixel-check.json",
+    "text_check": "qa/text-check.json",
+    "verification": "qa/verification.json",
+    "side_by_side_light_blue": "qa/titles-side-by-side-light-blue.png",
+    "stacked_light_blue": "qa/titles-stacked-light-blue.png",
+    "white": "qa/titles-white.png"
+  }
+}

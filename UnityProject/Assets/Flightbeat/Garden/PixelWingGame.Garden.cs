@@ -63,6 +63,7 @@ namespace Flightbeat.Game
         // sign and the problem line in red; the second line (what to do) stays navy. Not red all over: red is the rail's
         // danger colour, and being stuck is not yet danger.
         const float StallHintY = 312f, StallHintHeight = 96f;
+        float bombBusyUntil = -10f;
         void DrawGardenStallHint(PixelSurface s)
         {
             bool mapped = s.MapLayout;
@@ -489,7 +490,9 @@ namespace Flightbeat.Game
                     Color queueTint = row != 0 && ship.Kind == 2 ? Hex(0x8C919C) : GardenColor(ship.Color);
                     // 2026-10-29 14:53 (user): members with the pot / body art hide in their pot while queued and grow
                     // out of it at the front (sprout), instead of the twirl / back view below.
-                    bool hasSprout = !(row != 0 && ship.Kind == 2) && GardenSkin.HasSprout(queueTint);
+                    // 2026-11-01 21:13 (user: 2、3 排是背面): a member with a back view shows its back in the rows behind and
+                    // turns round at the front; the pot sprout is only the fallback for members without one.
+                    bool hasSprout = !(row != 0 && ship.Kind == 2) && !Has(PlantSlot(queueTint, "back")) && GardenSkin.HasSprout(queueTint);
                     bool fresh = wake < .7f && QueueReveal(ship, row) >= 1f;
                     bool twirl = fresh && !hasSprout, sprouting = fresh && hasSprout && row == 0;
                     float spin = twirl && wake < .36f ? wake / .36f : -1f;
@@ -529,6 +532,9 @@ namespace Flightbeat.Game
                         GardenSkin.BendMirror = spin > .25f && spin < .75f;
                     }
                     if (row > 0 && hasBack) GardenSkin.BackView = true;
+                    // 2026-11-02 (user: can the back view wiggle its bottom a little): members showing their back now and then
+                    // waggle - two quick left-right rocks about the pot rim, then a rest; out of step across the queue.
+                    if (row > 0 && hasBack && spin < 0f) GardenSkin.BendRotate = QueueBackWiggle(lane, row, ship.Id);
                     // Sprout: the pot jiggles (.1 s), then the body rises out of it with a small overshoot (.32 s), drawn
                     // after the pot and before the unfolding leaves; from .5 s the normal idle art takes over
                     // (body + pot + leaves = idle).
@@ -630,7 +636,11 @@ namespace Flightbeat.Game
             }
             // 2026-10-29 21:07 (界面优化 11, user: 不要这个提示): no 「点下方队员，开始出战」 capsule; the suggested member's
             // hops (GardenStartHintLane) already show where to start.
-            if (Battle.Stalled && selection == 0 && !settings && Battle.State == Phase.Playing) {
+            // 2026-11-02 11:21 (user: not while the bomb is being used; check again once it has gone off): while aiming,
+            // while the bomb flies and for .8 s after it lands (the blast and the refill) the hint is held back, and it
+            // only shows once the fleet has been stuck for another 1.1 s after that (the model's own stall time).
+            if (selection == 2 || Battle.PendingStrike != null) bombBusyUntil = ui + .8f;
+            if (Battle.Stalled && selection == 0 && !settings && Battle.State == Phase.Playing && ui - bombBusyUntil >= 1.1f) {
                 DrawGardenStallHint(s);
             }
             if (Battle.NoticeTime > 0 && selection == 0 && !settings && Battle.Notice != "已解锁战机位") {

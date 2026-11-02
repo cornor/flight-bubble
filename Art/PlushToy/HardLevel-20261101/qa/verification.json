@@ -1,0 +1,124 @@
+{
+  "phase": "hard_set",
+  "completed": [
+    "K1",
+    "K3",
+    "K5"
+  ],
+  "pending_style_confirmation": [
+    "K2",
+    "K4",
+    "K6",
+    "K7"
+  ],
+  "files": [
+    {
+      "file": "delivery/banner-hard.png",
+      "size": [
+        840,
+        220
+      ],
+      "mode": "RGBA",
+      "outer_edge_max_alpha": 0,
+      "visible_bbox": [
+        3,
+        3,
+        837,
+        217
+      ],
+      "visible_component_sizes": [
+        168977
+      ],
+      "sha256": "18bba7e84963179711918e09ab43e7d5decea53729b31853b86e4456555fba5c"
+    },
+    {
+      "file": "delivery/badge-hard.png",
+      "size": [
+        300,
+        300
+      ],
+      "mode": "RGBA",
+      "outer_edge_max_alpha": 0,
+      "visible_bbox": [
+        2,
+        3,
+        298,
+        298
+      ],
+      "visible_component_sizes": [
+        68313
+      ],
+      "sha256": "6da89a3fa373ee01e23426ed76c64949714237649166db19e879547da95c8193"
+    },
+    {
+      "file": "delivery/title-hard.png",
+      "size": [
+        680,
+        180
+      ],
+      "mode": "RGBA",
+      "outer_edge_max_alpha": 0,
+      "visible_bbox": [
+        3,
+        2,
+        677,
+        178
+      ],
+      "visible_component_sizes": [
+        99265
+      ],
+      "sha256": "7e08a75d21ed7b2bdae39fc522ca805aad94ae4bc260006552d2a86b838f8a83"
+    }
+  ],
+  "text_check": {
+    "expected": "困难关卡",
+    "characters": [
+      {
+        "character": "困",
+        "codepoint": "U+56F0",
+        "manual_check": "correct"
+      },
+      {
+        "character": "难",
+        "codepoint": "U+96BE",
+        "manual_check": "correct"
+      },
+      {
+        "character": "关",
+        "codepoint": "U+5173",
+        "manual_check": "correct"
+      },
+      {
+        "character": "卡",
+        "codepoint": "U+5361",
+        "manual_check": "correct"
+      }
+    ],
+    "manual_review": "4 characters, correct order, no extra characters or punctuation",
+    "ocr": {
+      "engine": "Apple Vision accurate zh-Hans",
+      "master_text": "困难关卡",
+      "delivery_text": "困难关卡",
+      "confidence": 1.0
+    }
+  },
+  "visual_review": {
+    "light_blue": "passed",
+    "dark_blue_bubble_board_screenshot": "passed",
+    "no_unintended_white_fringe": true,
+    "badge_white_outline": "intentional design",
+    "no_extra_effects": true
+  },
+  "previews": [
+    "qa/hard-light-blue.png",
+    "qa/hard-dark-board.png",
+    "qa/hard-transparent.png"
+  ],
+  "dark_board_screenshot_source": "../ColorReadability-20261026/number-plate-trial/webgl-evidence/level-3-battle-540x960.png",
+  "dark_board_crop": [
+    10,
+    89,
+    530,
+    409
+  ]
+}

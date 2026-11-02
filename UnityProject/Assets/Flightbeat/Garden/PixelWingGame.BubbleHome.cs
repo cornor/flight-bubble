@@ -46,7 +46,8 @@ namespace Flightbeat.Game
         static readonly bool[] HomeFloating = { true, true, false, false, false };
         const float HomeSquadScale = .93f;                  // clears the 150 px side bands (user decision 17:58)
         const float HomePivotX = 270f, HomePivotY = 600f;   // scale about the front cloud line
-        bool HomeArtReady => Has("plants/plush-home/blue/idle") || Has("plants/home/squad-blue");
+        // 2026-11-02: with the redrawn group (HomeGroupArt) the plush-home atlas frames are no longer packed.
+        bool HomeArtReady => HomeGroupArt || Has("plants/plush-home/blue/idle") || Has("plants/home/squad-blue");
 
         // One mapping for the background texture and the layers drawn over it. The source is 540x1170 logical
         // (core picture at y 105-1065). It covers the screen at scale k >= 1; the core stays vertically centred
@@ -190,7 +191,7 @@ namespace Flightbeat.Game
         {
             // The album is a page of its own; home layers must not show through its pale cloud background.
             if (codexOpen) { DrawBubbleCodex(s); return; }
-            if (Has("plants/plush-home/blue/idle")) { DrawPlushHome(s); return; }
+            if (HomeGroupArt || Has("plants/plush-home/blue/idle")) { DrawPlushHome(s); return; }
             if (!HomeArtReady)
             {
                 // Logo (H10) arrived before the squad layers: it replaces the program title on the old page.

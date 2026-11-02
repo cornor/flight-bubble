@@ -517,6 +517,16 @@ namespace Flightbeat.Game
             queueRefusedAt[lane] = ui;
         }
         static readonly float[] RefuseKeys = { 0f, .06f, .14f, .21f, .27f, .35f }, RefuseAngles = { 0f, 12f, -14f, 9f, -5f, 0f };
+        // Back-view waggle: within a 6 s cycle .8 s of two left-right rocks of up to 4.5 degrees about the rim (the pot stays
+        // put), eased in and out; still the rest of the time. 11:04 (user: too frequent overall): was 2.4 s / .6 s; each
+        // member's start is spread over the whole cycle (golden-ratio steps by member), so only one or two move at once.
+        float QueueBackWiggle(int lane, int row, int id)
+        {
+            float c = Mathf.Repeat(ui + Mathf.Repeat((id * 7 + lane * 3) * .618f, 1f) * 6f, 6f);   // not by row: no jump on moving up
+            if (c > .8f) return 0f;
+            float u = c / .8f;
+            return 4.5f * Mathf.Sin(u * Mathf.PI) * Mathf.Sin(u * Mathf.PI * 4f);
+        }
         float QueueRefuseShake(int lane)
         {
             if (!queueRefusedAt.TryGetValue(lane, out float at)) return 0f;

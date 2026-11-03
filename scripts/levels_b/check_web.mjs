@@ -35,7 +35,8 @@ export async function runChecks({ out, levels = path.join(repo, 'UnityProject/As
     const fallback = Array.from({ length: 260 }, (_, i) => i + 3).find(g => !byGame.has(g));
     report.expected = games.length + (fallback === undefined ? 0 : 1);
     const original = game => {
-      const resource = `sector${String(game - 2).padStart(2, '0')}`;
+      // 2026-11-03: the teaching levels 1-2 are training01/02 in the B set too.
+      const resource = game <= 2 ? `training${String(game).padStart(2, '0')}` : `sector${String(game - 2).padStart(2, '0')}`;
       const bytes = fs.readFileSync(path.join(levels, `${resource}.json`));
       return { resource, kind: 'A', fileSha256: sha(bytes), cellsSha256: sha(JSON.parse(bytes).cells.join(',')) };
     };

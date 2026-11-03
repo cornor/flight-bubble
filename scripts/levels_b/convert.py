@@ -145,7 +145,7 @@ def auto_sigma(level, hist, colours=None):
     return sigma
 
 
-def choose_recolor(img, a, game):
+def choose_recolor(img, a, game, force=None):
     """Mode R (2026-10-26 23:31 user decision): pick as many colours as the A level uses from every member that has
     debuted by this level, by how much of the picture each covers; this level's debut members are always kept."""
     from levelsb_common import allowed_colors, debut_colors
@@ -157,6 +157,11 @@ def choose_recolor(img, a, game):
     must = sorted(c for c in debut_colors(game, a) if board.get(c, 0))
     rest = [allowed[i] for i in np.argsort(-cover, kind='stable') if allowed[i] not in must]
     chosen = must + rest[:k - len(must)]
+    if force:   # 2026-11-03: --colours fixes the drawn set (e.g. keep a dark outline colour the coverage pick drops)
+        bad = [c for c in force if c not in allowed]
+        if bad or len(force) > k or not set(must) <= set(force):
+            raise SystemExit(f'--colours 最多 {k} 种已登场颜色，且包含本关新角色色 {must}')
+        chosen = sorted(force)
     # Stream-only colours keep their own member when it is not drawn on the board (see auto_sigma).
     for c in level_colors(a):
         if not board.get(c, 0):
@@ -237,9 +242,11 @@ def balance_colours(img, a, game, pic_colours, resample):
     return cols, grid, dist, hist, drop, pool, sorted(must)
 
 
-def balance_targets(base, hist):
+def balance_targets(base, hist, drawable=None):
     """Board target per colour: the picture's own count, except a colour may not exceed its total beads; any excess
-    goes to the colours with the most room (a small refill on the board)."""
+    goes to the colours with the most room (a small refill on the board). 2026-11-02: the excess goes only to colours
+    the picture is drawn with (`drawable`) while they have room; a stream-only colour (e.g. level 16's yellow and
+    white) is used only if they are all full (it used to be picked first and crashed the refill)."""
     total = counts(list(base['cells']) + list(base.get('stream') or []))
     target = {c: min(hist.get(c, 0), total[c]) for c in total}
     excess = sum(hist.values()) - sum(target.values())
@@ -247,7 +254,9 @@ def balance_targets(base, hist):
     while excess > 0:
         # Spread the excess so no receiving colour exceeds its own per-colour refill limit if avoidable.
         head = lambda c: max(CHANGED_PER_COLOR * (target[c] + 1), MIN_PER_COLOR) - got[c]
-        open_ = [c for c in total if total[c] > target[c]]
+        open_ = [c for c in total if total[c] > target[c] and (drawable is None or c in drawable)]
+        if not open_ and drawable is not None:
+            open_ = [c for c in total if total[c] > target[c]]
         if not open_:
             raise ValueError('沙流容量不足，无法保持各色总数')
         c = max(open_, key=lambda c: (head(c), total[c] - target[c], -c))
@@ -562,6 +571,7 @@ def main():
     ap.add_argument('--stream-balance', action='store_true', help='画面照原图转换，各色多出/缺少的数量到沙流里换色补回（总数、排队、弹量不变；10-27 用户确认）')
     ap.add_argument('--stream-place', choices=['even', 'deep'], default='even', help='沙流补偿时换色泡泡的位置：均匀分散 / 集中在各列最深处')
     ap.add_argument('--recolor', action='store_true', help='换色模式 R：从到本关为止已登场的角色颜色里，按画面挑出与原关同样多的颜色（保留本关新角色）')
+    ap.add_argument('--colours', help='配合 --recolor：指定画面用色（颜色索引或名字，逗号分隔），代替按面积自动挑选')
     ap.add_argument('--title', help='B 关名（默认沿用 A 关名）')
     ap.add_argument('--resample', choices=['block', 'box'], default='block')
     ap.add_argument('--fit', choices=['crop', 'pad'], default='crop')
@@ -595,7 +605,11 @@ def main():
     transform, tried = None, []
     pic_colours, cover = used, None
     if args.recolor:
-        pic_colours, cover = choose_recolor(img, a, game)
+        force = None
+        if args.colours:
+            names = {name(a, c): c for c in range(len(a['palette']) // 3)}
+            force = [int(x) if x.strip().isdigit() else names[x.strip()] for x in args.colours.split(',')]
+        pic_colours, cover = choose_recolor(img, a, game, force)
         print('  换色：画面选用 ' + '、'.join(f'{name(a, c)}{cover[c]:.0%}' for c in sorted(pic_colours, key=lambda c: -cover[c])))
     elif args.sigma:
         pic_colours = sorted(full_map(a, {int(x): int(y) for x, y in (p.split(':') for p in args.sigma.split(','))}).values())
@@ -605,12 +619,15 @@ def main():
         pic_colours, grid, dist, hist, dropped, pool, must = balance_colours(img, a, game, pic_colours, args.resample)
         if dropped:
             print(f'  沙流补偿：画面少用 {dropped} 种颜色（并入最接近的颜色），以免超出该色总数')
-        sigma = balance_assignment(a, hist, pic_colours, pool, must)
+        # 2026-11-02: --sigma fixes which A colour each picture colour stands for (e.g. level 13: the automatic pick
+        # put the first queue members on the zebra's black, which shows only from row 12); default: fewest changes.
+        sigma = (full_map(a, {int(x): int(y) for x, y in (q.split(':') for q in args.sigma.split(','))}) if args.sigma
+                 else balance_assignment(a, hist, pic_colours, pool, must))
         identity = all(k == v for k, v in sigma.items())
         mode = 'S' if identity else 'P' if set(sigma.values()) == set(used) else 'R'
         check_sigma(a, sigma, game, recolor=mode == 'R')
         base = a if identity else apply_sigma(a, sigma)
-        target, total = balance_targets(base, hist)
+        target, total = balance_targets(base, hist, set(pic_colours))
         final, budget_retry = (grid, False) if target == {c: n for c, n in hist.items() if n} else refill_candidate(
             grid, target, dist, sorted(set(pic_colours) | set(target)), protection_mask(constraints), constraints.get('recolorFrom'))
         need = {c: total[c] - target.get(c, 0) for c in total}

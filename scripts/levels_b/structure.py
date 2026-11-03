@@ -43,7 +43,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import make_temp
-from levelsb_common import (FIRST, LAST, LEVELS_A, ROOT, SIDE, apply_sigma, full_map, invert, file_sha256, label, load_a,
+from levelsb_common import (FIRST, LAST, TEACHING, LEVELS_A, ROOT, SIDE, apply_sigma, full_map, invert, file_sha256, label, load_a,
                             load_manifest, name, record_check, resource, validate)
 
 RATE = (1.0, 3.4, 4.6, 6.3)
@@ -265,6 +265,17 @@ def main():
                                     stream_balance=bool(entry.get('streamBalance')))
                 if sigma:   # 22:05: judge in A's colour roles (modes P/R map colours consistently)
                     b = apply_sigma(b, invert(full_map(a, sigma)))
+                if game in TEACHING:
+                    # 2026-11-03: teaching levels 1-2 are small silhouettes; the 60 x 60 layers/replay do not apply,
+                    # the check is validate_teaching (counts, queue, lesson fields, colour 0 on the front row).
+                    verdict = '超差' if problems else '通过'
+                    note = '；'.join(problems) or '教学关：各色数量、排队、教学设置与原版一致，底排有颜色 0'
+                    rows.append(dict(game=game, verdict=verdict, note=note, mix=0.0, replay='—', replayNote='', a={}, b={},
+                                     layers={d: 0.0 for d in LAYERS}, lowestShifts={}))
+                    print(f'{label(game)}：{verdict} {note}', flush=True)
+                    record_check(game, 'structure', verdict, str(out.relative_to(ROOT)) if out.is_relative_to(ROOT) else str(out),
+                                 entry['fileSha256'])
+                    continue
             sa, sb = simulate(a), simulate(b)
             la, lb = layers(a), layers(b)
             mix = round(float(front_mix(la, lb)), 4)
@@ -284,7 +295,7 @@ def main():
             if not args.temp:
                 record_check(game, 'structure', verdict, str(out.relative_to(ROOT)) if out.is_relative_to(ROOT) else str(out),
                              entry['fileSha256'])
-    fmt = lambda s: f'步 {s["steps"]} 卡 {s["stuck"]} 盲 {s["blind"]} 救 {s["rescues"]} 合 {s["merges"]}'
+    fmt = lambda s: f'步 {s["steps"]} 卡 {s["stuck"]} 盲 {s["blind"]} 救 {s["rescues"]} 合 {s["merges"]}' if s else '—'
     lines = [f'# B 套结构检查（{kind}，{datetime.now():%Y-%m-%d %H:%M}）', '',
              '| 关 | 判定 | 前 1/3/10/20 排差异（判 10、20） | 说明 | 最低排偏移 >5（仅参考，颜色: A→B） | A 理想打法（仅参考） | B 理想打法（仅参考） |',
              '|---|---|---|---|---|---|---|']

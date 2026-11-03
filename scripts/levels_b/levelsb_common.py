@@ -30,9 +30,16 @@ NAMES = {
 }
 
 
+# 2026-11-03 (user: give the teaching levels 1-2 new pictures too): small silhouette boards made by
+# tutorial_convert.py; the 60 x 60 tools (convert, structure, palette_table) still cover FIRST..LAST only.
+TEACHING = {1: 'training01', 2: 'training02'}
+
+
 def resource(game_level):
+    if game_level in TEACHING:
+        return TEACHING[game_level]
     if not FIRST <= game_level <= LAST:
-        raise SystemExit(f'第 {game_level} 关不在 B 套范围（第 {FIRST}–{LAST} 关）')
+        raise SystemExit(f'第 {game_level} 关不在 B 套范围（第 1、2、{FIRST}–{LAST} 关）')
     return f'sector{game_level - 2:02d}'
 
 
@@ -232,7 +239,31 @@ def queue_reorder(qa, qb, max_row_shift=None):
     return problems, stats
 
 
+def validate_teaching(a, b):
+    """Teaching levels 1-2 (tutorial_convert.py): same grid and fields as A except title / shades / cells; every colour
+    keeps A's count, the queue and the lesson are A's, and the bottom row (the front) has colour 0, which the first
+    lesson step ("tap the blue member") needs."""
+    problems = []
+    W, H = a['columns'], a['rows']
+    if (b.get('columns'), b.get('rows')) != (W, H) or len(b['cells']) != W * H:
+        problems.append(f'教学关棋盘必须是 {W} × {H}')
+    free = {'cells', 'title', 'shades'}
+    for k in set(a) | set(b):
+        if k not in free and a.get(k) != b.get(k):
+            problems.append(f'字段 {k} 与 A 关不一致')
+    ca = counts([c for c in a['cells'] if c >= 0]); cb = counts([c for c in b['cells'] if c >= 0])
+    if any(c < -1 for c in b['cells']) or set(cb) - set(ca):
+        problems.append('有非法颜色索引')
+    if ca != cb:
+        problems.append('各色数量与 A 关不一致')
+    if 0 not in b['cells'][(H - 1) * W:H * W]:
+        problems.append('最下面一排没有颜色 0（教学第一步要点蓝色队员）')
+    return problems
+
+
 def validate(a, b, mode, sigma=None, game_level=None, stream_balance=False):
+    if game_level in TEACHING:
+        return validate_teaching(a, b)
     """Plan 3.1. Returns a list of problems (empty = valid). Mode R needs the game level (debut rules).
     stream_balance (2026-10-27 12:20 user decision): the sand stream may be recoloured so that every colour's total
     (board + stream) still equals A's; its length and per-column split (streamOffsets) stay exactly as in A."""

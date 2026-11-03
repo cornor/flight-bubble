@@ -4,6 +4,10 @@
   python3 scripts/levels_b/stage_test.py 3 7            stage the current drafts of game levels 3 and 7
   python3 scripts/levels_b/stage_test.py --temp 3 7 40  stage mirrored A pictures (no drafts needed)
   python3 scripts/levels_b/stage_test.py --clean        remove the test channel
+  python3 scripts/levels_b/stage_test.py --all-evaluated --default-set B
+                                                        (bash scripts/r1v3/build.sh --new-levels does this) the current
+                                                        drafts of every level waiting for a playtest ('evaluated'); the
+                                                        build then opens on set B unless the URL / saved choice says A
 
 Files go to UnityProject/Assets/Flightbeat/Resources/levels/B-test/ with B-test/test.json (same format as
 released.json, each entry "status": "test"). The game uses them only while that list exists; reports show
@@ -43,12 +47,16 @@ def main():
     ap.add_argument('levels', type=int, nargs='*', metavar='关号')
     ap.add_argument('--temp', action='store_true', help='用 A 原图左右翻转生成测试关，不需要草稿')
     ap.add_argument('--clean', action='store_true')
+    ap.add_argument('--all-evaluated', action='store_true', help='清单里所有"待试玩"（evaluated）的关，用最新草稿')
+    ap.add_argument('--default-set', choices=('A', 'B'), help='写入 test.json：测试包打开时默认用哪套关卡（网址 set= 和手动切换优先）')
     args = ap.parse_args()
     if args.clean:
         return clean()
-    if not args.levels:
-        ap.error('给出关号，或用 --clean')
     manifest = load_manifest()['levels']
+    if args.all_evaluated:
+        args.levels = sorted(set(args.levels) | {e['game'] for e in manifest.values() if e.get('status') == 'evaluated'})
+    if not args.levels:
+        ap.error('给出关号、--all-evaluated，或用 --clean')
     staged = []
     with tempfile.TemporaryDirectory(prefix='levels-b-stage-') as tmp:
         for game in args.levels:
@@ -79,7 +87,10 @@ def main():
     merged = {e['resource']: e for e in old}
     merged.update({e['resource']: e for e in staged})
     levels = sorted(merged.values(), key=lambda e: e['game'])
-    (TEST_DIR / 'test.json').write_text(json.dumps(dict(levels=levels), ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+    listing = dict(levels=levels)
+    if args.default_set:
+        listing['defaultSet'] = args.default_set
+    (TEST_DIR / 'test.json').write_text(json.dumps(listing, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     print(f'测试通道共 {len(levels)} 关。测试构建：R1_LEVELS_TEST=1 bash scripts/r1v3/build.sh；测完运行 stage_test.py --clean')
     return 0
 

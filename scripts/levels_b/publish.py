@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from levelsb_common import (FIRST, LAST, LEVELS_A, ROOT, cells_sha256, file_sha256, label, load_a, load_manifest,
+from levelsb_common import (FIRST, LAST, TEACHING, LEVELS_A, ROOT, cells_sha256, file_sha256, label, load_a, load_manifest,
                             resource, save_manifest, validate)
 
 B_DIR = LEVELS_A / 'B'
@@ -37,7 +37,7 @@ def check_entry(entry, data):
     """Problems for one manifest entry against the given file bytes."""
     problems = []
     game = entry['game']
-    if not FIRST <= game <= LAST or entry['resource'] != resource(game):
+    if not (FIRST <= game <= LAST or game in TEACHING) or entry['resource'] != resource(game):
         return [f'关号与资源名不符：{game} {entry["resource"]}']
     if file_sha256(data) != entry.get('fileSha256'):
         problems.append('文件哈希与清单不一致')

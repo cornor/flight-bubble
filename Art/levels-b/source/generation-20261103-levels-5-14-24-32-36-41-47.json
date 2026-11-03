@@ -1,0 +1,1629 @@
+{
+  "date": "2026-11-03",
+  "tool": "built-in image_gen",
+  "requestedDeliverables": 21,
+  "recordedUniqueGenerations": 38,
+  "generationMode": "One built-in call per variant or targeted edit. Raw imagegen originals retained at sourceOutput paths.",
+  "exportMethod": "1200x1200 opaque indexed PNG. Retain full generated pixel contours. Deterministic nearest requested CIE Lab palette mapping, no dithering or gradients. One 0.05% ambiguous boundary-color adjustment enforces rabbit17 black cap. Bear red anti-alias artifacts excluded outside the one button. Source not replaced by the 60x60 diagnostic rendering.",
+  "areaMethod": "Exact pixel histogram of delivered PNG, whole canvas including background. Approximate target ratios may differ by up to 5.2 percentage points. All stated maximum ratios are satisfied.",
+  "review": "Art/levels-b/review/20261103-seven-groups",
+  "jobs": [
+    {
+      "level": 5,
+      "title": "赖床小猪",
+      "variant": 20,
+      "filename": "第5关-赖床小猪-20.png",
+      "path": "Art/levels-b/source/第5关-赖床小猪-20.png",
+      "palette": [
+        "FFC5E0",
+        "FFCAA9",
+        "FF525B",
+        "65392D",
+        "FFFFFF",
+        "2D2D2D",
+        "9C225E"
+      ],
+      "targetsPercent": [
+        40,
+        25,
+        20,
+        null,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        10,
+        8,
+        7,
+        2
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-3ddb01cb-d93f-479b-be2f-c364469ebf96.png",
+      "prompt": "Use case: precise-object-edit. Edit ONLY black lines. Keep EVERY shape, size and color-area relationship. Remove all black outlines from brown HEADBOARD and white PILLOW by filling those borderpixels with correspondingbrown/white. REMOVE the long horizontal BLACK LINE across topofPINKBLANKET: fillthatlinepink. Keep blackoutlinearound PIGHEAD/ears, snout, closedeyes andtrottersonly. Black currently8.7% mustbe6-7%. Do not changeheadsize orblanketsize. Do notaddblackanywhere.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: FFC5E0, FFCAA9, FF525B, 65392D, FFFFFF, 2D2D2D, 9C225E",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-a0d48e40-8a72-463f-9537-1710ae09e290.png",
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-64b27e9d-2a68-417b-ae58-435e5440b41b.png",
+          "prompt": "Use case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nPalette ONLY: #FFC5E0, #FFCAA9, #FF525B, #65392D, #FFFFFF, #2D2D2D, #9C225E.\nA single adorable sleepy peach pig tucked in bed, front view. The VERY LARGE round peach #FFCAA9 head centered in the upper middle has two triangular ears, two thick CLOSED curved black eyes, a big peach oval snout outlined black with two rose #9C225E nostrils, tiny rose cheek patches. A small white pillow behind the head, brown headboard behind pillow, flat solid coral-red wall. A completely plain flat pale-pink blanket covers the LOWER HALF of the image, uninterrupted solid pink, no folds/stripes/patterns. Two BIG peach front trotters rest ON TOP of the blanket near the BOTTOM edge, separated left and right, NOT beside the face. Head is visually the single main subject. Clear black outline 1–2 logical pixels thick. Full-canvas color area budget: pink 40%, peach 25%, red wall 20%, brown headboard 5%, white pillow 4%, black 5.5%, rose 0.5%. MUST keep brown<=10%, white<=8%, black<=7%, rose<=2%.\nVariant direction: Symmetric sleepy pose, round broad ears, front trotters centered at x=19 and x=41 near y=54.",
+          "reference": null
+        },
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-bb5b831d-5ce7-45d8-9bdd-476c54bdc6e5.png",
+          "prompt": "Use case: precise-object-edit. Edit the attached pixel artwork. Keep this exact sleepy pig identity and color scheme, but correct composition and area budget. Current pink blanket is only22% and peach38.6%, black12.9%. Redesign layout on a60x60 grid: raise blanket top to row30 (HALF the image), solid pink blanket must cover40% finalcanvas after overlaps. SHRINK head+ears to fit x12..48,y4..32, about80% current width and height, move upward. Head is still dominant. Two peach front trotters remain on blanket near y51..57, each about9x7 pixels. Use a ONE-cell black outline, not the current2-3cell outline. Closed eyes readable but only1-2cells thick. Preserve rose nostrils+cheeks. Redwall20%, peach25%, brown5%, white5%, black<=7%, pink40%, rose<=2%. Pillow and brown headboard stay behind head, not massive. No texture/shading.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact inks: FFC5E0, FFCAA9, FF525B, 65392D, FFFFFF, 2D2D2D, 9C225E",
+          "reference": null
+        },
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-a0d48e40-8a72-463f-9537-1710ae09e290.png",
+          "prompt": "Use case: precise-object-edit. Keep this layout, pink blanket starts halfway and trotters near bottom. Increase only peach pig head+ears width by about15% around center, retaining height (so it fills more red wall), and increase both peach trotters width/height about20%. Reduce rose cheek patches slightly. Blanket should reach40% rather than45%; peach25% rather than20%, red20% rather than25%. Brownheadboard and whitepillow behindhead may widen modestly. Keep outline exactly1logicalcell MAX, totalblackunder7%. Retain cute closed eyes. Preserve all flat colors. Do not shrink wholecomposition.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact palette: FFC5E0, FFCAA9, FF525B, 65392D, FFFFFF, 2D2D2D, 9C225E\nA single adorable sleepy peach pig tucked in bed, front view. The VERY LARGE round peach #FFCAA9 head centered in the upper middle has two triangular ears, two thick CLOSED curved black eyes, a big peach oval snout outlined black with two rose #9C225E nostrils, tiny rose cheek patches. A small white pillow behind the head, brown headboard behind pillow, flat solid coral-red wall. A completely plain flat pale-pink blanket covers the LOWER HALF of the image, uninterrupted solid pink, no folds/stripes/patterns. Two BIG peach front trotters rest ON TOP of the blanket near the BOTTOM edge, separated left and right, NOT beside the face. Head is visually the single main subject. Clear black outline 1–2 logical pixels thick. Full-canvas color area budget: pink 40%, peach 25%, red wall 20%, brown headboard 5%, white pillow 4%, black 5.5%, rose 0.5%. MUST keep brown<=10%, white<=8%, black<=7%, rose<=2%.",
+          "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-bb5b831d-5ce7-45d8-9bdd-476c54bdc6e5.png"
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 7,
+        "areaPercent": [
+          41.04819444444445,
+          26.68784722222222,
+          19.23777777777778,
+          3.9911805555555557,
+          2.1770833333333335,
+          6.272777777777778,
+          0.5851388888888889
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            40.361111111111114,
+            26.27777777777778,
+            19.194444444444443,
+            4.111111111111111,
+            2.5,
+            6.888888888888889,
+            0.6666666666666666
+          ]
+        },
+        "sha256": "354b593354414e765014bafea7bbddcec9b68f1057f22b851d1b2ae327af668f",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 5,
+      "title": "赖床小猪",
+      "variant": 21,
+      "filename": "第5关-赖床小猪-21.png",
+      "path": "Art/levels-b/source/第5关-赖床小猪-21.png",
+      "palette": [
+        "FFC5E0",
+        "FFCAA9",
+        "FF525B",
+        "65392D",
+        "FFFFFF",
+        "2D2D2D",
+        "9C225E"
+      ],
+      "targetsPercent": [
+        40,
+        25,
+        20,
+        null,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        10,
+        8,
+        7,
+        2
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-dfd31996-1f4c-42bc-b61a-ee78cb7af663.png",
+      "prompt": "Use case: stylized-concept. Create ONE new sibling variant of the attached pixelart. Preserve mainlayout and largecolorareabalance ofreference. Changeonly pose/shape subtly, no addedobjects. Direction: A very slightly tilted sleepy head, triangular soft ears, separated round front trotters resting near bottom left and bottom right..\nA single adorable sleepy peach pig tucked in bed, front view. The VERY LARGE round peach #FFCAA9 head centered in the upper middle has two triangular ears, two thick CLOSED curved black eyes, a big peach oval snout outlined black with two rose #9C225E nostrils, tiny rose cheek patches. A small white pillow behind the head, brown headboard behind pillow, flat solid coral-red wall. A completely plain flat pale-pink blanket covers the LOWER HALF of the image, uninterrupted solid pink, no folds/stripes/patterns. Two BIG peach front trotters rest ON TOP of the blanket near the BOTTOM edge, separated left and right, NOT beside the face. Head is visually the single main subject. Clear black outline 1–2 logical pixels thick. Full-canvas color area budget: pink 40%, peach 25%, red wall 20%, brown headboard 5%, white pillow 4%, black 5.5%, rose 0.5%. MUST keep brown<=10%, white<=8%, black<=7%, rose<=2%.\nStrictblackbudget: only outlinepighead,closedeyes,snout,trotters. No blacklineonblanket, nooutlineonpillow/headboard. Pigtrottersnearbottomborder. Keep headscale exactlyasreference, pinkblanket40%canvas, peach25%, red20%,black6%max.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: FFC5E0, FFCAA9, FF525B, 65392D, FFFFFF, 2D2D2D, 9C225E",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-3ddb01cb-d93f-479b-be2f-c364469ebf96.png",
+      "drafts": [],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 7,
+        "areaPercent": [
+          41.623125,
+          25.384097222222223,
+          19.604444444444443,
+          4.062430555555555,
+          2.4174305555555557,
+          6.349861111111111,
+          0.5586111111111111
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            40.69444444444444,
+            25.805555555555557,
+            19.416666666666668,
+            4.027777777777778,
+            2.7777777777777777,
+            6.666666666666667,
+            0.6111111111111112
+          ]
+        },
+        "sha256": "226859bf32dd044c92f1fdaf8107224649010cdc42c6ed9c8baea344849c97f4",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 5,
+      "title": "赖床小猪",
+      "variant": 22,
+      "filename": "第5关-赖床小猪-22.png",
+      "path": "Art/levels-b/source/第5关-赖床小猪-22.png",
+      "palette": [
+        "FFC5E0",
+        "FFCAA9",
+        "FF525B",
+        "65392D",
+        "FFFFFF",
+        "2D2D2D",
+        "9C225E"
+      ],
+      "targetsPercent": [
+        40,
+        25,
+        20,
+        null,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        10,
+        8,
+        7,
+        2
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-c44bb20c-0bf0-4c81-bfac-1fea809a8add.png",
+      "prompt": "Use case: stylized-concept. Create ONE new sibling variant of the attached pixelart. Preserve mainlayout and largecolorareabalance ofreference. Changeonly pose/shape subtly, no addedobjects. Direction: Extra chubby cheeks and a broad snout, restful closed crescent eyes, two chunky front trotters overlapping the lower blanket near bottom..\nA single adorable sleepy peach pig tucked in bed, front view. The VERY LARGE round peach #FFCAA9 head centered in the upper middle has two triangular ears, two thick CLOSED curved black eyes, a big peach oval snout outlined black with two rose #9C225E nostrils, tiny rose cheek patches. A small white pillow behind the head, brown headboard behind pillow, flat solid coral-red wall. A completely plain flat pale-pink blanket covers the LOWER HALF of the image, uninterrupted solid pink, no folds/stripes/patterns. Two BIG peach front trotters rest ON TOP of the blanket near the BOTTOM edge, separated left and right, NOT beside the face. Head is visually the single main subject. Clear black outline 1–2 logical pixels thick. Full-canvas color area budget: pink 40%, peach 25%, red wall 20%, brown headboard 5%, white pillow 4%, black 5.5%, rose 0.5%. MUST keep brown<=10%, white<=8%, black<=7%, rose<=2%.\nStrictblackbudget: only outlinepighead,closedeyes,snout,trotters. No blacklineonblanket, nooutlineonpillow/headboard. Pigtrottersnearbottomborder. Keep headscale exactlyasreference, pinkblanket40%canvas, peach25%, red20%,black6%max.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: FFC5E0, FFCAA9, FF525B, 65392D, FFFFFF, 2D2D2D, 9C225E",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-3ddb01cb-d93f-479b-be2f-c364469ebf96.png",
+      "drafts": [],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 7,
+        "areaPercent": [
+          39.038472222222225,
+          28.84375,
+          19.12201388888889,
+          4.050347222222222,
+          1.259236111111111,
+          6.881319444444444,
+          0.8048611111111111
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            39.0,
+            28.444444444444443,
+            19.25,
+            4.027777777777778,
+            1.5,
+            6.944444444444445,
+            0.8333333333333334
+          ]
+        },
+        "sha256": "ecd22a507b1b7bbcd9ab2ba1f1bcad78f4e239a0c3e41fe216b57cd4f389cd3c",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 14,
+      "title": "抱苹果小白兔",
+      "variant": 16,
+      "filename": "第14关-抱苹果小白兔-16.png",
+      "path": "Art/levels-b/source/第14关-抱苹果小白兔-16.png",
+      "palette": [
+        "46D9FF",
+        "FFFFFF",
+        "FF525B",
+        "2D2D2D",
+        "FFC5E0"
+      ],
+      "targetsPercent": [
+        45,
+        25,
+        15,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        12,
+        5
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-fe4aa84f-b70f-46f2-8b94-786664378eca.png",
+      "prompt": "Use case: precise-object-edit. Keep exactbunnyandappledesign. Compress ENTIRE bunny+apple horizontally to90%currentwidth aroundcanvascenter, keeping verticalsizeandbottombaseline. Fillrevealedarea cyan. Currentcyan38.7% mustbe45%,black13.2%mustbe<=12%, red17%becomes15%,white26.5%becomes24%. Do notscaleupagain. Keepfeetandblackoutline onbottomedge. Allpaletteandshapesidenticalapartfromhorizontalcompression.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 46D9FF, FFFFFF, FF525B, 2D2D2D, FFC5E0",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-9db98fef-7329-4965-b8b5-282f4b776807.png",
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-5f875a38-b19a-466e-8d93-d1123097a8a5.png",
+          "prompt": "Use case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nPalette ONLY: #46D9FF, #FFFFFF, #FF525B, #2D2D2D, #FFC5E0.\nA single big adorable WHITE rabbit facing front and hugging ONE LARGE RED APPLE in front of its belly. Full body chunky rounded silhouette, two long big white ears with pale-pink inner panels, large black eyes, tiny black nose, pale-pink cheeks. Strong DARK outline around rabbit, arm overlaps, feet and apple, 1–2 logical cells wide. Background only uniform cyan #46D9FF, no ground, no cloud. White front paws curl around apple sides. Both white hind feet and BLACK bottom outline must TOUCH the bottom edge, absolutely no cyan margin beneath feet. Apple large about 15% entire canvas with one tiny black stem, no leaf, no brown/green. Full-canvas area budget: cyan 45%, white25%, red15%, black11%, pink4%. Black<=12%, pink<=5%. One clear giant rabbit/fruit silhouette.\nVariant direction: Front-facing symmetrical bunny, tall upright ears and round apple held at tummy.",
+          "reference": null
+        },
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-9bda9ba2-2bad-4dcc-a056-bd47c1fad271.png",
+          "prompt": "Use case: precise-object-edit. Edit the attached pixel artwork. Keep this white bunny identity, cyan background, bottom touching feet. Increase REDAPPLE substantially from9.4% to15%canvas by making it wider and taller in lower middle, roughly26x25cells. Slightly reduce head width and cheek/pink areas so white25%,cyan45%, pink<5%. Make outlines ONE-cell thick around silhouette and apple, eyes retain big readable shape, totalblack<=12%. Whitepaws overlap appleedges, whitefeet with blackoutline stilltouchbottom. Retain complete ears insidecanvas (2cell marginat top). Pink inner ear panels narrower thanoriginal. One bunny and one apple, samepalette.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact inks: 46D9FF, FFFFFF, FF525B, 2D2D2D, FFC5E0",
+          "reference": null
+        },
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-9db98fef-7329-4965-b8b5-282f4b776807.png",
+          "prompt": "Use case: precise-object-edit. The current bunny is too narrow. Widen the whole bunny+apple horizontally by about15% centeredatx30, keep vertical sizeand bottom touchingfeet unchanged. This should lowercyan from53% to46%, increasewhite20% to24%, red13.5% to15%. Keep outlines1cellthin so black staysunder12%, pinkunder5%. Keepheadshape and facialfeatures, slightly splayed ears, appleheldbywhitepaws.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact palette: 46D9FF, FFFFFF, FF525B, 2D2D2D, FFC5E0\nA single big adorable WHITE rabbit facing front and hugging ONE LARGE RED APPLE in front of its belly. Full body chunky rounded silhouette, two long big white ears with pale-pink inner panels, large black eyes, tiny black nose, pale-pink cheeks. Strong DARK outline around rabbit, arm overlaps, feet and apple, 1–2 logical cells wide. Background only uniform cyan #46D9FF, no ground, no cloud. White front paws curl around apple sides. Both white hind feet and BLACK bottom outline must TOUCH the bottom edge, absolutely no cyan margin beneath feet. Apple large about 15% entire canvas with one tiny black stem, no leaf, no brown/green. Full-canvas area budget: cyan 45%, white25%, red15%, black11%, pink4%. Black<=12%, pink<=5%. One clear giant rabbit/fruit silhouette.",
+          "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-9bda9ba2-2bad-4dcc-a056-bd47c1fad271.png"
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 5,
+        "areaPercent": [
+          47.61340277777778,
+          22.325694444444444,
+          14.511597222222223,
+          11.730902777777779,
+          3.8184027777777776
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            47.583333333333336,
+            22.055555555555557,
+            14.333333333333334,
+            11.88888888888889,
+            4.138888888888889
+          ]
+        },
+        "sha256": "026086c5c6161300c84b2e0ed6ce7479575c62bef5482131f7019ec10023cd80",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 14,
+      "title": "抱苹果小白兔",
+      "variant": 17,
+      "filename": "第14关-抱苹果小白兔-17.png",
+      "path": "Art/levels-b/source/第14关-抱苹果小白兔-17.png",
+      "palette": [
+        "46D9FF",
+        "FFFFFF",
+        "FF525B",
+        "2D2D2D",
+        "FFC5E0"
+      ],
+      "targetsPercent": [
+        45,
+        25,
+        15,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        12,
+        5
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-d886d310-152e-4f05-ba92-19afd93626cf.png",
+      "prompt": "Use case: stylized-concept. Create ONE new sibling variant of the attached pixelart. Preserve mainlayout and largecolorareabalance ofreference. Changeonly pose/shape subtly, no addedobjects. Direction: One ear gently bends outward at its tip, apple sits slightly right of center, still both feet touch bottom..\nA single big adorable WHITE rabbit facing front and hugging ONE LARGE RED APPLE in front of its belly. Full body chunky rounded silhouette, two long big white ears with pale-pink inner panels, large black eyes, tiny black nose, pale-pink cheeks. Strong DARK outline around rabbit, arm overlaps, feet and apple, 1–2 logical cells wide. Background only uniform cyan #46D9FF, no ground, no cloud. White front paws curl around apple sides. Both white hind feet and BLACK bottom outline must TOUCH the bottom edge, absolutely no cyan margin beneath feet. Apple large about 15% entire canvas with one tiny black stem, no leaf, no brown/green. Full-canvas area budget: cyan 45%, white25%, red15%, black11%, pink4%. Black<=12%, pink<=5%. One clear giant rabbit/fruit silhouette.\nWhole rabbitincludingfeet remains about74%canvaswidth. Whitefeetandblackoutline musttouchbottom. Black total11%max, pink4%max. Do not enlargeoverallcharacter.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 46D9FF, FFFFFF, FF525B, 2D2D2D, FFC5E0",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-fe4aa84f-b70f-46f2-8b94-786664378eca.png",
+      "drafts": [],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 5,
+        "areaPercent": [
+          48.08493055555556,
+          22.660416666666666,
+          13.574375,
+          12,
+          3.680277777777778
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 720,
+        "largestBoundaryAssignmentCost": 1417,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            48.30555555555556,
+            22.38888888888889,
+            13.222222222222221,
+            12.055555555555555,
+            4.027777777777778
+          ]
+        },
+        "sha256": "12f48ef5930ecfa1b511bcaba8528f816ad035af73955ebc8c0a6a2cb18ea4a6",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 14,
+      "title": "抱苹果小白兔",
+      "variant": 18,
+      "filename": "第14关-抱苹果小白兔-18.png",
+      "path": "Art/levels-b/source/第14关-抱苹果小白兔-18.png",
+      "palette": [
+        "46D9FF",
+        "FFFFFF",
+        "FF525B",
+        "2D2D2D",
+        "FFC5E0"
+      ],
+      "targetsPercent": [
+        45,
+        25,
+        15,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        12,
+        5
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-fb6286c3-c072-45f7-b10e-57ae53ae6173.png",
+      "prompt": "Use case: precise-object-edit. Compress the whole bunny+apple horizontally to85%currentwidth, centered, keepheight andbottomtouchingfeet identical. Fillrevealedstripscyan. This correctscyan37%to46%,white29%to25%,red17%to14.5%,black13%to11%,pink5%to4.3%. Preserve earspreadandface. Do not change anyother features.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 46D9FF, FFFFFF, FF525B, 2D2D2D, FFC5E0",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-c4fc9b91-b95c-4f38-8e14-923be1fde0cf.png",
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-c4fc9b91-b95c-4f38-8e14-923be1fde0cf.png",
+          "prompt": "Use case: stylized-concept. Create ONE new sibling variant of the attached pixelart. Preserve mainlayout and largecolorareabalance ofreference. Changeonly pose/shape subtly, no addedobjects. Direction: Wide cuddly bunny face, slightly splayed ears, extra rounded large apple and chunky white feet at bottom..\nA single big adorable WHITE rabbit facing front and hugging ONE LARGE RED APPLE in front of its belly. Full body chunky rounded silhouette, two long big white ears with pale-pink inner panels, large black eyes, tiny black nose, pale-pink cheeks. Strong DARK outline around rabbit, arm overlaps, feet and apple, 1–2 logical cells wide. Background only uniform cyan #46D9FF, no ground, no cloud. White front paws curl around apple sides. Both white hind feet and BLACK bottom outline must TOUCH the bottom edge, absolutely no cyan margin beneath feet. Apple large about 15% entire canvas with one tiny black stem, no leaf, no brown/green. Full-canvas area budget: cyan 45%, white25%, red15%, black11%, pink4%. Black<=12%, pink<=5%. One clear giant rabbit/fruit silhouette.\nWhole rabbitincludingfeet remains about74%canvaswidth. Whitefeetandblackoutline musttouchbottom. Black total11%max, pink4%max. Do not enlargeoverallcharacter.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 46D9FF, FFFFFF, FF525B, 2D2D2D, FFC5E0",
+          "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-fe4aa84f-b70f-46f2-8b94-786664378eca.png"
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 5,
+        "areaPercent": [
+          49.143055555555556,
+          22.141597222222224,
+          12.80263888888889,
+          11.775208333333333,
+          4.1375
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            48.80555555555556,
+            22.194444444444443,
+            12.805555555555555,
+            12.027777777777779,
+            4.166666666666667
+          ]
+        },
+        "sha256": "9d704c9d2e5f4a7243fb6d57a22249ff6e5fb0e54b6162cf651dd23987ea6918",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 24,
+      "title": "提灯萤火虫",
+      "variant": 17,
+      "filename": "第24关-提灯萤火虫-17.png",
+      "path": "Art/levels-b/source/第24关-提灯萤火虫-17.png",
+      "palette": [
+        "696CAF",
+        "92EF4D",
+        "FFDF48",
+        "FFFFFF",
+        "2D2D2D"
+      ],
+      "targetsPercent": [
+        60,
+        15,
+        12,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        6,
+        6
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-c368ddeb-da9e-4785-9656-0076d1b27d09.png",
+      "prompt": "Use case: precise-object-edit. Current firefly greenhead/body and whitewings are TOO SMALL. Enlarge GREEN head+torso by25% in BOTH width andheight aroundcenter, move headup slightly toavoidtail. Enlarge each WHITEWING by45% width/height. Keep yellowbulb exactlycurrent size12.8%canvas andcenter. Enlarge black antennae proportionallywithhead, no newgrass. Targetindigo60-62%, lime15%, yellow12-13%, white4.5-5.5%under6%, black4-5%under6%. Onlyoneconnectedinsect. DONOTshrinkinsect. Greenheadwidth should be about24pixels on60grid. Yellowbulbwidth27pixels. Wings8x10pixelseach.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact palette: 696CAF, 92EF4D, FFDF48, FFFFFF, 2D2D2D\nA single big ROUND adorable lime-green firefly floating at center against completely flat indigo night sky #696CAF. Large lime head and round lime upper torso with big black eyes, tiny black smile and two thick readable black antennae. Exactly two small white wings attached at sides. The firefly's TAIL IS ONE HUGE yellow lightbulb-shaped glowing abdomen, sitting below the green head/body in the LOWER CENTER, not a separate carried lantern. Suggest light purely by the solid BRIGHT YELLOW shape, absolutely no gradients, rays, halo or scattered glow dots. A few simple clumps of lime grass attach to bottom edge. Full-canvas area budget: indigo61%, lime15%, yellow12%, white6% maximum, black6% maximum. Make the bulb big and visible, roughly 22x20 logical pixels in a 60x60 image. One coherent round friendly insect.",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-b0bff143-0288-4566-b020-9d6ebb87a01c.png",
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-927f5348-ca05-4774-b94a-350cecd70675.png",
+          "prompt": "Use case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nPalette ONLY: #696CAF, #92EF4D, #FFDF48, #FFFFFF, #2D2D2D.\nA single big ROUND adorable lime-green firefly floating at center against completely flat indigo night sky #696CAF. Large lime head and round lime upper torso with big black eyes, tiny black smile and two thick readable black antennae. Exactly two small white wings attached at sides. The firefly's TAIL IS ONE HUGE yellow lightbulb-shaped glowing abdomen, sitting below the green head/body in the LOWER CENTER, not a separate carried lantern. Suggest light purely by the solid BRIGHT YELLOW shape, absolutely no gradients, rays, halo or scattered glow dots. A few simple clumps of lime grass attach to bottom edge. Full-canvas area budget: indigo61%, lime15%, yellow12%, white6% maximum, black6% maximum. Make the bulb big and visible, roughly 22x20 logical pixels in a 60x60 image. One coherent round friendly insect.\nVariant direction: Upright front view, two white oval wings angled outward, fat pear-shaped yellow tail below.",
+          "reference": null
+        },
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-b0bff143-0288-4566-b020-9d6ebb87a01c.png",
+          "prompt": "Use case: precise-object-edit. Edit the attached pixel artwork. Keep this lime firefly design, huge yellowbulbtail and grass. Shrink just the GREEN HEAD+TORSO to about83% width and height (currentlime21.4% shouldbe15%), shrink each WHITEWING to about78%width,height (currentwhite8.9% to<=6%). Yellowbulbtail keep current size about12%canvas. Reducegrass density slightly, retainfewclumps onbottomedge. Eye/antenna black stayreadable, black<=6%. Wholeinsect remains connected centered, move head andwings closer togetherso no gaps. Expand plain indigo background until~60-61%. Donot add decorations. Allflatcolors.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact inks: 696CAF, 92EF4D, FFDF48, FFFFFF, 2D2D2D",
+          "reference": null
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 5,
+        "areaPercent": [
+          64.56166666666667,
+          13.32798611111111,
+          12.710486111111111,
+          4.800625,
+          4.599236111111111
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            64.66666666666667,
+            13.583333333333334,
+            12.666666666666666,
+            4.444444444444445,
+            4.638888888888889
+          ]
+        },
+        "sha256": "8a2d6e08eb4056006e6731d333823614d124f0f33157cc9ea054a9384dbf04e3",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 24,
+      "title": "提灯萤火虫",
+      "variant": 18,
+      "filename": "第24关-提灯萤火虫-18.png",
+      "path": "Art/levels-b/source/第24关-提灯萤火虫-18.png",
+      "palette": [
+        "696CAF",
+        "92EF4D",
+        "FFDF48",
+        "FFFFFF",
+        "2D2D2D"
+      ],
+      "targetsPercent": [
+        60,
+        15,
+        12,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        6,
+        6
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-dd10828d-b4fd-4064-b6ca-1195973f166d.png",
+      "prompt": "Use case: precise-object-edit. Keep the slightly tilted firefly exactly. Enlarge ONLYyellowbulbtail by15%widthandheight (area9.7% becomes12.8%), enlargebothwhitewings20%widthandheight(area4%becomes5.8%,under6%), slightlywidenthegreenhead+torso5% to15%area. Keepconnectionsnatural,grassunchanged. Indigobackgroundshouldthenbe61-63%. No newobjects. Everypixelblock itself mustalignhorizontal/verticalgrid, avoidrotatingpixels.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 696CAF, 92EF4D, FFDF48, FFFFFF, 2D2D2D",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-03f76373-8715-49f3-b51a-1e2840daf230.png",
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-03f76373-8715-49f3-b51a-1e2840daf230.png",
+          "prompt": "Use case: stylized-concept. Create ONE distinct sibling variant of the reference. Preserve current main subject scale, sparse background and palette balance. Variation: Slight jaunty tilt, long short-tipped antennae, two rounded wings and big round yellow tail below.. Increase green head+torso only about8% width/height fromreference so limecloserto15%, and tiltwholeinsectslightly; do notenlargeyellowtail. Whiteunder6%,blackunder6%.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 696CAF, 92EF4D, FFDF48, FFFFFF, 2D2D2D\nA single big ROUND adorable lime-green firefly floating at center against completely flat indigo night sky #696CAF. Large lime head and round lime upper torso with big black eyes, tiny black smile and two thick readable black antennae. Exactly two small white wings attached at sides. The firefly's TAIL IS ONE HUGE yellow lightbulb-shaped glowing abdomen, sitting below the green head/body in the LOWER CENTER, not a separate carried lantern. Suggest light purely by the solid BRIGHT YELLOW shape, absolutely no gradients, rays, halo or scattered glow dots. A few simple clumps of lime grass attach to bottom edge. Full-canvas area budget: indigo61%, lime15%, yellow12%, white6% maximum, black6% maximum. Make the bulb big and visible, roughly 22x20 logical pixels in a 60x60 image. One coherent round friendly insect.",
+          "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-c368ddeb-da9e-4785-9656-0076d1b27d09.png"
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 5,
+        "areaPercent": [
+          63.90229166666666,
+          14.938611111111111,
+          11.368819444444444,
+          5.5917361111111115,
+          4.198541666666666
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            63.388888888888886,
+            15.36111111111111,
+            11.333333333333334,
+            5.638888888888889,
+            4.277777777777778
+          ]
+        },
+        "sha256": "c5deca1e082f2f19ae103fcca820612dd33ee620c2c408209a06f61221a49f3f",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 24,
+      "title": "提灯萤火虫",
+      "variant": 19,
+      "filename": "第24关-提灯萤火虫-19.png",
+      "path": "Art/levels-b/source/第24关-提灯萤火虫-19.png",
+      "palette": [
+        "696CAF",
+        "92EF4D",
+        "FFDF48",
+        "FFFFFF",
+        "2D2D2D"
+      ],
+      "targetsPercent": [
+        60,
+        15,
+        12,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        6,
+        6
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-460e1fbf-9b4e-4f1e-bf3c-388b5be4542c.png",
+      "prompt": "Use case: stylized-concept. Create ONE new sibling variant of the attached pixelart. Preserve mainlayout and largecolorareabalance ofreference. Changeonly pose/shape subtly, no addedobjects. Direction: Symmetrical wide green head, happy large eyes, compact white wings, large rounded-square yellow bulb abdomen..\nA single big ROUND adorable lime-green firefly floating at center against completely flat indigo night sky #696CAF. Large lime head and round lime upper torso with big black eyes, tiny black smile and two thick readable black antennae. Exactly two small white wings attached at sides. The firefly's TAIL IS ONE HUGE yellow lightbulb-shaped glowing abdomen, sitting below the green head/body in the LOWER CENTER, not a separate carried lantern. Suggest light purely by the solid BRIGHT YELLOW shape, absolutely no gradients, rays, halo or scattered glow dots. A few simple clumps of lime grass attach to bottom edge. Full-canvas area budget: indigo61%, lime15%, yellow12%, white6% maximum, black6% maximum. Make the bulb big and visible, roughly 22x20 logical pixels in a 60x60 image. One coherent round friendly insect.\nGreenhead+torso slightlywider thanreference, green15%canvas. Yellowbulb12-13%. Whitewings5%,black5%,indigo62%. Do not shrinksubject.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 696CAF, 92EF4D, FFDF48, FFFFFF, 2D2D2D",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-c368ddeb-da9e-4785-9656-0076d1b27d09.png",
+      "drafts": [],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 5,
+        "areaPercent": [
+          60.20902777777778,
+          15.68625,
+          15.7975,
+          3.2670833333333333,
+          5.0401388888888885
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            60.19444444444444,
+            16.0,
+            15.36111111111111,
+            3.388888888888889,
+            5.055555555555555
+          ]
+        },
+        "sha256": "84b187f653b93a5937594588e62526e90edbf46c02e35b0021b57f8ce12739e1",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 32,
+      "title": "行囊小熊",
+      "variant": 9,
+      "filename": "第32关-行囊小熊-09.png",
+      "path": "Art/levels-b/source/第32关-行囊小熊-09.png",
+      "palette": [
+        "C8C5FF",
+        "65392D",
+        "FFFFFF",
+        "FF7E27",
+        "2D2D2D",
+        "FFCAA9",
+        "FF525B"
+      ],
+      "targetsPercent": [
+        45,
+        25,
+        10,
+        null,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        10,
+        9,
+        7,
+        null
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-25e8ae82-179e-4db5-a605-04fd00cf2b5c.png",
+      "prompt": "Use case: precise-object-edit. Edit the attached pixel artwork. Keep the friendly brown bear, sidebackpack, whitepath. Main correction: BLACK currently18.5% must be<=9%. Make ALL silhouette outlines and internal separators ONElogicalcell thick on60x60grid, thin eye shapes slightly to 4x5cells each and nose3x3cells while keeping readable. Bearwithoutbag shouldfit x15..42,y7..51, rounded headandshortbody. Brown about25%, peach<7%, lavender~45%. Orangebackpack currently1.3% too tiny: enlarge visible orangebag behindONErightshoulder to about7%wholecanvas, shape around10x24cells separated frombear by1cellblackline. Single redbutton only. Whitepath shouldoccupybottom7rows,10%after bearoverlap. Simplify outlines, keep cuteproportions.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact inks: C8C5FF, 65392D, FFFFFF, FF7E27, 2D2D2D, FFCAA9, FF525B",
+      "reference": null,
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-1aeaaee6-f45e-4fcb-ba3b-4678232e7441.png",
+          "prompt": "Use case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nPalette ONLY: #C8C5FF, #65392D, #FFFFFF, #FF7E27, #2D2D2D, #FFCAA9, #FF525B.\nA single cute BROWN bear standing FRONT-facing, full body, big round head and round ears, thick charcoal outline. Big black eyes and big black nose. Peach #FFCAA9 muzzle and a SMALL peach belly patch, total peach under7%. A small orange backpack peeks out from behind ONE shoulder only, visually separated from bear body by a definite black boundary. Backpack smaller than the bear and mostly behind it, no floating luggage. One tiny red button on backpack, the ONLY red mark. Plain solid pale-lavender #C8C5FF background. A broad simple WHITE path strip beneath bear's feet occupies roughly10% canvas. Full-canvas color budget: lavender45%, brown25%, white10%, orange7%, black7%, peach5.8%, red one 2x2 pixel button=0.11%. Orange<=10%, black<=9%, peach<=7%. One large bold dark bear silhouette.\nVariant direction: Symmetrical friendly bear stance, backpack visible behind its right shoulder, both short forepaws at sides.",
+          "reference": null
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 7,
+        "areaPercent": [
+          47.36708333333333,
+          26.060833333333335,
+          9.009375,
+          2.9186111111111113,
+          8.785486111111112,
+          5.808194444444444,
+          0.050416666666666665
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 948,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            47.638888888888886,
+            26.416666666666668,
+            8.86111111111111,
+            3.0833333333333335,
+            8.36111111111111,
+            5.583333333333333,
+            0.05555555555555555
+          ]
+        },
+        "sha256": "185e32ce27bf365a2fc4bf8eb7f5f12fc3f21f4f2efe697d995b4e6fee74ecd1",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true,
+        "redComponents": 1
+      }
+    },
+    {
+      "level": 32,
+      "title": "行囊小熊",
+      "variant": 10,
+      "filename": "第32关-行囊小熊-10.png",
+      "path": "Art/levels-b/source/第32关-行囊小熊-10.png",
+      "palette": [
+        "C8C5FF",
+        "65392D",
+        "FFFFFF",
+        "FF7E27",
+        "2D2D2D",
+        "FFCAA9",
+        "FF525B"
+      ],
+      "targetsPercent": [
+        45,
+        25,
+        10,
+        null,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        10,
+        9,
+        7,
+        null
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-af62b292-08e8-4469-8414-5848d2326e24.png",
+      "prompt": "Use case: stylized-concept. Use the attached approved design as STYLE, SIZE AND AREA-BALANCE REFERENCE. Create ONE distinct sibling variant, maintaining the current simple composition and color areas, no extra objects. Variant direction: Slightly jaunty stepping stance while facing front, backpack peeking behind left shoulder, round muzzle.. Make blacklines and internal mouth/separators slightly thinner, black must be BELOW8.5%canvas. One redbutton. \nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact palette: C8C5FF, 65392D, FFFFFF, FF7E27, 2D2D2D, FFCAA9, FF525B\nA single cute BROWN bear standing FRONT-facing, full body, big round head and round ears, thick charcoal outline. Big black eyes and big black nose. Peach #FFCAA9 muzzle and a SMALL peach belly patch, total peach under7%. A small orange backpack peeks out from behind ONE shoulder only, visually separated from bear body by a definite black boundary. Backpack smaller than the bear and mostly behind it, no floating luggage. One tiny red button on backpack, the ONLY red mark. Plain solid pale-lavender #C8C5FF background. A broad simple WHITE path strip beneath bear's feet occupies roughly10% canvas. Full-canvas color budget: lavender45%, brown25%, white10%, orange7%, black7%, peach5.8%, red one 2x2 pixel button=0.11%. Orange<=10%, black<=9%, peach<=7%. One large bold dark bear silhouette.",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-25e8ae82-179e-4db5-a605-04fd00cf2b5c.png",
+      "drafts": [],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 7,
+        "areaPercent": [
+          50.07111111111111,
+          25.77,
+          9.621875,
+          1.6819444444444445,
+          6.974861111111111,
+          5.842847222222222,
+          0.03736111111111111
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 1149,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            50.0,
+            25.47222222222222,
+            9.666666666666666,
+            1.6666666666666667,
+            7.138888888888889,
+            6.027777777777778,
+            0.027777777777777776
+          ]
+        },
+        "sha256": "a897627ddb7c14ae0f207644f5bf4d3b0881d7770f1d461552d13760e84f269f",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true,
+        "redComponents": 1
+      }
+    },
+    {
+      "level": 32,
+      "title": "行囊小熊",
+      "variant": 11,
+      "filename": "第32关-行囊小熊-11.png",
+      "path": "Art/levels-b/source/第32关-行囊小熊-11.png",
+      "palette": [
+        "C8C5FF",
+        "65392D",
+        "FFFFFF",
+        "FF7E27",
+        "2D2D2D",
+        "FFCAA9",
+        "FF525B"
+      ],
+      "targetsPercent": [
+        45,
+        25,
+        10,
+        null,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        10,
+        9,
+        7,
+        null
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-8832277d-7a49-41d6-a707-ddfa18eab77c.png",
+      "prompt": "Use case: precise-object-edit. Reduce wholebear+bag sizebyonly5%aroundcenter, keepfeet onwhitepath. THINallblackoutlinesand internalblackseparators by25%, totalblackmustbe8%canvasratherthan11.6%. Keepbigeyesbutreduceblackeyefillsabout10%, mouthline1logicalpixel. Preservebearidentity,frontstanceandredsinglebutton. Brownabout25-28%,lavender45%,white10%,peachunder7%. Do not thickenlinesagain.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: C8C5FF, 65392D, FFFFFF, FF7E27, 2D2D2D, FFCAA9, FF525B",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-59d64c54-085a-4fff-a147-a47d59353687.png",
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-59d64c54-085a-4fff-a147-a47d59353687.png",
+          "prompt": "Use case: stylized-concept. Create ONE distinct sibling variant of the reference. Preserve current main subject scale, sparse background and palette balance. Variation: Broad cuddly front-facing bear with short stout legs, backpack on its right side behind arm, big rounded ears.. Keep black totalbelow8.5%. Whitepathabout10%. Keep ONE tinyredbutton.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: C8C5FF, 65392D, FFFFFF, FF7E27, 2D2D2D, FFCAA9, FF525B\nA single cute BROWN bear standing FRONT-facing, full body, big round head and round ears, thick charcoal outline. Big black eyes and big black nose. Peach #FFCAA9 muzzle and a SMALL peach belly patch, total peach under7%. A small orange backpack peeks out from behind ONE shoulder only, visually separated from bear body by a definite black boundary. Backpack smaller than the bear and mostly behind it, no floating luggage. One tiny red button on backpack, the ONLY red mark. Plain solid pale-lavender #C8C5FF background. A broad simple WHITE path strip beneath bear's feet occupies roughly10% canvas. Full-canvas color budget: lavender45%, brown25%, white10%, orange7%, black7%, peach5.8%, red one 2x2 pixel button=0.11%. Orange<=10%, black<=9%, peach<=7%. One large bold dark bear silhouette.",
+          "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-25e8ae82-179e-4db5-a605-04fd00cf2b5c.png"
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 7,
+        "areaPercent": [
+          47.024652777777774,
+          28.318194444444444,
+          9.348194444444445,
+          1.832638888888889,
+          6.923819444444445,
+          6.492569444444444,
+          0.059930555555555556
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 1168,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            47.111111111111114,
+            27.944444444444443,
+            9.25,
+            1.9166666666666667,
+            7.194444444444445,
+            6.472222222222222,
+            0.1111111111111111
+          ]
+        },
+        "sha256": "1b557fa7137d60d3d624eea122c4eac949b219bfca67dd2911a3b1bbb3f45292",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true,
+        "redComponents": 1
+      }
+    },
+    {
+      "level": 36,
+      "title": "趴在雪坡上的小雪豹",
+      "variant": 3,
+      "filename": "第36关-趴在雪坡上的小雪豹-03.png",
+      "path": "Art/levels-b/source/第36关-趴在雪坡上的小雪豹-03.png",
+      "palette": [
+        "696CAF",
+        "2982F4",
+        "FFFFFF",
+        "C8C5FF",
+        "2D2D2D"
+      ],
+      "targetsPercent": [
+        40,
+        30,
+        20,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        8,
+        3.5
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-72098495-dda4-4658-b0bb-89961cd63d8a.png",
+      "prompt": "Use case: precise-object-edit. Edit the attached pixel artwork. Keep this adorable front-facing snow leopard pose, colors and big spots, but SCALE THE WHOLE LEOPARD DOWN to~82% current width/height centeredat x30,y34. Currentwhite29.8% should be20-22%, lavender9.8% should be<=8%, black5.25% should be<=3.5%. Smaller consistentanimal givescorrectareas. Fill revealed space with indigoabove/bluebelow. Raise the BLUE SLOPE upperedge to run roughlyfromrow32atleftto row25atright, untilblue30%andindigo40%. Keepfeetextendingdown but bottom5rowsALLBLUE. Removeblacktoeclawlines if needed to stayunder3.5%, blackonlybigeyesnoseandtinymouth. No thick bodyoutline.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact inks: 696CAF, 2982F4, FFFFFF, C8C5FF, 2D2D2D",
+      "reference": null,
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-183d4fea-2957-46d9-8af1-16e8c8ce5712.png",
+          "prompt": "Use case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nPalette ONLY: #696CAF, #2982F4, #FFFFFF, #C8C5FF, #2D2D2D.\nA single adorable WHITE SNOW LEOPARD lying prone on a BLUE snowy slope facing the viewer head-on. Big round white feline face with rounded ears, two large black eyes and large black nose, no thick black body outline (black reserved for face, maximum3.5%). A small number of LARGE PALE-LAVENDER spots, not tiny speckles, lavender inner ears and large spot patches, no stripes. Two big white front paws extend down toward lower portion. Compact white body behind head, clearly a lying cat. Upper background completely uniform INDIGO #696CAF night sky; lower background solid BLUE #2982F4 snow slope (snow is BLUE, not white). Lowest5 logical rows must be ALL BLUE with no paws/white/black in them. Full-canvas palette budget: indigo40%, blue30%, white22%, lavender5.5%, black2.5%. Lavender<=8%, black<=3.5%. NO other elements, no stars, no clouds, no shadow.\nVariant direction: Head centered, two paws extended symmetrically, gently rising blue slope from left to right.",
+          "reference": null
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 5,
+        "areaPercent": [
+          40.84875,
+          32.97944444444445,
+          17.877569444444443,
+          6.0524305555555555,
+          2.2418055555555556
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            40.833333333333336,
+            33.30555555555556,
+            18.0,
+            5.833333333333333,
+            2.0277777777777777
+          ]
+        },
+        "sha256": "c8ac5ffc331b9575af465e5977177f233d10c4b71e0ab4456a12264f9bd085b7",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 36,
+      "title": "趴在雪坡上的小雪豹",
+      "variant": 4,
+      "filename": "第36关-趴在雪坡上的小雪豹-04.png",
+      "path": "Art/levels-b/source/第36关-趴在雪坡上的小雪豹-04.png",
+      "palette": [
+        "696CAF",
+        "2982F4",
+        "FFFFFF",
+        "C8C5FF",
+        "2D2D2D"
+      ],
+      "targetsPercent": [
+        40,
+        30,
+        20,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        8,
+        3.5
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-4f006513-746a-4ff8-81fe-dd04f1cdc671.png",
+      "prompt": "Use case: stylized-concept. Use the attached approved design as STYLE, SIZE AND AREA-BALANCE REFERENCE. Create ONE distinct sibling variant, maintaining the current simple composition and color areas, no extra objects. Variant direction: Head just slightly tilted with curious expression, paws forward, large rounded lavender spots.. \nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact palette: 696CAF, 2982F4, FFFFFF, C8C5FF, 2D2D2D\nA single adorable WHITE SNOW LEOPARD lying prone on a BLUE snowy slope facing the viewer head-on. Big round white feline face with rounded ears, two large black eyes and large black nose, no thick black body outline (black reserved for face, maximum3.5%). A small number of LARGE PALE-LAVENDER spots, not tiny speckles, lavender inner ears and large spot patches, no stripes. Two big white front paws extend down toward lower portion. Compact white body behind head, clearly a lying cat. Upper background completely uniform INDIGO #696CAF night sky; lower background solid BLUE #2982F4 snow slope (snow is BLUE, not white). Lowest5 logical rows must be ALL BLUE with no paws/white/black in them. Full-canvas palette budget: indigo40%, blue30%, white22%, lavender5.5%, black2.5%. Lavender<=8%, black<=3.5%. NO other elements, no stars, no clouds, no shadow.",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-72098495-dda4-4658-b0bb-89961cd63d8a.png",
+      "drafts": [],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 5,
+        "areaPercent": [
+          40.168125,
+          30.599930555555556,
+          19.25173611111111,
+          7.7425,
+          2.2377083333333334
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            40.02777777777778,
+            30.61111111111111,
+            19.13888888888889,
+            7.972222222222222,
+            2.25
+          ]
+        },
+        "sha256": "fe83c4f5b75de8005e5a7d84a70e47a3abaabeeb9e170a2f2efc6ac71c1eaf98",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 36,
+      "title": "趴在雪坡上的小雪豹",
+      "variant": 5,
+      "filename": "第36关-趴在雪坡上的小雪豹-05.png",
+      "path": "Art/levels-b/source/第36关-趴在雪坡上的小雪豹-05.png",
+      "palette": [
+        "696CAF",
+        "2982F4",
+        "FFFFFF",
+        "C8C5FF",
+        "2D2D2D"
+      ],
+      "targetsPercent": [
+        40,
+        30,
+        20,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        8,
+        3.5
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-83ead32f-36cc-436b-b3e2-3cf0561204b4.png",
+      "prompt": "Use case: precise-object-edit. Preserve this front-facing prone snowleopard with raisedcurlytail, allpositions, whitebody, blue snow slope andindigo sky. Slightly shrink wholeanimal by3% inwidthandheight aroundcenter. Reduce the size of each pale-lavender spot and inner-earpanel by about7% inwidthandheight, filling removedlavender withwhitefur. Currentlavender8.8%wholecanvasmustbe7-7.5%maximum. Keep the FEW LARGE spots recognizable, do not introduce tinyspots. Keepbottom5logicalrowsallblue, blackeyesnoseandmouth unchanged, nooutline. Exact5inks #696CAF,#2982F4,#FFFFFF,#C8C5FF,#2D2D2D. Uniform60x60logicalpixelgrid,flatfills,noextrashades,notext,nobackgroundpatterns.",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-c53cf48b-05e6-4534-a932-5e03a152d527.png",
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-c53cf48b-05e6-4534-a932-5e03a152d527.png",
+          "prompt": "Use case: stylized-concept. Create ONE distinct sibling variant of the reference. Preserve current main subject scale, sparse background and palette balance. Variation: Wide rounded face, one front paw slightly farther down than the other, short tail curling behind but same one clear animal silhouette.. \nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 696CAF, 2982F4, FFFFFF, C8C5FF, 2D2D2D\nA single adorable WHITE SNOW LEOPARD lying prone on a BLUE snowy slope facing the viewer head-on. Big round white feline face with rounded ears, two large black eyes and large black nose, no thick black body outline (black reserved for face, maximum3.5%). A small number of LARGE PALE-LAVENDER spots, not tiny speckles, lavender inner ears and large spot patches, no stripes. Two big white front paws extend down toward lower portion. Compact white body behind head, clearly a lying cat. Upper background completely uniform INDIGO #696CAF night sky; lower background solid BLUE #2982F4 snow slope (snow is BLUE, not white). Lowest5 logical rows must be ALL BLUE with no paws/white/black in them. Full-canvas palette budget: indigo40%, blue30%, white22%, lavender5.5%, black2.5%. Lavender<=8%, black<=3.5%. NO other elements, no stars, no clouds, no shadow.",
+          "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-72098495-dda4-4658-b0bb-89961cd63d8a.png"
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 5,
+        "areaPercent": [
+          39.53944444444444,
+          28.45638888888889,
+          23.01451388888889,
+          6.198125,
+          2.7915277777777776
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            39.44444444444444,
+            28.666666666666668,
+            22.666666666666668,
+            6.388888888888889,
+            2.8333333333333335
+          ]
+        },
+        "sha256": "f296475f4548fea53fcfd098f71de6af1aa83d2db989262b84e221760e122740",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 41,
+      "title": "旋转木马上的冰雕小马",
+      "variant": 5,
+      "filename": "第41关-旋转木马上的冰雕小马-05.png",
+      "path": "Art/levels-b/source/第41关-旋转木马上的冰雕小马-05.png",
+      "palette": [
+        "2D2D2D",
+        "696CAF",
+        "C8C5FF",
+        "FFFFFF",
+        "46D9FF",
+        "2982F4"
+      ],
+      "targetsPercent": [
+        60,
+        13,
+        null,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        18,
+        15,
+        2.5,
+        2
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-cdc7a4b8-2eb0-4b70-8cd3-d6df6354e6f3.png",
+      "prompt": "Use case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nPalette ONLY: #2D2D2D, #696CAF, #C8C5FF, #FFFFFF, #46D9FF, #2982F4.\nA single simple adorable WHITE ICE CAROUSEL HORSE shown in clean SIDE VIEW mid-leap, centered against pure uniform CHARCOAL BLACK #2D2D2D background. Four simple chunky bent short legs visibly belonging to one horse, big head, one blue eye. Pale-lavender #C8C5FF mane and flowing tail, flat solid fills, NO ice shine textures or shading or facets. One very thin CYAN #46D9FF carousel pole vertically passes through the horse (visible above and below, horse occludes the middle). At top one very SIMPLE SOLID INDIGO canopy band, at bottom one THIN INDIGO base band, no stripes/frills/hanging decorations. Bottommost5 rows mainly/all BLACK. Total canvas color budget black60%, indigo13%, pale lavender13%, white12%, cyan1.7%, blue0.3%. Lavender<=18%, white<=15%, cyan<=2.5%, blue<=2%. Horse is the one clear focal subject and spans about70% width.\nVariant direction: Horse leaping toward right, arched proud neck, rounded lavender tail curls left.",
+      "reference": null,
+      "drafts": [],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 6,
+        "areaPercent": [
+          62.07958333333333,
+          13.781180555555556,
+          8.859791666666666,
+          14.104722222222222,
+          0.9754861111111112,
+          0.1992361111111111
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            60.388888888888886,
+            14.61111111111111,
+            8.916666666666666,
+            14.166666666666666,
+            1.75,
+            0.16666666666666666
+          ]
+        },
+        "sha256": "3ead1964c07b81259d11436d2023b38530affe5f70a415aee2267313581315c4",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 41,
+      "title": "旋转木马上的冰雕小马",
+      "variant": 6,
+      "filename": "第41关-旋转木马上的冰雕小马-06.png",
+      "path": "Art/levels-b/source/第41关-旋转木马上的冰雕小马-06.png",
+      "palette": [
+        "2D2D2D",
+        "696CAF",
+        "C8C5FF",
+        "FFFFFF",
+        "46D9FF",
+        "2982F4"
+      ],
+      "targetsPercent": [
+        60,
+        13,
+        null,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        18,
+        15,
+        2.5,
+        2
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-7c912da7-fad7-4826-9230-9fd6f453517c.png",
+      "prompt": "Use case: precise-object-edit. Repair ONLY the disconnected hindleg on this LEFT-facing carouselhorse. Attach the floating lower rearleg (lower-rightwhitepiece withindigohoof) to the hindquarter with a clear continuousWHITEupperlegbridge 3logicalpixels wide, separated fromotherleg byblackspace. ALLFOURLEGS mustbe connectedtohorsebody, nofloatingparts. Keep ALLother shapes, positions, paletteandcanvasunchanged.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 2D2D2D, 696CAF, C8C5FF, FFFFFF, 46D9FF, 2982F4",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-1dc4e702-f81d-4ca1-abc2-fdf80098eb31.png",
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-1dc4e702-f81d-4ca1-abc2-fdf80098eb31.png",
+          "prompt": "Use case: stylized-concept. Use the attached approved design as STYLE, SIZE AND AREA-BALANCE REFERENCE. Create ONE distinct sibling variant, maintaining the current simple composition and color areas, no extra objects. Variant direction: Horse leaping toward left, friendly slightly tucked chin, lifted front legs, sweeping lavender mane.. \nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact palette: 2D2D2D, 696CAF, C8C5FF, FFFFFF, 46D9FF, 2982F4\nA single simple adorable WHITE ICE CAROUSEL HORSE shown in clean SIDE VIEW mid-leap, centered against pure uniform CHARCOAL BLACK #2D2D2D background. Four simple chunky bent short legs visibly belonging to one horse, big head, one blue eye. Pale-lavender #C8C5FF mane and flowing tail, flat solid fills, NO ice shine textures or shading or facets. One very thin CYAN #46D9FF carousel pole vertically passes through the horse (visible above and below, horse occludes the middle). At top one very SIMPLE SOLID INDIGO canopy band, at bottom one THIN INDIGO base band, no stripes/frills/hanging decorations. Bottommost5 rows mainly/all BLACK. Total canvas color budget black60%, indigo13%, pale lavender13%, white12%, cyan1.7%, blue0.3%. Lavender<=18%, white<=15%, cyan<=2.5%, blue<=2%. Horse is the one clear focal subject and spans about70% width.",
+          "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-cdc7a4b8-2eb0-4b70-8cd3-d6df6354e6f3.png"
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 6,
+        "areaPercent": [
+          65.13875,
+          13.308125,
+          8.901875,
+          11.519791666666666,
+          0.9823611111111111,
+          0.14909722222222221
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            63.0,
+            14.472222222222221,
+            9.055555555555555,
+            11.527777777777779,
+            1.7222222222222223,
+            0.2222222222222222
+          ]
+        },
+        "sha256": "531b999be1c43cc442ef5595f43cbbe21d87f8aff6a84afee73acf94d0957d2f",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 41,
+      "title": "旋转木马上的冰雕小马",
+      "variant": 7,
+      "filename": "第41关-旋转木马上的冰雕小马-07.png",
+      "path": "Art/levels-b/source/第41关-旋转木马上的冰雕小马-07.png",
+      "palette": [
+        "2D2D2D",
+        "696CAF",
+        "C8C5FF",
+        "FFFFFF",
+        "46D9FF",
+        "2982F4"
+      ],
+      "targetsPercent": [
+        60,
+        13,
+        null,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        18,
+        15,
+        2.5,
+        2
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-c7c676b1-f799-441d-81a4-95abaea65aa7.png",
+      "prompt": "Use case: stylized-concept. Create ONE distinct sibling variant of the reference. Preserve current main subject scale, sparse background and palette balance. Variation: Horse facing right, especially rounded head and compact four-leg leaping silhouette, simple broad lavender mane and tail.. Exactlyfourlegs, all legs joinbody withcontinuousWHITEbridges. No floatinghoofor separatedleg.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 2D2D2D, 696CAF, C8C5FF, FFFFFF, 46D9FF, 2982F4\nA single simple adorable WHITE ICE CAROUSEL HORSE shown in clean SIDE VIEW mid-leap, centered against pure uniform CHARCOAL BLACK #2D2D2D background. Four simple chunky bent short legs visibly belonging to one horse, big head, one blue eye. Pale-lavender #C8C5FF mane and flowing tail, flat solid fills, NO ice shine textures or shading or facets. One very thin CYAN #46D9FF carousel pole vertically passes through the horse (visible above and below, horse occludes the middle). At top one very SIMPLE SOLID INDIGO canopy band, at bottom one THIN INDIGO base band, no stripes/frills/hanging decorations. Bottommost5 rows mainly/all BLACK. Total canvas color budget black60%, indigo13%, pale lavender13%, white12%, cyan1.7%, blue0.3%. Lavender<=18%, white<=15%, cyan<=2.5%, blue<=2%. Horse is the one clear focal subject and spans about70% width.",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-cdc7a4b8-2eb0-4b70-8cd3-d6df6354e6f3.png",
+      "drafts": [],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 6,
+        "areaPercent": [
+          63.36611111111111,
+          13.356527777777778,
+          8.53736111111111,
+          13.407847222222221,
+          1.0980555555555556,
+          0.23409722222222223
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            61.27777777777778,
+            14.63888888888889,
+            8.583333333333334,
+            13.444444444444445,
+            1.7777777777777777,
+            0.2777777777777778
+          ]
+        },
+        "sha256": "3acc01ae9a3ba11821d060b34012390905e7ca4f5c1b8d4a822f6fc22183b750",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 47,
+      "title": "夜里亮灯的冰滑梯",
+      "variant": 3,
+      "filename": "第47关-夜里亮灯的冰滑梯-03.png",
+      "path": "Art/levels-b/source/第47关-夜里亮灯的冰滑梯-03.png",
+      "palette": [
+        "2D2D2D",
+        "46D9FF",
+        "2982F4",
+        "C8C5FF",
+        "FFFFFF",
+        "696CAF"
+      ],
+      "targetsPercent": [
+        65,
+        18,
+        6,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        5,
+        4,
+        3
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-5fa6d996-f163-4429-bc81-c0416bbc3136.png",
+      "prompt": "Use case: precise-object-edit. Keep the ice-slide shape. Bluecurrently11%mustbe6-8%canvas. Reduce width ofBLUEBORDERaroundchute from2cellsto1cell, turninginnerblueborderhalfCYAN. Reducewidthofthelefttowerlegs by1cellontheinside, fillremovedinnerpartBLACK. Keepouterstair-stepedge. IncreasewidthoftheCYANchuteabout1celltolandnear18%. Remove1smallindigoextrafootblockifneeded,indigounder3%. Bottom5rowsallblack.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 2D2D2D, 46D9FF, 2982F4, C8C5FF, FFFFFF, 696CAF",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-2fe42bef-eff4-4b8d-80fe-744bed13c094.png",
+      "drafts": [
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-883e0bb2-992e-480d-b0cb-93b0762cf8c6.png",
+          "prompt": "Use case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nPalette ONLY: 2D2D2D, 46D9FF, 2982F4, C8C5FF, FFFFFF, 696CAF\nONE LARGE ICE SLIDE against featureless CHARCOAL BLACK #2D2D2D night, cute simple chunky pixel playground illustration. On the LEFT one short BLUE #2982F4 stepped staircase tower reaching upper-left/middle. From its top a WIDE CYAN #46D9FF curved SLIDE descends smoothly diagonally to LOWER RIGHT and curves flat at the end, with clear BLUE border edge. This is a broad solid cyan chute, NOT a thin wavy line. A few BIG SIMPLE pale-lavender/white light fixtures sit on tower top and slide edge, no thin decorative posts. Very small indigo structural base/accent blocks allowed. No railing, no trees, no stars, no scenery, no snow or ground. Bottommost5 logical rows must be ENTIRELY BLACK, slide ends at y<=54 on60-row grid. Full-canvas budget black65%, cyan18%, blue7%, lavender4.5%, white3%, indigo2.5%. Lavender<=5%, white<=4%, indigo<=3%. Slide is single readable large structure with wide chute and the background remains65% image.\nClassic tall left tower and broad gently curving slope that flares into a rounded lower-right landing.",
+          "reference": null
+        },
+        {
+          "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-2fe42bef-eff4-4b8d-80fe-744bed13c094.png",
+          "prompt": "Use case: precise-object-edit. Keep this slide structure and composition but WIDEN CYAN chute inward so the cyanarea risesfrom14%to18% and BLUE border/towerarea dropsfrom11%to~6%. Narrow the broad blueleft support/tower, preserving clear stair-step silhouette andgiveit6visiblelarge risers. Keep overallslideboundingbox. ReduceINDIGO archsupports/base from3.3% to2.5%, mostly replaceindigo withblackemptyspace. Enlarge pale-lavender lampstems/fixtures enoughfor2-3%area, WHITEunder4%. Black~65%. Keep bottom5rows allblack. No railings, stars, sceneryor tiny ornaments.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExact palette: 2D2D2D, 46D9FF, 2982F4, C8C5FF, FFFFFF, 696CAF\nONE LARGE ICE SLIDE against featureless CHARCOAL BLACK #2D2D2D night, cute simple chunky pixel playground illustration. On the LEFT one short BLUE #2982F4 stepped staircase tower reaching upper-left/middle. From its top a WIDE CYAN #46D9FF curved SLIDE descends smoothly diagonally to LOWER RIGHT and curves flat at the end, with clear BLUE border edge. This is a broad solid cyan chute, NOT a thin wavy line. A few BIG SIMPLE pale-lavender/white light fixtures sit on tower top and slide edge, no thin decorative posts. Very small indigo structural base/accent blocks allowed. No railing, no trees, no stars, no scenery, no snow or ground. Bottommost5 logical rows must be ENTIRELY BLACK, slide ends at y<=54 on60-row grid. Full-canvas budget black65%, cyan18%, blue7%, lavender4.5%, white3%, indigo2.5%. Lavender<=5%, white<=4%, indigo<=3%. Slide is single readable large structure with wide chute and the background remains65% image.",
+          "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-883e0bb2-992e-480d-b0cb-93b0762cf8c6.png"
+        }
+      ],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 6,
+        "areaPercent": [
+          67.91819444444444,
+          19.976111111111113,
+          7.573888888888889,
+          1.5274305555555556,
+          2.6309027777777776,
+          0.3734722222222222
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            67.41666666666667,
+            20.194444444444443,
+            7.0,
+            1.6666666666666667,
+            2.5555555555555554,
+            1.1666666666666667
+          ]
+        },
+        "sha256": "459c67c20305fc1dfbd3e3a729c72f5809b07eb3ef1771f230df93f2c6ad1cf7",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 47,
+      "title": "夜里亮灯的冰滑梯",
+      "variant": 4,
+      "filename": "第47关-夜里亮灯的冰滑梯-04.png",
+      "path": "Art/levels-b/source/第47关-夜里亮灯的冰滑梯-04.png",
+      "palette": [
+        "2D2D2D",
+        "46D9FF",
+        "2982F4",
+        "C8C5FF",
+        "FFFFFF",
+        "696CAF"
+      ],
+      "targetsPercent": [
+        65,
+        18,
+        6,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        5,
+        4,
+        3
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-0bf6d743-9c81-4a82-a35b-619b3d0b9754.png",
+      "prompt": "Use case: stylized-concept. Create ONE distinct sibling variant of the reference. Preserve current main subject scale, sparse background and palette balance. Variation: Compact chunky left stairs with a wide graceful S-curve cyan chute and a flat right landing.. Slimbluelefttowerandbluechutebordertoabout60%theircurrentthickness. WidenCYANslidingbed by2logicalcells; increasebiglavenderlampbases. Aimblue6-8%,cyan18%,black65%,lavender3-4%,white3%,indigo2%. Keepbottom5rowsblack.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 2D2D2D, 46D9FF, 2982F4, C8C5FF, FFFFFF, 696CAF\nONE LARGE ICE SLIDE against featureless CHARCOAL BLACK #2D2D2D night, cute simple chunky pixel playground illustration. On the LEFT one short BLUE #2982F4 stepped staircase tower reaching upper-left/middle. From its top a WIDE CYAN #46D9FF curved SLIDE descends smoothly diagonally to LOWER RIGHT and curves flat at the end, with clear BLUE border edge. This is a broad solid cyan chute, NOT a thin wavy line. A few BIG SIMPLE pale-lavender/white light fixtures sit on tower top and slide edge, no thin decorative posts. Very small indigo structural base/accent blocks allowed. No railing, no trees, no stars, no scenery, no snow or ground. Bottommost5 logical rows must be ENTIRELY BLACK, slide ends at y<=54 on60-row grid. Full-canvas budget black65%, cyan18%, blue7%, lavender4.5%, white3%, indigo2.5%. Lavender<=5%, white<=4%, indigo<=3%. Slide is single readable large structure with wide chute and the background remains65% image.",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-2fe42bef-eff4-4b8d-80fe-744bed13c094.png",
+      "drafts": [],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 6,
+        "areaPercent": [
+          66.49694444444444,
+          18.136388888888888,
+          8.388402777777777,
+          2.3716666666666666,
+          2.8558333333333334,
+          1.7507638888888888
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            66.52777777777777,
+            18.083333333333332,
+            8.36111111111111,
+            2.5,
+            3.0,
+            1.5277777777777777
+          ]
+        },
+        "sha256": "6bed8b9dcffbf89ef81c40e90474da8996ecd2161476b38d6ba01ebda297a519",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    },
+    {
+      "level": 47,
+      "title": "夜里亮灯的冰滑梯",
+      "variant": 5,
+      "filename": "第47关-夜里亮灯的冰滑梯-05.png",
+      "path": "Art/levels-b/source/第47关-夜里亮灯的冰滑梯-05.png",
+      "palette": [
+        "2D2D2D",
+        "46D9FF",
+        "2982F4",
+        "C8C5FF",
+        "FFFFFF",
+        "696CAF"
+      ],
+      "targetsPercent": [
+        65,
+        18,
+        6,
+        null,
+        null,
+        null
+      ],
+      "upperLimitsPercent": [
+        null,
+        null,
+        null,
+        5,
+        4,
+        3
+      ],
+      "sourceOutput": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-340cba7e-861b-4a8d-addc-0ea678577bd4.png",
+      "prompt": "Use case: stylized-concept. Create ONE new sibling variant of the attached pixelart. Preserve mainlayout and largecolorareabalance ofreference. Changeonly pose/shape subtly, no addedobjects. Direction: Bold left stepped tower, broad steep cyan chute smoothly curling at lower right, simple chunky lamps..\nONE LARGE ICE SLIDE against featureless CHARCOAL BLACK #2D2D2D night, cute simple chunky pixel playground illustration. On the LEFT one short BLUE #2982F4 stepped staircase tower reaching upper-left/middle. From its top a WIDE CYAN #46D9FF curved SLIDE descends smoothly diagonally to LOWER RIGHT and curves flat at the end, with clear BLUE border edge. This is a broad solid cyan chute, NOT a thin wavy line. A few BIG SIMPLE pale-lavender/white light fixtures sit on tower top and slide edge, no thin decorative posts. Very small indigo structural base/accent blocks allowed. No railing, no trees, no stars, no scenery, no snow or ground. Bottommost5 logical rows must be ENTIRELY BLACK, slide ends at y<=54 on60-row grid. Full-canvas budget black65%, cyan18%, blue7%, lavender4.5%, white3%, indigo2.5%. Lavender<=5%, white<=4%, indigo<=3%. Slide is single readable large structure with wide chute and the background remains65% image.\nUse broadercyanbedthanreference (cyan18-20%) andslightlyslimmerbluelefttower (blue6-7%). Givelefttower obviousstair-stepedge, no broadbluepanel. Lamps lavender4%,white3%,indigo2%. Bottom5rowsblack.\nUse case: stylized-concept. Create ONE standalone square pixel-art level illustration for a cute bubble puzzle game, NOT a collage or concept sheet. The finished image is sampled into a 60x60 bubble grid. Draw as an actual 60x60 logical pixel artwork enlarged with hard nearest-neighbor square edges. Make all face features, silhouette, and props bold and readable in sixty pixels. Uniform square pixel grid, chunky stepped contours, flat solid color regions. Strictly only the listed HEX inks. No gradients, no antialiasing, no extra shades, no texture/dither, no lighting/shadows, no text/numerals/labels, no border/frame, no ornamental small background shapes. Every percent below means fraction of the ENTIRE square including background. Use the area budget deliberately. Fully opaque edge-to-edge image.\nExactpalette: 2D2D2D, 46D9FF, 2982F4, C8C5FF, FFFFFF, 696CAF",
+      "reference": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-0bf6d743-9c81-4a82-a35b-619b3d0b9754.png",
+      "drafts": [],
+      "qa": {
+        "dimensions": [
+          1200,
+          1200
+        ],
+        "colorCount": 6,
+        "areaPercent": [
+          66.930625,
+          17.815069444444443,
+          8.534444444444444,
+          2.2332638888888887,
+          2.8338194444444444,
+          1.6527777777777777
+        ],
+        "upperLimitsPassed": true,
+        "paletteBoundaryAssignments": 0,
+        "largestBoundaryAssignmentCost": 0,
+        "redAntialiasBoundaryCorrections": 0,
+        "preview60": {
+          "dimensions": [
+            60,
+            60
+          ],
+          "method": "center nearest-neighbor from delivered PNG; diagnostic only",
+          "areaPercent": [
+            66.63888888888889,
+            17.72222222222222,
+            8.305555555555555,
+            2.5277777777777777,
+            2.8333333333333335,
+            1.9722222222222223
+          ]
+        },
+        "sha256": "2a3b623c6ec1805edfa0a47adc69629a4e5b361a68de9d06613bde0b44f20156",
+        "bottomRulePassed": true,
+        "exactPalettePassed": true,
+        "opaque": true
+      }
+    }
+  ]
+}

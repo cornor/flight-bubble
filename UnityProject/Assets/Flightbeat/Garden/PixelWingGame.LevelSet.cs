@@ -22,13 +22,16 @@ namespace Flightbeat.Game
         public const int LevelSetA = 0, LevelSetB = 1;
         const string LevelSetKey = "garden.levelSet";
         [Serializable] sealed class LevelSetEntry { public int game; public string resource, fileSha256, cellsSha256; }
-        [Serializable] sealed class LevelSetList { public LevelSetEntry[] levels; }
+        [Serializable] sealed class LevelSetList { public LevelSetEntry[] levels; public string defaultSet; }
         public sealed class LevelSetSource { public string name, kind, fileSha256, cellsSha256; }
 
         static string[] levelsA;
         static Dictionary<int, LevelSetSource> levelsB;   // levelIndex -> enabled B (or B-test) level
         public static int LevelSetCurrent { get; private set; }
         static bool levelSetSessionOverride;
+        // 2026-11-03 (user: a build mode with the new levels, opening on them): B-test/test.json may carry
+        // "defaultSet": "B" (build.sh --new-levels); used only when neither the URL/args nor a saved toggle chose.
+        static bool testDefaultB;
 
         // Original names, copied before the first change (also used by checks that must run on set A).
         public static string[] OriginalLevelNames
@@ -62,11 +65,13 @@ namespace Flightbeat.Game
             try { parsed = JsonUtility.FromJson<LevelSetList>(list.text); }
             catch (Exception e) { Debug.LogWarning("Level set list unreadable: " + listPath + " " + e.Message); return; }
             if (parsed?.levels == null) return;
+            if (folder == "B-test" && parsed.defaultSet == "B") testDefaultB = true;
             foreach (var entry in parsed.levels)
             {
                 int index = entry.game - 1;
-                // The B set covers game levels 3..262 (sector01..sector260); the name must match the slot.
-                if (index < 2 || index >= Levels.Length || entry.resource != OriginalLevelNames[index]) 
+                // The B set covers game levels 1..262 (training01/02 since 2026-11-03, sector01..sector260); the name
+                // must match the slot.
+                if (index < 0 || index >= Levels.Length || entry.resource != OriginalLevelNames[index]) 
                 { Debug.LogWarning("Level set entry ignored: " + folder + " " + entry.game + " " + entry.resource); continue; }
                 string name = folder + "/" + entry.resource;
                 var asset = Resources.Load<TextAsset>("Levels/" + name);
@@ -99,7 +104,12 @@ namespace Flightbeat.Game
             int at = Array.IndexOf(args, "--level-set");
             if (at >= 0 && at + 1 < args.Length) { set = args[at + 1] == "B" ? LevelSetB : LevelSetA; levelSetSessionOverride = true; }
             else if (TryLevelSetFromUrl(out int fromUrl)) { set = fromUrl; levelSetSessionOverride = true; }
-            else if (!evidenceControlled) set = PlayerPrefs.GetInt(LevelSetKey, LevelSetA) == LevelSetB ? LevelSetB : LevelSetA;
+            else if (!evidenceControlled)
+            {
+                LoadLevelSetCatalog();
+                int fallback = testDefaultB ? LevelSetB : LevelSetA;
+                set = PlayerPrefs.GetInt(LevelSetKey, fallback) == LevelSetB ? LevelSetB : LevelSetA;
+            }
             ApplyLevelSet(set);
             if (set == LevelSetB) Debug.Log("GARDEN_LEVEL_SET B " + LevelSetAvailableCount);
         }

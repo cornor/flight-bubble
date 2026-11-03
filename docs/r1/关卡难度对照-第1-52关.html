@@ -1,0 +1,173 @@
+<title>第1–52关难度对照</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* Layout: one scannable ledger — summary strip, filter chips, then a single table where each row carries a 1–10 scale track (original ring vs new dot). */
+:root{
+  --bg:#f3f7fb; --surface:#ffffff; --ink:#1d2b3a; --muted:#5f7184; --line:#d9e3ec;
+  --accent:#2f86d6; --accent-soft:#e1effb;
+  --easier:#1f9e7a; --easier-soft:#dcf3ec;
+  --harder:#d9573f; --harder-soft:#fbe5e0;
+  --flag:#b7791f; --flag-soft:#fbf0dc;
+  --track:#e6edf3;
+  --display:"Baloo 2","Noto Sans SC",system-ui,sans-serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111a24; --surface:#17222f; --ink:#e4edf5; --muted:#93a5b7; --line:#273647;
+  --accent:#6bb3f2; --accent-soft:#1d3247;
+  --easier:#4fd1a8; --easier-soft:#173a32;
+  --harder:#f2876f; --harder-soft:#43241f;
+  --flag:#e6b25c; --flag-soft:#3d301a;
+  --track:#243344; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111a24; --surface:#17222f; --ink:#e4edf5; --muted:#93a5b7; --line:#273647;
+  --accent:#6bb3f2; --accent-soft:#1d3247;
+  --easier:#4fd1a8; --easier-soft:#173a32;
+  --harder:#f2876f; --harder-soft:#43241f;
+  --flag:#e6b25c; --flag-soft:#3d301a;
+  --track:#243344; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding-block:32px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:24px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:700}
+h1{font-family:var(--display);font-size:clamp(28px,4.4vw,40px);line-height:1.15;margin:0;text-wrap:balance;font-weight:700}
+.lede{color:var(--muted);margin:0;max-width:62ch}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;gap:2px}
+.stat b{font-family:var(--display);font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:13px}
+.stat.same b{color:var(--accent)} .stat.half b{color:var(--ink)} .stat.one b{color:var(--easier)} .stat.flag b{color:var(--flag)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.controls .label{font-size:13px;color:var(--muted);margin-right:4px}
+.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.table-box{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:760px;font-variant-numeric:tabular-nums}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:500;position:sticky;top:0;background:var(--surface)}
+tbody tr:last-child td{border-bottom:none}
+tr.zone td{background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px;letter-spacing:.04em;padding:7px 12px}
+td.n{font-family:var(--display);font-weight:700;font-size:16px;width:44px}
+td.name{min-width:0}
+td.num{text-align:right;width:56px;font-weight:500}
+.track{position:relative;height:18px;width:150px}
+.track::before{content:"";position:absolute;left:0;right:0;top:8px;height:3px;border-radius:2px;background:var(--track)}
+.track .a,.track .b{position:absolute;top:3px;width:13px;height:13px;border-radius:50%;transform:translateX(-50%)}
+.track .a{border:2px solid var(--muted);background:var(--surface)}
+.track .b{background:var(--accent)}
+.track .b.up{background:var(--harder)} .track .b.down{background:var(--easier)}
+.delta{display:inline-block;min-width:44px;text-align:center;border-radius:999px;padding:1px 8px;font-size:13px;font-weight:500}
+.delta.zero{color:var(--muted)}
+.delta.up{background:var(--harder-soft);color:var(--harder)}
+.delta.down{background:var(--easier-soft);color:var(--easier)}
+.tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:6px;padding:0 7px;color:var(--muted);white-space:nowrap}
+.tag.hard{color:var(--harder);border-color:var(--harder-soft)} .tag.super{color:var(--harder);background:var(--harder-soft);border-color:transparent} .tag.teach{color:var(--accent);border-color:var(--accent-soft)}
+.note{font-size:13px;color:var(--muted)}
+.note .flag{color:var(--flag);background:var(--flag-soft);border-radius:6px;padding:1px 7px;display:inline-block}
+.note .ok{color:var(--easier);background:var(--easier-soft);border-radius:6px;padding:1px 7px;display:inline-block}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);align-items:center}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:6px}
+.legend .la{border:2px solid var(--muted)} .legend .lb{background:var(--accent)} .legend .lu{background:var(--harder)} .legend .ld{background:var(--easier)}
+footer{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px;max-width:72ch}
+footer p{margin:0}
+@media (max-width:520px){.track{width:110px}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">关卡第二套 · 新旧对照</div>
+    <h1>第 1–52 关难度对照</h1>
+    <p class="lede">原关卡（A 套）和我们新做的关卡（B 套）的难度分，按同一套模拟方法、同一批随机局面打出。1 分＝基本都能不复活通关，10 分＝基本赢不了；分数误差约 ±0.5 分。</p>
+  </header>
+
+  <section class="summary" aria-label="总览">
+    <div class="stat same"><b id="s-same">31</b><span>难度分完全一样</span></div>
+    <div class="stat half"><b id="s-half">20</b><span>差 0.5 分（误差内）</span></div>
+    <div class="stat one"><b id="s-one">1</b><span>差 1 分（第 24 关，新版简单）</span></div>
+    <div class="stat flag"><b id="s-flag">8</b><span>测试例外（用户同意入测试包）</span></div>
+  </section>
+
+  <div class="controls" role="group" aria-label="筛选">
+    <span class="label">显示</span>
+    <button class="chip" id="f-all" data-f="all" aria-pressed="true">全部 52 关</button>
+    <button class="chip" id="f-diff" data-f="diff" aria-pressed="false">难度分有差别</button>
+    <button class="chip" id="f-flag" data-f="flag" aria-pressed="false">测试例外</button>
+    <button class="chip" id="f-z1" data-f="z1" aria-pressed="false">泡泡岛 1–32</button>
+    <button class="chip" id="f-z2" data-f="z2" aria-pressed="false">冰雪乐园 33–52</button>
+  </div>
+
+  <div class="legend">
+    <span><i class="la"></i>原关难度</span>
+    <span><i class="lb"></i>新关难度（一样）</span>
+    <span><i class="lu"></i>新版更难</span>
+    <span><i class="ld"></i>新版更容易</span>
+  </div>
+
+  <div class="table-box">
+    <table>
+      <thead><tr><th>关</th><th>新关卡</th><th class="num">原关</th><th class="num">新关</th><th>1 ─── 难度 ─── 10</th><th>差</th><th>提示难度</th><th>备注</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    <p><b>怎么打的分：</b>每关 4 种机器人打法（内置建议、优先攻击、优先合成、优先清位）各打 32 局。每局表现：不复活赢 1.0、复活后赢 0.85、输了按清除进度 ×0.7。难度 D = 1 −（0.6 × 最好打法的平均表现 + 0.4 × 4 种打法的平均表现），分数 = 1 + 9 × D / 0.85，取到 0.5 分。</p>
+    <p><b>提示难度</b>是开场提示给玩家的难度（普通／困难／超难），新关沿用原关的标记；原关里就有标"普通"却很难（第 24 关）、标"超难"却不难（第 34 关）的情况。</p>
+    <p><b>测试例外：</b>和原关的难度差距（4 种打法的胜率、清除进度、复活率综合比较）略超 0.15 的标准，用户同意先放进测试包试玩；正式接入前需试玩后再确认。数据更新于 2026-11-03。</p>
+  </footer>
+</div>
+
+<script>
+const ROWS = [
+[1,"戴蝴蝶结的小水母",1,1,"教学",""],[2,"准备出航的小帆船",1,1,"教学",""],[3,"泡泡金鱼",1,1,"普通","已验收"],[4,"游泳圈小黄鸭",1,1,"普通",""],[5,"赖床小猪",2.5,3,"普通",""],[6,"小狐狸",1,1,"普通","已验收"],[7,"海边小乌龟",3.5,3.5,"困难",""],[8,"吃草小绵羊",1,1,"普通",""],[9,"打哈欠小老虎",5,5,"普通",""],[10,"破壳小鸡",6.5,6.5,"普通",""],[11,"泡澡小白狗",2,2.5,"普通",""],[12,"雪橇小企鹅",7,6.5,"超难",""],[13,"草原小斑马",1,1.5,"普通",""],[14,"抱苹果小白兔",5.5,5,"普通",""],[15,"推皮球小虎鲸",2.5,3,"普通",""],[16,"叶尖小瓢虫",3.5,4,"普通","测试例外：部分打法偏难"],[17,"散步大白鹅",4,4,"困难",""],[18,"抱桃子熊猫",1,1,"普通",""],[19,"树枝小喜鹊",3,3,"普通",""],[20,"腮帮子小仓鼠",2.5,2.5,"普通",""],[21,"背苹果小刺猬",7,6.5,"普通",""],[22,"草地野餐篮",7,7,"超难",""],[23,"月光白天鹅",1,1,"普通",""],[24,"提灯萤火虫",8.5,7.5,"普通",""],[25,"抱松果小松鼠",6.5,7,"普通",""],[26,"红蘑菇屋",5,5.5,"普通",""],[27,"大胡萝卜",7.5,7,"困难",""],[28,"趴着小柴犬",1,1,"普通",""],[29,"沙滩小木船",2.5,2.5,"普通",""],[30,"送行小章鱼",6.5,6,"普通",""],[31,"海边篝火",4.5,4,"普通",""],[32,"行囊小熊",8.5,8.5,"超难",""],
+[33,"夜空飘落的大雪花",1,1,"普通",""],[34,"冰面上滑行的企鹅队员",3,3,"超难","测试例外：难度偏高"],[35,"冰海里的小白鲸",5,4.5,"困难",""],[36,"趴在雪坡上的小雪豹",2,2,"普通",""],[37,"雪夜里亮着暖灯的小木屋",2,2.5,"困难","测试例外：更依赖复活"],[38,"仰头唱歌的小哈士奇",1,1,"普通",""],[39,"冰雪乐园的冰城堡",3.5,3.5,"超难","测试例外：部分打法偏易"],[40,"夜空里划过的笑脸流星",4,4.5,"困难","测试例外：一种打法明显偏难"],[41,"旋转木马上的冰雕小马",2.5,2.5,"普通",""],[42,"冰海里的粉色小水母",4.5,5,"困难",""],[43,"从雪洞探头的小白鼬",1,1,"普通",""],[44,"带绒球的毛线帽",4.5,4.5,"超难","测试例外：接近原关"],[45,"飞过夜空的小燕鸥",3,3.5,"困难",""],[46,"转动的冰雪风车",1.5,2,"普通",""],[47,"夜里亮灯的冰滑梯",8,8,"困难",""],[48,"一颗冰晶爱心",1,1,"普通",""],[49,"喷水的大蓝鲸",4,4,"超难",""],[50,"雪地里的小驯鹿",4,4,"困难","测试例外：难度偏高"],[51,"随风飘的条纹围巾",3,3,"普通",""],[52,"冰晶小王冠",2.5,3,"困难","测试例外：部分打法偏易、更依赖复活"]
+];
+const tbody = document.getElementById('rows');
+const pos = v => ((v - 1) / 9 * 100).toFixed(1) + '%';
+const fmt = v => (Number.isInteger(v) ? v : v.toFixed(1));
+const tagClass = {"教学":"teach","困难":"hard","超难":"super","普通":""};
+function rowHtml([n, name, a, b, mark, note]) {
+  const d = Math.round((b - a) * 10) / 10;
+  const dir = d > 0 ? 'up' : d < 0 ? 'down' : '';
+  const dtext = d === 0 ? '0' : (d > 0 ? '+' : '−') + fmt(Math.abs(d));
+  const n2 = note.startsWith('测试例外') ? `<span class="flag">${note}</span>` : note === '已验收' ? `<span class="ok">已验收</span>` : '';
+  return `<tr data-n="${n}" data-diff="${d !== 0}" data-flag="${note.startsWith('测试例外')}">
+    <td class="n">${n}</td><td class="name">${name}</td>
+    <td class="num">${fmt(a)}</td><td class="num">${fmt(b)}</td>
+    <td><div class="track" role="img" aria-label="原关 ${fmt(a)} 分，新关 ${fmt(b)} 分"><span class="a" style="left:${pos(a)}"></span><span class="b ${dir}" style="left:${pos(b)}"></span></div></td>
+    <td><span class="delta ${dir || 'zero'}">${dtext}</span></td>
+    <td><span class="tag ${tagClass[mark] || ''}">${mark}</span></td>
+    <td class="note">${n2}</td></tr>`;
+}
+function render(filter) {
+  const keep = r => {
+    const d = r[3] !== r[2], f = r[5].startsWith('测试例外');
+    return filter === 'all' || (filter === 'diff' && d) || (filter === 'flag' && f) || (filter === 'z1' && r[0] <= 32) || (filter === 'z2' && r[0] >= 33);
+  };
+  let html = '', zone = 0;
+  for (const r of ROWS.filter(keep)) {
+    const z = r[0] <= 32 ? 1 : 2;
+    if (z !== zone) { zone = z; html += `<tr class="zone"><td colspan="8">${z === 1 ? '战区 1 · 泡泡岛（第 1–32 关，其中 1–2 为教学关）' : '战区 2 · 冰雪乐园（第 33–52 关）'}</td></tr>`; }
+    html += rowHtml(r);
+  }
+  tbody.innerHTML = html;
+}
+document.querySelectorAll('.chip').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+  render(btn.dataset.f);
+  try { localStorage.setItem('difficulty-filter', btn.dataset.f); } catch (e) {}
+}));
+let start = 'all';
+try { start = localStorage.getItem('difficulty-filter') || 'all'; } catch (e) {}
+const startBtn = document.querySelector(`.chip[data-f="${start}"]`) || document.getElementById('f-all');
+document.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', b === startBtn ? 'true' : 'false'));
+render(startBtn.dataset.f);
+// summary from the data
+const same = ROWS.filter(r => r[2] === r[3]).length, half = ROWS.filter(r => Math.abs(r[3] - r[2]) === 0.5).length;
+const one = ROWS.filter(r => Math.abs(r[3] - r[2]) >= 1).length, flag = ROWS.filter(r => r[5].startsWith('测试例外')).length;
+document.getElementById('s-same').textContent = same; document.getElementById('s-half').textContent = half;
+document.getElementById('s-one').textContent = one; document.getElementById('s-flag').textContent = flag;
+</script>

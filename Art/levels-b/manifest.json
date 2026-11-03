@@ -70,22 +70,20 @@
     "sector03": {
       "game": 5,
       "resource": "sector03",
-      "mode": "R",
+      "mode": "P",
       "sigma": {
-        "6": 3,
-        "11": 13,
-        "13": 7,
-        "8": 6
+        "0": 13,
+        "13": 0
       },
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第5关-赖床小猪-18.png",
-      "sourceSha256": "99ddfd4e5d5b5dcb5f5ae4c87364780cc122f83fb81ca41055fb34d0ed8b1a70",
-      "fileSha256": "a91d31d4dc7b3891e8e9acf534a79a3b62a01fa1041793ca57589fa3bb4270f5",
-      "cellsSha256": "2c2b02a58deb97da7302f819075e64231ca10afb9b9734683319b33c2870cae7",
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第5关-赖床小猪-20.png",
+      "sourceSha256": "354b593354414e765014bafea7bbddcec9b68f1057f22b851d1b2ae327af668f",
+      "fileSha256": "5324de9fd3e7eba2be43bc87701f6c91fdbc294b41247fa7f30edc3b7ec50e3d",
+      "cellsSha256": "283a995c735e7fb6d44888690d3cc28dcba924807b4315b78ad5256d60931b55",
       "changedCells": 0,
       "withinLimits": true,
       "title": "赖床小猪",
       "draft": "Art/levels-b/work/第005关_sector03/sector03.json",
-      "status": "evaluated",
+      "status": "draft",
       "checks": {
         "structure": {
           "verdict": "通过",
@@ -103,40 +101,11 @@
         }
       },
       "streamBalance": {
-        "changed": 632,
+        "changed": 684,
         "length": 5936,
         "place": "deep"
       },
-      "queueTune": {
-        "moved": 13,
-        "maxRowShift": 6,
-        "boardSha256": "f7b73926f80ff30de0e9e18d9cacff996a8121f0df176d911fc9c633762204bb",
-        "tuningGap": {
-          "score": 0.22343413988281252,
-          "ease": -0.05995925744140626,
-          "worst": 0.19529611265625002
-        },
-        "validation": {
-          "original": {
-            "score": 1.0520900219921874,
-            "ease": -0.5074903234960937,
-            "worst": 0.96875
-          },
-          "tuned": {
-            "score": 0.1927326376171875,
-            "ease": -0.06563859939453123,
-            "worst": 0.29709947437499995
-          }
-        },
-        "seeds": {
-          "tuning": 64,
-          "validation": [
-            201,
-            264
-          ]
-        },
-        "at": "2026-10-28T01:06:41"
-      }
+      "note": "11-03 重画（泡泡阵上看不清）：--recolor --stream-balance --stream-place deep"
     },
     "sector04": {
       "game": 6,
@@ -509,31 +478,70 @@
     "sector11": {
       "game": 13,
       "resource": "sector11",
-      "mode": "S",
-      "sigma": {},
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第13关-草原小斑马-13.png",
-      "sourceSha256": "5b48d3a33bb522f20d7fbfce10dd9236829490021e47b894160342c407f281a0",
-      "fileSha256": "f64940c0ea51a24db7a29a08fd9c3d689ba671fb318a307997dc0746350f56e1",
-      "cellsSha256": "190a026c7e28c5b2ff259acb84bfc512fdc53122e80fffd81de6f28ffdaa7273",
-      "changedCells": 149,
+      "mode": "P",
+      "sigma": {
+        "4": 9,
+        "9": 4
+      },
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第13关-草原小斑马-18.png",
+      "sourceSha256": "52410e8576b5e6f61c95da358d3ddfeb53c60aea3ade763ec8db4cc9ad9fd7c1",
+      "fileSha256": "821fe9c51452fb42d61fcfb3cfd868d32ba8c505357adeb9d520f186d09c87ed",
+      "cellsSha256": "ce44f81f488dcc5e2dc4b73d6a4f2f1d292ea49334c623e2fcd529ee21afb5c9",
+      "changedCells": 0,
       "withinLimits": true,
       "title": "草原小斑马",
       "draft": "Art/levels-b/work/第013关_sector11/sector11.json",
-      "status": "draft",
+      "status": "evaluated",
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "f64940c0ea51a24db7a29a08fd9c3d689ba671fb318a307997dc0746350f56e1",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-161110",
-          "at": "2026-10-26T16:11:10"
+          "fileSha256": "821fe9c51452fb42d61fcfb3cfd868d32ba8c505357adeb9d520f186d09c87ed",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261102-103655",
+          "at": "2026-11-02T10:36:55"
         },
         "bot": {
-          "verdict": "超差",
-          "fileSha256": "f64940c0ea51a24db7a29a08fd9c3d689ba671fb318a307997dc0746350f56e1",
-          "evidence": "Builds/R1-evidence/levels-b-resume-art1-20261026",
-          "at": "2026-10-26T16:15:14",
-          "runs": 12
+          "verdict": "通过",
+          "fileSha256": "821fe9c51452fb42d61fcfb3cfd868d32ba8c505357adeb9d520f186d09c87ed",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261102-103655",
+          "at": "2026-11-02T10:37:53",
+          "runs": 64,
+          "engine": "headless"
         }
+      },
+      "streamBalance": {
+        "changed": 806,
+        "length": 5824,
+        "place": "deep"
+      },
+      "queueTune": {
+        "moved": 8,
+        "maxRowShift": 3,
+        "boardSha256": "6a9d8c9c0d82fbb5e622fe272fb6cfcabfe72ed8068754b8788a5ad2f4769b77",
+        "tuningGap": {
+          "score": 0.11393781875,
+          "ease": -0.015953284375,
+          "worst": 0.3125
+        },
+        "validation": {
+          "original": {
+            "score": 0.487212254296875,
+            "ease": -0.00825456464843749,
+            "worst": 1
+          },
+          "tuned": {
+            "score": 0.11309016562500002,
+            "ease": -0.016506020312500008,
+            "worst": 0.28125
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-11-02T10:36:55"
       }
     },
     "sector12": {
@@ -544,17 +552,17 @@
         "13": 2,
         "11": 8,
         "8": 16,
-        "15": 1
+        "15": 11
       },
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第14关-抱苹果小白兔-13.png",
-      "sourceSha256": "cdd124b024b3faea4f2d63bed0d2a4e57a582339675c3342043b8dbe29fdd4ad",
-      "fileSha256": "3dc059e519ee8dbdad50780d3d5fd7a67b39d2cbff6784d50e6cb6309e61132f",
-      "cellsSha256": "517b3d6728e18ff9b4d21264d85768b34d1170fb169706329361f515c33f0a93",
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第14关-抱苹果小白兔-16.png",
+      "sourceSha256": "026086c5c6161300c84b2e0ed6ce7479575c62bef5482131f7019ec10023cd80",
+      "fileSha256": "1a180601370b2808123348a3d2937f5403ca2bf799164e021787f4322d01da1c",
+      "cellsSha256": "8177420285919fcc058f67b6dfe045ae20062b91ce3bd0657d13cf8a0e668e58",
       "changedCells": 0,
       "withinLimits": true,
       "title": "抱苹果小白兔",
       "draft": "Art/levels-b/work/第014关_sector12/sector12.json",
-      "status": "evaluated",
+      "status": "draft",
       "checks": {
         "structure": {
           "verdict": "通过",
@@ -572,40 +580,11 @@
         }
       },
       "streamBalance": {
-        "changed": 665,
-        "length": 7168
+        "changed": 461,
+        "length": 7168,
+        "place": "deep"
       },
-      "queueTune": {
-        "moved": 7,
-        "maxRowShift": 3,
-        "boardSha256": "0abd687d5503aaaddf7557c0d24ab8247cbf59cb4c17afea4898344bffa17ac3",
-        "tuningGap": {
-          "score": 0.26068196710937497,
-          "ease": -0.0477409195703125,
-          "worst": 0.22003273562499992
-        },
-        "validation": {
-          "original": {
-            "score": 0.62149678125,
-            "ease": -0.310748390625,
-            "worst": 0.515625
-          },
-          "tuned": {
-            "score": 0.2417982555078125,
-            "ease": -0.10369537451171874,
-            "worst": 0.21875
-          }
-        },
-        "seeds": {
-          "tuning": 32,
-          "validation": [
-            201,
-            264
-          ]
-        },
-        "at": "2026-10-27T18:17:47",
-        "acceptedBy": "用户 10-27 18:15 接受（验证差距 0.24）"
-      }
+      "note": "11-03 重画（泡泡阵上看不清）：--recolor --stream-balance --stream-place deep"
     },
     "sector13": {
       "game": 15,
@@ -685,29 +664,75 @@
       "resource": "sector14",
       "mode": "S",
       "sigma": {},
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第16关-叶尖小瓢虫-16.png",
-      "sourceSha256": "40b92e41c191fd8a829cb20d3ef20e60bc70510fdaea8541f487b12bae90f228",
-      "fileSha256": "d2762b44d0bfc38719fab957b713bb4ff287ba43a75beca26dc306121542d081",
-      "cellsSha256": "11eba52cd479d5acfcecab978566cde499d2e909622c3978a996e0200c5ee3ba",
-      "changedCells": 42,
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第16关-叶尖小瓢虫-25.png",
+      "sourceSha256": "9dba6f95413bbb9af53c290f01037312d69db6068319fd5ac06e1a92cb191b29",
+      "fileSha256": "dd43afa018c491d125264e0e2702c021136f0bb9a0563cd8fbc73f6a5f421c0b",
+      "cellsSha256": "ff674a2e1f41cc88a8bde203bf33f7e1435d2be13f580e859b2701e8ac96551b",
+      "changedCells": 0,
       "withinLimits": true,
       "title": "叶尖小瓢虫",
       "draft": "Art/levels-b/work/第016关_sector14/sector14.json",
-      "status": "draft",
+      "status": "evaluated",
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "d2762b44d0bfc38719fab957b713bb4ff287ba43a75beca26dc306121542d081",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261026-163445",
-          "at": "2026-10-26T16:34:45"
+          "fileSha256": "dd43afa018c491d125264e0e2702c021136f0bb9a0563cd8fbc73f6a5f421c0b",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261102-160303",
+          "at": "2026-11-02T16:03:03"
         },
         "bot": {
-          "verdict": "超差",
-          "fileSha256": "d2762b44d0bfc38719fab957b713bb4ff287ba43a75beca26dc306121542d081",
-          "evidence": "Builds/R1-evidence/levels-b-resume-art4-20261026",
-          "at": "2026-10-26T16:55:52",
-          "runs": 12
+          "verdict": "通过",
+          "fileSha256": "dd43afa018c491d125264e0e2702c021136f0bb9a0563cd8fbc73f6a5f421c0b",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261102-160303",
+          "at": "2026-11-02T16:04:58",
+          "runs": 64,
+          "engine": "headless"
         }
+      },
+      "streamBalance": {
+        "changed": 233,
+        "length": 5824,
+        "place": "deep"
+      },
+      "queueTune": {
+        "moved": 7,
+        "maxRowShift": 2,
+        "boardSha256": "7c6e6d314568d12cdd4258aa2d5eefb3ea56d6ef8e1cd9244f4c8f702c2ebc27",
+        "tuningGap": {
+          "score": 0.16526206281250003,
+          "ease": -0.05919353140625001,
+          "worst": 0.28125
+        },
+        "validation": {
+          "original": {
+            "score": 0.67659118359375,
+            "ease": -0.338295591796875,
+            "worst": 0.515625
+          },
+          "tuned": {
+            "score": 0.1818876669921875,
+            "ease": -0.07531883349609375,
+            "worst": 0.25
+          }
+        },
+        "seeds": {
+          "tuning": 32,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-11-02T16:03:03"
+      },
+      "playtestException": {
+        "scope": "test-only",
+        "userConfirmedAt": "2026-11-02T16:00:00",
+        "userDecision": "25 号图与最佳排队纳入测试，标注部分打法偏难",
+        "label": "部分打法偏难",
+        "defaultQueueGapLimit": 0.15,
+        "actualQueueGap": 0.1818876669921875,
+        "defaultQueueGapPassed": false,
+        "fileSha256": "dd43afa018c491d125264e0e2702c021136f0bb9a0563cd8fbc73f6a5f421c0b"
       }
     },
     "sector15": {
@@ -938,17 +963,18 @@
       "resource": "sector20",
       "mode": "R",
       "sigma": {
-        "1": 2,
-        "0": 9,
-        "6": 16,
-        "4": 1,
-        "7": 0,
-        "8": 4
+        "1": 9,
+        "0": 2,
+        "6": 10,
+        "4": 16,
+        "10": 0,
+        "7": 4,
+        "8": 1
       },
       "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第22关-草地野餐篮-09.png",
       "sourceSha256": "4723621cfa858293a2fe4cd42184ff1cbbfbac54627097dd0570cf3cc5ccf53d",
-      "fileSha256": "536284a66822752b9ad4ae14d3ad8afbc111f9d1eb9c9c6377bd6d7c52c5ad55",
-      "cellsSha256": "b7c59e94d27dc591b71921ceac11ea91da4a25ac3b96eae84141c8560cc28700",
+      "fileSha256": "34a87a7f7fc286844a67aa3cdc4b64fc97327aa5c5a9aeee74527e849675233b",
+      "cellsSha256": "1b6c137632f019c636830a98ceb1f555bcbf64580fe8c66346b89554ec8c6317",
       "changedCells": 0,
       "withinLimits": true,
       "title": "草地野餐篮",
@@ -957,43 +983,44 @@
       "checks": {
         "structure": {
           "verdict": "通过",
-          "fileSha256": "536284a66822752b9ad4ae14d3ad8afbc111f9d1eb9c9c6377bd6d7c52c5ad55",
-          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261027-171139",
-          "at": "2026-10-27T17:11:39"
+          "fileSha256": "34a87a7f7fc286844a67aa3cdc4b64fc97327aa5c5a9aeee74527e849675233b",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261103-192917",
+          "at": "2026-11-03T19:29:17"
         },
         "bot": {
           "verdict": "通过",
-          "fileSha256": "536284a66822752b9ad4ae14d3ad8afbc111f9d1eb9c9c6377bd6d7c52c5ad55",
-          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261027-171139",
-          "at": "2026-10-27T17:13:30",
+          "fileSha256": "34a87a7f7fc286844a67aa3cdc4b64fc97327aa5c5a9aeee74527e849675233b",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261103-192954",
+          "at": "2026-11-03T19:34:53",
           "runs": 64,
           "engine": "headless"
         }
       },
       "streamBalance": {
-        "changed": 304,
+        "changed": 540,
         "length": 12992,
         "place": "deep"
       },
+      "note": "11-03 重新转换：--recolor --colours 小白,小冰,小棕,小荧,小橙,小粉（保留棕色轮廓）",
       "queueTune": {
-        "moved": 24,
+        "moved": 13,
         "maxRowShift": 6,
-        "boardSha256": "2b3f9a5f2f3a9ab5189b58284da73172cc79e8402a6841e8ba9c7913d44e6acf",
+        "boardSha256": "04c144386e1ea3c1be0b9c78d51c0a857097c0bb2e9f9de16c246c3ec5136952",
         "tuningGap": {
-          "score": 0.071702006796875,
-          "ease": -0.01114689167968752,
-          "worst": 0.15674158031250007
+          "score": 0.06358768523437498,
+          "ease": 0.019335842382812475,
+          "worst": 0.10199757187499997
         },
         "validation": {
           "original": {
-            "score": 0.27282232042968746,
-            "ease": -0.13641116021484373,
-            "worst": 0.3942477892187499
+            "score": 0.23769691269531246,
+            "ease": -0.08088494259765625,
+            "worst": 0.3483672496875
           },
           "tuned": {
-            "score": 0.07204808718749996,
-            "ease": -0.02725499339843749,
-            "worst": 0.16389392874999992
+            "score": 0.0858087184375,
+            "ease": 0.0004081186718750199,
+            "worst": 0.10029212046875002
           }
         },
         "seeds": {
@@ -1003,7 +1030,7 @@
             264
           ]
         },
-        "at": "2026-10-27T17:11:39"
+        "at": "2026-11-03T19:29:17"
       }
     },
     "sector21": {
@@ -1079,17 +1106,22 @@
     "sector22": {
       "game": 24,
       "resource": "sector22",
-      "mode": "S",
-      "sigma": {},
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第24关-提灯萤火虫-14.png",
-      "sourceSha256": "1657eca66ece952109e30b1cae3e49af014e09668e240a9cf9f4e3492359820e",
-      "fileSha256": "3910b66c9d65a578048d023936a4af799fd7d0c2fad09b2421f4f041cc91b91d",
-      "cellsSha256": "a1a6f078c978cc6aa7164b0634e1f7a03fda87d180ebd3f6b275946fbfbfcefa",
-      "changedCells": 98,
+      "mode": "R",
+      "sigma": {
+        "9": 1,
+        "6": 10,
+        "10": 11,
+        "3": 0
+      },
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第24关-提灯萤火虫-19.png",
+      "sourceSha256": "84b187f653b93a5937594588e62526e90edbf46c02e35b0021b57f8ce12739e1",
+      "fileSha256": "c63340c351b6e05fda370ee0d2b5257d3c0b84a1d45bcaefdaa1d6125f664cbb",
+      "cellsSha256": "6846d6eec2f278cac70f9a881afc9d74d3053d846c96535785da886fc0e78a39",
+      "changedCells": 0,
       "withinLimits": true,
       "title": "提灯萤火虫",
       "draft": "Art/levels-b/work/第024关_sector22/sector22.json",
-      "status": "evaluated",
+      "status": "draft",
       "checks": {
         "structure": {
           "verdict": "通过",
@@ -1106,36 +1138,12 @@
           "engine": "headless"
         }
       },
-      "queueTune": {
-        "moved": 12,
-        "maxRowShift": 3,
-        "boardSha256": "4499c88242cea3cdc3cf927c95ea54e82b940985bc13352eab5fb03ddc05de52",
-        "tuningGap": {
-          "score": 0.08114347195312499,
-          "ease": 0.0382914898828125,
-          "worst": 0.1904529034375
-        },
-        "validation": {
-          "original": {
-            "score": 1.3465738308203126,
-            "ease": 0.6732869154101563,
-            "worst": 0.890625
-          },
-          "tuned": {
-            "score": 0.1320654020703125,
-            "ease": 0.06338197658203125,
-            "worst": 0.265625
-          }
-        },
-        "seeds": {
-          "tuning": 32,
-          "validation": [
-            201,
-            264
-          ]
-        },
-        "at": "2026-10-26T20:22:24"
-      }
+      "streamBalance": {
+        "changed": 467,
+        "length": 7840,
+        "place": "deep"
+      },
+      "note": "11-03 重画（泡泡阵上看不清）：--recolor --stream-balance --stream-place deep --colours 小碧,小靛,小橙,小黑,小白（原关黄色只在沙流里，灯改橙色）"
     },
     "sector23": {
       "game": 25,
@@ -1524,20 +1532,24 @@
     "sector30": {
       "game": 32,
       "resource": "sector30",
-      "mode": "P",
+      "mode": "R",
       "sigma": {
         "0": 4,
-        "4": 0
+        "4": 11,
+        "10": 0,
+        "11": 6,
+        "6": 10,
+        "8": 1
       },
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第32关-行囊小熊-08.png",
-      "sourceSha256": "3c7cefa94a1fe13c3492c3ac46c5fad101032c532a2cdb921ab301ad09640d6e",
-      "fileSha256": "ba4a27b9e354cc5e32fab4cf6badbcbb9d4adc0ed725527f32dfa8e8b336bf40",
-      "cellsSha256": "b6f5142c3a8bec5cf1d6a2311f9527e91b3e196b3506d45aa45a126b0b9b33c5",
-      "changedCells": 63,
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第32关-行囊小熊-09.png",
+      "sourceSha256": "185e32ce27bf365a2fc4bf8eb7f5f12fc3f21f4f2efe697d995b4e6fee74ecd1",
+      "fileSha256": "8f5b8f7d2acf5d5b5741d7cddc175808c45675cae88b3331a7e93c45b5817d7b",
+      "cellsSha256": "4c04fb47c8d5908237553645216937cb810398935a4f39f27a9771274ee12885",
+      "changedCells": 0,
       "withinLimits": true,
       "title": "行囊小熊",
       "draft": "Art/levels-b/work/第032关_sector30/sector30.json",
-      "status": "evaluated",
+      "status": "draft",
       "checks": {
         "structure": {
           "verdict": "通过",
@@ -1554,36 +1566,12 @@
           "engine": "headless"
         }
       },
-      "queueTune": {
-        "moved": 2,
-        "maxRowShift": 2,
-        "boardSha256": "9d50607333b26f4bb4e2ce1011cae5d3c2e89c5d27f1d335185f7b9dc06e7924",
-        "tuningGap": {
-          "score": 0.04986309476562499,
-          "ease": 0.011432852226562491,
-          "worst": 0.07923170468749996
-        },
-        "validation": {
-          "original": {
-            "score": 0.3436713513671875,
-            "ease": 0.17183567568359376,
-            "worst": 0.58859768421875
-          },
-          "tuned": {
-            "score": 0.0555743986328125,
-            "ease": 0.019967782597656237,
-            "worst": 0.12331227781250001
-          }
-        },
-        "seeds": {
-          "tuning": 32,
-          "validation": [
-            201,
-            264
-          ]
-        },
-        "at": "2026-10-26T20:19:20"
-      }
+      "streamBalance": {
+        "changed": 431,
+        "length": 11648,
+        "place": "deep"
+      },
+      "note": "11-03 重画（泡泡阵上看不清）：--recolor --stream-balance --stream-place deep"
     },
     "sector31": {
       "game": 33,
@@ -1779,20 +1767,20 @@
         "0": 3,
         "3": 0
       },
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第36关-趴在雪坡上的小雪豹-02.png",
-      "sourceSha256": "1f8fd0d9722331cd057b15248c7cb59a9221268273c466979bd2e9ca45eab182",
-      "fileSha256": "037ca281408e745502a1be4ecbab0c19767f5cc61e3f7c2f0c9edaba4f78a0d3",
-      "cellsSha256": "cd84b4cdb71647ad9ab319af0a689488af26827dece2aad2fd837f21e365b63e",
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第36关-趴在雪坡上的小雪豹-04.png",
+      "sourceSha256": "fe83c4f5b75de8005e5a7d84a70e47a3abaabeeb9e170a2f2efc6ac71c1eaf98",
+      "fileSha256": "d8936769c3cb092be8fbebd7585ea27300786acc16497df2aa9c4115c4201f19",
+      "cellsSha256": "77d6f08dac66e3ff8369479bbeeb871839af3b6545b4c057e6eb185f092e77bc",
       "changedCells": 0,
       "withinLimits": true,
       "streamBalance": {
-        "changed": 165,
+        "changed": 251,
         "length": 6664,
         "place": "deep"
       },
       "title": "趴在雪坡上的小雪豹",
       "draft": "Art/levels-b/work/第036关_sector34/sector34.json",
-      "status": "evaluated",
+      "status": "draft",
       "checks": {
         "structure": {
           "verdict": "通过",
@@ -1809,36 +1797,7 @@
           "engine": "headless"
         }
       },
-      "queueTune": {
-        "moved": 13,
-        "maxRowShift": 2,
-        "boardSha256": "2daaa6b5683b6c11a6a2f65fe0c9c31c2c191bed833c9ca0e0caeed0cbc4c4b0",
-        "tuningGap": {
-          "score": 0.08455448164062503,
-          "ease": 0.024782842617187502,
-          "worst": 0.09375
-        },
-        "validation": {
-          "original": {
-            "score": 0.6361745241796875,
-            "ease": 0.22819632052734373,
-            "worst": 1
-          },
-          "tuned": {
-            "score": 0.12061688683593746,
-            "ease": 0.04273031841796873,
-            "worst": 0.15625
-          }
-        },
-        "seeds": {
-          "tuning": 32,
-          "validation": [
-            201,
-            264
-          ]
-        },
-        "at": "2026-10-28T11:46:43"
-      }
+      "note": "11-03 重画（泡泡阵上看不清）：--recolor --stream-balance --stream-place deep"
     },
     "sector35": {
       "game": 37,
@@ -2125,53 +2084,23 @@
       "resource": "sector39",
       "mode": "P",
       "sigma": {
-        "2": 3,
-        "3": 2
+        "15": 0,
+        "0": 15
       },
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第41关-旋转木马上的冰雕小马-04.png",
-      "sourceSha256": "6a7c625fef385e359204e06a48dccc60c319feb145f0bd726500e1af31e1c8cd",
-      "fileSha256": "872c225988b6003cbf8fc2bb0d662dac8668eb58882cd4db777fb773ceb6438d",
-      "cellsSha256": "77c4ffefb0297233f7ab512309070fbef6bef26b48e2835c6effab7a622ca2ce",
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第41关-旋转木马上的冰雕小马-05.png",
+      "sourceSha256": "3ead1964c07b81259d11436d2023b38530affe5f70a415aee2267313581315c4",
+      "fileSha256": "25448b31cbaff598078243547572a0cf502cb796f0d8476bb36351da90e6ce77",
+      "cellsSha256": "818bc127bd9092dc874a3350eddadb5492319409484c93757c5ae0dcaedfe3de",
       "changedCells": 0,
       "withinLimits": true,
       "streamBalance": {
-        "changed": 890,
+        "changed": 605,
         "length": 6664,
         "place": "deep"
       },
       "title": "旋转木马上的冰雕小马",
       "draft": "Art/levels-b/work/第041关_sector39/sector39.json",
-      "status": "evaluated",
-      "queueTune": {
-        "moved": 20,
-        "maxRowShift": 6,
-        "boardSha256": "cb0d40d10fdc0f2c42d656c2e5c371df82b2c866db3d473fefca6a1658f0ee9d",
-        "tuningGap": {
-          "score": 0.0920693677734375,
-          "ease": -0.006699691113281253,
-          "worst": 0.3125
-        },
-        "validation": {
-          "original": {
-            "score": 0.45503474050781245,
-            "ease": -0.14308315220703122,
-            "worst": 0.59375
-          },
-          "tuned": {
-            "score": 0.13470929890625002,
-            "ease": -0.021364112773437485,
-            "worst": 0.375
-          }
-        },
-        "seeds": {
-          "tuning": 64,
-          "validation": [
-            201,
-            264
-          ]
-        },
-        "at": "2026-10-28T20:09:02"
-      },
+      "status": "draft",
       "checks": {
         "structure": {
           "verdict": "通过",
@@ -2187,7 +2116,8 @@
           "runs": 64,
           "engine": "headless"
         }
-      }
+      },
+      "note": "11-03 重画（泡泡阵上看不清）：--recolor --stream-balance --stream-place deep"
     },
     "sector40": {
       "game": 42,
@@ -2452,68 +2382,42 @@
       "resource": "sector44",
       "mode": "P",
       "sigma": {
-        "3": 15,
-        "15": 3
+        "14": 3,
+        "3": 14
       },
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第46关-转动的冰雪风车-04.png",
-      "sourceSha256": "87bb84511015c1499a0c0401fa65efa29362ed8fb3640160306d50282e7ae7d1",
-      "fileSha256": "18976b3520dfc09f0c9fdf96df9539ea2126c5c8da5df7ff46841a28600f4854",
-      "cellsSha256": "1be901f7b367ebde7483afeedaae0f6d3203760d2e56a07ba083e7af1216e2fc",
-      "changedCells": 0,
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第46关-转动的冰雪风车-09.png",
+      "sourceSha256": "94c803df18518cc18c075f19e8c8bda32d2305c5f691b7b696d291d143ce1a9b",
+      "fileSha256": "6d1e3071e57739df4de40e4585f1a666fed1e58356f39b3eb163f0e71f57e327",
+      "cellsSha256": "288a5bbb6961d7bb4488bc38904004cd7ef3387c5cf814210906adbdde68e1f2",
+      "changedCells": 6,
       "withinLimits": true,
       "streamBalance": {
-        "changed": 263,
+        "changed": 131,
         "length": 6664,
         "place": "deep"
       },
       "title": "转动的冰雪风车",
       "draft": "Art/levels-b/work/第046关_sector44/sector44.json",
-      "status": "draft"
-    },
-    "sector45": {
-      "game": 47,
-      "resource": "sector45",
-      "mode": "P",
-      "sigma": {
-        "11": 0,
-        "2": 11,
-        "3": 2,
-        "15": 3,
-        "0": 15
-      },
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第47关-夜里亮灯的冰滑梯-01.png",
-      "sourceSha256": "52b218d2e783f6d3448495eac89c2cf7db751af5bde68fe7df3df8d2bd05c6b1",
-      "fileSha256": "b2199b86b846cf5a04abdff42d25bce371d3ae307da268d2f78de7896897b3a6",
-      "cellsSha256": "63e8f4b413eea298c59135feb9e1f4db08e8f6d5e873b4a5beccccc15c032361",
-      "changedCells": 0,
-      "withinLimits": true,
-      "streamBalance": {
-        "changed": 1097,
-        "length": 10920,
-        "place": "deep"
-      },
-      "title": "夜里亮灯的冰滑梯",
-      "draft": "Art/levels-b/work/第047关_sector45/sector45.json",
       "status": "evaluated",
       "queueTune": {
-        "moved": 11,
-        "maxRowShift": 6,
-        "boardSha256": "aed03a955bba90ec63b5f876f5e0ae718bdb71b00bb6dbef7ff5b1b5bec460ab",
+        "moved": 8,
+        "maxRowShift": 5,
+        "boardSha256": "f45d65d4460d29c245e3403438575bfea627c2d14b12867e75337ef7ffece813",
         "tuningGap": {
-          "score": 0.05848129539062499,
-          "ease": 0.021039675273437503,
-          "worst": 0.09375
+          "score": 0.10389620320312498,
+          "ease": -0.012144996835937505,
+          "worst": 0.34375
         },
         "validation": {
           "original": {
-            "score": 0.24937559214843746,
-            "ease": 0.09421716287109375,
-            "worst": 0.25480909859374995
+            "score": 0.3260725439453125,
+            "ease": -0.058544084472656244,
+            "worst": 0.9375
           },
           "tuned": {
-            "score": 0.0895741886328125,
-            "ease": -0.015295175332031258,
-            "worst": 0.1875
+            "score": 0.1441343074609375,
+            "ease": -0.01737965373046875,
+            "worst": 0.390625
           }
         },
         "seeds": {
@@ -2523,8 +2427,47 @@
             264
           ]
         },
-        "at": "2026-10-28T16:08:03"
+        "at": "2026-11-02T11:48:05"
       },
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "6d1e3071e57739df4de40e4585f1a666fed1e58356f39b3eb163f0e71f57e327",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261102-114806",
+          "at": "2026-11-02T11:48:06"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "6d1e3071e57739df4de40e4585f1a666fed1e58356f39b3eb163f0e71f57e327",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261102-114806",
+          "at": "2026-11-02T11:50:08",
+          "runs": 64,
+          "engine": "headless"
+        }
+      }
+    },
+    "sector45": {
+      "game": 47,
+      "resource": "sector45",
+      "mode": "P",
+      "sigma": {
+        "15": 0,
+        "0": 15
+      },
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第47关-夜里亮灯的冰滑梯-04.png",
+      "sourceSha256": "6bed8b9dcffbf89ef81c40e90474da8996ecd2161476b38d6ba01ebda297a519",
+      "fileSha256": "209ddeea55aaa9dbdbb961cdae37c3cdccb013429f15e999364ca2a13c645326",
+      "cellsSha256": "2407da153a2bc083cdef18b6af9cf05afcfc2e6d852933bd619c852ee55133da",
+      "changedCells": 0,
+      "withinLimits": true,
+      "streamBalance": {
+        "changed": 213,
+        "length": 10920,
+        "place": "deep"
+      },
+      "title": "夜里亮灯的冰滑梯",
+      "draft": "Art/levels-b/work/第047关_sector45/sector45.json",
+      "status": "draft",
       "checks": {
         "structure": {
           "verdict": "通过",
@@ -2540,30 +2483,79 @@
           "runs": 64,
           "engine": "headless"
         }
-      }
+      },
+      "note": "11-03 重画（泡泡阵上看不清）：--recolor --stream-balance --stream-place deep"
     },
     "sector46": {
       "game": 48,
       "resource": "sector46",
-      "mode": "P",
+      "mode": "R",
       "sigma": {
         "0": 2,
-        "2": 0
+        "2": 3,
+        "3": 0,
+        "16": 1
       },
-      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第48关-一颗冰晶爱心-03.png",
-      "sourceSha256": "bd53155cfbacc1113ad2af844ae40f5fb3caacb723c4b40107afd6bce4cb0f8f",
-      "fileSha256": "71d0642e7ebdfef12d0f773c3ad37a93d9057699aa7ec68148afab8fafc90935",
-      "cellsSha256": "39051214e1c95b7dcf76ffa6a361a3a11f0df6326afceae9cc14b343813fb2f8",
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第48关-一颗冰晶爱心-07.png",
+      "sourceSha256": "82db03973e1fc655683074a119e4aa7775b72b0ef3878d316dcd4c2c2f387dcb",
+      "fileSha256": "17562bc0353131f0a7e680e985083e84cb3c008ea7ea53033627b5787e8f620a",
+      "cellsSha256": "120449b4288c69e9c27c0172b83403137ef4e772622a16a7371c42a6549808f1",
       "changedCells": 0,
       "withinLimits": true,
       "streamBalance": {
-        "changed": 673,
+        "changed": 463,
         "length": 4788,
         "place": "deep"
       },
       "title": "一颗冰晶爱心",
       "draft": "Art/levels-b/work/第048关_sector46/sector46.json",
-      "status": "draft"
+      "status": "evaluated",
+      "queueTune": {
+        "moved": 5,
+        "maxRowShift": 3,
+        "boardSha256": "60e8c4fdd5e22e4d7f1dcbdc484fbeb4e5a73bd4a0fff3ecd5c1febc97459130",
+        "tuningGap": {
+          "score": 0.068359375,
+          "ease": 0.0,
+          "worst": 0.375
+        },
+        "validation": {
+          "original": {
+            "score": 0.126953125,
+            "ease": 0.0,
+            "worst": 0.53125
+          },
+          "tuned": {
+            "score": 0.07421875,
+            "ease": 0.0,
+            "worst": 0.4375
+          }
+        },
+        "seeds": {
+          "tuning": 64,
+          "validation": [
+            201,
+            264
+          ]
+        },
+        "at": "2026-11-02T10:12:08"
+      },
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "17562bc0353131f0a7e680e985083e84cb3c008ea7ea53033627b5787e8f620a",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261102-101208",
+          "at": "2026-11-02T10:12:08"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "17562bc0353131f0a7e680e985083e84cb3c008ea7ea53033627b5787e8f620a",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261102-101208",
+          "at": "2026-11-02T10:12:53",
+          "runs": 64,
+          "engine": "headless"
+        }
+      }
     },
     "sector47": {
       "game": 49,
@@ -2860,6 +2852,76 @@
         "actualQueueGap": 0.18000817609375,
         "defaultQueueGapPassed": false,
         "fileSha256": "2a43bdb01ed64a8d463ccf3c59fb1699e0ca54e2f70fd3696cd70b38f003dff4"
+      }
+    },
+    "training01": {
+      "game": 1,
+      "resource": "training01",
+      "mode": "S",
+      "sigma": {},
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第1关-戴蝴蝶结的小水母-01.png",
+      "sourceSha256": "f522467fb8276a0954ad71f74796d4467efbf17fde29247e71573fa3982f6644",
+      "fileSha256": "b9ca497a369039bf88dc3d61ece64d3fd28a96f77de9d605874b13d9b3e819f8",
+      "cellsSha256": "5f40abee98fa1f40281c27d9c0922dd9992bcaac8bf8b7c348537a67be194665",
+      "changedCells": 4,
+      "withinLimits": true,
+      "title": "戴蝴蝶结的小水母",
+      "draft": "Art/levels-b/work/第001关_training01/training01.json",
+      "status": "evaluated",
+      "checks": {
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "b9ca497a369039bf88dc3d61ece64d3fd28a96f77de9d605874b13d9b3e819f8",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261103-111651",
+          "at": "2026-11-03T11:16:52",
+          "runs": 64,
+          "engine": "headless"
+        },
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "b9ca497a369039bf88dc3d61ece64d3fd28a96f77de9d605874b13d9b3e819f8",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261103-111651",
+          "at": "2026-11-03T11:16:51"
+        }
+      },
+      "teaching": {
+        "tool": "tutorial_convert.py",
+        "note": "教学关：剪影小棋盘，各色数量、排队、教学设置与原版一致；底排含颜色 0"
+      }
+    },
+    "training02": {
+      "game": 2,
+      "resource": "training02",
+      "mode": "S",
+      "sigma": {},
+      "sourceImage": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第2关-准备出航的小帆船-04.png",
+      "sourceSha256": "469ae66dea11f65d3cbeed7edcde9dec4b0870cdfce2625b30f4faccab945b04",
+      "fileSha256": "5113647cda05d1adaf5739c2eeb777cc5a5269f6aa16078928f6c85a16bd1a55",
+      "cellsSha256": "eef1e5052473984de593296cbfc26ba86019ffe3f25681e287dbc17e9a2fbcb6",
+      "changedCells": 0,
+      "withinLimits": true,
+      "title": "准备出航的小帆船",
+      "draft": "Art/levels-b/work/第002关_training02/training02.json",
+      "status": "evaluated",
+      "checks": {
+        "structure": {
+          "verdict": "通过",
+          "fileSha256": "5113647cda05d1adaf5739c2eeb777cc5a5269f6aa16078928f6c85a16bd1a55",
+          "evidence": "Builds/R1-evidence/levels-b-structure-draft-20261103-121834",
+          "at": "2026-11-03T12:18:34"
+        },
+        "bot": {
+          "verdict": "通过",
+          "fileSha256": "5113647cda05d1adaf5739c2eeb777cc5a5269f6aa16078928f6c85a16bd1a55",
+          "evidence": "Builds/R1-evidence/levels-b-eval-draft-20261103-121834",
+          "at": "2026-11-03T12:18:35",
+          "runs": 64,
+          "engine": "headless"
+        }
+      },
+      "teaching": {
+        "tool": "tutorial_convert.py",
+        "note": "教学关：剪影小棋盘，各色数量、排队、教学设置与原版一致；底排含颜色 0；11-03 12:15 用户指定 04 号（用户提供），颜色比例与原版差较多，按 04 号手工重画 24×21 格子（帆每排加宽 1 格、两道条纹上移、绿旗放大、船底收圆）"
       }
     }
   }

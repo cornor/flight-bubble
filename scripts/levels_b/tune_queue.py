@@ -101,6 +101,10 @@ def main():
     ap.add_argument('--reset', action='store_true')
     ap.add_argument('--apply', action='store_true', help='把验证通过的排队写入草稿并更新清单（之后需重跑结构检查和机器人粗筛）')
     ap.add_argument('--accept', type=float, default=ACCEPT, help='验证差距上限')
+    ap.add_argument('--salt', type=int, default=0, help='2026-11-02: another random stream, to search in parallel from a copy of the state')
+    ap.add_argument('--worst-cap', type=float, default=None,
+                    help='2026-11-02: also keep each single strategy difference (win / progress / revive) under this; '
+                         'the search objective adds 2 x the excess (evaluate.py fails a 50-point revive gap)')
     args = ap.parse_args()
     t0 = time.time()
     global TUNE
@@ -148,7 +152,9 @@ def main():
         sp.write_text(json.dumps(st))
         print(json.dumps(dict(level=game, original=st['validation']['original'], tuned=st['validation']['tuned']), ensure_ascii=False))
         return 0
-    rng = random.Random(st['rounds'] * 7919 + game)
+    def obj(g):
+        return g['score'] + (2 * max(0.0, g['worst'] - args.worst_cap) if args.worst_cap is not None else 0.0)
+    rng = random.Random(st['rounds'] * 7919 + game + args.salt * 104729)
     tried = set(map(tuple, st['tried']))
     members = [_queue_member(e) for e in a['queue']]
     last = st.get('roundSeconds', 45)
@@ -169,20 +175,20 @@ def main():
             props.append(q)
             if len(props) >= args.proposals:
                 break
-        if not props or st.get('stall', 0) >= args.patience or st['best']['gap']['score'] <= args.target:
+        if not props or st.get('stall', 0) >= args.patience or obj(st['best']['gap']) <= args.target:
             st['done'] = True
             break
         if 'aScreen' not in st:
             st['aScreen'] = evaluate(simlib.a_path(game), game, SCREEN, None)
         a_screen = {int(k): v for k, v in st['aScreen'].items()}
-        screened = [(simlib.gap(a_screen, evaluate(board, game, SCREEN, q))['score'], q) for q in props]
+        screened = [(obj(simlib.gap(a_screen, evaluate(board, game, SCREEN, q))), q) for q in props]
         screened.sort(key=lambda x: x[0])
         improved = False
         for _, q in screened[:args.finalists]:
             tried.add(tuple(q))
             sq = evaluate(board, game, TUNE, q)
             g = simlib.gap(sa, sq)
-            if g['score'] < st['best']['gap']['score']:
+            if obj(g) < obj(st['best']['gap']):
                 st['best'] = dict(perm=q, summary=sq, gap=g)
                 improved = True
         st['stall'] = 0 if improved else st.get('stall', 0) + 1
@@ -193,7 +199,8 @@ def main():
         sp.write_text(json.dumps(st))
     moved = sum(1 for k, p in enumerate(st['best']['perm']) if members[p] != members[k])
     print(json.dumps(dict(level=game, rounds=st['rounds'], start=round(st['start']['score'], 3),
-                          best=round(st['best']['gap']['score'], 3), ease=round(st['best']['gap']['ease'], 3),
+                          best=round(st['best']['gap']['score'], 3), worst=round(st['best']['gap']['worst'], 3),
+                          ease=round(st['best']['gap']['ease'], 3),
                           moved=moved, done=st.get('done', False), history=st['history'][-6:]), ensure_ascii=False))
     return 0
 

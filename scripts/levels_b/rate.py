@@ -36,7 +36,7 @@ def level_path(game, level_set='A'):
     """A = the original level; B = the current B draft from the manifest (None when there is none)."""
     if level_set == 'B':
         from levelsb_common import load_manifest, resource
-        if game < 3:
+        if game < 3 and game not in (1, 2):   # 2026-11-03: the teaching levels 1-2 have B drafts too
             return None
         entry = load_manifest()['levels'].get(resource(game))
         return ROOT / entry['draft'] if entry else None

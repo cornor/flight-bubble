@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
 # R1 v3 (bubble squad): rebuild the atlas (deliveries + placeholders), regenerate the battle UI prefabs,
 # audit logic/data, then build WebGL.
-# usage: bash scripts/r1v3/build.sh [/absolute/new/output/dir]
+# usage: bash scripts/r1v3/build.sh [--new-levels] [/absolute/new/output/dir]
+#   bash scripts/r1v3/build.sh                 the original levels (plus approved/released B levels); a leftover
+#                                              B-test channel is removed first, so it never ships
+#   bash scripts/r1v3/build.sh --new-levels    test build with every new level waiting for a playtest (manifest
+#                                              'evaluated', current drafts), opening on set B (URL set=A for the
+#                                              originals); runs check_web.sh afterwards (R1_CHECK_WEB=0 skips it).
+#                                              Marked as a test build: never publish it.
 #   CLEAN=1 bash scripts/r1v3/build.sh   full rebuild (clears Unity's IL2CPP cache, rebuilds the atlas)
 # Build speed (2026-10-19): the atlas is skipped when its inputs did not change (Builds/.atlas-cache.json), and the
 # WebGL build is incremental unless CLEAN=1. Each step prints how long it took.
 set -euo pipefail
 repo="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$repo"
+# 2026-11-03 (user: a build mode that puts the new levels in; the default build keeps the original levels).
+new_levels=0
+if [ "${1:-}" = "--new-levels" ]; then new_levels=1; shift; fi
 # Fixed output directory (user request 2026-10-15): every build replaces Builds/WebGL/GardenR1-bubble.
 output="$repo/Builds/WebGL/GardenR1-bubble"
 if [ "$#" -gt 0 ] && [ "$1" != "$output" ]; then echo "输出固定为 $output"; exit 2; fi
@@ -20,6 +29,15 @@ step_start=$SECONDS; build_start=$SECONDS
 # 2026-10-22 (user): print when the build runs; the finish time also goes into the page (console + meta) and 打开说明.txt.
 echo "开始构建：$(date '+%Y-%m-%d %H:%M:%S')"
 step() { echo "[$(( SECONDS - step_start ))s] $1"; step_start=$SECONDS; }
+if [ "$new_levels" = 1 ]; then
+  export R1_LEVELS_TEST=1
+  python3 scripts/levels_b/stage_test.py --clean > /dev/null
+  python3 scripts/levels_b/stage_test.py --all-evaluated --default-set B | tail -1
+  step "新关卡放入测试通道"
+elif [ "${R1_LEVELS_TEST:-0}" != 1 ] && [ -e UnityProject/Assets/Flightbeat/Resources/levels/B-test ]; then
+  python3 scripts/levels_b/stage_test.py --clean
+  echo "默认构建：已清除上次留下的测试通道，本包只含原关卡和已验收的 B 套关卡"
+fi
 python3 scripts/r1v3/build_atlas_v3.py | tee "$output.atlas.json"
 step "图集"
 "$unity" -batchmode -nographics -quit -projectPath "$repo/UnityProject" \
@@ -91,5 +109,10 @@ if [ "${R1_LEVELS_TEST:-0}" = 1 ]; then
   echo "本包含 B-test 测试关卡，仅供本机测试，不可发布（R1_LEVELS_TEST=1）" > "$output/LEVELS_TEST_BUILD.txt"
   echo "⚠ 测试构建：包含 B-test 测试关卡，不可发布"
 fi
+if [ "$new_levels" = 1 ] && [ "${R1_CHECK_WEB:-1}" != 0 ]; then
+  bash scripts/levels_b/check_web.sh || echo "⚠ 网页检查未通过（见上方输出）；包已生成，可以先试玩"
+  step "网页检查（新关卡）"
+fi
 echo "构建完成：${output}（共 $(( SECONDS - build_start )) 秒，完成于 $(date '+%Y-%m-%d %H:%M:%S')）"
 echo "试玩：python3 -m http.server 8792 --bind 127.0.0.1 --directory \"$output\"  然后打开 http://127.0.0.1:8792/（服务可以一直开着，重新构建后刷新即可）"
+if [ "$new_levels" = 1 ]; then echo "新关卡测试包：默认就是 B 套（新关卡），想看原关卡在网址后加 ?set=A；测试通道留到下次默认构建时自动清除"; fi

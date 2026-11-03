@@ -455,7 +455,7 @@ namespace Flightbeat.Game
                 PadPumpFx(s, ship, pump, LastMouth, at.x, pumpFeet, pumpBody, false);
                 float wait = PadWaitAlpha(ship);
                 // 2026-10-21 (user): no ball icon; 10:21 a quiet regular-weight note instead of bold (it only informs).
-                if (wait > .01f) GardenBars.QuietChip(s, "等待", at.x, GardenRaisedPadY(674f), 58f, 25f, 16f, wait);
+                if (wait > .01f) GardenBars.QuietChip(s, "等待", at.x, GardenRaisedPadY(674f), 60f, 26f, 18f, wait);   // 2026-11-03 10:56 (user: text review): 18 px (was 16).
             }
             float queueScale = Mathf.Min(108f, 500f / Battle.LaneCount - 8f) / 108f;
             // 2026-10-22 10:00 (user: queue members look small on phones): the queue members are drawn as big as a

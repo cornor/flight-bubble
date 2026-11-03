@@ -352,7 +352,7 @@ namespace Flightbeat.Game
             }
             float x = cx - w * .5f + 55f, room = w - 69f;
             float sv = Mathf.Min(25f, room / Mathf.Max(.01f, GardenBarArt.TextWidth(value, 1f)));
-            GardenBarArt.Text(s, label, x, cy - 24f, 15f, false, A(Hex(0x94703F), a));
+            GardenBarArt.Text(s, label, x, cy - 26f, 17f, false, A(Hex(0x94703F), a));   // 2026-11-03 10:56 (user: text review): 17 px (was 15).
             GardenBarArt.Text(s, value, x, cy - 3f, sv, false, A(winInk, a));
         }
         // Light behind a showcased member (victory screen, codex): the H14 light with its big bubbles removed at pack

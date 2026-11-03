@@ -232,7 +232,7 @@ namespace Flightbeat.Game
                 float tagCy = GardenBars.ScreenY(s, rowY);
                 s.MapLayout = false;
                 GardenBars.Capsule(s, rowX + tagW * .5f, tagCy, tagW, h - 6f, GardenBars.Gold, tagAlpha);
-                GardenBarArt.Text(s, "初次登场", rowX + tagW * .5f, tagCy - 8.5f, 15f, true, A(GardenBars.Brown, tagAlpha));
+                GardenBarArt.Text(s, "初次登场", rowX + tagW * .5f, tagCy - 9f, 16f, true, A(GardenBars.Brown, tagAlpha));   // 2026-11-03 10:56 (user: text review): 16 px (was 15).
                 s.MapLayout = tagMapped;
             }
             for (int k = 0; k < n; k++)
@@ -263,7 +263,7 @@ namespace Flightbeat.Game
                         bool mapped = s.MapLayout;
                         float textCy = GardenBars.ScreenY(s, c.y);
                         s.MapLayout = false;
-                        GardenBarArt.Text(s, Name(tint), c.x + 18f, textCy - 9f, 16f, true, Hex(0x163E6D));
+                        GardenBarArt.Text(s, Name(tint), c.x + 18f, textCy - 10f, 18f, true, Hex(0x163E6D));   // 2026-11-03 10:56 (user: text review): 18 px (was 16).
                         s.MapLayout = mapped;
                     }   // 22:40: centred right of the avatar
                 }

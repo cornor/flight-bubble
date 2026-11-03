@@ -63,7 +63,7 @@ namespace Flightbeat.Game
                     WinRoundRect(s, x, y, w, h, 28f, A(Color.white, a));
                 if (p < .9f) return;
                 ResultSubtitle(s, "确定清空所有关卡进度吗？", cy - 62f, 24f, ResultNavy, a);
-                GardenBarArt.Text(s, "通关记录和图鉴收集都会清空", 270f, cy - 26f, 16f, true, A(Hex(0x6B7A99), a));
+                GardenBarArt.Text(s, "通关记录和图鉴收集都会清空", 270f, cy - 27f, 18f, true, A(Hex(0x6B7A99), a));   // 2026-11-03 10:56 (user: text review): 18 px (was 16).
                 ResultPill(s, ResetCancelAction, 92f, cy + 24f, 168f, 64f, "white", "取消");
                 ResultPill(s, ResetConfirmAction, 280f, cy + 24f, 168f, 64f, "red", "清空");
             }

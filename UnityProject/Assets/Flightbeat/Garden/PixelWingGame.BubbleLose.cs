@@ -85,7 +85,6 @@ namespace Flightbeat.Game
                 GardenBars.Icon(s, "unlock", ix, cy - 6f, 56f, a);
             }
             GardenBarArt.Text(s, "+1", cx + 12f, cy - 18f, 32f, false, A(Color.white, a));
-            GardenBarArt.Text(s, "+1", cx + 12.8f, cy - 18f, 32f, false, A(Color.white, a));
         }
 
         static void ReviveEffectHint(PixelSurface s, float y)

@@ -11,10 +11,23 @@ ART = ROOT / 'Art/R1/ui-bars-assets-20261020/glass-v2'
 EXTRA_ART = ROOT / 'Art/R1/ui-bars-assets-20261020/remaining-v1'
 OUT = ROOT / 'UnityProject/Assets/Flightbeat/Resources/GardenR1'
 FONT = ROOT / 'Art/fonts/ChillRoundF/ChillRoundFBold.ttf'
+# 2026-11-03 10:10 (user: use this font in the game): the rounded hint / dialog-title font is Arita Heiti Medium too
+# (same 48 px body with the 1 px emboldening, 90 px titles); characters it lacks still fall back to Noto Sans SC.
+if (ROOT / 'Art/fonts/AritaHeiti/AritaHeiti-Medium.ttf').is_file(): FONT = ROOT / 'Art/fonts/AritaHeiti/AritaHeiti-Medium.ttf'
+# 2026-11-03 18:17 (user: switch to this font): now OPPOSans-S Medium (the user's new ARITA-HEITI.TTF), which keeps
+# the hooks on slanted strokes.
+if (ROOT / 'Art/fonts/OPPOSansS/OPPOSans-S-Medium.ttf').is_file(): FONT = ROOT / 'Art/fonts/OPPOSansS/OPPOSans-S-Medium.ttf'
 SIZE, FONT_SIZE, CELL = 2048, 48, 56
 # Result headings no longer magnify the 48 px body font. Keep the title font's light optical stroke.
 # Tight packing keeps the larger title glyphs in the existing texture without moving the glass or body glyphs.
 TITLE_SIZE, TITLE_STROKE = 90, 1
+# 2026-11-03 10:56 (user: titles bold): with Arita Heiti the titles are baked bold - a 3 px stroke - at 84 px (no room
+# left for bold 90 px glyphs; titles are drawn at 72 px at most, so nothing is lost).
+if 'AritaHeiti' in FONT.name: TITLE_SIZE, TITLE_STROKE = 84, 3
+if 'OPPOSans' in FONT.name: TITLE_SIZE, TITLE_STROKE = 82, 3   # its glyph body is larger than Arita's: 84 px bold no longer fits
+# 2026-11-03 19:50 (UI check on a phone: 设置 / 暂停一下 / 泡泡图鉴 clogged - 置, 停, 图, 鉴 lost their inner gaps): the 3 px
+# stroke is too heavy once the 82 px glyphs are shown at 32-46 px. 1 px still reads bold and keeps the counters open.
+if 'OPPOSans' in FONT.name: TITLE_STROKE = 1
 TITLES = ('设置', '暂停一下', '休息一下', '泡泡全打光啦！', '失败了', '泡泡碰到护栏啦', '复活', '连胜中断', '体力', '泡泡图鉴',
           '挑战失败', '太棒了，挑战成功！', '全部通关，太棒了！', '差一点就成功了！', '复活成功！')
 
@@ -60,12 +73,22 @@ def build(out=OUT):
         if bytes(font.getmask(c)) == missing_mask:
             chosen = fallback
             fallback_chars.append(c)
+        if c.isspace():
+            # No ink for blanks (OPPOSans-S has no space glyph; a stroked fallback space left a 13x2 px sliver).
+            glyphs.append(dict(code=ord(c), x=0, y=0, w=0, h=0, advance=chosen.getlength(c) / FONT_SIZE, bearingX=0, bearingY=0))
+            continue
         # Bake a subtle rounded emboldening at 48px, not repeated offset draws at runtime.
         box = chosen.getbbox(c, anchor='ls', stroke_width=1)
+        draw_font, size = chosen, FONT_SIZE
+        # OPPOSans' '$' and 'j' run a few px taller than a cell: bake just those a size or two smaller (same advance).
+        while max(box[2] - box[0], box[3] - box[1]) + 4 > CELL and size > FONT_SIZE - 6:
+            size -= 1; draw_font = ImageFont.truetype(chosen.path, size)
+            if chosen is fallback: draw_font.set_variation_by_axes([700])
+            box = draw_font.getbbox(c, anchor='ls', stroke_width=1)
         w, h = box[2] - box[0], box[3] - box[1]
         x, y = (i % cols) * CELL + 2, (i // cols) * CELL + 2
         assert w + 4 <= CELL and h + 4 <= CELL, (c, box)
-        ImageDraw.Draw(image).text((x - box[0], y - box[1]), c, font=chosen,
+        ImageDraw.Draw(image).text((x - box[0], y - box[1]), c, font=draw_font,
                                   fill='white', anchor='ls', stroke_width=1, stroke_fill='white')
         glyphs.append(dict(code=ord(c), x=x, y=y, w=w, h=h,
                            advance=chosen.getlength(c) / FONT_SIZE,
@@ -109,30 +132,38 @@ def build(out=OUT):
         slots.append(dict(id=name, atlas=2, x=dx, y=dy, w=art.width, h=height,
                           fw=art.width, fh=height, ox=0, oy=0))
     # Pack title ink bounds (plus 4 px sampling gutters) beside/below the glass assets.
-    title_font = ImageFont.truetype(str(FONT), TITLE_SIZE)
     title_chars = sorted(set(''.join(TITLES)))
-    title_glyphs = []
-    title_missing = bytes(title_font.getmask('\uffff'))
-    free = [(0, art_top, SIZE, SIZE - art_top)]
+    free0 = [(0, art_top, SIZE, SIZE - art_top)]
     for slot in slots:
-        free = subtract_rect(free, (slot['x'] - 4, slot['y'] - 4, slot['w'] + 8, slot['h'] + 8))
-    boxes = [(c, title_font.getbbox(c, anchor='ls', stroke_width=TITLE_STROKE)) for c in title_chars]
-    boxes.sort(key=lambda item: -(item[1][3] - item[1][1]))
-    for c, box in boxes:
-        assert bytes(title_font.getmask(c)) != title_missing, f'Missing rounded title glyph: {c}'
+        free0 = subtract_rect(free0, (slot['x'] - 4, slot['y'] - 4, slot['w'] + 8, slot['h'] + 8))
+    # 2026-11-03 18:42 (Mac build: a glyph overflowed): FreeType on the Mac draws a pixel or two larger than elsewhere,
+    # so the bold titles step down from TITLE_SIZE (to 72 px at most, the largest size they are shown at) until they pack.
+    for title_size in range(TITLE_SIZE, 71, -1):
+        title_font = ImageFont.truetype(str(FONT), title_size)
+        title_missing = bytes(title_font.getmask('\uffff'))
+        free, placed = list(free0), []
+        boxes = [(c, title_font.getbbox(c, anchor='ls', stroke_width=TITLE_STROKE)) for c in title_chars]
+        boxes.sort(key=lambda item: -(item[1][3] - item[1][1]))
+        for c, box in boxes:
+            assert bytes(title_font.getmask(c)) != title_missing, f'Missing rounded title glyph: {c}'
+            w, h = box[2] - box[0], box[3] - box[1]
+            candidates = [r for r in free if r[2] >= w + 8 and r[3] >= h + 8]
+            if not candidates: break
+            cell = min(candidates, key=lambda r: (min(r[2] - w - 8, r[3] - h - 8), r[1], r[0]))
+            free = subtract_rect(free, (cell[0], cell[1], w + 8, h + 8)); placed.append((c, box, cell))
+        if len(placed) == len(boxes): break
+    assert len(placed) == len(boxes), ('title glyphs do not fit', TITLE_SIZE, art_top)
+    title_glyphs = []
+    for c, box, cell in placed:
         w, h = box[2] - box[0], box[3] - box[1]
-        candidates = [r for r in free if r[2] >= w + 8 and r[3] >= h + 8]
-        assert candidates, ('title glyphs do not fit', c, TITLE_SIZE, art_top)
-        cell = min(candidates, key=lambda r: (min(r[2] - w - 8, r[3] - h - 8), r[1], r[0]))
         x, ty = cell[0] + 4, cell[1] + 4
-        free = subtract_rect(free, (cell[0], cell[1], w + 8, h + 8))
         ImageDraw.Draw(image).text((x - box[0], ty - box[1]), c, font=title_font, fill='white', anchor='ls',
                                   stroke_width=TITLE_STROKE, stroke_fill='white')
         title_glyphs.append(dict(code=ord(c), x=x, y=ty, w=w, h=h,
-                                 advance=title_font.getlength(c) / TITLE_SIZE,
-                                 bearingX=box[0] / TITLE_SIZE, bearingY=box[1] / TITLE_SIZE))
+                                 advance=title_font.getlength(c) / title_size,
+                                 bearingX=box[0] / title_size, bearingY=box[1] / title_size))
     title_glyphs.sort(key=lambda g: g['code'])
-    (out / 'titles.json').write_text(json.dumps(dict(size=SIZE, fontSize=TITLE_SIZE,
+    (out / 'titles.json').write_text(json.dumps(dict(size=SIZE, fontSize=title_size,
         characters=''.join(title_chars), glyphs=title_glyphs, slots=[], titles=TITLES), ensure_ascii=False))
     image.save(out / 'bars.png')
     target.write_text(json.dumps(dict(size=SIZE, fontSize=FONT_SIZE, cell=CELL,

@@ -11,7 +11,7 @@ namespace Flightbeat.Garden.UI
     {
         public const float ProgressWidth = 256f;   // 2026-10-21: 266 -> 256, room for the larger percent
         // 2026-10-31: the green fill sits inside the track's groove: 7.5 px in from each end, 10.6 px tall.
-        public const float ProgressInset = 7.5f, ProgressFillWidth = ProgressWidth - 2f * ProgressInset, ProgressFillHeight = 10.6f;
+        public const float ProgressInset = 7.5f, ProgressFillWidth = ProgressWidth - 2f * ProgressInset, ProgressFillHeight = 14.6f;   // 2026-11-03 17:36 (user: thicker bar): 10.6 -> 14.6, with the track 22 -> 26
         [Header("Layers and responsive containers")]
         public GameObject background, header, controls, pauseDialog, resultDialog;
         public RectTransform backgroundTop, backgroundField, backgroundBottom, headerBand, controlsBand;

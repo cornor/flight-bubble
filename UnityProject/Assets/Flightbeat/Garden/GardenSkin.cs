@@ -735,7 +735,7 @@ namespace Flightbeat.Garden
         public static void Plant(PixelSurface s, Color tint, Vector2 at, int tier, string ammo, float attack = 0f, bool waiting = false, bool showName = true, float displayScale = 1f) {
             Creature(s, tint, at.x, at.y + 18f * displayScale, 76f * displayScale, tier, "", attack, 12f, false, false);
             // 2026-10-21 (user): no ball icon; 10:21 a quiet regular-weight note instead of bold.
-            if (waiting) GardenBars.QuietChip(s, "等待", at.x, at.y + 30f, 54f, 23f, 15f);
+            if (waiting) GardenBars.QuietChip(s, "等待", at.x, at.y + 30f, 56f, 24f, 17f);   // 2026-11-03 10:56 (user: text review): 17 px (was 15).
         }
         // UI spec v3 4.3: golden swirl on an empty open pad. Rotate the texture (not the quad) and lay it flat (x0.45).
         // The slot keeps a sqrt(2) transparent margin, so rotated UV corners never leave it.

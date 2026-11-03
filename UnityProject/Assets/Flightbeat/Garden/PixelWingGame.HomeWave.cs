@@ -91,10 +91,13 @@ namespace Flightbeat.Game
                 SoapBubble(s, at, size, Color.white, Mathf.Clamp01((2.5f - age) / .3f) * .8f, i);
             }
             DrawWaveStart(s);
-            HomeIconButton(s, 801, ScreenLayout.Left + 24f, ScreenLayout.Top + 18f, "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 48f);
+            // 2026-11-03 10:19 (user: no word under the settings button).
+            HomeIconButton(s, 801, ScreenLayout.Left + 24f, ScreenLayout.Top + 18f, "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 48f, -1f);
             // 2026-10-30 (界面优化 4, after the reference): 伙伴图鉴 in the top-right corner, opposite 设置.
             // 2026-10-30 16:10 (调整 4): exactly where the reference has it - at the right edge, level with the bubble.
-            HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 70f, Mathf.Max(ScreenLayout.Top + 96f, HomeWaveRect(0f, 300f, 0f, 0f).y), "plants/home/btn-codex", "伙伴图鉴", Hex(0xFFB347), 48f);
+            // 2026-11-03 10:19 (user: the album button's icon and word a little bigger): icon 48 -> 60 px (right edge kept),
+            // word 14 -> 18 px.
+            HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 82f, Mathf.Max(ScreenLayout.Top + 96f, HomeWaveRect(0f, 300f, 0f, 0f).y), "plants/home/btn-codex", "伙伴图鉴", Hex(0xFFB347), 60f, 18f);
             DrawWavePartner(s, k, ox, oy);
             s.MapLayout = true;
             DrawLevelPick(s);
@@ -112,7 +115,8 @@ namespace Flightbeat.Game
             if (level != homeLabelLevel) { homeLabelLevel = level; homeLabel = "第 " + level + " 关"; }
             Rect label = HomeWaveRect(170f, 862f, 200f, 30f);
             float lk = label.height / 30f;
-            GardenBarArt.Text(s, homeLabel, label.center.x, label.y, 22f * lk, true, Hex(0x1D3A7A));
+            // 2026-11-03 10:19 (user: the level line a little bigger): 22 -> 28 px, nudged up 3 px to keep its gap to the button.
+            GardenBarArt.Text(s, homeLabel, label.center.x, label.y - 3f * lk, 28f * lk, true, Hex(0x1D3A7A));
             // 2026-10-31 16:26 (user: 开始游戏和设置里的按钮不像一种样式): the same capsule, words and proportions as the
             // dialog buttons (300x80, 32 px words, the face at .47) - it was a chunkier 340x96 with 36 px words.
             Rect r = HomeWaveRect(110f, 904f, 320f, 80f);
@@ -157,7 +161,7 @@ namespace Flightbeat.Game
             string head = found ? "下一位伙伴" : "全员集结";
             Color navy = Hex(0x16285A), grey = Hex(0x6B7589), blue = Hex(0x1A6DF8);
             GardenBarArt.Text(s, head, tx, card.center.y - 30f * k, 22f * k, false, navy);
-            GardenBarArt.Text(s, head, tx + .7f, card.center.y - 30f * k, 22f * k, false, navy);
+            // 2026-11-03 19:50 (UI check): one ink pass - the rounded atlas is already baked bold; the offset second pass thickened the strokes.
             float ly = card.center.y + 3f * k, ls = 17f * k;
             if (!found) GardenBarArt.Text(s, homeNextLine, tx, ly, ls, false, grey);
             else
@@ -165,7 +169,7 @@ namespace Flightbeat.Game
                 string mid = homeNextMid;
                 float x = tx;
                 GardenBarArt.Text(s, "通关", x, ly, ls, false, grey); x += GardenBarArt.TextWidth("通关", ls) + 3f * k;
-                GardenBarArt.Text(s, mid, x, ly, ls, false, blue); GardenBarArt.Text(s, mid, x + .7f, ly, ls, false, blue);
+                GardenBarArt.Text(s, mid, x, ly, ls, false, blue);
                 x += GardenBarArt.TextWidth(mid, ls) + 3f * k;
                 GardenBarArt.Text(s, "解锁", x, ly, ls, false, grey);
             }

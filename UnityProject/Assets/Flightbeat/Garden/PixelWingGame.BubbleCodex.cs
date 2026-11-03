@@ -92,9 +92,10 @@ namespace Flightbeat.Game
             TextOutline(s, homeNextName, tx + tagW + 8f, y + 12f, 24f, Gold, Outline, 2f, false);
             TextOutline(s, homeNextLine, tx, y + 48f, 19f, Cream, Outline, 1.7f, false);
         }
-        void HomeIconButton(PixelSurface s, int id, float x, float y, string art, string label, Color fallback, float size = 56f)
+        void HomeIconButton(PixelSurface s, int id, float x, float y, string art, string label, Color fallback, float size = 56f, float wordSize = 0f)
         {
-            HitBox(s, id, x - 4f, y - 4f, size + 8f, size + 24f);
+            // 2026-11-03 10:19: wordSize < 0 draws no word under the icon; > 0 sets its size.
+            HitBox(s, id, x - 4f, y - 4f, size + 8f, size + (wordSize < 0f ? 8f : 24f));
             float cx = x + size * .5f, cy = y + size * .5f, d = size * (1f - PressPulse(id) * .1f);
             if (!Asset(s, art, cx - d * .5f, cy - d * .5f, d, d, Color.white))
             {
@@ -105,7 +106,8 @@ namespace Flightbeat.Game
             // now the rounded type of the other buttons, 16 px, white with a navy edge.
             // 2026-10-30 (light theme): navy words under the icon, a little bolder instead of the white-with-edge type.
             // 2026-10-31 (reference): small grey words under the icon (#56627A, 14 px), not the big navy ones.
-            float ls = size >= 80f ? 20f : size >= 56f ? 16f : 14f;
+            if (wordSize < 0f) return;
+            float ls = wordSize > 0f ? wordSize : size >= 80f ? 20f : size >= 56f ? 16f : 14f;
             GardenBarArt.Text(s, label, cx, y + size + 3f, ls, true, Hex(0x56627A));
         }
 
@@ -242,6 +244,7 @@ namespace Flightbeat.Game
             float nameWidth = GardenBarArt.TextWidth(title, 30f), tagWidth = have ? GardenBarArt.TextWidth(blurb[0], 17f) + 18f : 0f;
             float groupWidth = nameWidth + (have ? 12f + tagWidth : 0f), nameLeft = cx - groupWidth * .5f;
             GardenBarArt.Text(s, title, nameLeft, oy + 364f, 30f, false, CodexInk);
+            // 2026-11-03 19:50 (UI check): one ink pass - the rounded atlas is already baked bold; the offset second pass thickened the strokes.
             if (have)
             {
                 float tagX = nameLeft + nameWidth + 12f;
@@ -269,8 +272,9 @@ namespace Flightbeat.Game
                 tx += GardenBarArt.TextWidth(lv, 19f);
                 GardenBarArt.Text(s, post, tx, oy + 410f, 19f, false, CodexMuted);
             }
+            // 2026-11-03 10:56 (user: text review): 伙伴一览 bold, 点击卡片查看 16 -> 17 px.
             GardenBarArt.Text(s, "伙伴一览", 24f, oy + 472f, 23f, false, CodexInk);
-            GardenBarArt.Text(s, "点击卡片查看", 516f - GardenBarArt.TextWidth("点击卡片查看", 16f), oy + 478f, 16f, false, CodexMuted);
+            GardenBarArt.Text(s, "点击卡片查看", 516f - GardenBarArt.TextWidth("点击卡片查看", 17f), oy + 477f, 17f, false, CodexMuted);
             const int cols = 6;
             const float cw = 77f, ch = 94f, columnGap = 6f, rowGap = 8f;
             float gy = oy + 507f + slide;
@@ -290,7 +294,7 @@ namespace Flightbeat.Game
                     CodexSilhouetteArt(s, c.tint, mid, y + 69f, 88f);
                     CodexLock(s, mid, y + 42f, 17f);
                 }
-                DialogText(s, owned ? c.name : "第" + c.level + "关", mid, y + 75f, 16f, owned ? CodexInk : CodexMuted);
+                DialogText(s, owned ? c.name : "第" + c.level + "关", mid, y + 74f, 18f, owned ? CodexInk : CodexMuted);   // 2026-11-03 10:56 (user: text review): 18 px (was 16).
                 if (selected)
                 {
                     float checkX = x + cw - 13f, checkY = y + 12f;
@@ -349,7 +353,7 @@ namespace Flightbeat.Game
             DrawMemberAvatars(s, ox + 270f, y0 + 56f, newMembers, t - .25f);   // 11:39: avatars, no names
             float note = Clamp01((t - .6f - n * .15f) / .3f);
             if (note > 0f)
-                TextOutline(s, "已收入泡泡图鉴", ox + 270f, y0 + 95f, 14f, new Color(.86f, .92f, 1f, note), new Color(Outline.r, Outline.g, Outline.b, note), 1.2f);
+                TextOutline(s, "已收入泡泡图鉴", ox + 270f, y0 + 94f, 16f, new Color(.86f, .92f, 1f, note), new Color(Outline.r, Outline.g, Outline.b, note), 1.2f);
             s.MapLayout = mapped;
         }
     }

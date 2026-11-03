@@ -200,30 +200,39 @@ namespace Flightbeat.Editor
             // (the pill has a thicker lower rim, so its face centre is ~3.5 px above the middle of the 38 px box).
             Art("Level plaque", band, "scene/level", 66, 12, 116, 38, true, 36, 36, 19);
             RoundLabel("Lesson title", band, "泡泡课堂 {0}/2", 66, 16, 116, 15, GardenBars.Navy);
-            RoundLabel("Level title", band, "第 {0} 关", 66, 15f, 116, 18, GardenBars.Navy).gameObject.SetActive(false);
+            RoundLabel("Level title", band, "第 {0} 关", 66, 13f, 116, 22, GardenBars.Navy).gameObject.SetActive(false);
             // 2026-10-21 10:44 (user: too much room around the number): the frame ends 14 px earlier on the right (344 -> 330).
             Art("Progress frame", band, "scene/progress-frame", 190, 12, 330, 38, true, 36, 36, 19);
             // 2026-10-21 (quality pass): the empty groove read as a dull grey bar. Now a pale frosted groove with a fine
             // inner shade along its top edge, like a channel pressed into the glass.
-            var track = Art("Progress track", band, "scene/progress-track", 201, 20, GardenBattlePage.ProgressWidth, 22, true, 18, 18, 11);   // T7: 18 px round ends
+            // 2026-11-03 14:05 (user: the inner bar is not centred up and down inside the big bar): the frame has a thicker
+            // lower rim, so its face centre sits ~3.5 px above the box middle; the track sat on the box middle and looked low
+            // (wide white above, almost none below). Track, shade and fill all move 3.5 px up onto the face centre.
+            // 2026-11-03 17:36 (user: the inner bar is too thin, make it thicker): track 22 -> 26 px tall. Its sprite is all
+            // border (36 px, 18 px slices), so the extra 4 px stretch the channel's middle row; the fill grows by the same
+            // 4 px (ProgressFillHeight), and the track starts 2 px higher so it stays centred on the face.
+            const float TrackY = 14.5f, TrackH = 26f;
+            var track = Art("Progress track", band, "scene/progress-track", 201, TrackY, GardenBattlePage.ProgressWidth, TrackH, true, 18, 18, 11);   // T7: 18 px round ends
             // 23:33 (user: at 0 % the pale groove did not read as a bar): deeper, as on the revive dialog, with a
             // stronger inner shade.
             // 10-22 11:50 (user picked option 3): no groove inside the frame any more, only a faint lane (frame
             // glass shows through); the fill a softer deep blue so progress reads at a glance; no head spark.
             track.color = Color.white;
-            var shade = Node("Progress track shade", band, 199, 23.5f, GardenBattlePage.ProgressWidth - 18f, 2f);
+            var shade = Node("Progress track shade", band, 199, TrackY + 3.5f, GardenBattlePage.ProgressWidth - 18f, 2f);
             var shadeImage = shade.gameObject.AddComponent<Image>(); shadeImage.raycastTarget = false;
             shadeImage.color = new Color(.09f, .2f, .38f, 0f);
             // 2026-10-31 10:22 (user: 有进度的时候位置没有摆对): the fill lies inside the groove of the light-theme track
             // (its channel is 7.5 px in from each end and 5-15.5 px down the 22 px track), a green capsule with round ends.
-            Image fill = Art("Progress fill", band, "scene/progress-fill", 201f + GardenBattlePage.ProgressInset, 20f + 4.9f,
+            // 2026-11-03 11:30 (user: the fill is not centred up and down in the groove): it touched the groove's top shade
+            // and left a light band below it; 1.2 px lower centres it between the shade and the lower rim.
+            Image fill = Art("Progress fill", band, "scene/progress-fill", 201f + GardenBattlePage.ProgressInset, TrackY + 6.1f,
                 GardenBattlePage.ProgressFillWidth * .35f, GardenBattlePage.ProgressFillHeight, true, 16, 16, GardenBattlePage.ProgressFillHeight * .5f);
             fill.color = Color.white;   // 2026-10-21: cyan-blue as in the design; mint stays for success hints
             // A soft spark rides the head of the fill (moved by PixelWingGame.GardenUi).
             Image spark = Art("Progress spark", band, "fx/glow", 190, 15, 30, 32);
             spark.color = new Color(1f, 1f, 1f, .8f);
             // 2026-10-21: the percent a size larger (16 -> 18) and closer to the groove.
-            RoundLabel("Progress percent", band, "{0}%", 459, 15f, 54, 18, GardenSkin.Hex(0x3F248A));   // 10-31: centred on the pill face (was ~3.5 px low)
+            RoundLabel("Progress percent", band, "{0}%", 459, 14f, 54, 20, GardenSkin.Hex(0x3F248A));   // 10-31: centred on the pill face (was ~3.5 px low). 2026-11-03 10:56 (user: text review): level 22 px, percent 20 px (were 18).
             return root;
         }
         static RectTransform Controls()
@@ -327,7 +336,7 @@ namespace Flightbeat.Editor
             var rewards = Node("Rewards", content, 0, 0, 540, 960);
             Label("Coins", rewards, "收获金币 +{0}", 70, 420, 400, 20, Ink);
             Label("Seeds", rewards, "收获碎片 +{0}", 70, 456, 400, 20, Ink);
-            Label("Statistics", rewards, "最高连击 {0}  用时 {1} 秒", 70, 510, 400, 16, Ink);
+            Label("Statistics", rewards, "最高连击 {0}  用时 {1} 秒", 70, 510, 400, 18, Ink);   // 2026-11-03 10:56 (user: text review): 18 px (was 16).
             Label("Campaign complete", content, "全部关卡通过", 70, 566, 400, 20, Ink);
             // 2026-10-29 (界面优化 7/17, user: 所有的结算都要统一): light-theme capsules. Loss: a wide blue 重新挑战 with white
             // 返回主页 · 分享 below; win: blue 主页 · 重玩 with a wide yellow 下一关 below (the overlays draw the rest).

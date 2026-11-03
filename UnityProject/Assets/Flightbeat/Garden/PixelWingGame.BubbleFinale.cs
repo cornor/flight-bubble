@@ -215,7 +215,7 @@ namespace Flightbeat.Game
             DrawFinaleButtonFace(s, breathe * (1f - PressPulse(8) * .05f), alpha);
             HintCapsule(s, "决战时刻", 496f, 172f, 40f, 20f, GardenBars.Gold, GardenBars.Brown,
                 alpha, 1f, "crown", GardenBars.Deco.Many, finaleGuideAge);
-            GardenBarArt.TextOutline(s, "全员已出战 · 泡泡不到 " + Flightbeat.Model.Battle.FinaleThreshold + " 个", 270f, 528f, 16f, A(Cream, alpha), A(Outline, alpha), 1.6f);
+            GardenBarArt.TextOutline(s, "全员已出战 · 泡泡不到 " + Flightbeat.Model.Battle.FinaleThreshold + " 个", 270f, 527f, 18f, A(Cream, alpha), A(Outline, alpha), 1.6f);   // 2026-11-03 10:56 (user: text review): 18 px (was 16).
             // Speech bubble with Xiao Lan; reveal at the original typing speed (spokenCharacters of the source line).
             int shown = dialogue.Length == 0 ? FinaleGuideLine.Length
                 : Mathf.Clamp(Mathf.CeilToInt(FinaleGuideLine.Length * (float)spokenCharacters / dialogue.Length), 0, FinaleGuideLine.Length);

@@ -174,7 +174,7 @@ namespace Flightbeat.Game
             }
             finally { s.MapLayout = mapped; }
         }
-        // One centred line in the rounded bar font, a little bolder (drawn twice, .7 px apart); "{...}" key words coloured.
+        // One centred line in the rounded bar font (already bold; one ink pass); "{...}" key words coloured.
         void GuideLine(PixelSurface s, string line, float cx, float centreY, float size, float alpha)
         {
             string plain = line.Replace("{", "").Replace("}", "");
@@ -188,7 +188,6 @@ namespace Flightbeat.Game
                     string part = line.Substring(start, i - start);
                     Color ink = key ? (part.Contains("蓝") ? dialogueBlue : dialogueKey) : guideInk; ink.a *= alpha;
                     GardenBarArt.Text(s, part, x, y, size, false, ink);
-                    GardenBarArt.Text(s, part, x + .7f, y, size, false, ink);
                     x += GardenBarArt.TextWidth(part, size);
                 }
                 if (i < line.Length) key = line[i] == '{';
@@ -216,7 +215,6 @@ namespace Flightbeat.Game
                 Color white = new Color(1f, 1f, 1f, alpha);
                 float tx = left + iconW * k + textW * k * .5f, ty = cy - size * k * .55f;
                 GardenBarArt.Text(s, text, tx, ty, size * k, true, white);
-                GardenBarArt.Text(s, text, tx + .8f, ty, size * k, true, white);
             }
             finally { s.MapLayout = mapped; }
         }

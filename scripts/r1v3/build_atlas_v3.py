@@ -766,8 +766,48 @@ if missing:
         draw.text((x + 2 - left, y + 2 - top), c, font=font, fill='white', anchor='ls')
         glyphs.append(dict(code=ord(c), x=x + 2, y=y + 2, w=right - left, h=bottom - top, advance=font.getlength(c) / FONT_SIZE,
                            bearingX=left / FONT_SIZE, bearingY=top / FONT_SIZE))
-cursor_y = ((len(chars) + cols - 1) // cols) * CELL
 glyph_mode = 'source-preserved+' + str(len(missing))
+# 2026-11-03 10:10 (user: use this font in the game): the game text font is Arita Heiti Medium (Art/fonts/AritaHeiti).
+# Every glyph is drawn again in it at the same 32 px in the same 40 px cells (it runs ~3 % narrower than the imported Noto
+# glyphs, so no label grows); a character it lacks (only the play triangle today) falls back to Noto Sans SC 600.
+# 2026-11-03 18:17 (user: switch to this font): the user's new ARITA-HEITI.TTF is in fact OPPOSans-S Medium (its name
+# table says so); unlike Arita Heiti it keeps the small hooks on slanted strokes (the right sides of the two characters
+# on the start / done buttons). Stored as Art/fonts/OPPOSansS/OPPOSans-S-Medium.ttf.
+GAME_FONT = ROOT / 'Art/fonts/OPPOSansS/OPPOSans-S-Medium.ttf'
+if GAME_FONT.is_file():
+    image = Image.new('RGBA', (SIZE, SIZE))
+    glyphs, font_size = [], FONT_SIZE
+    _game = ImageFont.truetype(str(GAME_FONT), FONT_SIZE)
+    _noto = ImageFont.truetype(str(FONT), FONT_SIZE); _noto.set_variation_by_axes([600])
+    _notdef = bytes(_game.getmask('\uffff'))
+    draw = ImageDraw.Draw(image)
+    _fallback = []
+    for i, c in enumerate(chars):
+        _f = _game
+        # 2026-11-03 19:50 (UI check: the half-width space U+0020 in 「已收集 0 / 22」 showed as a crossed box): OPPOSans-S
+        # has no space glyph, so its notdef box was baked for ' '. A blank character is spacing only: no ink, no quad
+        # (w = h = 0), just the advance - the game font's when it has the character, otherwise Noto's.
+        if c.isspace():
+            _has = _game.getbbox(c, anchor='ls')[3] <= _game.getbbox(c, anchor='ls')[1]   # notdef has ink; a real blank has none
+            glyphs.append(dict(code=ord(c), x=0, y=0, w=0, h=0, advance=(_game if _has else _noto).getlength(c) / FONT_SIZE,
+                               bearingX=0, bearingY=0))
+            continue
+        if bytes(_game.getmask(c)) == _notdef: _f = _noto; _fallback.append(c)
+        x, y = (i % cols) * CELL, (i // cols) * CELL
+        left, top, right, bottom = _f.getbbox(c, anchor='ls')
+        _d, _size = _f, FONT_SIZE
+        # A glyph a pixel or two taller than a cell (OPPOSans' '$'; Noto's '|' standing in for the missing bar on the Mac's
+        # FreeType) is baked just a size or two smaller, with the same advance.
+        while (right - left + 4 > CELL or bottom - top + 4 > CELL) and _size > FONT_SIZE - 6:
+            _size -= 1; _d = ImageFont.truetype(str(GAME_FONT if _f is _game else FONT), _size)
+            if _f is not _game: _d.set_variation_by_axes([600])
+            left, top, right, bottom = _d.getbbox(c, anchor='ls')
+        assert right - left + 4 <= CELL and bottom - top + 4 <= CELL, (c, right - left, bottom - top)
+        draw.text((x + 2 - left, y + 2 - top), c, font=_d, fill='white', anchor='ls')
+        glyphs.append(dict(code=ord(c), x=x + 2, y=y + 2, w=right - left, h=bottom - top, advance=_f.getlength(c) / FONT_SIZE,
+                           bearingX=left / FONT_SIZE, bearingY=top / FONT_SIZE))
+    glyph_mode = 'opposans-s' + ('+noto:' + ''.join(_fallback) if _fallback else '')
+cursor_y = ((len(chars) + cols - 1) // cols) * CELL
 
 # 2026-10-31 10:22 (user: 顶部的进度条有进度的时候位置没有摆对): the old purple-rimmed fill was taller than the light
 # theme's groove and spilled over its white rim. A plain green capsule (round 16 px ends, white gloss along the top,

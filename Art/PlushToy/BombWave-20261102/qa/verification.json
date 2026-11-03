@@ -1,0 +1,126 @@
+{
+  "date": "2026-11-02",
+  "frames": [
+    {
+      "id": "W1",
+      "delivery": "delivery/wave-1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "c7e625fbf5b0c364e2935c05f7991b0179ee1d9418172d8803b5a469f2a10eab",
+      "clear_center_radius_px": 287,
+      "outer_edge_max_alpha": 0,
+      "visible_bbox": [
+        56,
+        60,
+        971,
+        965
+      ],
+      "outer_envelope_diameter_px": 925.2,
+      "median_radial_ink_width_px": 81.3,
+      "mean_alpha_coverage_pct": 19.933,
+      "board_overlay": "qa/wave-1-board.png",
+      "board_center_differing_pixels": 0
+    },
+    {
+      "id": "W2",
+      "delivery": "delivery/wave-2.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "6b1f5f0d37a3cdd005d48ce6aa49b2114c360815b9daf2b94a99a64128e5a99a",
+      "clear_center_radius_px": 348,
+      "outer_edge_max_alpha": 0,
+      "visible_bbox": [
+        59,
+        65,
+        967,
+        963
+      ],
+      "outer_envelope_diameter_px": 921.3,
+      "median_radial_ink_width_px": 33.7,
+      "mean_alpha_coverage_pct": 5.05,
+      "board_overlay": "qa/wave-2-board.png",
+      "board_center_differing_pixels": 0
+    },
+    {
+      "id": "W3",
+      "delivery": "delivery/wave-3.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "dd34a4c2bd052b30aef548b7631eb5939d3547685454dc875cce5d71a53ca478",
+      "clear_center_radius_px": 325,
+      "outer_edge_max_alpha": 0,
+      "visible_bbox": [
+        70,
+        72,
+        960,
+        959
+      ],
+      "outer_envelope_diameter_px": 921.6,
+      "median_radial_ink_width_px": 21.7,
+      "mean_alpha_coverage_pct": 2.278,
+      "board_overlay": "qa/wave-3-board.png",
+      "board_center_differing_pixels": 0
+    },
+    {
+      "id": "W4",
+      "delivery": "delivery/wave-4.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "68ec7b087ac91acbd8412fb32a33837c70314c6cb3266c04d14083c9d2cd16e7",
+      "clear_center_radius_px": 384,
+      "outer_edge_max_alpha": 0,
+      "visible_bbox": [
+        80,
+        86,
+        960,
+        966
+      ],
+      "outer_envelope_diameter_px": 921.5,
+      "median_radial_ink_width_px": 4.5,
+      "mean_alpha_coverage_pct": 0.111,
+      "board_overlay": "qa/wave-4-board.png",
+      "board_center_differing_pixels": 0
+    }
+  ],
+  "outer_envelope_method": "Twice the 99.98th percentile of visible radial distance from canvas center (alpha > 8), allowing individual soft foam tips.",
+  "median_width_method": "Median 10th-to-90th alpha-weighted radial span in occupied two-degree sectors (alpha > 10).",
+  "overview": "qa/waves-overview.png",
+  "board_check": {
+    "source": "../ColorReadability-20261026/number-plate-trial/webgl-evidence/level-3-battle-540x960.png",
+    "source_crop_xywh": [
+      0,
+      62,
+      540,
+      380
+    ],
+    "preview_size": [
+      540,
+      380
+    ],
+    "sprite_rect_xywh_in_preview": [
+      120,
+      36,
+      300,
+      300
+    ],
+    "sprite_center_xy_in_preview": [
+      270,
+      186
+    ],
+    "sprite_opacity": 1.0,
+    "unchanged_center_radius_px": 65,
+    "note": "Same placement, size and opacity for all four composited inspection images."
+  }
+}

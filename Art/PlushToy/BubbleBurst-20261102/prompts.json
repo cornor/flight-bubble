@@ -1,0 +1,25 @@
+{
+  "tool": "imagegen（内置）",
+  "generation_count": 1,
+  "prompt": "Use case: stylized-concept. A single game VFX component texture atlas on genuinely transparent RGBA, wide horizontal canvas. Precisely three distinct isolated SINGLE tiny water particles, equally spaced left to right, centered inside three equal-width cells, ample transparent margins. No typography, no labels, no diagrams, no extra satellites, no full explosion. LEFT: one nearly round, beautiful clear blue soap microbubble, like a thin film balloon filled with air; a small broken cream-white crescent reflection in its upper-left quadrant and a weak turquoise lower lip, see-through body, NO black outline. MIDDLE: one sleek horizontal lentil-shaped transparent aqueous droplet (wide right bulb, taper toward the left, aspect 2:1), body of pale aqua translucent glass with the same restrained white surface glint. RIGHT: one slightly flattened irregular oval soap bubble, rosy pearl thin-film reflection, one elegant long narrow broken highlight hugging its upper left inside edge. A toy-world game, simple soft 3D art with one deliberate specular mark per particle, colored translucent film rims, completely empty outside each object. No glow, no halo, no sparks, no stars, no lens flare, no shadow, no ground plane or background, no heavy outlines. Should stay legible in a small particle sprite at 6 pixels across.",
+  "transparent_background": true,
+  "master": "masters/water-particles.png",
+  "motion_master": "masters/motion.py",
+  "designs": [
+    {
+      "id": "A",
+      "direction": "珠串菊：一束内保留大小两三颗圆泡，长短交替，一起放射。",
+      "texture": "左／圆泡"
+    },
+    {
+      "id": "B",
+      "direction": "燕尾分珠：几支水滴先直射，然后在外侧裂成一对岔开的水珠。",
+      "texture": "中／尖尾水滴，左／圆泡"
+    },
+    {
+      "id": "C",
+      "direction": "双汐：第一圈扁圆薄泡先开，隔两帧，错角的内圈在空心周围补开。",
+      "texture": "右／薄膜椭圆，左／圆泡"
+    }
+  ]
+}

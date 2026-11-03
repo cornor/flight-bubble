@@ -90,7 +90,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/DashTransition-20261031/delivery', ROOT / 'Art/PlushToy/DashArms-20261031/delivery', ROOT / 'Art/PlushToy/HardTitle-20261101/delivery', ROOT / 'Art/PlushToy/HardBolt-20261102/delivery', ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/DashTransition-20261031/delivery', ROOT / 'Art/PlushToy/DashArms-20261031/delivery', ROOT / 'Art/PlushToy/HardTitle-20261101/delivery', ROOT / 'Art/PlushToy/HardBolt-20261102/delivery', ROOT / 'Art/PlushToy/BombWave-20261102/delivery', ROOT / 'Art/PlushToy/BubblePop-20261102/delivery', ROOT / 'Art/PlushToy/BubbleBurst-20261102/delivery', ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     files += [p for p in (PAD_COMBAT_ART / 'mouths.json', PAD_COMBAT_ART / 'coverage.json') if p.exists()]
@@ -528,6 +528,47 @@ HARD_TITLE = ROOT / 'Art/PlushToy/HardTitle-20261101/delivery'
 # 2026-11-02 10:25 (user picked A: the drawn bolts looked fake): six white bolt frames (HardBolt-20261102) cycled beside
 # the super-hard wordmark, tinted purple in code; on the creature atlas at .75.
 HARD_BOLT = ROOT / 'Art/PlushToy/HardBolt-20261102/delivery'
+# 2026-11-02 15:57: the bomb's shock-wave ring, four stages (BombWave-20261102), on the creature atlas at half size.
+BOMB_WAVE = ROOT / 'Art/PlushToy/BombWave-20261102/delivery'
+# 2026-11-02 16:33: the tintable bead pop (BubblePop-20261102). 18:19 (user: concept B's water crown is too big and
+# heavy; the pop should burst into see-through bubbles): B is no longer packed. 19:49 (user: the dense middle of the
+# impact-dust burst smears into one blob; burst straight into small see-through bubbles, wider for higher tiers): one
+# clear bubble is cut from fx impact-dust (frame 3, upper left) and split into a tintable pair - the blue body turned
+# grey (150-255, multiplied by the bead's colour in the game), see-through in the middle and solid at the rim, and its
+# near-white glints as a white highlight layer. The game flings several of them out per pop.
+if (FXDEL / 'fx/impact-dust.png').is_file():
+    (GEN / 'fx').mkdir(parents=True, exist_ok=True)
+    _bub = np.asarray(Image.open(FXDEL / 'fx/impact-dust.png').convert('RGBA').crop((345, 6, 383, 44))).astype(np.float32)
+    _yy, _xx = np.mgrid[0:_bub.shape[0], 0:_bub.shape[1]]
+    _d = np.hypot(_xx - 18.5, _yy - 19.)
+    _bub[..., 3] *= np.clip((17. - _d) / 1.5, 0., 1.)
+    _r, _a = _bub[..., 0], _bub[..., 3]
+    _white = np.clip((_r - 200.) / 50., 0., 1.)
+    _see = np.clip(.45 + .55 * (_d / 17. / .85) ** 3, 0., 1.)
+    _body = np.zeros_like(_bub); _body[..., 0] = _body[..., 1] = _body[..., 2] = np.clip(150. + (_r - 90.) / 110. * 105., 150., 255.)
+    _body[..., 3] = _a * (1. - .6 * _white) * _see
+    _glint = np.zeros_like(_bub); _glint[..., :3] = 255.; _glint[..., 3] = _a * _white
+    for _layer, _arr in (('color', _body), ('light', _glint)):
+        Image.fromarray(_arr.astype(np.uint8), 'RGBA').save(GEN / f'fx/bubble-{_layer}.png')
+        SLOTS.append((f'plants/fx/bubble-{_layer}', str(GEN / f'fx/bubble-{_layer}.png'), 1.0, None))
+# 2026-11-02 20:27 (user: bursts like fireworks, no light, nothing heavy in the middle; art delivered BubbleBurst-20261102,
+# picked concept A "Pearl Rays"): three levels x 16 frames (20 ms each) of a tintable film layer and a white glint layer.
+# The strips are cut into frames here; the film's alpha is raised 1.5x (at board size the delivered film was nearly
+# invisible). Packed at .6 (154 px frames, drawn at ~180 px).
+BUBBLE_BURST = ROOT / 'Art/PlushToy/BubbleBurst-20261102/delivery/\u65b9\u6848A'
+if (BUBBLE_BURST / 'L0-film.png').is_file():
+    (GEN / 'fx').mkdir(parents=True, exist_ok=True)
+    for _lv in range(3):
+        for _layer, _src, _amul in (('color', 'film', 1.5), ('light', 'glint', 1.0)):
+            _strip = Image.open(BUBBLE_BURST / f'L{_lv}-{_src}.png').convert('RGBA')
+            for _i in range(_strip.width // 256):
+                _fr = _strip.crop((_i * 256, 0, _i * 256 + 256, 256))
+                if _amul != 1.0: _fr.putalpha(_fr.split()[3].point(lambda v, m=_amul: min(255, int(v * m + .5))))
+                if _fr.split()[3].getbbox() is None: continue
+                _fr.save(GEN / f'fx/burst-{_lv}-{_i}-{_layer}.png')
+                SLOTS.append((f'plants/fx/burst-{_lv}-{_i}-{_layer}', str(GEN / f'fx/burst-{_lv}-{_i}-{_layer}.png'), .6, None))
+for _i in range(4):
+    if (BOMB_WAVE / f'wave-{_i + 1}.png').is_file(): SLOTS.append((f'plants/fx/bomb-wave-{_i}', str(BOMB_WAVE / f'wave-{_i + 1}.png'), .5, None))
 for _i in range(6):
     if (HARD_BOLT / f'bolt-{_i + 1}.png').is_file(): SLOTS.append((f'plants/uiref/incoming-bolt-{_i}', str(HARD_BOLT / f'bolt-{_i + 1}.png'), .75, None))
 for _sid, _rel in (('plants/uiref/incoming-hard', 'title-hard.png'), ('plants/uiref/incoming-super', 'title-super.png')):

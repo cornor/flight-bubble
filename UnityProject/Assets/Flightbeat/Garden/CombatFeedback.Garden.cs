@@ -67,7 +67,7 @@ namespace Flightbeat.Feedback
         // a bubble popping): the falling film shards and solid droplets are gone. Now a soap-bubble "pop", .22 s: the
         // bead swells to 1.3x with a soft wobble, vanishes, and a thin light ring of its colour flicks open and fades;
         // sparse hits add 4 short comic "pop" strokes; a few tiny soft mist dots drift out and fade (no gravity).
-        struct GardenPop { public Vector2 at; public float born, rich; public int color, seed; public bool lite; }
+        struct GardenPop { public Vector2 at; public float born, rich; public int color, seed, tier; public bool lite, spark, small; }
         readonly System.Collections.Generic.List<GardenPop> gardenPops = new System.Collections.Generic.List<GardenPop>();
         readonly System.Collections.Generic.Queue<float> gardenHitTimes = new System.Collections.Generic.Queue<float>();
         bool gardenPopsHooked;
@@ -84,7 +84,7 @@ namespace Flightbeat.Feedback
             st.to[k] = new Vector2(shot.TargetX, shot.TargetY);
             st.at[k] = battle.Time;
         }
-        int gardenPopSeed;
+        int gardenPopSeed, gardenSeedAtImpact;
         // Ordinary tiers and MAX's splash attack share one visual admission path.
         // Copy values at impact: the model releases/reuses Shot immediately afterwards.
         const float GardenAttackPopLife = .4f;
@@ -97,10 +97,53 @@ namespace Flightbeat.Feedback
         static float GardenAttackPopSize(int tier) => tier >= 3 ? 120f : tier == 2 ? 84f : tier == 1 ? 60f : 40f;
         // Keep the original neighborhoods independent of the larger visual sizes.
         static float GardenAttackPopMergeRadius(int tier) => tier >= 3 ? 60f : tier == 2 ? 30f : 24f;
+        static bool GardenRocketPopOn = false;
         void GardenOnImpact(Shot shot)
         {
-            // MAX's main shot retains its small bead feedback; only its splash gets the large clip.
-            if (!shot.Rocket && shot.Tier >= 3) return;
+            // 2026-11-02 14:24 (user: stronger hit feedback): the board gives a small jolt for MAX rockets and, at most every
+            // .35 s, for Ⅱ / MAX streams (several kills at once kick it too, in GardenOnHit).
+            // 2026-11-02 15:59 (user: MAX - small spark-splash explosions instead of the bubble pop): the pops this shot just
+            // raised (Battle.Hit fires before Impacted in the same Resolve) turn into spark bursts; one within 60 px and
+            // .1 s of an earlier spark burst is dropped, so a MAX stream or rocket sprays in clusters, not every bead.
+            // 19:49 (user: higher tiers burst wider): the pops this shot raised take its tier.
+            int shotTier = shot.Rocket ? 3 : shot.Tier;
+            for (int i = 0; i < gardenPops.Count; i++) {
+                var q = gardenPops[i];
+                if (q.lite || q.seed < gardenSeedAtImpact || q.born < time - .001f) continue;
+                q.tier = shotTier; gardenPops[i] = q;
+            }
+            // 20:45 (user: tiers 0 to MAX burst wider and wider; MAX stronger - wider, with more bubbles): with the painted
+            // firework pop, MAX keeps it (drawn bigger and doubled, see DrawGardenFirework) instead of the spark burst; a MAX
+            // pop within 60 px and .1 s of an earlier full MAX burst plays the small burst, so a MAX stream is not a wall of
+            // big bursts. The spark burst below stays only as the fallback without the art.
+            if (shotTier >= 3 && GardenSkin.Has("plants/fx/burst-0-1-color")) {
+                for (int i = gardenPops.Count - 1; i >= 0; i--) {
+                    var q = gardenPops[i];
+                    if (q.lite || q.small || q.seed < gardenSeedAtImpact || q.born < time - .001f) continue;
+                    foreach (var o in gardenPops)
+                        if (o.seed < q.seed && o.tier >= 3 && !o.small && !o.lite && time - o.born < .1f
+                            && (PlushLayout.Point(o.at) - PlushLayout.Point(q.at)).sqrMagnitude < 3600f) { q.small = true; gardenPops[i] = q; break; }
+                }
+            }
+            else if (shot.Tier >= 3) {
+                for (int i = gardenPops.Count - 1; i >= 0; i--) {
+                    var q = gardenPops[i];
+                    if (q.lite || q.spark || q.seed < gardenSeedAtImpact || q.born < time - .001f) continue;
+                    if (q.small) { gardenPops.RemoveAt(i); continue; }   // MAX never shows the soap pop
+                    bool near = false;
+                    foreach (var o in gardenPops)
+                        if (o.spark && time - o.born < .1f && (PlushLayout.Point(o.at) - PlushLayout.Point(q.at)).sqrMagnitude < 3600f) { near = true; break; }
+                    if (near) { gardenPops.RemoveAt(i); continue; }
+                    q.spark = true; gardenPops[i] = q;
+                }
+            }
+            gardenSeedAtImpact = gardenPopSeed;
+            if (shot.Rocket) GardenHitKick(3f);
+            else if (shot.Tier >= 2 && time - gardenStreamKickAt > .35f) { gardenStreamKickAt = time; GardenHitKick(1.5f); }
+            // 2026-11-02 14:24 (user: turn off the extra pop): ordinary shots no longer add the big generic burst clip on top
+            // of the bead's own pop (it hid which bead broke and fogged dense rows); only MAX rockets keep it. 20:45 (user: turn
+            // off the extra art pop on MAX too): off for rockets as well; the switch keeps the code for later.
+            if (!GardenRocketPopOn || !shot.Rocket) return;
             Vector2 at = shot.Rocket ? ScreenLayout.EnemyPoint(shot.TargetX, shot.TargetY)
                 : EnemyShown(shot.TargetIndex, ShownPoint(shot.TargetX, shot.TargetY));
             int tier = shot.Rocket ? 3 : shot.Tier;
@@ -147,57 +190,232 @@ namespace Flightbeat.Feedback
         void GardenOnHit(int color, float x, float y) {
             int hits = 0;
             foreach (var q in gardenPops) if (!q.lite) hits++;
-            if (hits >= 32) { for (int i = 0; i < gardenPops.Count; i++) if (!gardenPops[i].lite) { gardenPops.RemoveAt(i); break; } }
+            // 21:09: 48 (was 32) - the firework pop lives .44 s, and dropping the oldest cut fading bursts off early.
+            if (hits >= 48) { for (int i = 0; i < gardenPops.Count; i++) if (!gardenPops[i].lite) { gardenPops.RemoveAt(i); break; } }
             while (gardenHitTimes.Count > 0 && (time - gardenHitTimes.Peek() > .4f || gardenHitTimes.Peek() > time)) gardenHitTimes.Dequeue();
             gardenHitTimes.Enqueue(time);
+            int burst = 0; foreach (float h in gardenHitTimes) if (time - h <= .12f) burst++;
+            if (burst >= 4 && time - gardenBurstKickAt > .3f) { gardenBurstKickAt = time; GardenHitKick(2f); }
             // 1 up to ~5 hits in .4 s (one or two members), fading to 0 by ~16 (a full row firing / combo storm).
             float rich = Mathf.Clamp01((16f - gardenHitTimes.Count) / 11f);
-            gardenPops.Add(new GardenPop { at = ShownPoint(x, y), born = time, color = color, seed = gardenPopSeed++, rich = rich });
+            // 16:31 (user screenshot: a blue swirl where a stream kept hitting one corner): a Ⅱ / MAX stream pops a bead every
+            // frame next to the last one, so the big pops piled up into rings of shards. A bead within 34 px of a big pop
+            // started less than .12 s ago gets the small soap pop instead; the stream reads as a string of pops, not a swirl.
+            Vector2 at = ShownPoint(x, y);
+            bool crowded = false;
+            foreach (var o in gardenPops)
+                if (!o.lite && !o.small && time - o.born < .12f && (PlushLayout.Point(o.at) - PlushLayout.Point(at)).sqrMagnitude < 34f * 34f) { crowded = true; break; }
+            gardenPops.Add(new GardenPop { at = at, born = time, color = color, seed = gardenPopSeed++, rich = rich, small = crowded });
         }
         static float GardenHash(int n) { float v = Mathf.Sin(n * 12.9898f) * 43758.5453f; return v - Mathf.Floor(v); }
         public float GardenBeadSize = 11f;   // set by the game from the drawn bead size
+        // 2026-11-02 (user: hits should feel great; pops bigger, not tied to the bead size). 15:50 (user: it did not read as
+        // a bubble breaking - the expanding ring looked like a gust following the shots): tiers 0-2 now blow the bead up
+        // into a see-through soap bubble of its own colour (.08 s, to 26 px radius, rim, inner sheen, highlight), which
+        // then pops - a flash, six curved film shards flying out and turning, and up to 10 small beads of the colour flung
+        // out and dropping (.28 s in all, ~100 px across). MAX hits (spark) are small spark-splash explosions instead. The
+        // combo boost (from 20 hits, full at 100) makes both up to 30 % bigger with more beads / sparks; busy boards (rich)
+        // throw fewer. The bomb's ripple of pops (lite) keeps the small soap pop.
+        const float GardenPopLife = .36f, GardenPopSwell = .06f, GardenPopRadius = 26f;   // 17:15: .06 swell + .3 splash
         void DrawGardenPops(PixelSurface s, Func<int, Color> color) {
-            const float life = .22f, swell = .05f;
-            float bead = GardenBeadSize;
+            float boost = Mathf.Clamp01((battle.Combo - 20) / 80f);
+            bool art = GardenSkin.Has("plants/fx/bubble-color"), firework = GardenSkin.Has("plants/fx/burst-0-1-color");
             for (int i = gardenPops.Count - 1; i >= 0; i--) {
                 GardenPop p = gardenPops[i];
-                float r = p.lite ? 0f : p.rich, age = time - p.born;
-                if (age >= life || age < -1f) { gardenPops.RemoveAt(i); continue; }
-                if (age < 0f) continue;
-                Color tint = color(p.color);
-                // 1. Swell with a soft wobble, then gone.
-                if (age < swell) {
-                    float k = age / swell, grow = 1f + .3f * Mathf.Sin(k * Mathf.PI * .5f), wob = .08f * Mathf.Sin(k * Mathf.PI * 2f);
-                    Color c = tint; c.a = 1f - .25f * k;
-                    GardenSkin.Bug(s, c, p.at, bead * grow * (1f - wob), false, bead * grow * (1f + wob));
-                    continue;
-                }
-                float u = (age - swell) / (life - swell), e = 1f - (1f - u) * (1f - u) * (1f - u), fade = 1f - u;
-                Color skin = Color.Lerp(tint, Color.white, .45f);
-                // 2. The thin film ring flicks open and fades.
-                Color ring = skin; ring.a = .9f * fade * fade;
-                s.Ring(p.at, bead * (.6f + .6f * e), ring, .5f + 1.3f * fade, 16, 0f, 360f);
-                // 3. Sparse hits: four short "pop" strokes just outside the ring.
-                if (r > .3f) {
-                    for (int k = 0; k < 4; k++) {
-                        float ang = (45f + k * 90f + (GardenHash(p.seed * 3 + k) - .5f) * 30f) * Mathf.Deg2Rad;
-                        Vector2 dir = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang));
-                        float r0 = bead * (.85f + .45f * e), len = bead * .38f * fade;
-                        Color line = skin; line.a = r * fade;
-                        s.Segment(p.at + dir * r0, p.at + dir * (r0 + len), 1.4f, line);
-                    }
-                }
-                // 4. A few tiny soft mist dots drift out and fade (no gravity, no solid crumbs).
-                int n = p.lite ? 3 : 4 + Mathf.RoundToInt(r);
-                for (int k = 0; k < n; k++) {
-                    float ang = (k / (float)n + GardenHash(p.seed * 5 + k) * .2f) * Mathf.PI * 2f;
-                    float reach = bead * (.55f + (.7f + .3f * GardenHash(p.seed * 7 + k)) * e);
-                    Vector2 q = p.at + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * reach;
-                    Color mist = skin; mist.a = .75f * fade;
-                    float d = bead * (.32f - .14f * u);
-                    s.Glow(q.x, q.y, d, d, mist, 0f);
-                }
+                float age = time - p.born;
+                // 18:10: a crowded stream pop (small) throws a smaller bubble burst when the bubble is in the atlas.
+                bool alive = p.small && firework ? DrawGardenFirework(s, p, color(p.color), age, boost, true)
+                    : p.small && art ? DrawGardenBubbleBurst(s, p, color(p.color), age, boost, true)
+                    : p.lite || p.small ? DrawGardenLitePop(s, p, color(p.color), age)
+                    : p.spark ? DrawGardenSparkPop(s, p, color(p.color), age, boost)
+                    : DrawGardenSoapPop(s, p, color(p.color), age, boost);
+                if (!alive) gardenPops.RemoveAt(i);
             }
+        }
+        bool DrawGardenSoapPop(PixelSurface s, GardenPop p, Color tint, float age, float boost) {
+            if (age >= GardenPopLife || age < -1f) return false;
+            if (age < 0f) return true;
+            float R = GardenPopRadius * (1f + .3f * boost);
+            // 18:10 (user picked concept B, the jelly water crown). 18:19 (user: too big and heavy, it covers the board):
+            // the painted impact-dust burst. 19:49 (user: its dense middle smears into one blob on black and white beads alike;
+            // burst straight into small see-through bubbles, wider for higher tiers): the bead bursts into clear bubbles of its
+            // colour (plants/fx/bubble) flung out from its edge - no core, no ring.
+            // 20:27 (user: like fireworks bursting, no light, nothing heavy where it bursts; art BubbleBurst-20261102, concept
+            // A "Pearl Rays"): strings of clear bubbles flung out from the hit, painted per tier.
+            if (GardenSkin.Has("plants/fx/burst-0-1-color")) return DrawGardenFirework(s, p, tint, age, boost, false);
+            if (GardenSkin.Has("plants/fx/bubble-color")) return DrawGardenBubbleBurst(s, p, tint, age, boost, false);
+            if (age < GardenPopSwell) {
+                float k = age / GardenPopSwell, r = Mathf.Lerp(GardenBeadSize * .5f, R, 1f - (1f - k) * (1f - k));
+                // 16:50 (user: why is there a circle on every hit): no outlined shell - the bead itself swells (to 1.8x, a
+                // soft glow of its colour behind) and pops into its beads; the painted pop replaces this when delivered.
+                Color soft = tint; soft.a = .35f * k;
+                s.Glow(p.at.x, p.at.y, r * 2.4f, r * 2.4f, soft, 0f);
+                float bs = GardenBeadSize * (1f + .8f * k);
+                GardenSkin.Bug(s, tint, p.at, bs, false, bs);
+                return true;
+            }
+            float u = (age - GardenPopSwell) / (GardenPopLife - GardenPopSwell), e = 1f - (1f - u) * (1f - u) * (1f - u), fade = 1f - u;
+            if (u < .2f) {
+                Color flash = Color.Lerp(tint, Color.white, .6f); flash.a = .7f * (1f - u / .2f);
+                s.Glow(p.at.x, p.at.y, R * 2.2f, R * 2.2f, flash, 0f);
+            }
+            // 16:33 (user: the ring of shards looks bad): no film shards. 17:15 (user: the bits are all solid, no feeling of
+            // bubble water splashing): the painted splash of see-through bubbles and droplets (fx impact-dust, six frames)
+            // tinted a little lighter than the bead, ~84 px (up to 30 % more with the combo boost), over .3 s.
+            if (GardenFx.Has("impact-dust")) {
+                Color wet = Color.Lerp(tint, Color.white, .3f);
+                GardenFx.BurstTint(s, "impact-dust", p.at, R * 3.2f, age - GardenPopSwell, GardenPopLife - GardenPopSwell, wet);
+                return true;
+            }
+            int n = Mathf.RoundToInt(Mathf.Lerp(4f, 10f + 3f * boost, p.rich));
+            for (int k = 0; k < n; k++) {
+                float ang = (k / (float)n + GardenHash(p.seed * 5 + k) * .1f) * Mathf.PI * 2f, sp = R * (1.1f + .9f * GardenHash(p.seed * 7 + k));
+                Vector2 q = p.at + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * sp * e + new Vector2(0f, R * .5f * u * u);
+                GardenSkin.Shot(s, tint, q, (7f - 3.5f * u) * (1f + .2f * boost), Mathf.Min(1f, fade * 1.3f));
+            }
+            return true;
+        }
+        // The painted firework pop: the tier's frames (the art's last two are empty), drawn 180 px wide (about 1.4x the
+        // art's board size - at that size the bubbles were too small to read), 20 % more with the combo boost; a crowded
+        // stream pop (small) plays tier 0 at 70 %. Every other pop is mirrored. White and pale beads are tinted towards a
+        // light blue-grey, or their see-through bubbles vanish on white rows. 21:09 (user: it disappears too fast): the
+        // burst out (frames 0-5) keeps the art's 20 ms a frame, the spread and fade after it (frames 6-13) run at 40 ms -
+        // .44 s in all instead of .28 s.
+        const float GardenFireworkSize = 180f, GardenFireworkLife = .44f;
+        static int GardenFireworkFrameAt(float age) => age < .12f ? Mathf.FloorToInt(age / .02f) : 6 + Mathf.FloorToInt((age - .12f) / .04f);
+        bool DrawGardenFirework(PixelSurface s, GardenPop p, Color tint, float age, float boost, bool small) {
+            bool max = !small && p.tier >= 3;
+            if (age >= GardenFireworkLife + (max ? .04f : 0f) || age < -1f) return false;
+            if (age < 0f) return true;
+            int tier = small ? 0 : Mathf.Clamp(p.tier, 0, 2), f = GardenFireworkFrameAt(age);
+            float size = GardenFireworkSize * (small ? .7f : max ? 1.3f + .2f * boost : 1f + .2f * boost);
+            float pale = Mathf.Clamp01((Mathf.Min(tint.r, Mathf.Min(tint.g, tint.b)) - .7f) / .3f);
+            Color c = Color.Lerp(tint, new Color(.62f, .70f, .88f), .6f * pale); c.a = 1f;
+            string id = "plants/fx/burst-" + tier + "-" + f;
+            if (f < 14 && GardenSkin.Has(id + "-color")) {
+                bool flip = GardenHash(p.seed * 11 + 3) < .5f;
+                float x = p.at.x - size * .5f, y = p.at.y - size * .5f;
+                GardenSkin.Asset(s, id + "-color", x, y, size, size, c, false, true, flip);
+                GardenSkin.Asset(s, id + "-light", x, y, size, size, Color.white, false, true, flip);
+            }
+            // MAX: a second, smaller copy 40 ms behind, turned half a ray (16 deg) so its bubbles fill the gaps - twice the
+            // bubbles, ~1.3x the reach of tier 2.
+            int f2 = age < .04f ? -1 : GardenFireworkFrameAt(age - .04f);
+            string id2 = "plants/fx/burst-2-" + f2;
+            if (max && f2 >= 0 && f2 < 14 && GardenSkin.Has(id2 + "-color")) {
+                float s2 = size * .8f, rot = 16f + 20f * GardenHash(p.seed * 13 + 5);
+                GardenSkin.AssetRotated(s, id2 + "-color", p.at, s2, s2, rot, c);
+                GardenSkin.AssetRotated(s, id2 + "-light", p.at, s2, s2, rot, Color.white);
+            }
+            return true;
+        }
+        // 7 / 9 / 12 clear bubbles (8-16 px) for tiers 0 / 1 / 2, flying out to 26 / 38 / 52 px from the bead (about 55 /
+        // 80 / 105 px across; 30 % more with the combo boost), easing out and drifting up a little; each lives .27-.37 s
+        // and swells slightly as it fades. A crowded stream pop (small) throws 4 at 70 % of the reach. Busy boards (rich)
+        // throw up to 40 % fewer.
+        const float GardenBubbleLife = .34f;
+        bool DrawGardenBubbleBurst(PixelSurface s, GardenPop p, Color tint, float age, float boost, bool small) {
+            if (age >= GardenBubbleLife * 1.1f || age < -1f) return false;
+            if (age < 0f) return true;
+            int tier = Mathf.Clamp(p.tier, 0, 2);
+            float reach = (tier == 2 ? 52f : tier == 1 ? 38f : 26f) * (1f + .3f * boost) * (small ? .7f : 1f);
+            int n = small ? 4 : Mathf.RoundToInt((tier == 2 ? 12f : tier == 1 ? 9f : 7f) * Mathf.Lerp(.6f, 1f, p.rich));
+            for (int k = 0; k < n; k++) {
+                float life = GardenBubbleLife * (.8f + .3f * GardenHash(p.seed * 3 + k)), u = age / life;
+                if (u >= 1f) continue;
+                float ang = (k + .5f * GardenHash(p.seed * 5 + k)) / n * Mathf.PI * 2f;
+                float dist = reach * (.5f + .5f * GardenHash(p.seed * 7 + k)), e = 1f - (1f - u) * (1f - u) * (1f - u);
+                float r = 4f + (.25f + .75f * e) * dist;
+                Vector2 q = p.at + new Vector2(Mathf.Cos(ang) * r, Mathf.Sin(ang) * r - 6f * u * u);
+                float size = (8f + 8f * GardenHash(p.seed * 11 + k)) * (small ? .8f : 1f) * (1f + .25f * Mathf.Max(0f, (u - .75f) / .25f));
+                float a = u < .7f ? 1f : 1f - (u - .7f) / .3f;
+                Color c = tint; c.a = a;
+                GardenSkin.Asset(s, "plants/fx/bubble-color", q.x - size * .5f, q.y - size * .5f, size, size, c);
+                GardenSkin.Asset(s, "plants/fx/bubble-light", q.x - size * .5f, q.y - size * .5f, size, size, new Color(1f, 1f, 1f, a));
+            }
+            return true;
+        }
+        // A see-through soap bubble of the bead's colour: a pale fill, a solid rim, an inner sheen, a white highlight arc
+        // at the upper left and a small glint at the lower right.
+        void GardenSoapShell(PixelSurface s, Vector2 at, float r, Color tint, float a) {
+            Color fill = Color.Lerp(tint, Color.white, .3f); fill.a = .47f * a;
+            // 16:31 (user screenshot: a pale disc floating over the pads): GardenRoundedRect does not apply the layout
+            // mapping that Ring / Glow do, so the fill is placed at the mapped point with the mapping off.
+            bool mapped = s.MapLayout;
+            Vector2 c = mapped ? PlushLayout.Point(at) : at;
+            s.MapLayout = false;
+            s.GardenRoundedRect(c.x - r, c.y - r, r * 2f, r * 2f, r, fill, fill);
+            s.MapLayout = mapped;
+            Color rim = tint; rim.a = a;
+            s.Ring(at, r, rim, Mathf.Max(1.5f, r * .2f), 24, 0f, 360f);
+            Color sheen = Color.Lerp(tint, Color.white, .65f); sheen.a = .5f * a;
+            s.Ring(at, r * .86f, sheen, Mathf.Max(1f, r * .06f), 24, 0f, 360f);
+            s.Ring(at, r * .72f, new Color(1f, 1f, 1f, .95f * a), Mathf.Max(1f, r * .13f), 6, 200f, 50f);
+            s.Glow(at.x + r * .45f, at.y + r * .42f, r * .24f, r * .24f, new Color(1f, 1f, 1f, .8f * a), 0f);
+        }
+        // MAX: a small spark-splash explosion, .32 s - a gold-white flash, then 14 sparks shooting out and dropping, each
+        // a white-hot head with a little gold glow and a tail in the bead's colour, thinning as they go, and a few gold
+        // embers. No ring, ~100 px across.
+        bool DrawGardenSparkPop(PixelSurface s, GardenPop p, Color tint, float age, float boost) {
+            const float life = .32f, flash = .04f;
+            if (age >= life || age < -1f) return false;
+            if (age < 0f) return true;
+            float S = 50f * (1f + .3f * boost);
+            Color gold = new Color(1f, .84f, .35f), white = new Color(1f, .98f, .9f);
+            if (age < flash) {
+                float k = age / flash;
+                s.Glow(p.at.x, p.at.y, S * (.5f + .3f * k), S * (.5f + .3f * k), new Color(gold.r, gold.g, gold.b, .9f), 0f);
+                s.Glow(p.at.x, p.at.y, S * .24f, S * .24f, white, 0f);
+                return true;
+            }
+            float u = (age - flash) / (life - flash), fade = 1f - u, e = 1f - (1f - u) * (1f - u);
+            if (u < .25f) s.Glow(p.at.x, p.at.y, S * .6f * (1f - u), S * .6f * (1f - u), new Color(gold.r, gold.g, gold.b, .6f * (1f - u / .25f)), 0f);
+            int n = Mathf.RoundToInt(Mathf.Lerp(8f, 14f + 4f * boost, p.rich));
+            float a = Mathf.Min(1f, fade * 1.3f), w = 4.5f * (1f - u) + 1.5f;
+            for (int k = 0; k < n; k++) {
+                float ang = (k / (float)n + GardenHash(p.seed * 3 + k) * .06f) * Mathf.PI * 2f, v = S * (.7f + .7f * GardenHash(p.seed * 7 + k));
+                Vector2 dir = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang));
+                Vector2 head = p.at + dir * v * e + new Vector2(0f, S * .9f * u * u);
+                float tl = S * (.25f * (1f - u) + .05f);
+                Vector2 tail = head - dir * tl - new Vector2(0f, S * .25f * u), mid = Vector2.Lerp(tail, head, .5f);
+                Color tc = Color.Lerp(tint, Color.white, .2f); tc.a = a * .7f;
+                s.Segment(tail, mid, w * .6f, tc);
+                Color hc = Color.Lerp(white, gold, Mathf.Min(1f, u * 1.6f)); hc.a = a;
+                s.Segment(mid, head, w, hc);
+                s.Glow(head.x, head.y, (6f * (1f - u) + 2f) * 2f, (6f * (1f - u) + 2f) * 2f, new Color(gold.r, gold.g, gold.b, .9f * fade), 0f);
+                GardenSkin.Shot(s, white, head, w, fade);
+            }
+            for (int k = 0; k < 6; k++) {
+                float ang = GardenHash(p.seed * 13 + k) * Mathf.PI * 2f, v = S * (.3f + .4f * GardenHash(p.seed * 17 + k));
+                Vector2 q = p.at + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * v * e + new Vector2(0f, S * .6f * u * u);
+                s.Glow(q.x, q.y, 6f, 6f, new Color(gold.r, gold.g, gold.b, fade), 0f);
+            }
+            return true;
+        }
+        // The bomb's pops (lite): the earlier small soap pop - swell, a thin light ring and three mist dots, .22 s.
+        bool DrawGardenLitePop(PixelSurface s, GardenPop p, Color tint, float age) {
+            const float life = .22f, swell = .05f;
+            float bead = GardenBeadSize;
+            if (age >= life || age < -1f) return false;
+            if (age < 0f) return true;
+            if (age < swell) {
+                float k = age / swell, grow = 1f + .3f * Mathf.Sin(k * Mathf.PI * .5f), wob = .08f * Mathf.Sin(k * Mathf.PI * 2f);
+                Color c = tint; c.a = 1f - .25f * k;
+                GardenSkin.Bug(s, c, p.at, bead * grow * (1f - wob), false, bead * grow * (1f + wob));
+                return true;
+            }
+            float u = (age - swell) / (life - swell), e = 1f - (1f - u) * (1f - u) * (1f - u), fade = 1f - u;
+            Color skin = Color.Lerp(tint, Color.white, .45f);
+            // 16:50 (user: a circle on every hit): the thin film ring is gone from the small pop too; only the mist remains.
+            for (int k = 0; k < 3; k++) {
+                float ang = (k / 3f + GardenHash(p.seed * 5 + k) * .2f) * Mathf.PI * 2f;
+                float reach = bead * (.55f + (.7f + .3f * GardenHash(p.seed * 7 + k)) * e);
+                Vector2 q = p.at + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * reach;
+                Color mist = skin; mist.a = .75f * fade;
+                float d = bead * (.32f - .14f * u);
+                s.Glow(q.x, q.y, d, d, mist, 0f);
+            }
+            return true;
         }
         // ---- Bubble bomb (2026-10-21 10:57) ------------------------------------------------------------------------
         // Fall (the model's 1 s countdown): the rainbow bomb hangs a moment above the field with its fuse fizzing, then
@@ -230,9 +448,24 @@ namespace Flightbeat.Feedback
         // Board shake after a detonation (applied to the beads and pads by the game), in px.
         public float GardenStrikeShake {
             get {
-                if (lastStrike == null || superAge < .04f || superAge > .45f) return 0f;
+                float hit = GardenHitShake;
+                if (lastStrike == null || superAge < .04f || superAge > .45f) return hit;
                 float u = (superAge - .04f) / .41f;
-                return Mathf.Sin(superAge * 95f) * 9f * (1f - u) * (1f - u);
+                return hit + Mathf.Sin(superAge * 95f) * 9f * (1f - u) * (1f - u);
+            }
+        }
+        // 2026-11-02: the small hit jolt - a .18 s decaying wobble of the given amplitude (px); a stronger kick takes over.
+        float gardenHitKickAt = -10f, gardenHitKickAmp, gardenStreamKickAt = -10f, gardenBurstKickAt = -10f;
+        void GardenHitKick(float amp) {
+            float u = (time - gardenHitKickAt) / .18f;
+            if (u >= 0f && u < 1f && gardenHitKickAmp * (1f - u) * (1f - u) > amp) return;
+            gardenHitKickAt = time; gardenHitKickAmp = amp;
+        }
+        float GardenHitShake {
+            get {
+                float t = time - gardenHitKickAt, u = t / .18f;
+                if (u < 0f || u >= 1f) return 0f;
+                return Mathf.Sin(t * 110f) * gardenHitKickAmp * (1f - u) * (1f - u);
             }
         }
         static readonly Color[] gardenRainbow = {
@@ -275,6 +508,23 @@ namespace Flightbeat.Feedback
                 s.MapLayout = mapped;
             }
             if (a < .3f) s.Glow(at.x, at.y, R * 2.4f, R * 2.4f, new Color(1f, .97f, .85f, .6f * (1f - a / .3f)), 0f);
+            // 2026-11-02 15:57 (user: a quality shock wave spreading from the bomb; art if code is not enough): the painted
+            // ring (BombWave-20261102, four stages thick -> thin -> scattering -> gone). 17:29 (user: not seen when the bomb
+            // went off; the build showed it hidden under the white flash, then thin white on the white beads and pale tray):
+            // it now starts as the flash clears (.08 s), grows from .3x to 1.8x the blast radius over .7 s (easing out),
+            // holds the thick first stage longest (stages at 0 / .38 / .66 / .86), stays full strength for the first half,
+            // and a soft blue copy just behind it gives the white foam an edge on white beads.
+            const float WaveStart = .08f, WaveTime = .7f;
+            if (a >= WaveStart && a < WaveStart + WaveTime && GardenSkin.Has("plants/fx/bomb-wave-0")) {
+                float wu = (a - WaveStart) / WaveTime, grow = 1f - Mathf.Pow(1f - wu, 2.2f);
+                float size = R * 2f * Mathf.Lerp(.3f, 1.8f, grow) / .9f;
+                int stage = wu < .38f ? 0 : wu < .66f ? 1 : wu < .86f ? 2 : 3;
+                float alpha = wu < .5f ? 1f : Mathf.Pow(1f - (wu - .5f) / .5f, 1.2f);
+                string id = "plants/fx/bomb-wave-" + stage;
+                float back = size * 1.04f;
+                GardenSkin.Asset(s, id, at.x - back * .5f, at.y - back * .5f + 2f, back, back, new Color(.35f, .55f, .95f, .45f * alpha));
+                GardenSkin.Asset(s, id, at.x - size * .5f, at.y - size * .5f, size, size, new Color(1f, 1f, 1f, alpha));
+            }
             // 11:09 (user: it looked program-drawn). Painted sequences only: the purple soap bubble bursting into a
             // foam ring (water-splash) across the blast, the bright bubble pop with its star flash (rocket-pop) at the
             // core, and a chain of foam bursts (impact-dust) going off around the ring one after another.
@@ -283,7 +533,9 @@ namespace Flightbeat.Feedback
                 // The painted front grows out from the impact, rather than playing in a fixed-size box.
                 float wave = Mathf.Clamp01((a - .05f) / .55f);
                 float spread = 1f - Mathf.Pow(1f - wave, 3f);
-                GardenFx.Burst(s, "water-splash", at, R * Mathf.Lerp(.55f, 3f, spread), a - .05f, .8f);
+                // 2026-11-02: with the painted shock wave the old foam ring (water-splash) would be a second ring on top of it.
+                if (!GardenSkin.Has("plants/fx/bomb-wave-0"))
+                    GardenFx.Burst(s, "water-splash", at, R * Mathf.Lerp(.55f, 3f, spread), a - .05f, .8f);
                 GardenFx.Burst(s, "rocket-pop", at, R * 1.5f, a - .02f, .42f);
                 for (int k = 0; k < 7; k++) {
                     float dustAge = a - (.1f + .025f * k), t = Mathf.Clamp01(dustAge / .5f);

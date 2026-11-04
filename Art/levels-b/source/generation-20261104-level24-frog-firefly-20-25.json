@@ -1,0 +1,441 @@
+{
+  "date": "2026-11-04",
+  "mode": "built-in image_gen",
+  "generationCount": 30,
+  "postprocess": "Nearest-neighbor resize to1200x1200; CIELAB nearest requested palette mapping, no dithering. Shapes generated and edited with image_gen. 60x60 categorical-majority previews are diagnostic only.",
+  "notes": "五种色值完全一致。面积占比未全部达到目标：橙色实际约5.1–7.4%（目标约9%），背景约68.9–72.8%（目标约68%）；逐图实测见records。",
+  "records": [
+    {
+      "variant": 20,
+      "subject": "提灯笼的小青蛙",
+      "file": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第24关-提灯笼的小青蛙-20.png",
+      "size": [
+        1200,
+        1200
+      ],
+      "sha256": "31d6d7ee00fa015f42ee7de52817549b3bf32010c79c0322e70c20cfae1bf86d",
+      "palette": [
+        "#696CAF",
+        "#30D183",
+        "#FF7E27",
+        "#2D2D2D",
+        "#FFFFFF"
+      ],
+      "areaPercent": [
+        72.377,
+        10.799,
+        5.092,
+        7.001,
+        4.731
+      ],
+      "targetAreaPercent": [
+        68,
+        10,
+        9,
+        7,
+        6
+      ],
+      "areaPercentagePointDeviation": [
+        4.377,
+        0.799,
+        -3.908,
+        0.001,
+        -1.269
+      ],
+      "generationCalls": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: stylized-concept. Asset: ONE adorable chibi pixel-art picture for a children's bubble puzzle level. Square canvas. Genuine chunky PIXEL ART with clearly stepped square-pixel edges and solid flat fills. Design is readable when reduced to60x60cells: big clear shapes, large eyes, continuous BLACK chunky contour about2logicalcells thick. No gradients, shading, lighting effects, texture, antialiasing, outlines in other colors, text, borders, stars, sparkles, dots, or background patterns. Cuteness: huge round baby head, tiny rounded body, happy smile, large round BLACK eyes each with one big WHITE highlight, plush-toy-like shape but FLAT PIXEL fills, NOT fur texture or3D. Only ONE main character. Opaque background.\nEXACTLY these5colors and no other colors: indigo #696CAF about68% of TOTAL canvas; emerald #30D183 about10%; orange #FF7E27 about9%; charcoal-black #2D2D2D about7%; white #FFFFFF about6%. These are canvas area proportions. Most of the image is clean uninterrupted indigo night background; character has a large readable bounding box spanning roughly half the canvas while actual painted non-background area is around32%. Keep ample indigo negative space. No extra objects beyond those explicitly requested. No different green, yellow, pink, brown or gray. No text anywhere.\nScene: a super-cute chubby baby FROG holding ONE round orange LANTERN at night. Indigo background. Frog sits centrally in lower-middle of canvas; huge emerald rounded head with TWO bulging eye bumps on its top; large happy black round eyes with big white square highlight; short curved happy black smile. Small emerald body and feet, white round belly, thick continuous black silhouette outline. One little arm holds a simple thick black handle with ONE ROUND orange lantern beside the head. Lantern is distinctly smaller than the frog's head but big enough to supply much of orange area; round solid orange disc with black chunky outline, no internal line patterns, no tassel, no glow. One large simple chunky WHITE CRESCENT moon in UPPER RIGHT, no stars. A single broad emerald LILY PAD beneath the frog, touching BOTTOM edge. Lily pad simple round stepped silhouette, no water or ripples or vein texture. Body+head approx25%canvaspainted; lantern8-9%; leaf+moon small, manage all5color area targets. Bounding box frog roughly55%canvaswidth and55%height, lower middle. Baby expression irresistibly cute, huge head small body.\nVariant20: symmetrical front-facing sitting frog with round wide cheeks; lantern held on viewer LEFT at shoulder height. Crescent upperRIGHT. Feet relaxed on broad small lotus pad.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-682606c9-0824-4c1a-b7dd-d84600e07279.png"
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: precise-object-edit. Input is edit target. Keep the same cute chibi pixel style, pose/direction, composition type and exact5palette. Correct the area ratios by changing relative sizes only, plus frog eye placement if relevant.\nMake the FROG and lily pad more compact to let the indigo background reach68%: scale the frog head to about78% of current width/height, scale tiny torso/feet to65% of current width/height, scale lily pad to65% of current width/height while it stays attached toBOTTOMedge. Place the smaller frog still just above its pad, lower-middle. Keep head clearly larger than tiny body. Eyes must be inside the TWO TOP eye-bumps, which are frog eyes, NOT ears. Exactly TWO eyes total; delete any extra ear-like dark marks. Keep cute round black eyes and bigwhite highlights. White round belly and crescent moon remain readable; enlarge belly fill relative to small torso to help white reach6%.\nENLARGE the ORANGE LANTERN: the solid orange circular fill should be approx34% of canvaswidth in diameter (area9%), clearly round, attached to one hand by a short thickblackhandle. The frog head silhouette should remain approx43-45%canvaswidth, so lantern IS SMALLER than thehead. Keep lantern on original side, next to frog with clear separation. Do not shrink the lantern with frog. Retain white crescent upperRIGHT.\nWhole canvas target areas: #696CAF background68%, #30D183 emerald10%, #FF7E27 orange9%, #2D2D2D black7%, #FFFFFF white6%. These are TOTALcanvaspercentages. Broad uninterrupted plainindigobackground. Keep BLACK continuous chunky contour readableat60x60, but do not letoutlineandeyesexceedroughly8%canvas. Mouthsimplehappyblacksmile.\nSquare flat pixel-art, bold square stepped edges, no gradients, shading, shadow, glow, textures, text, dots, stars, decorative patterns or extra colors. Use only those5solidcolors. Make shapes simple and cute with no gaps in contours. Do not add any objects.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-da66b1c0-2d0b-4881-bb10-9b4bf0dbd9f5.png"
+        },
+        {
+          "attempt": 3,
+          "prompt": "Use case: precise-object-edit. Reference is edit target. Make ONLY the following orange and white area corrections:\n1. Make the ORANGE LANTERN 1.65 TIMES its CURRENT DIAMETER (about2.7times area). It must become obviously larger than in this reference, while still a little smaller than the frog's head. Keep it held on same side, reposition it outward a little if needed to avoid covering frog face/body. Orange fill should occupy8-9% of entire canvas. Simple perfectly round stepped orange disc, thin but clear continuous blackcontour, no tassel/details.\n2. Enlarge WHITE CRESCENT MOON by15% in diameter, still upperRIGHT entirely insideimage. Enlarge white belly patch by20% width andheight withinbody. These WHITE fills plus eye highlights should occupy5-6%canvas.\nKeep frog itself exactly the same size, position, face and 2eye-bumps; preserve current head/body/feet, greenlilypad touchingbottom, pose and colors. Do not shrink anything else.\nMaintain square image, genuine chunky flat PIXELART, no gradients, no texture, no glow, no shading, no text, no dots/stars. Exact five solidcolors: #696CAF background, #30D183 green, #FF7E27 orange, #2D2D2D black, #FFFFFF white. Keep same style, no new objects. Result goal68%indigo,10%green,9%orange,7%black,6%white across wholecanvas.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-68c1355d-b254-4801-b3dd-80d3456db3d7.png"
+        },
+        {
+          "attempt": 4,
+          "prompt": "Precise edit of the provided pixelart. The orange area is still far too small. REPLACE the hand-held orange lantern with a MUCH BIGGER, NEARLY HEAD-SIZED ROUND ORANGE DISC. The orange-filled disc itself must have DIAMETER ONE THIRD of the whole image width (33.5% width, about420px on this1254px image), plus a clear modest blackoutline outside it. Its width must be85-95% of the character's head width. This is a large obvious increase, not a tiny adjustment. A solid circle of that diameter covers9% of the image. Keep it on the SAME side connected to the same hand/body attachment, allow slight repositioning outward/down to fit ENTIRELY inside the frame without covering the face. Head still slightly larger. No extra details on orange disc.\nPreserve crescent moon, whitebelly, lily pad touching bottom.\nKeep everything else unchanged: exact frog/firefly greenhead andbody dimensions, face, eye highlights, pose, background, colors. Coarse stepped PIXELART, fully FLAT exact5colors: indigo#696CAF,green#30D183,orange#FF7E27,black#2D2D2D,white#FFFFFF. NO gradients, glow, lighting, shading, new objects or text.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-072b81af-5099-496c-b56b-d10461bfe491.png"
+        },
+        {
+          "attempt": 5,
+          "prompt": "Edit this pixelart. Change ONLY the large orange lantern: INCREASE ITS DIAMETER BY 50%, with the black contour following the enlarged circle. Keep the entire circle inside the frame, shift it a little toward the empty space if necessary. It should be almost as wide as the character's head, just slightly smaller. Make this a clearly noticeable enlargement. The current orange shape is too small. Keep the face, green head, green body, white areas, background, bottom green area and all other artwork exactly unchanged. Maintain flat five-color pixel-art. Do not add text, shading, glow or details.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-a6b32e98-826c-4b15-b8a1-9c9a8e05505e.png"
+        }
+      ],
+      "qa": {
+        "exactFiveColors": true,
+        "opaque": true,
+        "noGradientsAfterPaletteNormalization": true,
+        "60x60Preview": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/review/20261104-level24-frog-firefly/20-60.png",
+        "visualNotes": "大眼睛和白色高光可辨；背景无碎点纹样；灯体小于头部。60×60 为缩小检查图，交付原图保留完整轮廓。"
+      }
+    },
+    {
+      "variant": 21,
+      "subject": "提灯笼的小青蛙",
+      "file": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第24关-提灯笼的小青蛙-21.png",
+      "size": [
+        1200,
+        1200
+      ],
+      "sha256": "849805ea378974b81cfe0a29a7cc24220b8cf93831045c43d2d99d7a49658b36",
+      "palette": [
+        "#696CAF",
+        "#30D183",
+        "#FF7E27",
+        "#2D2D2D",
+        "#FFFFFF"
+      ],
+      "areaPercent": [
+        68.917,
+        11.138,
+        6.188,
+        8.77,
+        4.987
+      ],
+      "targetAreaPercent": [
+        68,
+        10,
+        9,
+        7,
+        6
+      ],
+      "areaPercentagePointDeviation": [
+        0.917,
+        1.138,
+        -2.812,
+        1.77,
+        -1.013
+      ],
+      "generationCalls": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: stylized-concept. Asset: ONE adorable chibi pixel-art picture for a children's bubble puzzle level. Square canvas. Genuine chunky PIXEL ART with clearly stepped square-pixel edges and solid flat fills. Design is readable when reduced to60x60cells: big clear shapes, large eyes, continuous BLACK chunky contour about2logicalcells thick. No gradients, shading, lighting effects, texture, antialiasing, outlines in other colors, text, borders, stars, sparkles, dots, or background patterns. Cuteness: huge round baby head, tiny rounded body, happy smile, large round BLACK eyes each with one big WHITE highlight, plush-toy-like shape but FLAT PIXEL fills, NOT fur texture or3D. Only ONE main character. Opaque background.\nEXACTLY these5colors and no other colors: indigo #696CAF about68% of TOTAL canvas; emerald #30D183 about10%; orange #FF7E27 about9%; charcoal-black #2D2D2D about7%; white #FFFFFF about6%. These are canvas area proportions. Most of the image is clean uninterrupted indigo night background; character has a large readable bounding box spanning roughly half the canvas while actual painted non-background area is around32%. Keep ample indigo negative space. No extra objects beyond those explicitly requested. No different green, yellow, pink, brown or gray. No text anywhere.\nScene: a super-cute chubby baby FROG holding ONE round orange LANTERN at night. Indigo background. Frog sits centrally in lower-middle of canvas; huge emerald rounded head with TWO bulging eye bumps on its top; large happy black round eyes with big white square highlight; short curved happy black smile. Small emerald body and feet, white round belly, thick continuous black silhouette outline. One little arm holds a simple thick black handle with ONE ROUND orange lantern beside the head. Lantern is distinctly smaller than the frog's head but big enough to supply much of orange area; round solid orange disc with black chunky outline, no internal line patterns, no tassel, no glow. One large simple chunky WHITE CRESCENT moon in UPPER RIGHT, no stars. A single broad emerald LILY PAD beneath the frog, touching BOTTOM edge. Lily pad simple round stepped silhouette, no water or ripples or vein texture. Body+head approx25%canvaspainted; lantern8-9%; leaf+moon small, manage all5color area targets. Bounding box frog roughly55%canvaswidth and55%height, lower middle. Baby expression irresistibly cute, huge head small body.\nVariant21: baby frog with a slight cheerful head tilt toward its orange lantern, lantern on viewerRIGHT held at cheek height. Keep crescent in upperRIGHT but well separated. Big round belly and compact feet, simple lotus pad.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-45fbec15-a5f0-47a6-9cdc-758f1ac413fa.png"
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: precise-object-edit. Input is edit target. Keep the same cute chibi pixel style, pose/direction, composition type and exact5palette. Correct the area ratios by changing relative sizes only, plus frog eye placement if relevant.\nMake the FROG and lily pad more compact to let the indigo background reach68%: scale the frog head to about78% of current width/height, scale tiny torso/feet to65% of current width/height, scale lily pad to65% of current width/height while it stays attached toBOTTOMedge. Place the smaller frog still just above its pad, lower-middle. Keep head clearly larger than tiny body. Eyes must be inside the TWO TOP eye-bumps, which are frog eyes, NOT ears. Exactly TWO eyes total; delete any extra ear-like dark marks. Keep cute round black eyes and bigwhite highlights. White round belly and crescent moon remain readable; enlarge belly fill relative to small torso to help white reach6%.\nENLARGE the ORANGE LANTERN: the solid orange circular fill should be approx34% of canvaswidth in diameter (area9%), clearly round, attached to one hand by a short thickblackhandle. The frog head silhouette should remain approx43-45%canvaswidth, so lantern IS SMALLER than thehead. Keep lantern on original side, next to frog with clear separation. Do not shrink the lantern with frog. Retain white crescent upperRIGHT.\nWhole canvas target areas: #696CAF background68%, #30D183 emerald10%, #FF7E27 orange9%, #2D2D2D black7%, #FFFFFF white6%. These are TOTALcanvaspercentages. Broad uninterrupted plainindigobackground. Keep BLACK continuous chunky contour readableat60x60, but do not letoutlineandeyesexceedroughly8%canvas. Mouthsimplehappyblacksmile.\nSquare flat pixel-art, bold square stepped edges, no gradients, shading, shadow, glow, textures, text, dots, stars, decorative patterns or extra colors. Use only those5solidcolors. Make shapes simple and cute with no gaps in contours. Do not add any objects.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-12231961-1959-4b0b-8c3e-0b46eade147c.png"
+        },
+        {
+          "attempt": 3,
+          "prompt": "Use case: precise-object-edit. Reference is edit target. Make ONLY the following orange and white area corrections:\n1. Make the ORANGE LANTERN 1.65 TIMES its CURRENT DIAMETER (about2.7times area). It must become obviously larger than in this reference, while still a little smaller than the frog's head. Keep it held on same side, reposition it outward a little if needed to avoid covering frog face/body. Orange fill should occupy8-9% of entire canvas. Simple perfectly round stepped orange disc, thin but clear continuous blackcontour, no tassel/details.\n2. Enlarge WHITE CRESCENT MOON by15% in diameter, still upperRIGHT entirely insideimage. Enlarge white belly patch by20% width andheight withinbody. These WHITE fills plus eye highlights should occupy5-6%canvas.\nKeep frog itself exactly the same size, position, face and 2eye-bumps; preserve current head/body/feet, greenlilypad touchingbottom, pose and colors. Do not shrink anything else.\nMaintain square image, genuine chunky flat PIXELART, no gradients, no texture, no glow, no shading, no text, no dots/stars. Exact five solidcolors: #696CAF background, #30D183 green, #FF7E27 orange, #2D2D2D black, #FFFFFF white. Keep same style, no new objects. Result goal68%indigo,10%green,9%orange,7%black,6%white across wholecanvas.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-a1f64199-f7f7-483a-9a65-f2d1e15bf3ff.png"
+        },
+        {
+          "attempt": 4,
+          "prompt": "Precise edit of the provided pixelart. The orange area is still far too small. REPLACE the hand-held orange lantern with a MUCH BIGGER, NEARLY HEAD-SIZED ROUND ORANGE DISC. The orange-filled disc itself must have DIAMETER ONE THIRD of the whole image width (33.5% width, about420px on this1254px image), plus a clear modest blackoutline outside it. Its width must be85-95% of the character's head width. This is a large obvious increase, not a tiny adjustment. A solid circle of that diameter covers9% of the image. Keep it on the SAME side connected to the same hand/body attachment, allow slight repositioning outward/down to fit ENTIRELY inside the frame without covering the face. Head still slightly larger. No extra details on orange disc.\nPreserve crescent moon, whitebelly, lily pad touching bottom.\nKeep everything else unchanged: exact frog/firefly greenhead andbody dimensions, face, eye highlights, pose, background, colors. Coarse stepped PIXELART, fully FLAT exact5colors: indigo#696CAF,green#30D183,orange#FF7E27,black#2D2D2D,white#FFFFFF. NO gradients, glow, lighting, shading, new objects or text.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-31732fbe-e3ad-451e-8ac0-d2ee674c8e76.png"
+        },
+        {
+          "attempt": 5,
+          "prompt": "Edit this pixelart. Change ONLY the large orange lantern: INCREASE ITS DIAMETER BY 50%, with the black contour following the enlarged circle. Keep the entire circle inside the frame, shift it a little toward the empty space if necessary. It should be almost as wide as the character's head, just slightly smaller. Make this a clearly noticeable enlargement. The current orange shape is too small. Keep the face, green head, green body, white areas, background, bottom green area and all other artwork exactly unchanged. Maintain flat five-color pixel-art. Do not add text, shading, glow or details.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-ec737392-cde3-4813-a569-bc2f14f36f2e.png"
+        }
+      ],
+      "qa": {
+        "exactFiveColors": true,
+        "opaque": true,
+        "noGradientsAfterPaletteNormalization": true,
+        "60x60Preview": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/review/20261104-level24-frog-firefly/21-60.png",
+        "visualNotes": "大眼睛和白色高光可辨；背景无碎点纹样；灯体小于头部。60×60 为缩小检查图，交付原图保留完整轮廓。"
+      }
+    },
+    {
+      "variant": 22,
+      "subject": "提灯笼的小青蛙",
+      "file": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第24关-提灯笼的小青蛙-22.png",
+      "size": [
+        1200,
+        1200
+      ],
+      "sha256": "e72fe2b66fea4939985cbb6733c691c8248daf5842f1536ecb6b98056c46d818",
+      "palette": [
+        "#696CAF",
+        "#30D183",
+        "#FF7E27",
+        "#2D2D2D",
+        "#FFFFFF"
+      ],
+      "areaPercent": [
+        71.632,
+        9.33,
+        5.522,
+        8.761,
+        4.755
+      ],
+      "targetAreaPercent": [
+        68,
+        10,
+        9,
+        7,
+        6
+      ],
+      "areaPercentagePointDeviation": [
+        3.632,
+        -0.67,
+        -3.478,
+        1.761,
+        -1.245
+      ],
+      "generationCalls": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: stylized-concept. Asset: ONE adorable chibi pixel-art picture for a children's bubble puzzle level. Square canvas. Genuine chunky PIXEL ART with clearly stepped square-pixel edges and solid flat fills. Design is readable when reduced to60x60cells: big clear shapes, large eyes, continuous BLACK chunky contour about2logicalcells thick. No gradients, shading, lighting effects, texture, antialiasing, outlines in other colors, text, borders, stars, sparkles, dots, or background patterns. Cuteness: huge round baby head, tiny rounded body, happy smile, large round BLACK eyes each with one big WHITE highlight, plush-toy-like shape but FLAT PIXEL fills, NOT fur texture or3D. Only ONE main character. Opaque background.\nEXACTLY these5colors and no other colors: indigo #696CAF about68% of TOTAL canvas; emerald #30D183 about10%; orange #FF7E27 about9%; charcoal-black #2D2D2D about7%; white #FFFFFF about6%. These are canvas area proportions. Most of the image is clean uninterrupted indigo night background; character has a large readable bounding box spanning roughly half the canvas while actual painted non-background area is around32%. Keep ample indigo negative space. No extra objects beyond those explicitly requested. No different green, yellow, pink, brown or gray. No text anywhere.\nScene: a super-cute chubby baby FROG holding ONE round orange LANTERN at night. Indigo background. Frog sits centrally in lower-middle of canvas; huge emerald rounded head with TWO bulging eye bumps on its top; large happy black round eyes with big white square highlight; short curved happy black smile. Small emerald body and feet, white round belly, thick continuous black silhouette outline. One little arm holds a simple thick black handle with ONE ROUND orange lantern beside the head. Lantern is distinctly smaller than the frog's head but big enough to supply much of orange area; round solid orange disc with black chunky outline, no internal line patterns, no tassel, no glow. One large simple chunky WHITE CRESCENT moon in UPPER RIGHT, no stars. A single broad emerald LILY PAD beneath the frog, touching BOTTOM edge. Lily pad simple round stepped silhouette, no water or ripples or vein texture. Body+head approx25%canvaspainted; lantern8-9%; leaf+moon small, manage all5color area targets. Bounding box frog roughly55%canvaswidth and55%height, lower middle. Baby expression irresistibly cute, huge head small body.\nVariant22: front-facing extra-squat round baby frog, huge eye bumps close together and happy small smile, lantern held to viewerLEFT a little above its shoulder. Crescent upperRIGHT. Cute broad tucked feet on a lotus pad.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-8ea8a102-dc7c-4044-a200-27d6350acb9e.png"
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: precise-object-edit. Input is edit target. Keep the same cute chibi pixel style, pose/direction, composition type and exact5palette. Correct the area ratios by changing relative sizes only, plus frog eye placement if relevant.\nMake the FROG and lily pad more compact to let the indigo background reach68%: scale the frog head to about78% of current width/height, scale tiny torso/feet to65% of current width/height, scale lily pad to65% of current width/height while it stays attached toBOTTOMedge. Place the smaller frog still just above its pad, lower-middle. Keep head clearly larger than tiny body. Eyes must be inside the TWO TOP eye-bumps, which are frog eyes, NOT ears. Exactly TWO eyes total; delete any extra ear-like dark marks. Keep cute round black eyes and bigwhite highlights. White round belly and crescent moon remain readable; enlarge belly fill relative to small torso to help white reach6%.\nENLARGE the ORANGE LANTERN: the solid orange circular fill should be approx34% of canvaswidth in diameter (area9%), clearly round, attached to one hand by a short thickblackhandle. The frog head silhouette should remain approx43-45%canvaswidth, so lantern IS SMALLER than thehead. Keep lantern on original side, next to frog with clear separation. Do not shrink the lantern with frog. Retain white crescent upperRIGHT.\nWhole canvas target areas: #696CAF background68%, #30D183 emerald10%, #FF7E27 orange9%, #2D2D2D black7%, #FFFFFF white6%. These are TOTALcanvaspercentages. Broad uninterrupted plainindigobackground. Keep BLACK continuous chunky contour readableat60x60, but do not letoutlineandeyesexceedroughly8%canvas. Mouthsimplehappyblacksmile.\nSquare flat pixel-art, bold square stepped edges, no gradients, shading, shadow, glow, textures, text, dots, stars, decorative patterns or extra colors. Use only those5solidcolors. Make shapes simple and cute with no gaps in contours. Do not add any objects.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-ef76ad3f-864b-4650-9ce7-dad8cbf8cb19.png"
+        },
+        {
+          "attempt": 3,
+          "prompt": "Use case: precise-object-edit. Reference is edit target. Make ONLY the following orange and white area corrections:\n1. Make the ORANGE LANTERN 1.65 TIMES its CURRENT DIAMETER (about2.7times area). It must become obviously larger than in this reference, while still a little smaller than the frog's head. Keep it held on same side, reposition it outward a little if needed to avoid covering frog face/body. Orange fill should occupy8-9% of entire canvas. Simple perfectly round stepped orange disc, thin but clear continuous blackcontour, no tassel/details.\n2. Enlarge WHITE CRESCENT MOON by15% in diameter, still upperRIGHT entirely insideimage. Enlarge white belly patch by20% width andheight withinbody. These WHITE fills plus eye highlights should occupy5-6%canvas.\nKeep frog itself exactly the same size, position, face and 2eye-bumps; preserve current head/body/feet, greenlilypad touchingbottom, pose and colors. Do not shrink anything else.\nMaintain square image, genuine chunky flat PIXELART, no gradients, no texture, no glow, no shading, no text, no dots/stars. Exact five solidcolors: #696CAF background, #30D183 green, #FF7E27 orange, #2D2D2D black, #FFFFFF white. Keep same style, no new objects. Result goal68%indigo,10%green,9%orange,7%black,6%white across wholecanvas.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-0d2c45d4-78c6-4710-afe1-26b70397cad2.png"
+        },
+        {
+          "attempt": 4,
+          "prompt": "Precise edit of the provided pixelart. The orange area is still far too small. REPLACE the hand-held orange lantern with a MUCH BIGGER, NEARLY HEAD-SIZED ROUND ORANGE DISC. The orange-filled disc itself must have DIAMETER ONE THIRD of the whole image width (33.5% width, about420px on this1254px image), plus a clear modest blackoutline outside it. Its width must be85-95% of the character's head width. This is a large obvious increase, not a tiny adjustment. A solid circle of that diameter covers9% of the image. Keep it on the SAME side connected to the same hand/body attachment, allow slight repositioning outward/down to fit ENTIRELY inside the frame without covering the face. Head still slightly larger. No extra details on orange disc.\nPreserve crescent moon, whitebelly, lily pad touching bottom.\nKeep everything else unchanged: exact frog/firefly greenhead andbody dimensions, face, eye highlights, pose, background, colors. Coarse stepped PIXELART, fully FLAT exact5colors: indigo#696CAF,green#30D183,orange#FF7E27,black#2D2D2D,white#FFFFFF. NO gradients, glow, lighting, shading, new objects or text.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-db3bc310-fdb5-467f-92b3-ca2c3b37fe4a.png"
+        },
+        {
+          "attempt": 5,
+          "prompt": "Edit this pixelart. Change ONLY the large orange lantern: INCREASE ITS DIAMETER BY 50%, with the black contour following the enlarged circle. Keep the entire circle inside the frame, shift it a little toward the empty space if necessary. It should be almost as wide as the character's head, just slightly smaller. Make this a clearly noticeable enlargement. The current orange shape is too small. Keep the face, green head, green body, white areas, background, bottom green area and all other artwork exactly unchanged. Maintain flat five-color pixel-art. Do not add text, shading, glow or details.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-c5e33d4a-7246-4755-af77-1a33b8ac9e6f.png"
+        }
+      ],
+      "qa": {
+        "exactFiveColors": true,
+        "opaque": true,
+        "noGradientsAfterPaletteNormalization": true,
+        "60x60Preview": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/review/20261104-level24-frog-firefly/22-60.png",
+        "visualNotes": "大眼睛和白色高光可辨；背景无碎点纹样；灯体小于头部。60×60 为缩小检查图，交付原图保留完整轮廓。"
+      }
+    },
+    {
+      "variant": 23,
+      "subject": "圆滚滚的小萤火虫",
+      "file": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第24关-圆滚滚的小萤火虫-23.png",
+      "size": [
+        1200,
+        1200
+      ],
+      "sha256": "96ee7c79d152f5a410ca905b2a7400834ff3325687ffa2693bbc62c8230888a5",
+      "palette": [
+        "#696CAF",
+        "#30D183",
+        "#FF7E27",
+        "#2D2D2D",
+        "#FFFFFF"
+      ],
+      "areaPercent": [
+        72.336,
+        9.083,
+        5.727,
+        7.238,
+        5.617
+      ],
+      "targetAreaPercent": [
+        68,
+        10,
+        9,
+        7,
+        6
+      ],
+      "areaPercentagePointDeviation": [
+        4.336,
+        -0.917,
+        -3.273,
+        0.238,
+        -0.383
+      ],
+      "generationCalls": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: stylized-concept. Asset: ONE adorable chibi pixel-art picture for a children's bubble puzzle level. Square canvas. Genuine chunky PIXEL ART with clearly stepped square-pixel edges and solid flat fills. Design is readable when reduced to60x60cells: big clear shapes, large eyes, continuous BLACK chunky contour about2logicalcells thick. No gradients, shading, lighting effects, texture, antialiasing, outlines in other colors, text, borders, stars, sparkles, dots, or background patterns. Cuteness: huge round baby head, tiny rounded body, happy smile, large round BLACK eyes each with one big WHITE highlight, plush-toy-like shape but FLAT PIXEL fills, NOT fur texture or3D. Only ONE main character. Opaque background.\nEXACTLY these5colors and no other colors: indigo #696CAF about68% of TOTAL canvas; emerald #30D183 about10%; orange #FF7E27 about9%; charcoal-black #2D2D2D about7%; white #FFFFFF about6%. These are canvas area proportions. Most of the image is clean uninterrupted indigo night background; character has a large readable bounding box spanning roughly half the canvas while actual painted non-background area is around32%. Keep ample indigo negative space. No extra objects beyond those explicitly requested. No different green, yellow, pink, brown or gray. No text anywhere.\nScene: ONE super-cute fat round baby FIREFLY hovering in the CENTER. Plain indigo background. Plush-toy proportions with giant rounded emerald head and very small rounded emerald body, a happy black smile, two HUGE round black eyes with big white highlights, small ORANGE cheek patches. Two short THICK black antennae with emerald ROUND BALLS at tips. Small pair of WHITE rounded wings behind the body, one on either side, simple black outlines. At the lower/rear of the body is ONE round solid ORANGE tail light, a big simple bulb-like abdomen smaller than the giant head. No glow halo, gradients or rays: solid orange shape only with thick black contour. The tail light must be the character's body part, not a hand-held lamp, not separate object. Small emerald arms/feet. Bottom edge: just one low simple emerald grass strip with a FEW broad stepped tufts, no tiny separate blades. No moon, stars, sparkles or firefly dots. Main character approximate bounding box60%canvaswidth and60%height, with generous indigo around it; totalpaintedarea32%. Keep green limited to10%canvas, orange tail fairly substantial9%, black7%, white6%.\nVariant23: almost symmetrical front-facing chubby firefly with round head, small white wings spread, orange rounded tail just below and slightly to viewerRIGHT, happy smile and compact orange cheeks.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-cfa0c80a-085e-483b-966f-f3b832616499.png"
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: precise-object-edit. Input is edit target. Keep the same cute chibi pixel style, pose/direction, composition type and exact5palette. Correct the area ratios by changing relative sizes only, plus frog eye placement if relevant.\nReduce the GREEN HEAD to about78% of current width/height and small green torso/limbs to65%, keeping big-head tiny-bodycuteness and original tilt. Shorten antennae to be compact with smallerballtips. Reduce bottom grass height by half, just a very low green strip with few broad tufts touchingbottom. This reduces green to10%. Keep mainbug centered in midair.\nENLARGE ORANGE TAIL-LIGHT: make ONE near-round solid ORANGE bulb abdomen with fill diameter about32-33%canvaswidth, attached to lower/rearbody. This gives orange~8-9% including smallorangecheeks. Keep head silhouette about40-42%canvaswidth so orangetail remains SMALLERthanhead. This orange circle is rearabdomen ofthebug, NOT handheldobject, NO lanternhandle. Broaden the pair of WHITE roundedwingfills enough for white~6%canvas total; wings smallrelativehead. Preserve large round blackeyes, bigwhiteglints, orangecheeks andhappysmile.\nWhole canvas target areas: #696CAF background68%, #30D183 emerald10%, #FF7E27 orange9%, #2D2D2D black7%, #FFFFFF white6%. These are TOTALcanvaspercentages. Broad uninterrupted plainindigobackground. Keep BLACK continuous chunky contour readableat60x60, but do not letoutlineandeyesexceedroughly8%canvas. Mouthsimplehappyblacksmile.\nSquare flat pixel-art, bold square stepped edges, no gradients, shading, shadow, glow, textures, text, dots, stars, decorative patterns or extra colors. Use only those5solidcolors. Make shapes simple and cute with no gaps in contours. Do not add any objects.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-15b85c69-c4a5-4615-9388-49c6a23540bd.png"
+        },
+        {
+          "attempt": 3,
+          "prompt": "Use case: precise-object-edit. Reference is edit target. Make ONLY the following orange and white area corrections:\n1. Make the ORANGE TAIL BULB TWICE its CURRENT DIAMETER (4times area). Round solid orange abdomen, visually MUCH larger than current small orange circle. Its orange fill should cover8-9%ofentirecanvas. Keep its blackoutline modest about1logicalpixel. It must remain attached tobug'srear/lowerbody at same side and a little SMALLER than the green head silhouette. Shift it outward/down if necessary so it does not coverface. Not handheld; NO handle. Keep small orangecheeks.\n2. Make each WHITE WING 1.65times current width andheight, keepingroundshapebehindbody. WHITE totalfill should cover5-6%canvas. Simple white roundedwings, continuousblackoutline, nofeatherdetails.\nKeep the bug'sgreenhead and greenbody exactly current size/position/tilt, facialexpression, eyes, antennae andgreenballtips. Keep lowgreen grass strip as is. Do not shrink otherparts.\nMaintain square image, genuine chunky flat PIXELART, no gradients, no texture, no glow, no shading, no text, no dots/stars. Exact five solidcolors: #696CAF background, #30D183 green, #FF7E27 orange, #2D2D2D black, #FFFFFF white. Keep same style, no new objects. Result goal68%indigo,10%green,9%orange,7%black,6%white across wholecanvas.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-9b7018c1-1dd3-4dc1-bab6-0ee19dfd66e4.png"
+        },
+        {
+          "attempt": 4,
+          "prompt": "Precise edit of the provided pixelart. The orange area is still far too small. REPLACE the attached orange tail-light abdomen with a MUCH BIGGER, NEARLY HEAD-SIZED ROUND ORANGE DISC. The orange-filled disc itself must have DIAMETER ONE THIRD of the whole image width (33.5% width, about420px on this1254px image), plus a clear modest blackoutline outside it. Its width must be85-95% of the character's head width. This is a large obvious increase, not a tiny adjustment. A solid circle of that diameter covers9% of the image. Keep it on the SAME side connected to the same hand/body attachment, allow slight repositioning outward/down to fit ENTIRELY inside the frame without covering the face. Head still slightly larger. No extra details on orange disc.\nAlso make the WHITE wing fills a little broader (125% current width andheight), two plain round white wings, keep them behind the head/body. Preserve orangecheeks.\nKeep everything else unchanged: exact frog/firefly greenhead andbody dimensions, face, eye highlights, pose, background, colors. Coarse stepped PIXELART, fully FLAT exact5colors: indigo#696CAF,green#30D183,orange#FF7E27,black#2D2D2D,white#FFFFFF. NO gradients, glow, lighting, shading, new objects or text.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-950731f5-3ccf-46b1-a242-6c4066074aa6.png"
+        },
+        {
+          "attempt": 5,
+          "prompt": "Edit this pixelart. Change ONLY the large orange tail-light: INCREASE ITS DIAMETER BY 50%, with the black contour following the enlarged circle. Keep the entire circle inside the frame, shift it a little toward the empty space if necessary. It should be almost as wide as the character's head, just slightly smaller. Make this a clearly noticeable enlargement. The current orange shape is too small. Keep the face, green head, green body, white areas, background, bottom green area and all other artwork exactly unchanged. Maintain flat five-color pixel-art. Do not add text, shading, glow or details.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-cd8937b6-f791-40b8-9aee-c03ef966f0c4.png"
+        }
+      ],
+      "qa": {
+        "exactFiveColors": true,
+        "opaque": true,
+        "noGradientsAfterPaletteNormalization": true,
+        "60x60Preview": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/review/20261104-level24-frog-firefly/23-60.png",
+        "visualNotes": "大眼睛和白色高光可辨；背景无碎点纹样；灯体小于头部。60×60 为缩小检查图，交付原图保留完整轮廓。"
+      }
+    },
+    {
+      "variant": 24,
+      "subject": "圆滚滚的小萤火虫",
+      "file": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第24关-圆滚滚的小萤火虫-24.png",
+      "size": [
+        1200,
+        1200
+      ],
+      "sha256": "93f8f87d1f93ce85a4056ac5ed22d58a98e385a446fc609d2ae3639b2d58c5ba",
+      "palette": [
+        "#696CAF",
+        "#30D183",
+        "#FF7E27",
+        "#2D2D2D",
+        "#FFFFFF"
+      ],
+      "areaPercent": [
+        72.755,
+        8.405,
+        6.641,
+        7.49,
+        4.709
+      ],
+      "targetAreaPercent": [
+        68,
+        10,
+        9,
+        7,
+        6
+      ],
+      "areaPercentagePointDeviation": [
+        4.755,
+        -1.595,
+        -2.359,
+        0.49,
+        -1.291
+      ],
+      "generationCalls": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: stylized-concept. Asset: ONE adorable chibi pixel-art picture for a children's bubble puzzle level. Square canvas. Genuine chunky PIXEL ART with clearly stepped square-pixel edges and solid flat fills. Design is readable when reduced to60x60cells: big clear shapes, large eyes, continuous BLACK chunky contour about2logicalcells thick. No gradients, shading, lighting effects, texture, antialiasing, outlines in other colors, text, borders, stars, sparkles, dots, or background patterns. Cuteness: huge round baby head, tiny rounded body, happy smile, large round BLACK eyes each with one big WHITE highlight, plush-toy-like shape but FLAT PIXEL fills, NOT fur texture or3D. Only ONE main character. Opaque background.\nEXACTLY these5colors and no other colors: indigo #696CAF about68% of TOTAL canvas; emerald #30D183 about10%; orange #FF7E27 about9%; charcoal-black #2D2D2D about7%; white #FFFFFF about6%. These are canvas area proportions. Most of the image is clean uninterrupted indigo night background; character has a large readable bounding box spanning roughly half the canvas while actual painted non-background area is around32%. Keep ample indigo negative space. No extra objects beyond those explicitly requested. No different green, yellow, pink, brown or gray. No text anywhere.\nScene: ONE super-cute fat round baby FIREFLY hovering in the CENTER. Plain indigo background. Plush-toy proportions with giant rounded emerald head and very small rounded emerald body, a happy black smile, two HUGE round black eyes with big white highlights, small ORANGE cheek patches. Two short THICK black antennae with emerald ROUND BALLS at tips. Small pair of WHITE rounded wings behind the body, one on either side, simple black outlines. At the lower/rear of the body is ONE round solid ORANGE tail light, a big simple bulb-like abdomen smaller than the giant head. No glow halo, gradients or rays: solid orange shape only with thick black contour. The tail light must be the character's body part, not a hand-held lamp, not separate object. Small emerald arms/feet. Bottom edge: just one low simple emerald grass strip with a FEW broad stepped tufts, no tiny separate blades. No moon, stars, sparkles or firefly dots. Main character approximate bounding box60%canvaswidth and60%height, with generous indigo around it; totalpaintedarea32%. Keep green limited to10%canvas, orange tail fairly substantial9%, black7%, white6%.\nVariant24: cheerful baby firefly tilted slightly LEFT in midair, very large round head, tiny body, orange bulb abdomen lowerRIGHT, short ball-tipped antennae and rounded white wings.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-14a92ff2-96a9-41ce-a351-812651875e02.png"
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: precise-object-edit. Input is edit target. Keep the same cute chibi pixel style, pose/direction, composition type and exact5palette. Correct the area ratios by changing relative sizes only, plus frog eye placement if relevant.\nReduce the GREEN HEAD to about78% of current width/height and small green torso/limbs to65%, keeping big-head tiny-bodycuteness and original tilt. Shorten antennae to be compact with smallerballtips. Reduce bottom grass height by half, just a very low green strip with few broad tufts touchingbottom. This reduces green to10%. Keep mainbug centered in midair.\nENLARGE ORANGE TAIL-LIGHT: make ONE near-round solid ORANGE bulb abdomen with fill diameter about32-33%canvaswidth, attached to lower/rearbody. This gives orange~8-9% including smallorangecheeks. Keep head silhouette about40-42%canvaswidth so orangetail remains SMALLERthanhead. This orange circle is rearabdomen ofthebug, NOT handheldobject, NO lanternhandle. Broaden the pair of WHITE roundedwingfills enough for white~6%canvas total; wings smallrelativehead. Preserve large round blackeyes, bigwhiteglints, orangecheeks andhappysmile.\nWhole canvas target areas: #696CAF background68%, #30D183 emerald10%, #FF7E27 orange9%, #2D2D2D black7%, #FFFFFF white6%. These are TOTALcanvaspercentages. Broad uninterrupted plainindigobackground. Keep BLACK continuous chunky contour readableat60x60, but do not letoutlineandeyesexceedroughly8%canvas. Mouthsimplehappyblacksmile.\nSquare flat pixel-art, bold square stepped edges, no gradients, shading, shadow, glow, textures, text, dots, stars, decorative patterns or extra colors. Use only those5solidcolors. Make shapes simple and cute with no gaps in contours. Do not add any objects.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-e5bba783-ba06-426e-bb13-0be84fe57361.png"
+        },
+        {
+          "attempt": 3,
+          "prompt": "Use case: precise-object-edit. Reference is edit target. Make ONLY the following orange and white area corrections:\n1. Make the ORANGE TAIL BULB TWICE its CURRENT DIAMETER (4times area). Round solid orange abdomen, visually MUCH larger than current small orange circle. Its orange fill should cover8-9%ofentirecanvas. Keep its blackoutline modest about1logicalpixel. It must remain attached tobug'srear/lowerbody at same side and a little SMALLER than the green head silhouette. Shift it outward/down if necessary so it does not coverface. Not handheld; NO handle. Keep small orangecheeks.\n2. Make each WHITE WING 1.65times current width andheight, keepingroundshapebehindbody. WHITE totalfill should cover5-6%canvas. Simple white roundedwings, continuousblackoutline, nofeatherdetails.\nKeep the bug'sgreenhead and greenbody exactly current size/position/tilt, facialexpression, eyes, antennae andgreenballtips. Keep lowgreen grass strip as is. Do not shrink otherparts.\nMaintain square image, genuine chunky flat PIXELART, no gradients, no texture, no glow, no shading, no text, no dots/stars. Exact five solidcolors: #696CAF background, #30D183 green, #FF7E27 orange, #2D2D2D black, #FFFFFF white. Keep same style, no new objects. Result goal68%indigo,10%green,9%orange,7%black,6%white across wholecanvas.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-16c93fd2-f427-4b9d-898c-f5401710a553.png"
+        },
+        {
+          "attempt": 4,
+          "prompt": "Precise edit of the provided pixelart. The orange area is still far too small. REPLACE the attached orange tail-light abdomen with a MUCH BIGGER, NEARLY HEAD-SIZED ROUND ORANGE DISC. The orange-filled disc itself must have DIAMETER ONE THIRD of the whole image width (33.5% width, about420px on this1254px image), plus a clear modest blackoutline outside it. Its width must be85-95% of the character's head width. This is a large obvious increase, not a tiny adjustment. A solid circle of that diameter covers9% of the image. Keep it on the SAME side connected to the same hand/body attachment, allow slight repositioning outward/down to fit ENTIRELY inside the frame without covering the face. Head still slightly larger. No extra details on orange disc.\nAlso make the WHITE wing fills a little broader (125% current width andheight), two plain round white wings, keep them behind the head/body. Preserve orangecheeks.\nKeep everything else unchanged: exact frog/firefly greenhead andbody dimensions, face, eye highlights, pose, background, colors. Coarse stepped PIXELART, fully FLAT exact5colors: indigo#696CAF,green#30D183,orange#FF7E27,black#2D2D2D,white#FFFFFF. NO gradients, glow, lighting, shading, new objects or text.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-d1582d31-c368-42fb-954c-fae69057a31d.png"
+        },
+        {
+          "attempt": 5,
+          "prompt": "Edit this pixelart. Change ONLY the large orange tail-light: INCREASE ITS DIAMETER BY 50%, with the black contour following the enlarged circle. Keep the entire circle inside the frame, shift it a little toward the empty space if necessary. It should be almost as wide as the character's head, just slightly smaller. Make this a clearly noticeable enlargement. The current orange shape is too small. Keep the face, green head, green body, white areas, background, bottom green area and all other artwork exactly unchanged. Maintain flat five-color pixel-art. Do not add text, shading, glow or details.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-e931eda2-d653-472d-a080-eb2a945ad291.png"
+        }
+      ],
+      "qa": {
+        "exactFiveColors": true,
+        "opaque": true,
+        "noGradientsAfterPaletteNormalization": true,
+        "60x60Preview": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/review/20261104-level24-frog-firefly/24-60.png",
+        "visualNotes": "大眼睛和白色高光可辨；背景无碎点纹样；灯体小于头部。60×60 为缩小检查图，交付原图保留完整轮廓。"
+      }
+    },
+    {
+      "variant": 25,
+      "subject": "圆滚滚的小萤火虫",
+      "file": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第24关-圆滚滚的小萤火虫-25.png",
+      "size": [
+        1200,
+        1200
+      ],
+      "sha256": "8c68a42cd765c854754ebc31da6c915e94d89a75733d083fe7c8d0d405699abe",
+      "palette": [
+        "#696CAF",
+        "#30D183",
+        "#FF7E27",
+        "#2D2D2D",
+        "#FFFFFF"
+      ],
+      "areaPercent": [
+        71.763,
+        8.435,
+        7.377,
+        7.056,
+        5.369
+      ],
+      "targetAreaPercent": [
+        68,
+        10,
+        9,
+        7,
+        6
+      ],
+      "areaPercentagePointDeviation": [
+        3.763,
+        -1.565,
+        -1.623,
+        0.056,
+        -0.631
+      ],
+      "generationCalls": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: stylized-concept. Asset: ONE adorable chibi pixel-art picture for a children's bubble puzzle level. Square canvas. Genuine chunky PIXEL ART with clearly stepped square-pixel edges and solid flat fills. Design is readable when reduced to60x60cells: big clear shapes, large eyes, continuous BLACK chunky contour about2logicalcells thick. No gradients, shading, lighting effects, texture, antialiasing, outlines in other colors, text, borders, stars, sparkles, dots, or background patterns. Cuteness: huge round baby head, tiny rounded body, happy smile, large round BLACK eyes each with one big WHITE highlight, plush-toy-like shape but FLAT PIXEL fills, NOT fur texture or3D. Only ONE main character. Opaque background.\nEXACTLY these5colors and no other colors: indigo #696CAF about68% of TOTAL canvas; emerald #30D183 about10%; orange #FF7E27 about9%; charcoal-black #2D2D2D about7%; white #FFFFFF about6%. These are canvas area proportions. Most of the image is clean uninterrupted indigo night background; character has a large readable bounding box spanning roughly half the canvas while actual painted non-background area is around32%. Keep ample indigo negative space. No extra objects beyond those explicitly requested. No different green, yellow, pink, brown or gray. No text anywhere.\nScene: ONE super-cute fat round baby FIREFLY hovering in the CENTER. Plain indigo background. Plush-toy proportions with giant rounded emerald head and very small rounded emerald body, a happy black smile, two HUGE round black eyes with big white highlights, small ORANGE cheek patches. Two short THICK black antennae with emerald ROUND BALLS at tips. Small pair of WHITE rounded wings behind the body, one on either side, simple black outlines. At the lower/rear of the body is ONE round solid ORANGE tail light, a big simple bulb-like abdomen smaller than the giant head. No glow halo, gradients or rays: solid orange shape only with thick black contour. The tail light must be the character's body part, not a hand-held lamp, not separate object. Small emerald arms/feet. Bottom edge: just one low simple emerald grass strip with a FEW broad stepped tufts, no tiny separate blades. No moon, stars, sparkles or firefly dots. Main character approximate bounding box60%canvaswidth and60%height, with generous indigo around it; totalpaintedarea32%. Keep green limited to10%canvas, orange tail fairly substantial9%, black7%, white6%.\nVariant25: cheerful round baby firefly tilted slightly RIGHT, giant rounded head, tiny body, orange round abdomen lowerLEFT, rounded white wings and two short ball-tipped antennae. Warm cute smiling expression.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-5ed14cad-f395-4656-aa81-66dd1d32381e.png"
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: precise-object-edit. Input is edit target. Keep the same cute chibi pixel style, pose/direction, composition type and exact5palette. Correct the area ratios by changing relative sizes only, plus frog eye placement if relevant.\nReduce the GREEN HEAD to about78% of current width/height and small green torso/limbs to65%, keeping big-head tiny-bodycuteness and original tilt. Shorten antennae to be compact with smallerballtips. Reduce bottom grass height by half, just a very low green strip with few broad tufts touchingbottom. This reduces green to10%. Keep mainbug centered in midair.\nENLARGE ORANGE TAIL-LIGHT: make ONE near-round solid ORANGE bulb abdomen with fill diameter about32-33%canvaswidth, attached to lower/rearbody. This gives orange~8-9% including smallorangecheeks. Keep head silhouette about40-42%canvaswidth so orangetail remains SMALLERthanhead. This orange circle is rearabdomen ofthebug, NOT handheldobject, NO lanternhandle. Broaden the pair of WHITE roundedwingfills enough for white~6%canvas total; wings smallrelativehead. Preserve large round blackeyes, bigwhiteglints, orangecheeks andhappysmile.\nWhole canvas target areas: #696CAF background68%, #30D183 emerald10%, #FF7E27 orange9%, #2D2D2D black7%, #FFFFFF white6%. These are TOTALcanvaspercentages. Broad uninterrupted plainindigobackground. Keep BLACK continuous chunky contour readableat60x60, but do not letoutlineandeyesexceedroughly8%canvas. Mouthsimplehappyblacksmile.\nSquare flat pixel-art, bold square stepped edges, no gradients, shading, shadow, glow, textures, text, dots, stars, decorative patterns or extra colors. Use only those5solidcolors. Make shapes simple and cute with no gaps in contours. Do not add any objects.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-21dda708-cd11-47b0-aeb9-d2992dca5651.png"
+        },
+        {
+          "attempt": 3,
+          "prompt": "Use case: precise-object-edit. Reference is edit target. Make ONLY the following orange and white area corrections:\n1. Make the ORANGE TAIL BULB TWICE its CURRENT DIAMETER (4times area). Round solid orange abdomen, visually MUCH larger than current small orange circle. Its orange fill should cover8-9%ofentirecanvas. Keep its blackoutline modest about1logicalpixel. It must remain attached tobug'srear/lowerbody at same side and a little SMALLER than the green head silhouette. Shift it outward/down if necessary so it does not coverface. Not handheld; NO handle. Keep small orangecheeks.\n2. Make each WHITE WING 1.65times current width andheight, keepingroundshapebehindbody. WHITE totalfill should cover5-6%canvas. Simple white roundedwings, continuousblackoutline, nofeatherdetails.\nKeep the bug'sgreenhead and greenbody exactly current size/position/tilt, facialexpression, eyes, antennae andgreenballtips. Keep lowgreen grass strip as is. Do not shrink otherparts.\nMaintain square image, genuine chunky flat PIXELART, no gradients, no texture, no glow, no shading, no text, no dots/stars. Exact five solidcolors: #696CAF background, #30D183 green, #FF7E27 orange, #2D2D2D black, #FFFFFF white. Keep same style, no new objects. Result goal68%indigo,10%green,9%orange,7%black,6%white across wholecanvas.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-657aa0fa-7e48-4869-ab4a-07236e14f7d1.png"
+        },
+        {
+          "attempt": 4,
+          "prompt": "Precise edit of the provided pixelart. The orange area is still far too small. REPLACE the attached orange tail-light abdomen with a MUCH BIGGER, NEARLY HEAD-SIZED ROUND ORANGE DISC. The orange-filled disc itself must have DIAMETER ONE THIRD of the whole image width (33.5% width, about420px on this1254px image), plus a clear modest blackoutline outside it. Its width must be85-95% of the character's head width. This is a large obvious increase, not a tiny adjustment. A solid circle of that diameter covers9% of the image. Keep it on the SAME side connected to the same hand/body attachment, allow slight repositioning outward/down to fit ENTIRELY inside the frame without covering the face. Head still slightly larger. No extra details on orange disc.\nAlso make the WHITE wing fills a little broader (125% current width andheight), two plain round white wings, keep them behind the head/body. Preserve orangecheeks.\nKeep everything else unchanged: exact frog/firefly greenhead andbody dimensions, face, eye highlights, pose, background, colors. Coarse stepped PIXELART, fully FLAT exact5colors: indigo#696CAF,green#30D183,orange#FF7E27,black#2D2D2D,white#FFFFFF. NO gradients, glow, lighting, shading, new objects or text.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-0dffe55b-42ff-4582-8cf1-1c02dfafeacd.png"
+        },
+        {
+          "attempt": 5,
+          "prompt": "Edit this pixelart. Change ONLY the large orange tail-light: INCREASE ITS DIAMETER BY 50%, with the black contour following the enlarged circle. Keep the entire circle inside the frame, shift it a little toward the empty space if necessary. It should be almost as wide as the character's head, just slightly smaller. Make this a clearly noticeable enlargement. The current orange shape is too small. Keep the face, green head, green body, white areas, background, bottom green area and all other artwork exactly unchanged. Maintain flat five-color pixel-art. Do not add text, shading, glow or details.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-bba1af00-4555-44c0-88dc-63235d8e4e67.png"
+        }
+      ],
+      "qa": {
+        "exactFiveColors": true,
+        "opaque": true,
+        "noGradientsAfterPaletteNormalization": true,
+        "60x60Preview": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/review/20261104-level24-frog-firefly/25-60.png",
+        "visualNotes": "大眼睛和白色高光可辨；背景无碎点纹样；灯体小于头部。60×60 为缩小检查图，交付原图保留完整轮廓。"
+      }
+    }
+  ]
+}

@@ -7,8 +7,9 @@ These boards are small silhouettes (24 x 20 / 24 x 21, `shapedFormation`, empty 
 1. Map every pixel to the nearest level colour or to white (= empty), crop to the subject.
 2. Fit the subject into the grid keeping its aspect, bottom-aligned (the bottom row is the front) and centred, by
    majority vote per cell; the scale is chosen so the number of filled cells is as close as possible to A's.
-3. Exact counts: grow/shrink along the silhouette until the filled total equals A's, then recolour along colour
-   borders until every colour has A's count (the queue, ammo and lesson stay exactly A's).
+3. The picture is kept as drawn (2026-11-04 user decision: the bubble count per colour may differ from A, the
+   picture matters most): each queue member keeps its lane, colour and order, and its colour's ammo is re-split over
+   that colour's members in proportion to A's ammo, so ammo = bubbles again.
 4. Checks for the lesson: the bottom row must contain colour 0 (the first members are colour 0 and the first lesson
    step is "tap the blue member"); report the first row (from the bottom) of every colour against A.
 Writes <out>/<resource>.json, a preview <resource>.png and report.json.
@@ -53,80 +54,24 @@ def nb(g, y, x):
     H, W = g.shape
     return [(y + dy, x + dx) for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)) if 0 <= y + dy < H and 0 <= x + dx < W]
 
-def exact(grid, target):
-    g = grid.copy(); H, W = g.shape; total = sum(target.values())
-    # 1. total filled cells: add next to the silhouette (colour of the most common neighbour) / remove boundary cells
-    for _ in range(2000):
-        n = int((g >= 0).sum())
-        if n == total: break
-        if n < total:
-            cand = [(y, x) for y in range(H) for x in range(W) if g[y, x] < 0 and sum(g[q] >= 0 for q in nb(g, y, x)) >= 2]
-            cand = cand or [(y, x) for y in range(H) for x in range(W) if g[y, x] < 0 and any(g[q] >= 0 for q in nb(g, y, x))]
-            y, x = max(cand, key=lambda p: (sum(g[q] >= 0 for q in nb(g, *p)), p[0]))
-            c = Counter(int(g[q]) for q in nb(g, y, x) if g[q] >= 0).most_common(1)[0][0]; g[y, x] = c
-        else:
-            cand = [(y, x) for y in range(H) for x in range(W) if g[y, x] >= 0 and sum(g[q] >= 0 for q in nb(g, y, x)) <= 2]
-            y, x = min(cand, key=lambda p: (sum(g[q] >= 0 for q in nb(g, *p)), -p[0]))   # thinnest, higher first
-            g[y, x] = -1
-    # 2. per colour: recolour a surplus cell that touches a deficit colour (keeps parts connected)
-    for _ in range(5000):
-        have = Counter(int(v) for v in g.flatten() if v >= 0)
-        sur = [c for c in target if have[c] > target[c]]; dfc = [c for c in target if have[c] < target[c]]
-        if not sur and not dfc: break
-        best = None
-        for y in range(H):
-            for x in range(W):
-                a = int(g[y, x])
-                if a not in sur: continue
-                for q in nb(g, y, x):
-                    b = int(g[q])
-                    if b in dfc:
-                        score = sum(int(g[r]) == b for r in nb(g, y, x)) * 2 - sum(int(g[r]) == a for r in nb(g, y, x))
-                        if best is None or score > best[0]: best = (score, y, x, b)
-        if best is None:
-            # No shared border: relay through a colour m that borders both (a -> m here, then m -> b next round), so a
-            # recoloured cell always sits next to its own colour (11-03: two orange cells had landed in the green bow).
-            a, b = sur[0], dfc[0]
-            def touches(c1, c2):
-                return any(int(g[q]) == c2 for y in range(H) for x in range(W) if g[y, x] == c1 for q in nb(g, y, x))
-            relay = [m for m in target if m not in (a, b) and touches(a, m) and touches(m, b)]
-            if relay:
-                m = relay[0]
-                y, x = max(((y, x) for y in range(H) for x in range(W) if g[y, x] == a and any(int(g[q]) == m for q in nb(g, y, x))),
-                           key=lambda p: sum(int(g[q]) == m for q in nb(g, *p)))
-                g[y, x] = m; continue
-            ps = [(y, x) for y in range(H) for x in range(W) if g[y, x] == a]
-            qs = [(y, x) for y in range(H) for x in range(W) if g[y, x] == b] or ps
-            y, x = min(ps, key=lambda p: min(abs(p[0] - q[0]) + abs(p[1] - q[1]) for q in qs))
-            g[y, x] = b; continue
-        _, y, x, b = best; g[y, x] = b
-    return g
-
-def grow_shrink(grid, target):
-    """2026-11-03 (level 2's picture 04: its colour shares differ a lot from A's, and recolouring along colour borders
-    ate an orange stripe): a short colour grows on its outer edge (empty cells next to it) and a long one is trimmed on
-    its outer edge, so stripes, masts and faces inside the picture stay as drawn. Only colour 0 may grow into the
-    bottom row. Then exact() settles any remainder."""
-    g = grid.copy(); H, W = g.shape
-    for _ in range(3000):
-        have = Counter(int(v) for v in g.flatten() if v >= 0)
-        dfc = [c for c in target if have[c] < target[c]]; sur = [c for c in target if have[c] > target[c]]
-        moved = False
-        for d in dfc:
-            cand = [(y, x) for y in range(H) for x in range(W) if g[y, x] < 0 and (d == 0 or y < H - 1)
-                    and any(int(g[q]) == d for q in nb(g, y, x))]
-            if cand:
-                y, x = max(cand, key=lambda p: (sum(int(g[q]) == d for q in nb(g, *p)), -sum(int(g[q]) not in (-1, d) for q in nb(g, *p))))
-                g[y, x] = d; moved = True; break
-        for c in sur:
-            cand = [(y, x) for y in range(H) for x in range(W) if g[y, x] == c and any(g[q] < 0 for q in nb(g, y, x))
-                    or (g[y, x] == c and (y in (0, H - 1) or x in (0, W - 1)))]
-            if cand:
-                y, x = min(cand, key=lambda p: sum(int(g[q]) == c for q in nb(g, *p)))
-                g[y, x] = -1; moved = True; break
-        if not moved or (not dfc and not sur):
-            break
-    return g
+def resplit_ammo(queue, counts):
+    """2026-11-04: every colour's ammo total becomes its new bubble count, split over that colour's members
+    in proportion to A's ammo (largest remainder, at least 1 each); lane, colour and order stay A's."""
+    q = [dict(e) for e in queue]
+    for c in {e['color'] for e in q}:
+        idx = [i for i, e in enumerate(q) if e['color'] == c]
+        old = [q[i]['ammo'] for i in idx]; n = counts.get(c, 0)
+        if n < len(idx):
+            raise ValueError(f'颜色 {c} 只有 {n} 颗，少于它的 {len(idx)} 个队员')
+        raw = [n * o / sum(old) for o in old]
+        new = [max(1, int(r)) for r in raw]
+        for k in sorted(range(len(idx)), key=lambda k: raw[k] - int(raw[k]), reverse=True):
+            if sum(new) >= n: break
+            new[k] += 1
+        while sum(new) > n:
+            k = max(range(len(new)), key=lambda k: new[k]); new[k] -= 1
+        for i, a in zip(idx, new): q[i]['ammo'] = a
+    return q
 
 
 def first_rows(cells, W, H):
@@ -140,7 +85,6 @@ def first_rows(cells, W, H):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--level', type=int, required=True, choices=(1, 2))
     ap.add_argument('--image', required=True); ap.add_argument('--title', required=True); ap.add_argument('--out')
-    ap.add_argument('--grow', action='store_true', help='grow/trim colours on the outer edge first (pictures whose colour shares differ from A)')
     a = ap.parse_args()
     res = RES[a.level]; A = json.loads((LEVELS / f'{res}.json').read_text())
     W, H = A['columns'], A['rows']; cols = palette(A)
@@ -155,9 +99,16 @@ def main():
         if best is None or abs(n - sum(target.values())) < best[0]: best = (abs(n - sum(target.values())), s, gr)
     _, scale, grid = best
     before = Counter(int(v) for v in grid.flatten() if v >= 0)
-    g = exact(grow_shrink(grid, target) if a.grow else grid, target)
-    changed = int((g != grid).sum())
+    g = grid.copy()
+    changed = 0
     B = json.loads(json.dumps(A)); B['cells'] = [int(v) for v in g.flatten()]; B['title'] = a.title
+    newc = dict(Counter(int(v) for v in g.flatten() if v >= 0))
+    if set(newc) != set(target):
+        print('图里的颜色和本关不一致：', sorted(newc), '应为', sorted(target)); return 1
+    try:
+        B['queue'] = resplit_ammo(A['queue'], newc)
+    except ValueError as e:
+        print(e); return 1
     B['shades'] = [0] * (W * H)   # sourceImage stays A's, like the other B drafts (the new picture is in the manifest)
     out = Path(a.out) if a.out else ROOT / f'Art/levels-b/work/第{a.level:03d}关_{res}'
     out.mkdir(parents=True, exist_ok=True)
@@ -165,6 +116,8 @@ def main():
     fa, fb = first_rows(A['cells'], W, H), first_rows(B['cells'], W, H)
     rep = dict(level=a.level, resource=res, title=a.title, image=str(a.image), scale=round(float(scale), 2),
                quantized={int(k): v for k, v in before.items()}, target=target, changedCells=changed,
+               counts={int(k): v for k, v in newc.items()},
+               ammo=[e['ammo'] for e in B['queue']], ammoA=[e['ammo'] for e in A['queue']],
                bottomRowHasColour0=0 in [B['cells'][(H - 1) * W + c] for c in range(W)],
                firstRowA={int(k): v for k, v in fa.items()}, firstRowB={int(k): v for k, v in fb.items()})
     (out / 'report.json').write_text(json.dumps(rep, ensure_ascii=False, indent=1))

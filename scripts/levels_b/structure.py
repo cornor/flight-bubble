@@ -269,7 +269,7 @@ def main():
                     # 2026-11-03: teaching levels 1-2 are small silhouettes; the 60 x 60 layers/replay do not apply,
                     # the check is validate_teaching (counts, queue, lesson fields, colour 0 on the front row).
                     verdict = '超差' if problems else '通过'
-                    note = '；'.join(problems) or '教学关：各色数量、排队、教学设置与原版一致，底排有颜色 0'
+                    note = '；'.join(problems) or '教学关：排队队员、教学设置与原版一致，各色弹量等于颗数，底排有颜色 0'
                     rows.append(dict(game=game, verdict=verdict, note=note, mix=0.0, replay='—', replayNote='', a={}, b={},
                                      layers={d: 0.0 for d in LAYERS}, lowestShifts={}))
                     print(f'{label(game)}：{verdict} {note}', flush=True)

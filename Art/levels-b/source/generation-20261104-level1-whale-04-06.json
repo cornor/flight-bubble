@@ -1,0 +1,240 @@
+{
+  "date": "2026-11-04",
+  "mode": "built-in image_gen",
+  "generationCount": 9,
+  "postprocess": "Categorical palette mapping to the requested three inks plus white; registered grid sampling to 24x20; nearest-neighbor 50x export. No new artwork drawn in code.",
+  "records": [
+    {
+      "variant": 4,
+      "output": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第1关-喷水的小蓝鲸-04.png",
+      "logicalSize": [
+        24,
+        20
+      ],
+      "exportSize": [
+        1200,
+        1000
+      ],
+      "palette": [
+        "#FFFFFF",
+        "#42A9FF",
+        "#62E18E",
+        "#FF9D30"
+      ],
+      "qa": {
+        "variant": 4,
+        "counts": [
+          275,
+          148,
+          36,
+          21
+        ],
+        "ratios": [
+          72.2,
+          17.56,
+          10.24
+        ],
+        "eyes": [
+          [
+            15,
+            13,
+            2,
+            2,
+            4
+          ],
+          [
+            19,
+            13,
+            2,
+            2,
+            4
+          ]
+        ],
+        "samplingOffset": [
+          0.35,
+          0.3
+        ],
+        "samplingSpan": 1,
+        "ratioOrder": [
+          "blue",
+          "green",
+          "orange"
+        ],
+        "ratiosExcludeWhite": true,
+        "foregroundComponents": 1,
+        "greenComponents": 1,
+        "orangeComponents": 3,
+        "bottomEdgeContainsBlue": true
+      },
+      "sha256": "95b0e56ee4670076a4e9c80cb4977ce706cf1a5090ab2c9ebb7968684b6375b3",
+      "generationCalls": [
+        {
+          "prompt": "Use case: stylized-concept.\nCreate ONE very cute extremely simple chunky PIXEL ICON of a FAT BABY BLUE WHALE spraying a GREEN FOUNTAIN. Wide canvas ratio6:5. Treat the entire art as EXACTLY24 columns by20 rows of solid square pixel tiles enlarged with nearest-neighbor: a square tile occupies1/24ofwidth and1/20ofheight. This is coarse24x20pixelart, NOT a detailed illustration, not smooth curves, not a grid drawn on top. No outlines, no gridlines, no shading, gradients, antialiasing, tiny dots, fine lines or text.\nONE round chubby whale seen from the side, broad oval-pill body in flat BLUE #42A9FF. The whole whale including tail spans nearly ALL24columns. Big blue belly reaches and TOUCHES the bottom row, no white margin underbody. Cute large round head at one side, little tail at the opposite side. All contours use big square stair steps. No separate other creatures.\nExactly TWO LARGE WHITE SQUARE EYES in the visible head/face area, EACH EXACTLY2x2logicaltiles, separated by at leastonebluecolumn. Pure white eye squares only, NO pupils, black, eyelashes or outline. To show both eyes, use a slightlythree-quarter face on a mainly side-profilebody. One/two chunky round stepped ORANGE blush patches oncheeks and a SMALL ORANGE tail/flukes at rear. NO other facialdetails needed.\nA big cheerful GREEN fountain sprays upward out oftopofhead, shaped like one simple little three-pronged fountain/treetop, with a SHORT THICK2-cell stem and big rounded stepped lobes. Greenwater is ONE CONNECTED LARGE SHAPE touchingwhaletop, not separate drops, no tiny splashspecks. Fountainusesupperhalfofcanvas, whale occupieslowerhalf. Simple strong silhouette readable at24x20.\nUse ONLY3inks plus white background: BLUE #42A9FF about70%, GREEN #62E18E about18%, ORANGE #FF9D30 about11% ofthe COLORED/paintedtiles; excludeallwhitefrompercentages. Aimroughly180bluecells,46greencells,28orangecells, but naturalcutewhaleshapeisthepriority. White #FFFFFF is emptybackground andthetwo2x2eyes. FULLYOPAQUE whitebackground, NO transparent areas. Exactcolors, noextra shades, no black atall. Allcolorregionsalignedtothesame24x20grid. No border, label, lettering, shadow, sceneorpattern.\nVariant04: whale facesRIGHT, orange forkedtailonLEFT, roundheadandplumpbluebody. Greenfountain openslikea broad three-lobed little tree abovehead. Eyes sit as TWO2x2whiteblocks inupperrightpartofbody. Two compactorangecheeks under/nexttoeyes, tinyorangeflukesleft. Cheerful solidblocksilhouette.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-dc36e860-5580-445b-b5a9-c88d8da7dc78.png"
+        },
+        {
+          "prompt": "Use case: precise-object-edit. Edit this single chunky pixel baby whale icon to correct color-area proportions. Keep canvas ratio 6:5, pure white background, the existing whale direction, fat blue body shape/position, body touching bottom edge, and exactly two 2x2-tile WHITE SQUARE EYES. Do not introduce any pupils or outlines.\nMake ONLY these color-area corrections:\n1. The green fountain is currently much too large (36% of colored area). SHRINK THE ENTIRE GREEN FOUNTAIN to approximately 60% of its current width AND 62% of its current height, anchored at the bottom of its stem where it touches whale head. Erase its former area to white. The new fountain including its short stem should be about 11-12 logical cells wide and 6 cells high on the 24x20 canvas, only 40-45 occupied green cells. Keep three rounded stepped lobes like a little fountain, connected to short thick 2-cell stem. NO separated droplets. Plenty of white space above this smaller fountain. Green should become approximately18% of nonwhite areas.\n2. Increase orange colored area by about20%: make both orange stepped round cheeks a little larger/thicker, while keeping the small forked orange tail. Aim for total orange 11% of nonwhite areas, blue70%, green18%. Keep eyes untouched.\nStrict final style: real COARSE 24x20 square-pixel-grid art, all edges align with that single grid, flat opaque EXACTLY BLUE #42A9FF, GREEN #62E18E, ORANGE #FF9D30, WHITE #FFFFFF. Absolutely NO gradients, shadows, texture, outline, small dots, text, blur, extra hues. Blue is clearly dominant. Still ONE broad cute whale almost full canvas width at bottom. Reference is edit target.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-9ae69a46-e143-48d2-a84b-3e4e1bdb5e51.png"
+        },
+        {
+          "prompt": "Use case: precise-object-edit. Input is edit target. ONLY enlarge the GREEN FOUNTAIN slightly, to 125% of its current width and 135% of its current height. Keep the stem bottom anchored to the exact same point on the blue whale head, extend upward and to both sides. Keep the same simple three-lobed fountain silhouette, short thick stem, all connected as one shape. The green fountain should occupy approximately 18% of all colored pixels, about40 green tiles on the whole24x20 tilecanvas, rather than current12%. This is a modest enlargement; do NOT return to the giant fountain filling whole canvaswidth.\nEVERYTHING ELSE UNCHANGED: whale facing direction, BLUE broad chubby body touching bottom, exact placement and sizes of two WHITE2x2squaretileeyes, ORANGE cheeks and tail, pure WHITE empty background.\nSimple24x20squaretilepixelart, enlarge hard square steps. Solidflat #42A9FF blue, #62E18E green, #FF9D30 orange, #FFFFFF white only. NO gradients, texture, outlines, antialiasing, little dots, shadows, text. Canvas6:5.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-be209bef-2814-4247-8d1f-6bfab990e599.png"
+        }
+      ]
+    },
+    {
+      "variant": 5,
+      "output": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第1关-喷水的小蓝鲸-05.png",
+      "logicalSize": [
+        24,
+        20
+      ],
+      "exportSize": [
+        1200,
+        1000
+      ],
+      "palette": [
+        "#FFFFFF",
+        "#42A9FF",
+        "#62E18E",
+        "#FF9D30"
+      ],
+      "qa": {
+        "variant": 5,
+        "counts": [
+          256,
+          158,
+          40,
+          26
+        ],
+        "ratios": [
+          70.54,
+          17.86,
+          11.61
+        ],
+        "eyes": [
+          [
+            3,
+            13,
+            2,
+            2,
+            4
+          ],
+          [
+            6,
+            13,
+            2,
+            2,
+            4
+          ]
+        ],
+        "samplingOffset": [
+          0.4,
+          0.7
+        ],
+        "ratioOrder": [
+          "blue",
+          "green",
+          "orange"
+        ],
+        "ratiosExcludeWhite": true,
+        "foregroundComponents": 1,
+        "greenComponents": 1,
+        "orangeComponents": 3,
+        "bottomEdgeContainsBlue": true
+      },
+      "sha256": "4e07a064949af3dd0f3cc9a1c4eec0edaae6df8516fc2207b337540d7b4c0634",
+      "generationCalls": [
+        {
+          "prompt": "Use case: stylized-concept.\nCreate ONE very cute extremely simple chunky PIXEL ICON of a FAT BABY BLUE WHALE spraying a GREEN FOUNTAIN. Wide canvas ratio6:5. Treat the entire art as EXACTLY24 columns by20 rows of solid square pixel tiles enlarged with nearest-neighbor: a square tile occupies1/24ofwidth and1/20ofheight. This is coarse24x20pixelart, NOT a detailed illustration, not smooth curves, not a grid drawn on top. No outlines, no gridlines, no shading, gradients, antialiasing, tiny dots, fine lines or text.\nONE round chubby whale seen from the side, broad oval-pill body in flat BLUE #42A9FF. The whole whale including tail spans nearly ALL24columns. Big blue belly reaches and TOUCHES the bottom row, no white margin underbody. Cute large round head at one side, little tail at the opposite side. All contours use big square stair steps. No separate other creatures.\nExactly TWO LARGE WHITE SQUARE EYES in the visible head/face area, EACH EXACTLY2x2logicaltiles, separated by at leastonebluecolumn. Pure white eye squares only, NO pupils, black, eyelashes or outline. To show both eyes, use a slightlythree-quarter face on a mainly side-profilebody. One/two chunky round stepped ORANGE blush patches oncheeks and a SMALL ORANGE tail/flukes at rear. NO other facialdetails needed.\nA big cheerful GREEN fountain sprays upward out oftopofhead, shaped like one simple little three-pronged fountain/treetop, with a SHORT THICK2-cell stem and big rounded stepped lobes. Greenwater is ONE CONNECTED LARGE SHAPE touchingwhaletop, not separate drops, no tiny splashspecks. Fountainusesupperhalfofcanvas, whale occupieslowerhalf. Simple strong silhouette readable at24x20.\nUse ONLY3inks plus white background: BLUE #42A9FF about70%, GREEN #62E18E about18%, ORANGE #FF9D30 about11% ofthe COLORED/paintedtiles; excludeallwhitefrompercentages. Aimroughly180bluecells,46greencells,28orangecells, but naturalcutewhaleshapeisthepriority. White #FFFFFF is emptybackground andthetwo2x2eyes. FULLYOPAQUE whitebackground, NO transparent areas. Exactcolors, noextra shades, no black atall. Allcolorregionsalignedtothesame24x20grid. No border, label, lettering, shadow, sceneorpattern.\nVariant05: whale facesLEFT, orange smallupturned forkedtailonRIGHT. Roundbighead, bottom-heavyfatbelly. A connectedGREENfan-shapedfountainaboveheadwithwideouterlobes. TWO2x2whiteeyes together onvisibleleftsideface, smallorangeblush. Allsame3inkpalette/areaandcoarse24x20tilegrid.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-93da0a7b-4f89-434f-80c6-0f9e7f3a7e41.png"
+        },
+        {
+          "prompt": "Use case: precise-object-edit. Edit this single chunky pixel baby whale icon to correct color-area proportions. Keep canvas ratio 6:5, pure white background, the existing whale direction, fat blue body shape/position, body touching bottom edge, and exactly two 2x2-tile WHITE SQUARE EYES. Do not introduce any pupils or outlines.\nMake ONLY these color-area corrections:\n1. The green fountain is currently much too large (36% of colored area). SHRINK THE ENTIRE GREEN FOUNTAIN to approximately 60% of its current width AND 62% of its current height, anchored at the bottom of its stem where it touches whale head. Erase its former area to white. The new fountain including its short stem should be about 11-12 logical cells wide and 6 cells high on the 24x20 canvas, only 40-45 occupied green cells. Keep three rounded stepped lobes like a little fountain, connected to short thick 2-cell stem. NO separated droplets. Plenty of white space above this smaller fountain. Green should become approximately18% of nonwhite areas.\n2. Increase orange colored area by about20%: make both orange stepped round cheeks a little larger/thicker, while keeping the small forked orange tail. Aim for total orange 11% of nonwhite areas, blue70%, green18%. Keep eyes untouched.\nStrict final style: real COARSE 24x20 square-pixel-grid art, all edges align with that single grid, flat opaque EXACTLY BLUE #42A9FF, GREEN #62E18E, ORANGE #FF9D30, WHITE #FFFFFF. Absolutely NO gradients, shadows, texture, outline, small dots, text, blur, extra hues. Blue is clearly dominant. Still ONE broad cute whale almost full canvas width at bottom. Reference is edit target.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-8cd76161-37a0-4ac2-b120-3ae286d0f35f.png"
+        },
+        {
+          "prompt": "Use case: precise-object-edit. Input is edit target. ONLY enlarge the GREEN FOUNTAIN slightly, to 125% of its current width and 135% of its current height. Keep the stem bottom anchored to the exact same point on the blue whale head, extend upward and to both sides. Keep the same simple three-lobed fountain silhouette, short thick stem, all connected as one shape. The green fountain should occupy approximately 18% of all colored pixels, about40 green tiles on the whole24x20 tilecanvas, rather than current12%. This is a modest enlargement; do NOT return to the giant fountain filling whole canvaswidth.\nEVERYTHING ELSE UNCHANGED: whale facing direction, BLUE broad chubby body touching bottom, exact placement and sizes of two WHITE2x2squaretileeyes, ORANGE cheeks and tail, pure WHITE empty background.\nSimple24x20squaretilepixelart, enlarge hard square steps. Solidflat #42A9FF blue, #62E18E green, #FF9D30 orange, #FFFFFF white only. NO gradients, texture, outlines, antialiasing, little dots, shadows, text. Canvas6:5.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-6ada34b1-b877-4071-9899-fe43b0618ec6.png"
+        }
+      ]
+    },
+    {
+      "variant": 6,
+      "output": "/Users/yangdage/aitools/flight/flight-bubble/Art/levels-b/source/第1关-喷水的小蓝鲸-06.png",
+      "logicalSize": [
+        24,
+        20
+      ],
+      "exportSize": [
+        1200,
+        1000
+      ],
+      "palette": [
+        "#FFFFFF",
+        "#42A9FF",
+        "#62E18E",
+        "#FF9D30"
+      ],
+      "qa": {
+        "variant": 6,
+        "counts": [
+          269,
+          150,
+          39,
+          22
+        ],
+        "ratios": [
+          71.09,
+          18.48,
+          10.43
+        ],
+        "eyes": [
+          [
+            16,
+            13,
+            2,
+            2,
+            4
+          ],
+          [
+            20,
+            13,
+            2,
+            2,
+            4
+          ]
+        ],
+        "samplingOffset": [
+          0.3,
+          0.75
+        ],
+        "ratioOrder": [
+          "blue",
+          "green",
+          "orange"
+        ],
+        "ratiosExcludeWhite": true,
+        "foregroundComponents": 1,
+        "greenComponents": 1,
+        "orangeComponents": 3,
+        "bottomEdgeContainsBlue": true
+      },
+      "sha256": "aaf3673b3ca844dc70ba5939ef17ce1f5cd4922406bfc7161f9b81ef2ffa532e",
+      "generationCalls": [
+        {
+          "prompt": "Use case: stylized-concept.\nCreate ONE very cute extremely simple chunky PIXEL ICON of a FAT BABY BLUE WHALE spraying a GREEN FOUNTAIN. Wide canvas ratio6:5. Treat the entire art as EXACTLY24 columns by20 rows of solid square pixel tiles enlarged with nearest-neighbor: a square tile occupies1/24ofwidth and1/20ofheight. This is coarse24x20pixelart, NOT a detailed illustration, not smooth curves, not a grid drawn on top. No outlines, no gridlines, no shading, gradients, antialiasing, tiny dots, fine lines or text.\nONE round chubby whale seen from the side, broad oval-pill body in flat BLUE #42A9FF. The whole whale including tail spans nearly ALL24columns. Big blue belly reaches and TOUCHES the bottom row, no white margin underbody. Cute large round head at one side, little tail at the opposite side. All contours use big square stair steps. No separate other creatures.\nExactly TWO LARGE WHITE SQUARE EYES in the visible head/face area, EACH EXACTLY2x2logicaltiles, separated by at leastonebluecolumn. Pure white eye squares only, NO pupils, black, eyelashes or outline. To show both eyes, use a slightlythree-quarter face on a mainly side-profilebody. One/two chunky round stepped ORANGE blush patches oncheeks and a SMALL ORANGE tail/flukes at rear. NO other facialdetails needed.\nA big cheerful GREEN fountain sprays upward out oftopofhead, shaped like one simple little three-pronged fountain/treetop, with a SHORT THICK2-cell stem and big rounded stepped lobes. Greenwater is ONE CONNECTED LARGE SHAPE touchingwhaletop, not separate drops, no tiny splashspecks. Fountainusesupperhalfofcanvas, whale occupieslowerhalf. Simple strong silhouette readable at24x20.\nUse ONLY3inks plus white background: BLUE #42A9FF about70%, GREEN #62E18E about18%, ORANGE #FF9D30 about11% ofthe COLORED/paintedtiles; excludeallwhitefrompercentages. Aimroughly180bluecells,46greencells,28orangecells, but naturalcutewhaleshapeisthepriority. White #FFFFFF is emptybackground andthetwo2x2eyes. FULLYOPAQUE whitebackground, NO transparent areas. Exactcolors, noextra shades, no black atall. Allcolorregionsalignedtothesame24x20grid. No border, label, lettering, shadow, sceneorpattern.\nVariant06: whale facesRIGHT, orangetailonLEFT anglesup slightly. Especiallyroundchubbyface andbroadlowbelly touchingbottom. Greenfountainwithtallcentralroundlobeandtwoflatterouterlobes, alloneconnectedshape. TWO2x2whiteeye squares andchunkyorangecheeks onrighthead. Exactlythecoarseblockstyleofasimplepuzzlegameicon.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-12af9b40-e128-47a9-8b93-0aba8aaea1fb.png"
+        },
+        {
+          "prompt": "Use case: precise-object-edit. Edit this single chunky pixel baby whale icon to correct color-area proportions. Keep canvas ratio 6:5, pure white background, the existing whale direction, fat blue body shape/position, body touching bottom edge, and exactly two 2x2-tile WHITE SQUARE EYES. Do not introduce any pupils or outlines.\nMake ONLY these color-area corrections:\n1. The green fountain is currently much too large (36% of colored area). SHRINK THE ENTIRE GREEN FOUNTAIN to approximately 60% of its current width AND 62% of its current height, anchored at the bottom of its stem where it touches whale head. Erase its former area to white. The new fountain including its short stem should be about 11-12 logical cells wide and 6 cells high on the 24x20 canvas, only 40-45 occupied green cells. Keep three rounded stepped lobes like a little fountain, connected to short thick 2-cell stem. NO separated droplets. Plenty of white space above this smaller fountain. Green should become approximately18% of nonwhite areas.\n2. Increase orange colored area by about20%: make both orange stepped round cheeks a little larger/thicker, while keeping the small forked orange tail. Aim for total orange 11% of nonwhite areas, blue70%, green18%. Keep eyes untouched.\nStrict final style: real COARSE 24x20 square-pixel-grid art, all edges align with that single grid, flat opaque EXACTLY BLUE #42A9FF, GREEN #62E18E, ORANGE #FF9D30, WHITE #FFFFFF. Absolutely NO gradients, shadows, texture, outline, small dots, text, blur, extra hues. Blue is clearly dominant. Still ONE broad cute whale almost full canvas width at bottom. Reference is edit target.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-254fcc04-4a2d-44b9-b592-6e23211a7722.png"
+        },
+        {
+          "prompt": "Use case: precise-object-edit. Input is edit target. ONLY enlarge the GREEN FOUNTAIN slightly, to 125% of its current width and 135% of its current height. Keep the stem bottom anchored to the exact same point on the blue whale head, extend upward and to both sides. Keep the same simple three-lobed fountain silhouette, short thick stem, all connected as one shape. The green fountain should occupy approximately 18% of all colored pixels, about40 green tiles on the whole24x20 tilecanvas, rather than current12%. This is a modest enlargement; do NOT return to the giant fountain filling whole canvaswidth.\nEVERYTHING ELSE UNCHANGED: whale facing direction, BLUE broad chubby body touching bottom, exact placement and sizes of two WHITE2x2squaretileeyes, ORANGE cheeks and tail, pure WHITE empty background.\nSimple24x20squaretilepixelart, enlarge hard square steps. Solidflat #42A9FF blue, #62E18E green, #FF9D30 orange, #FFFFFF white only. NO gradients, texture, outlines, antialiasing, little dots, shadows, text. Canvas6:5.",
+          "master": "/Users/yangdage/.codex/generated_images/01a16cd0-af8c-7973-b3ac-9e594a71378b/exec-1a5b5c11-edaa-4187-884f-00eaf4ab6eff.png"
+        }
+      ]
+    }
+  ]
+}

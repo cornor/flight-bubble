@@ -240,22 +240,33 @@ def queue_reorder(qa, qb, max_row_shift=None):
 
 
 def validate_teaching(a, b):
-    """Teaching levels 1-2 (tutorial_convert.py): same grid and fields as A except title / shades / cells; every colour
-    keeps A's count, the queue and the lesson are A's, and the bottom row (the front) has colour 0, which the first
+    """Teaching levels 1-2 (tutorial_convert.py): same grid and fields as A except title / shades / cells / queue ammo;
+    the queue members and the lesson are A's, each colour's ammo equals its bubbles (counts may differ from A since 11-04), and the bottom row (the front) has colour 0, which the first
     lesson step ("tap the blue member") needs."""
     problems = []
     W, H = a['columns'], a['rows']
     if (b.get('columns'), b.get('rows')) != (W, H) or len(b['cells']) != W * H:
         problems.append(f'教学关棋盘必须是 {W} × {H}')
-    free = {'cells', 'title', 'shades'}
+    # 2026-11-04 user decision: the bubble count per colour may differ from A (the picture matters most); the queue keeps
+    # A's members (lane, colour, order and every other field) and only the ammo changes, so each colour's ammo = bubbles.
+    free = {'cells', 'title', 'shades', 'queue'}
     for k in set(a) | set(b):
         if k not in free and a.get(k) != b.get(k):
             problems.append(f'字段 {k} 与 A 关不一致')
+    qa, qb = a.get('queue') or [], b.get('queue') or []
+    strip = lambda q: [{k: v for k, v in e.items() if k != 'ammo'} for e in q]
+    if strip(qa) != strip(qb):
+        problems.append('排队的队员（车道、颜色、顺序）与 A 关不一致')
     ca = counts([c for c in a['cells'] if c >= 0]); cb = counts([c for c in b['cells'] if c >= 0])
     if any(c < -1 for c in b['cells']) or set(cb) - set(ca):
         problems.append('有非法颜色索引')
-    if ca != cb:
-        problems.append('各色数量与 A 关不一致')
+    if set(ca) != set(cb):
+        problems.append('颜色种类与 A 关不一致')
+    ammo = {}
+    for e in qb:
+        ammo[e['color']] = ammo.get(e['color'], 0) + e['ammo']
+    if any(e['ammo'] < 1 for e in qb) or ammo != dict(cb):
+        problems.append('各色弹量合计与盘面颗数不一致')
     if 0 not in b['cells'][(H - 1) * W:H * W]:
         problems.append('最下面一排没有颜色 0（教学第一步要点蓝色队员）')
     return problems

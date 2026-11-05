@@ -660,7 +660,8 @@ for method, field in [('Key', 'slotId'), ('Name', 'displayName'), ('Animal', 'an
     lookup += ['                default: return ' + fallback + ';', '            }', '        }']
 # Debut table (2026-10-16): for each level (0-based, training01 first) the squad members appearing for the first
 # time, by character (creatureId), as the hex used in that level. Drives the intro's "新队员" chips and NEW tags.
-_order = ['training01', 'training02'] + [f'sector{i:02}' for i in range(1, 261)]
+# 2026-11-05: the game has 52 levels (PixelWingGame.Levels.LevelCount); sector51+ moved to Art/levels-a/.
+_order = ['training01', 'training02'] + [f'sector{i:02}' for i in range(1, 51)]
 _by_hex = {e['hex'].upper(): e['creatureId'] for e in color_data['colors']}
 _seen, _debut = set(), []
 for _name in _order:

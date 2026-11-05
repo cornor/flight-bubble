@@ -70,9 +70,7 @@ namespace Flightbeat.Game
                 levelPickHeader = "第 " + (first + 1) + "–" + last + " 关";
             }
             TextOutline(s, levelPickHeader, 270f, oy + 84f, 16f, Hex(0xFFE58A), Outline, 1.5f);
-            bool newSet = LevelSetCurrent == LevelSetB;
-            if (LevelSetAvailableCount > 0)
-                TextOutline(s, newSet ? "当前：新版关卡图案（可在设置里切换）" : "当前：经典关卡图案（可在设置里切换）", 270f, oy + 108f, 14f, Hex(0xBFD4F2), Outline, 1.2f);
+            // 2026-11-05: the new levels are the game's levels; no set line and no 「新」 badges any more.
 
             int next = NextBubbleLevel(), unlocked = Economy.Data.unlocked;
             const float cell = 92f, d = 70f, gridTop = 150f;
@@ -93,12 +91,6 @@ namespace Flightbeat.Game
                 else
                     Asset(s, "scene/lock-bubble", cx - 17f, cy - 17f, 34f, 34f, new Color(1f, 1f, 1f, .85f * t));
                 if (cleared) LevelPickStar(s, cx + d * .3f, cy + d * .32f, 8f, t);
-                if (newSet && open && LevelHasB(i))
-                {
-                    float bx = cx + d * .34f, by = cy - d * .36f;
-                    GardenSkin.Shot(s, Hex(0xFF7A6B), new Vector2(bx, by), 24f, t);
-                    TextOutline(s, "新", bx, by - 7f, 13f, Cream, Hex(0x8A1E1E), 1.2f);
-                }
             }
 
             // Page buttons and page dots.

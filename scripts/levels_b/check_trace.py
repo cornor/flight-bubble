@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 from evaluate import STRATEGIES, UNITY
-from levelsb_common import LEVELS_A, ROOT, file_sha256, load_manifest, resource
+from levelsb_common import LEVELS_A, ROOT, a_level_path, file_sha256, load_manifest, resource
 
 
 def main():
@@ -31,7 +31,7 @@ def main():
         b = ROOT / entry['draft']
         if file_sha256(b.read_bytes()) != entry['fileSha256']:
             raise ValueError(f'第 {game} 关草稿哈希不一致')
-        for side, path in [('A', LEVELS_A / f'{res}.json'), ('B', b)]:
+        for side, path in [('A', a_level_path(res)), ('B', b)]:
             sources[str(path)] = file_sha256(path.read_bytes())
             for strategy in STRATEGIES:
                 for seed in range(1, args.runs + 1):

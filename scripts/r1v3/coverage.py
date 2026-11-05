@@ -9,7 +9,8 @@ colors = {e['hex'].upper(): e for e in entries}
 assert len(colors) == len(entries)
 atlas = json.loads((DATA / 'GardenR1/atlas.json').read_text())
 slots = {s['id']: s for s in atlas['slots']}
-levels = ['training01', 'training02'] + [f'sector{i:02}' for i in range(1,261)]
+# 2026-11-05: the game has 52 levels (PixelWingGame.Levels.LevelCount); sector51+ moved to Art/levels-a/.
+levels = ['training01', 'training02'] + [f'sector{i:02}' for i in range(1,51)]
 rows = []
 for index, name in enumerate(levels, 1):
     d = json.loads((DATA / 'levels' / (name + '.json')).read_text())

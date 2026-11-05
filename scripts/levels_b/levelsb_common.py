@@ -9,6 +9,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 LEVELS_A = ROOT / 'UnityProject/Assets/Flightbeat/Resources/levels'
+# 2026-11-05 (user: the new levels 1-52 are the game's levels, the originals backed up): the original files of game
+# levels 53-262 (sector51..sector260) moved out of the game to Art/levels-a/, which holds all 262 originals.
+LEVELS_A_BACKUP = ROOT / 'Art/levels-a'
+
+
+def a_level_path(name):
+    """Original (A) level file by resource name: the game's copy, else the backup in Art/levels-a/."""
+    path = LEVELS_A / f'{name}.json'
+    return path if path.exists() else LEVELS_A_BACKUP / f'{name}.json'
 WORK = ROOT / 'Art/levels-b/work'
 MANIFEST = ROOT / 'Art/levels-b/manifest.json'
 FIRST, LAST = 3, 262          # game levels covered by the B set
@@ -52,7 +61,7 @@ def file_tag(game_level):
 
 
 def load_a(game_level):
-    path = LEVELS_A / f'{resource(game_level)}.json'
+    path = a_level_path(resource(game_level))
     raw = path.read_bytes()
     return json.loads(raw), raw
 

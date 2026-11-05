@@ -130,7 +130,9 @@ def check(allow_test):
                 problems.append(f'{label(e["game"])}：released.json 列出但文件不存在'); continue
             if m.get('status') != 'approved' or m.get('fileSha256') != e['fileSha256']:
                 problems.append(f'{label(e["game"])}：清单里不是已验收状态，或哈希不一致')
-            problems += [f'{label(e["game"])}：{p}' for p in check_entry(e | {'mode': m.get('mode', 'S'), 'sigma': m.get('sigma')}, f.read_bytes())]
+            # 2026-11-05: pass streamBalance too (stream-balanced levels were checked as plain ones and failed).
+            extra = {'mode': m.get('mode', 'S'), 'sigma': m.get('sigma'), 'streamBalance': m.get('streamBalance')}
+            problems += [f'{label(e["game"])}：{p}' for p in check_entry(e | extra, f.read_bytes())]
     for p in problems:
         print('  ✗', p)
     count = len(json.loads(RELEASED.read_text())['levels']) if RELEASED.exists() else 0

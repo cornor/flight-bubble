@@ -23,7 +23,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import simlib
-from levelsb_common import LEVELS_A, ROOT
+from levelsb_common import LEVELS_A, ROOT, a_level_path
 
 CACHE = ROOT / 'tools/work/levels-b/rating'
 D_MAX = .85          # D at or above this scores 10: every run lost at about 20 % progress or less (2026-10-27)
@@ -40,7 +40,7 @@ def level_path(game, level_set='A'):
             return None
         entry = load_manifest()['levels'].get(resource(game))
         return ROOT / entry['draft'] if entry else None
-    return LEVELS_A / (f'training{game:02d}.json' if game <= 2 else f'sector{game - 2:02d}.json')
+    return a_level_path(f'training{game:02d}' if game <= 2 else f'sector{game - 2:02d}')
 
 
 def perf(r):

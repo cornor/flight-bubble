@@ -10,7 +10,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from levelsb_common import LEVELS_A, ROOT, resource
+from levelsb_common import LEVELS_A, ROOT, a_level_path, resource
 
 DOTNET = os.environ.get('DOTNET', str(Path.home() / '.dotnet/dotnet'))
 SIM_DLL = os.environ.get('LEVELSB_SIM', str(Path.home() / 'simbin/LevelsBSim.dll'))
@@ -67,4 +67,4 @@ def gap(sa, sb):
 
 
 def a_path(game):
-    return LEVELS_A / f'{resource(game)}.json'
+    return a_level_path(resource(game))

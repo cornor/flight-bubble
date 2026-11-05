@@ -2,8 +2,9 @@
 # R1 v3 (bubble squad): rebuild the atlas (deliveries + placeholders), regenerate the battle UI prefabs,
 # audit logic/data, then build WebGL.
 # usage: bash scripts/r1v3/build.sh [--new-levels] [/absolute/new/output/dir]
-#   bash scripts/r1v3/build.sh                 the original levels (plus approved/released B levels); a leftover
-#                                              B-test channel is removed first, so it never ships
+#   bash scripts/r1v3/build.sh                 the game's levels: since 2026-11-05 the 52 released new levels
+#                                              (Resources/levels/B, players always get them; ?set=A shows the
+#                                              originals 1-52); a leftover B-test channel is removed first
 #   bash scripts/r1v3/build.sh --new-levels    test build with every new level waiting for a playtest (manifest
 #                                              'evaluated', current drafts), opening on set B (URL set=A for the
 #                                              originals); runs check_web.sh afterwards (R1_CHECK_WEB=0 skips it).

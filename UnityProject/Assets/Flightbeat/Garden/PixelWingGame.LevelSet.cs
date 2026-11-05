@@ -13,14 +13,13 @@ namespace Flightbeat.Game
     //  - Released levels come from Resources/levels/B/released.json, test levels from B-test/test.json (only
     //    present in test builds). A level is enabled only if its file exists and its SHA-256 matches the list;
     //    anything else keeps the A level (per-level fallback).
-    //  - The choice is a bubble-layer PlayerPrefs key, never FleetProfile. Evidence and regression runs
-    //    (evidenceControlled) stay on A unless --level-set B is passed explicitly; a URL "set=B" / "set=A"
-    //    overrides the saved choice for that session only.
-    //  - Changing the set only renames entries; the running battle is not touched (next level entry uses it).
+    //  - 2026-11-05 (user: the new levels 1-52 are the game's levels; drop the switch): players always get set B.
+    //    The settings switch and its saved PlayerPrefs choice are gone; a URL "set=A" still shows the originals for
+    //    that session (comparison only). Evidence and regression runs (evidenceControlled) stay on A unless
+    //    --level-set B is passed explicitly.
     public partial class PixelWingGame
     {
         public const int LevelSetA = 0, LevelSetB = 1;
-        const string LevelSetKey = "garden.levelSet";
         [Serializable] sealed class LevelSetEntry { public int game; public string resource, fileSha256, cellsSha256; }
         [Serializable] sealed class LevelSetList { public LevelSetEntry[] levels; public string defaultSet; }
         public sealed class LevelSetSource { public string name, kind, fileSha256, cellsSha256; }
@@ -28,10 +27,6 @@ namespace Flightbeat.Game
         static string[] levelsA;
         static Dictionary<int, LevelSetSource> levelsB;   // levelIndex -> enabled B (or B-test) level
         public static int LevelSetCurrent { get; private set; }
-        static bool levelSetSessionOverride;
-        // 2026-11-03 (user: a build mode with the new levels, opening on them): B-test/test.json may carry
-        // "defaultSet": "B" (build.sh --new-levels); used only when neither the URL/args nor a saved toggle chose.
-        static bool testDefaultB;
 
         // Original names, copied before the first change (also used by checks that must run on set A).
         public static string[] OriginalLevelNames
@@ -65,11 +60,10 @@ namespace Flightbeat.Game
             try { parsed = JsonUtility.FromJson<LevelSetList>(list.text); }
             catch (Exception e) { Debug.LogWarning("Level set list unreadable: " + listPath + " " + e.Message); return; }
             if (parsed?.levels == null) return;
-            if (folder == "B-test" && parsed.defaultSet == "B") testDefaultB = true;
             foreach (var entry in parsed.levels)
             {
                 int index = entry.game - 1;
-                // The B set covers game levels 1..262 (training01/02 since 2026-11-03, sector01..sector260); the name
+                // The B set covers game levels 1..52 (Levels.LevelCount since 2026-11-05; training01/02 since 11-03); the name
                 // must match the slot.
                 if (index < 0 || index >= Levels.Length || entry.resource != OriginalLevelNames[index]) 
                 { Debug.LogWarning("Level set entry ignored: " + folder + " " + entry.game + " " + entry.resource); continue; }
@@ -102,14 +96,9 @@ namespace Flightbeat.Game
         {
             int set = LevelSetA;
             int at = Array.IndexOf(args, "--level-set");
-            if (at >= 0 && at + 1 < args.Length) { set = args[at + 1] == "B" ? LevelSetB : LevelSetA; levelSetSessionOverride = true; }
-            else if (TryLevelSetFromUrl(out int fromUrl)) { set = fromUrl; levelSetSessionOverride = true; }
-            else if (!evidenceControlled)
-            {
-                LoadLevelSetCatalog();
-                int fallback = testDefaultB ? LevelSetB : LevelSetA;
-                set = PlayerPrefs.GetInt(LevelSetKey, fallback) == LevelSetB ? LevelSetB : LevelSetA;
-            }
+            if (at >= 0 && at + 1 < args.Length) set = args[at + 1] == "B" ? LevelSetB : LevelSetA;
+            else if (TryLevelSetFromUrl(out int fromUrl)) set = fromUrl;
+            else if (!evidenceControlled) set = LevelSetB;   // 2026-11-05: the new levels are the game's levels
             ApplyLevelSet(set);
             if (set == LevelSetB) Debug.Log("GARDEN_LEVEL_SET B " + LevelSetAvailableCount);
         }
@@ -125,14 +114,6 @@ namespace Flightbeat.Game
                 if (parts[1] == "A" || parts[1] == "a") { set = LevelSetA; return true; }
             }
             return false;
-        }
-        // Home settings toggle (action LevelSetAction). Takes effect from the next level entry.
-        void ToggleLevelSet()
-        {
-            int next = LevelSetCurrent == LevelSetB ? LevelSetA : LevelSetB;
-            ApplyLevelSet(next);
-            if (!levelSetSessionOverride && !evidenceControlled) { PlayerPrefs.SetInt(LevelSetKey, next); PlayerPrefs.Save(); }
-            audioChip.Play("ui");
         }
     }
 }

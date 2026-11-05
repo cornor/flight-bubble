@@ -93,10 +93,10 @@ namespace Flightbeat.Editor
             Check(game.LevelIndex == 3 && !game.TransitionActive && game.Economy.Data.energy == 0, "Zero-energy retry succeeds through original transition");
             game.Economy.Data.energy = 0; Check(!game.Economy.CanSortie, "Next fixture has zero energy"); Invoke("NextLevel");
             Check(game.LevelIndex == 4 && game.Economy.Data.energy == 0, "Zero-energy next succeeds");
-            p = game.Economy.Data; p.cleared.Clear(); p.cleared.AddRange(Enumerable.Range(1, 262)); p.energy = 0; Invoke("StartBubbleLevel");
-            Check(game.LevelIndex == 261 && !game.InHome, "All cleared starts the last level");
+            p = game.Economy.Data; p.cleared.Clear(); p.cleared.AddRange(Enumerable.Range(1, PixelWingGame.Levels.Length)); p.energy = 0; Invoke("StartBubbleLevel");
+            Check(game.LevelIndex == PixelWingGame.Levels.Length - 1 && !game.InHome, "All cleared starts the last level");   // 52 levels since 2026-11-05
             Set("evidenceViewport", new Vector2Int(540, 1170)); Invoke("ApplyDisplay", 540, 1170);
-            for (int i = 0; i < 262; i++)
+            for (int i = 0; i < PixelWingGame.Levels.Length; i++)
             {
                 game.Economy.Data.energy = 5;
                 Check(game.StartSortie(i), "StartSortie " + (i+1));

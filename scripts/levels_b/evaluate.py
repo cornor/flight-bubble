@@ -34,7 +34,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import make_temp
-from levelsb_common import LEVELS_A, ROOT, file_sha256, label, load_manifest, record_check, resource
+from levelsb_common import LEVELS_A, ROOT, a_level_path, file_sha256, label, load_manifest, record_check, resource
 
 UNITY = '/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/MacOS/Unity'
 STRATEGIES = {0: '内置建议', 1: '优先攻击', 2: '优先合成', 3: '优先清位'}
@@ -110,7 +110,7 @@ def main():
     cases, sources = [], {}
     for game in args.levels:
         res = resource(game)
-        a_path = LEVELS_A / f'{res}.json'
+        a_path = a_level_path(res)
         if args.self or args.noise:
             b_path = a_path
         elif args.temp:

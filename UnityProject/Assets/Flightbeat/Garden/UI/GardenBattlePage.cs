@@ -46,13 +46,8 @@ namespace Flightbeat.Garden.UI
         // 2026-10-19 B level set: home-only settings row 「新图案关卡」 with a switch, a runtime copy of the 光效 row
         // placed under it. While it shows, the panel grows by one row and the buttons below move down with it.
         // Hidden (and the panel unchanged) when no B level is available.
-        public const int LevelSetAction = 805;
-        const float LevelSetRow = 98f;
-        GameObject levelSetRow, levelSetDivider;
-        Image levelSetToggle;
         RectTransform settingsPanelArt, resumeRect;
         float panelHeight, resumeY, resetY;
-        bool levelSetShown;
 
         PixelWingGame owner;
         GardenUiAction[] headerActions, controlActions, pauseActions, resultActions;
@@ -78,7 +73,7 @@ namespace Flightbeat.Garden.UI
                 if (action.actionId == 24 && action.name == "Resume")
                 { resumeLabel = action.GetComponentInChildren<GardenUiText>(true); resumeLabel.alternateText = "完  成"; }
             CreateResetProgress();
-            CreateLevelSetRow();
+            CaptureSettingsLayout();
             CreateMainButtonLabels();
             LightenDialogTitles();
             FindWinParts();
@@ -269,55 +264,19 @@ namespace Flightbeat.Garden.UI
         }
         public void PresentResetProgress(string label) { if (resetLabel) resetLabel.Present(false, label); }
 
-        void CreateLevelSetRow()
+        // 2026-11-05 (user: the new levels are the game's levels, drop the switch): the hidden 「新版关卡图案」 row is gone;
+        // only the settings layout the home mode moves (panel height, Resume and Reset rows) is captured here.
+        void CaptureSettingsLayout()
         {
-            GardenUiAction light = null, sound = null, resume = null;
+            GardenUiAction resume = null;
             foreach (var action in pauseActions)
-            {
-                if (action.actionId == 22) light = action;
-                else if (action.actionId == 21) sound = action;
-                else if (action.actionId == 24 && action.name == "Resume") resume = action;
-            }
-            if (!light || !resume || levelSetRow) return;
-            levelSetRow = Instantiate(light.gameObject, light.transform.parent, false);
-            levelSetRow.name = "Level set";
-            var rect = (RectTransform)levelSetRow.transform;
-            rect.anchoredPosition = ((RectTransform)light.transform).anchoredPosition - new Vector2(0, LevelSetRow);
-            levelSetRow.GetComponent<GardenUiAction>().actionId = LevelSetAction;
-            // 2026-10-21 18:11 (user): a wording players understand (was 新图案关卡); its own icon when delivered.
-            foreach (var text in levelSetRow.GetComponentsInChildren<GardenUiText>(true)) { text.text = text.alternateText = "新版关卡图案"; text.SetVerticesDirty(); }
-            var alt = levelSetRow.transform.Find("Alt icon");
-            if (alt) { alt.gameObject.SetActive(true); var own = levelSetRow.transform.Find("Light icon"); if (own) own.gameObject.SetActive(false); }
-            levelSetToggle = levelSetRow.GetComponentsInChildren<Image>(true).Length > 0 ? FindToggle(levelSetRow.transform) : null;
-            // The 光效 row has no divider under it (it was the last row); borrow the 音效 row's.
-            var divider = sound ? sound.transform.Find("Divider") : null;
-            if (divider) { levelSetDivider = Instantiate(divider.gameObject, light.transform, false); levelSetDivider.SetActive(false); }
-            levelSetRow.SetActive(false);
+                if (action.actionId == 24 && action.name == "Resume") resume = action;
+            if (!resume || resumeRect) return;
             settingsPanelArt = pauseDialog.transform.Find("Settings/Content/Panel") as RectTransform;
             resumeRect = (RectTransform)resume.transform;
             if (settingsPanelArt) panelHeight = settingsPanelArt.sizeDelta.y;
             resumeY = resumeRect.anchoredPosition.y;
             resetY = resetProgress ? ((RectTransform)resetProgress.transform).anchoredPosition.y : 0f;
-            pauseActions = pauseDialog.GetComponentsInChildren<GardenUiAction>(true);
-        }
-        static Image FindToggle(Transform row)
-        {
-            foreach (var image in row.GetComponentsInChildren<Image>(true))
-                if (image.name.EndsWith(" toggle")) return image;
-            return null;
-        }
-        // show: home settings and at least one B level; on: the B set is selected.
-        public void PresentLevelSet(bool show, bool on)
-        {
-            if (!levelSetRow) return;
-            if (show != levelSetShown)
-            {
-                levelSetShown = show;
-                levelSetRow.SetActive(show);
-                if (levelSetDivider) levelSetDivider.SetActive(show);
-                RelayoutSettings();
-            }
-            if (show && levelSetToggle) levelSetToggle.sprite = on ? toggleOn : toggleOff;
         }
 
         // Home key art background (Art/R1/home-v1 H2): a full-screen image over the battle background bands,
@@ -410,7 +369,7 @@ namespace Flightbeat.Garden.UI
         void RelayoutSettings()
         {
             if (!resumeRect) return;
-            float extraRow = levelSetShown ? LevelSetRow : 0f;
+            const float extraRow = 0f;
             // 2026-10-31 16:33 (user: 设置页的样式跟参照图不一样): on the home settings the 完成 button sits inside the panel,
             // under the divider and 「重置关卡进度」, as in the reference (it hung below the panel, half under its shadow).
             if (settingsPanelArt) settingsPanelArt.sizeDelta = new Vector2(settingsPanelArt.sizeDelta.x, panelHeight + extraRow + (homeMode ? 115f : 0f));

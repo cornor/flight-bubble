@@ -132,8 +132,6 @@ namespace Flightbeat.Game
             view.toggleIcons[1].sprite = audioChip.EffectsMuted ? view.toggleOff : view.toggleOn;
             view.toggleIcons[2].sprite = effects.Enabled ? view.toggleOn : view.toggleOff;
             view.PresentResetProgress(ResetProgressLabel);
-            // 2026-10-22: hide the new-level switch for now; preserve the selected level set and saved progress.
-            view.PresentLevelSet(false, LevelSetCurrent == LevelSetB);
         }
         bool TryGardenUiHit(Vector2 logical, out int id)
         {

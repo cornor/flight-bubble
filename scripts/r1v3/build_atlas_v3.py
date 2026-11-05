@@ -1067,6 +1067,10 @@ def export_loading():
         bg.resize((720, round(720 * bg.height / bg.width)), Image.Resampling.LANCZOS).save(tpl / 'loading-bg.webp', quality=86, method=6)
         logo = Image.open(_llogo).convert('RGBA')
         logo.resize((720, round(720 * logo.height / logo.width)), Image.Resampling.LANCZOS).save(tpl / 'loading-logo.webp', quality=90, method=6)
+        # 2026-11-05 (user: drop what the game no longer uses): index.html only shows these two; earlier designs' files
+        # (mascot, hero, bubble, bar pictures, anchor script) were left behind and copied into every build.
+        for f in tpl.iterdir():
+            if f.name.startswith('loading-') and f.name.split('.')[0] not in ('loading-bg', 'loading-logo'): f.unlink()
         return (tpl / 'loading-bg.webp').stat().st_size + (tpl / 'loading-logo.webp').stat().st_size
     if (LOADING_ART / 'mascot-v2.png').exists():
         # B layout with the user's reference mascot: smiling, raised paw, refined blue pot.

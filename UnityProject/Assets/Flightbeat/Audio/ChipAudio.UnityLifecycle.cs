@@ -46,7 +46,14 @@ namespace Flightbeat.Audio
             AudioClip bubble = Resources.Load<AudioClip>("GardenR1/" + path);
             if (bubble) return bubble;
 #endif
+#if FLIGHTBEAT_GARDEN_R1 && UNITY_WEBGL && !UNITY_EDITOR
+            // 2026-11-05 (user: drop what the game no longer uses): all 79 keys have a bubble clip, so the WebGL bundle
+            // OriginalAudio/flightbeat-original-audio (4.6 MB) was never opened; it moved to Art/archive/original-audio/.
+            Debug.LogWarning("Bubble sound missing: " + path);
+            return null;
+#else
             return OriginalAudioAssets.Load(path);
+#endif
         }
         public AudioClip GetClip(AudioSource source) => source.clip;
         public AudioDataLoadState LoadState(AudioClip clip) => clip.loadState;

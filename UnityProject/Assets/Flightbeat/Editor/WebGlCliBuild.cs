@@ -24,8 +24,9 @@ namespace Flightbeat.Editor
                 GardenBattleUiAssets.RefreshSprites();
                 GardenDefaultEvidence.Write(output + ".defaults.json");
             }
-            // 2026-10-19 (size and speed): the WebGL player only ever opens OriginalAudio/flightbeat-original-audio (4.4 MB
-            // AAC); the 28 MB float-PCM native bundle beside it is for the editor / native players. Anything under
+            // 2026-10-19 (size and speed): the WebGL player only ever opened OriginalAudio/flightbeat-original-audio (4.4 MB
+            // AAC; since 2026-11-05 not at all: every sound has a bubble clip and that bundle moved to Art/archive/); the 28 MB
+            // float-PCM native bundle beside it is for the editor / native players. Anything under
             // Resources ships, so the native bundle is parked outside Assets for the duration of the build and put back
             // afterwards (also on the next build if a crash left it parked).
             RestoreNativeAudio();

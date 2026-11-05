@@ -6,6 +6,7 @@
 - **游戏里还剩什么**：`UnityProject/Assets/Flightbeat/Resources/levels/` 里只保留原版第 1–52 关（`training01/02`、`sector01`–`sector50`），供 `?set=A` 对照和关卡工具使用；第 53–262 关（`sector51`–`sector260`）已从游戏目录移到这里，不再打进包里。
 - **新版在哪**：正式关卡在 `Resources/levels/B/`（由 `scripts/levels_b/publish.py` 发布，`B/released.json` 列出哈希）；草稿与制作记录在 `Art/levels-b/`。
 - **完整找回**：git 标签 `levels-a-original` 是换关前的最后状态（`git checkout levels-a-original -- UnityProject/Assets/Flightbeat/Resources/levels` 可整体还原）。
+- **另外 9 个原版文件**：`other/` 里是原版关卡目录里不在关卡列表中的 9 个文件（`bloom05`、`codex`、`crest06`、`helix03`、`nova07`、`orbit01`、`prism08`、`scout04`、`sentinel02`，原版游戏其他模式用的），游戏和工具都没有用到，11-05 一并移出游戏目录。
 - **关卡工具**：`scripts/levels_b/levelsb_common.py` 的 `a_level_path()` 在游戏目录找不到原版文件时会到这里找。
 
 | 关 | 文件 | 原版关名 | 原版提示难度 | 原版图案来源 | 新版（正式）关名 |

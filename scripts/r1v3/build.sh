@@ -41,10 +41,16 @@ elif [ "${R1_LEVELS_TEST:-0}" != 1 ] && [ -e UnityProject/Assets/Flightbeat/Reso
 fi
 python3 scripts/r1v3/build_atlas_v3.py | tee "$output.atlas.json"
 step "图集"
+# 2026-11-05: Unity renumbers every object when it regenerates the prefabs; keep the old files when
+# nothing in them really changed, so a plain rebuild leaves git clean (scripts/r1v3/prefab_stable.py).
+prefab_snapshot=$(mktemp -d)
+python3 scripts/r1v3/prefab_stable.py save "$prefab_snapshot"
 "$unity" -batchmode -nographics -quit -projectPath "$repo/UnityProject" \
   -executeMethod Flightbeat.Editor.GardenBattleUiAssets.RecreateForV3 -logFile "$output.prefabs.log" || {
     echo "界面 Prefab 重建失败，日志：$output.prefabs.log"; grep -E "error CS|Error|Exception" "$output.prefabs.log" | head -40; exit 1; }
 grep -q GARDEN_UI_PREFABS_CREATED "$output.prefabs.log" || { echo '界面 Prefab 未生成'; exit 1; }
+python3 scripts/r1v3/prefab_stable.py restore "$prefab_snapshot" || { echo '界面 Prefab 引用检查未通过'; exit 1; }
+rm -rf "$prefab_snapshot"
 step "界面 Prefab"
 python3 scripts/r1v3/build_atlas_v3.py > /dev/null      # prefab copy changed: make sure every glyph is in the atlas
 python3 scripts/r1v3/coverage.py > "$output.coverage.json"

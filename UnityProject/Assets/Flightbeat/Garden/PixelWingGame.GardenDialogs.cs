@@ -13,13 +13,14 @@ namespace Flightbeat.Game
     // Rigid layout centred like the prefab dialogs (no band mapping), so the panel keeps its shape on tall screens.
     public partial class PixelWingGame
     {
-        static readonly Color DialogShade = new Color(.055f, .078f, .2f, .8f);
+        // 2026-11-05 (user: the same as 沙画消消): plain black at 200/255 (was indigo .055/.078/.2 at 80 %).
+        static readonly Color DialogShade = new Color(0f, 0f, 0f, 200f / 255f);
         static readonly Color DialogTitleInk = Hex(0x54318C), DialogLinkInk = Hex(0x72568E), DialogSoftInk = Hex(0x796582);
 
         // Shade, card and title. Leaves MapLayout off and returns the vertical offset of the 960-high frame; callers
         // restore MapLayout when done. `y` / `height` are in the 540 x 960 frame.
         float GardenModal(PixelSurface s, string title, float y, float height,
-            float titleOffset = 38f, float titleSize = GardenTitleArt.Size, float shadeAlpha = .8f, string panelSlot = null)
+            float titleOffset = 38f, float titleSize = GardenTitleArt.Size, float shadeAlpha = 200f / 255f, string panelSlot = null)
         {
             HitBlock(s);
             s.MapLayout = false;

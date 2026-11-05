@@ -59,7 +59,7 @@ namespace Flightbeat.Game
                 float w = Mathf.Min(108f, 500f / Battle.LaneCount - 8f), y0 = top - 4f, y1 = top + rowH - 1f, r = 14f;
                 float L = ScreenLayout.Left, R = ScreenLayout.Left + ScreenLayout.Width, H = ScreenLayout.Height;
                 float age = ui - guideShownAt, a = Clamp01(age / .25f);
-                Color shade = new Color(.02f, .04f, .12f, .62f * a);
+                Color shade = new Color(0f, 0f, 0f, .62f * a);   // 2026-11-05 (user: like 沙画消消): black (was navy), same strength
                 s.Rect(L, 0f, R - L, y0, shade);
                 s.Rect(L, y1, R - L, H - y1, shade);
                 for (int row = 0; row < Mathf.CeilToInt(y1 - y0); row++)

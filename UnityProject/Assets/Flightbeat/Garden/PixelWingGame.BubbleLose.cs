@@ -25,7 +25,8 @@ namespace Flightbeat.Game
                 HitBlock(s);
                 s.MapLayout = false;
                 float oy = (ScreenLayout.Height - 960f) * .5f;
-                s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, new Color(.035f, .055f, .16f, .84f * fade));
+                // 2026-11-05 (user: the same as 沙画消消): plain black at 199/255 like its revive popup (was navy at 84 %).
+                s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, new Color(0f, 0f, 0f, 199f / 255f * fade));
                 // 2026-10-30 (调整 14): positions and sizes measured from the reference; a warm light falls from above
                 // onto the heart; the reward tiles are see-through glass.
                 ResultTitle(s, "差一点就成功了！", oy + 162f, 46f, t, fade);

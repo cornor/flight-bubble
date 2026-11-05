@@ -131,7 +131,8 @@ namespace Flightbeat.Garden.UI
         // the board behind all but disappears in a clean night blue and the card, ribbon and buttons stand out.
         UnityEngine.UI.Image resultShield;
         Color resultShieldColor;
-        static readonly Color WinShade = new Color(.055f, .078f, .2f, .8f);
+        // 2026-11-05 (user: the same as 沙画消消): plain black at 200/255, as every popup there (was indigo .055/.078/.2 at 80 %).
+        static readonly Color WinShade = new Color(0f, 0f, 0f, 200f / 255f);
         void FindWinParts()
         {
             var win = new System.Collections.Generic.List<GameObject>();

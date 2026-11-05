@@ -14,6 +14,10 @@ namespace Flightbeat.Feedback
         // mouth (the original muzzle points belong to the old hulls: some started at the mouth, others lower) and
         // land where the bead is drawn (the advance is smoothed for display, the model moves in pulses).
         public Func<int, Vector2> GardenMouth, GardenEnemyAt;
+        // The pad members' drawing (set by the game each frame): canvas, size per tier and feet for a pad y.
+        public float GardenPadCanvas;
+        public Func<int, float> GardenPadScaleOf;
+        public Func<float, float> GardenPadFeetAt;
         public float GardenOffsetDelta;
         public bool GardenComboVisible => comboFade > .01f && !HideCombo;
         int gardenPreviousCombo;
@@ -755,6 +759,17 @@ namespace Flightbeat.Feedback
         Vector2 ShownPoint(float x, float y) => ScreenLayout.EnemyPoint(x, y + GardenOffsetDelta);
         readonly Dictionary<Kamikaze, Vector2> gardenKamikazeHit = new Dictionary<Kamikaze, Vector2>();
         readonly List<Kamikaze> gardenKamikazeGone = new List<Kamikaze>();
+        // The lowest bead of the whole field as drawn (FrontScreenY when the field is empty).
+        float GardenFieldBottom() {
+            float any = float.MinValue;
+            for (int c = 0; c < battle.Level.columns; c++) {
+                int front = battle.Front(c);
+                if (front < 0 || !battle.Alive[front]) continue;
+                float y = EnemyShown(front, ShownPoint(battle.EnemyX(front), battle.EnemyY(front))).y;
+                if (y > any) any = y;
+            }
+            return any > float.MinValue ? any : FrontScreenY;
+        }
         // The bubble field's lower edge as drawn: the lowest front bead within 36 px of screen x, or the lowest front
         // bead anywhere when that part of the field is already cleared; the original front line when none is left.
         Vector2 GardenFieldEdge(float x) {
@@ -950,19 +965,45 @@ namespace Flightbeat.Feedback
                 }
                 if (!k.exploded) {
                     float t = Mathf.Clamp01((k.age / k.delay - .25f) / .75f);
-                    var p = Vector2.Lerp(k.from, hit, t * t);
-                    if (t > 0) GardenFx.Draw(s, "dash-trail", p + new Vector2(0, 45), 36, 96, color(k.color));
-                    GardenSkin.Plant(s, color(k.color), p, k.tier, "0");
+                    if (GardenPadScaleOf != null && GardenPadFeetAt != null && GardenPadCanvas > 0f) {
+                        // 2026-11-05 (user: one toy flying up, not two): the pad farewell is off while this runs, so the
+                        // member itself takes off - same size and feet as on its pad - until its head is in the field's edge.
+                        float scale = GardenPadScaleOf(k.tier), body = GardenPadCanvas * scale;
+                        float feet = Mathf.Lerp(GardenPadFeetAt(k.from.y), hit.y - 8f + body * .8f, t * t);
+                        if (t > 0) GardenFx.Draw(s, "dash-trail", new Vector2(k.x, feet + 27f), 36, 96, color(k.color));
+                        GardenSkin.Creature(s, color(k.color), k.x, feet, GardenPadCanvas, k.tier, "", 0f, 12f, false, false,
+                            0f, 0f, scale);
+                    } else {
+                        var p = Vector2.Lerp(k.from, hit, t * t);
+                        if (t > 0) GardenFx.Draw(s, "dash-trail", p + new Vector2(0, 45), 36, 96, color(k.color));
+                        GardenSkin.Plant(s, color(k.color), p, k.tier, "0");
+                    }
                 } else {
                     // 2026-11-05 (user): the spent member bursts as a soap bubble where it hits the field (was a dust puff).
                     if (!GardenFx.SoapPop(s, hit, 36f, color(k.color), k.age - k.delay, k.color * 7 + (int)k.x))
                         GardenFx.Burst(s, "impact-dust", hit, 80, k.age - k.delay, .5f);
                 }
             }
+            float fieldBottom = GardenFieldBottom();
             foreach (var wave in waves) {
                 float t = Mathf.Clamp01(wave.age / wave.duration);
                 bool revive = wave.kind == RepelKind.Revive;
-                float y = (revive ? 574 : FrontScreenY) - t * (revive ? 260 : 50);
+                // 2026-11-05 (user): merges and spent members each push the field and each started a gust, so a merge chain
+                // stacked several. A gust with a newer one less than .3 s behind it is not drawn; the newer one is drawn
+                // brighter and rises further for each gust it took over. It starts at the field's current lower edge
+                // (FrontScreenY stays at the full board's bottom row).
+                int merged = 0;
+                if (!revive) {
+                    bool absorbed = false;
+                    foreach (var other in waves) {
+                        if (other == wave || other.kind == RepelKind.Revive) continue;
+                        if (other.age < wave.age && wave.age - other.age < .3f) { absorbed = true; break; }
+                        if (other.age > wave.age && other.age - wave.age < .3f) merged++;
+                    }
+                    if (absorbed) continue;
+                }
+                float boost = 1f + .3f * Mathf.Min(merged, 3);
+                float y = (revive ? 574 : fieldBottom) - t * (revive ? 260 : 50 * boost);
                 float h = revive ? 180 : 60;
                 // 2026-10-31 00:27 (user, after the reference): no blue water any more - a wavy gold-and-white light ribbon in
                 // the gap under the bubble field (following its edge as it is pushed up), a band of small foam bubbles,
@@ -1041,7 +1082,7 @@ namespace Flightbeat.Feedback
                 }
                 else
                 GardenFx.Draw(s, revive ? "revive-wave" : "repel-gust", new Vector2(270, y - h * .5f), 540, h,
-                    new Color(1, 1, 1, (revive ? .85f : .65f) * (1 - t)));
+                    new Color(1, 1, 1, Mathf.Min(1f, (revive ? .85f : .65f) * boost) * (1 - t)));
             }
             // f53914: PendingStrike exists during its 1s countdown; SuperDetonate starts superAge.
             // Only the cosmetic can moves; impact timing, target and radius are the original model's.

@@ -39,6 +39,7 @@ namespace Flightbeat.Game
         // about the old 1.18 so neighbours on 7 pads do not overlap).
         // 2026-10-22 10:30 (user: bigger on phones): tier 0 +12 % (.76 -> .85); MAX stays (on 8 pads it nearly touches
         // its neighbours), so the steps narrow to +15 % / +11 % / +10 %.
+        System.Func<int, float> padScaleOf; System.Func<float, float> padFeetAt;   // cached delegates for CombatFeedback
         static float PadTierScale(int tier) => tier >= 3 ? 1.2f : tier == 2 ? 1.09f : tier == 1 ? .98f : .85f;
         readonly Dictionary<int, int> padTier = new Dictionary<int, int>(), padFromTier = new Dictionary<int, int>();
         readonly Dictionary<int, float> padPopAt = new Dictionary<int, float>();
@@ -652,7 +653,9 @@ namespace Flightbeat.Game
             {
                 PadSeen seen = padSeen[id];
                 padSeen.Remove(id);
-                if (seen.ship == null || seen.ship.Ammo > 0 || Battle.State == Phase.Intro) continue;
+                // 2026-11-05 (user: one toy flying up, not two): with the pressure rules on, the spent member flies up and
+                // hits the field itself (CombatFeedback kamikaze), so no farewell on the pad.
+                if (seen.ship == null || seen.ship.Ammo > 0 || Battle.State == Phase.Intro || Battle.Pressure.enabled) continue;
                 padFarewells.Add(new PadFarewell { born = ui, x = seen.x, feet = seen.feet, scale = seen.scale,
                     color = seen.ship.Color, tier = seen.ship.Tier, seed = id });
             }

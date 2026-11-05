@@ -407,6 +407,8 @@ namespace Flightbeat.Game
             GardenSkin.Clock = ui;   // idle motion uses UI time only
             GardenSkin.Celebrate = Battle.State == Phase.Won;
             feedback.GardenMouth = GardenMouth; feedback.GardenEnemyAt = GardenEnemyAt;
+            feedback.GardenPadCanvas = GardenBayCanvas(); feedback.GardenPadScaleOf = padScaleOf ??= PadTierScale;
+            feedback.GardenPadFeetAt = padFeetAt ??= (y => GardenRaisedPadY(y + 12f));
             TrackNewMembers();
             TrackMvpKills();   // 17:34: per-color clears for the victory screen MVP (BubbleWin)
             // 2026-10-16: the original combo counter (f53835) in bubble style, same visibility rule as the source HUD.

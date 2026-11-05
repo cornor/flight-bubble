@@ -48,7 +48,7 @@ def resource(game_level):
     if game_level in TEACHING:
         return TEACHING[game_level]
     if not FIRST <= game_level <= LAST:
-        raise SystemExit(f'第 {game_level} 关不在 B 套范围（第 1、2、{FIRST}–{LAST} 关）')
+        raise SystemExit(f'第 {game_level} 关不在可制作的关卡范围（第 1、2、{FIRST}–{LAST} 关）')
     return f'sector{game_level - 2:02d}'
 
 

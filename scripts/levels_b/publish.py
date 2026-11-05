@@ -136,7 +136,7 @@ def check(allow_test):
     for p in problems:
         print('  ✗', p)
     count = len(json.loads(RELEASED.read_text())['levels']) if RELEASED.exists() else 0
-    print(f'B 套发布检查：{"通过" if not problems else "失败"}（已发布 {count} 关'
+    print(f'关卡发布检查：{"通过" if not problems else "失败"}（已发布 {count} 关'
           + ('，含测试通道' if TEST_DIR.exists() else '') + '）')
     return 1 if problems else 0
 

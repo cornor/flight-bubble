@@ -37,7 +37,7 @@ if [ "$new_levels" = 1 ]; then
   step "新关卡放入测试通道"
 elif [ "${R1_LEVELS_TEST:-0}" != 1 ] && [ -e UnityProject/Assets/Flightbeat/Resources/levels/B-test ]; then
   python3 scripts/levels_b/stage_test.py --clean
-  echo "默认构建：已清除上次留下的测试通道，本包只含原关卡和已验收的 B 套关卡"
+  echo "默认构建：已清除上次留下的测试通道，本包只含已发布的正式关卡"
 fi
 python3 scripts/r1v3/build_atlas_v3.py | tee "$output.atlas.json"
 step "图集"
@@ -52,8 +52,8 @@ python3 scripts/r1/check_source.py > "$output.source.json"
 # B level set (docs/r1/关卡第二套-实施计划.md): only approved, released levels may ship; the B-test channel only
 # in an explicit test build (R1_LEVELS_TEST=1), which is marked and must not be published.
 if [ "${R1_LEVELS_TEST:-0}" = 1 ]; then python3 scripts/levels_b/publish.py --check --allow-test
-else python3 scripts/levels_b/publish.py --check || { echo "B 套关卡检查未通过（测试关卡请用 R1_LEVELS_TEST=1 构建）"; exit 1; }; fi
-step "图集补字、覆盖、源码与 B 套关卡检查"
+else python3 scripts/levels_b/publish.py --check || { echo "关卡发布检查未通过（测试关卡请用 R1_LEVELS_TEST=1 构建）"; exit 1; }; fi
+step "图集补字、覆盖、源码与关卡发布检查"
 "$unity" -batchmode -nographics -quit -projectPath "$repo/UnityProject" -buildTarget WebGL \
   -executeMethod Flightbeat.Editor.WebGlCliBuild.Run --flightbeat-garden-r1 \
   --flightbeat-webgl-build "$output" ${clean_flag[@]+"${clean_flag[@]}"} -logFile "$output.build.log" || {
@@ -107,8 +107,8 @@ if p.exists():
                         lambda m: m[1] + '?v=' + stamp, p.read_text()))
 PY
 if [ "${R1_LEVELS_TEST:-0}" = 1 ]; then
-  echo "本包含 B-test 测试关卡，仅供本机测试，不可发布（R1_LEVELS_TEST=1）" > "$output/LEVELS_TEST_BUILD.txt"
-  echo "⚠ 测试构建：包含 B-test 测试关卡，不可发布"
+  echo "本包含测试通道里的关卡，仅供本机测试，不可发布（R1_LEVELS_TEST=1）" > "$output/LEVELS_TEST_BUILD.txt"
+  echo "⚠ 测试构建：包含测试通道里的关卡，不可发布"
 fi
 if [ "$new_levels" = 1 ] && [ "${R1_CHECK_WEB:-1}" != 0 ]; then
   bash scripts/levels_b/check_web.sh || echo "⚠ 网页检查未通过（见上方输出）；包已生成，可以先试玩"

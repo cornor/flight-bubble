@@ -296,7 +296,7 @@ def main():
                 record_check(game, 'structure', verdict, str(out.relative_to(ROOT)) if out.is_relative_to(ROOT) else str(out),
                              entry['fileSha256'])
     fmt = lambda s: f'步 {s["steps"]} 卡 {s["stuck"]} 盲 {s["blind"]} 救 {s["rescues"]} 合 {s["merges"]}' if s else '—'
-    lines = [f'# B 套结构检查（{kind}，{datetime.now():%Y-%m-%d %H:%M}）', '',
+    lines = [f'# 关卡结构检查（{kind}，{datetime.now():%Y-%m-%d %H:%M}）', '',
              '| 关 | 判定 | 前 1/3/10/20 排差异（判 10、20） | 说明 | 最低排偏移 >5（仅参考，颜色: A→B） | A 理想打法（仅参考） | B 理想打法（仅参考） |',
              '|---|---|---|---|---|---|---|']
     for r in rows:

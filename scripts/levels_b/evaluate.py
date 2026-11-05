@@ -192,7 +192,7 @@ def main():
         bl = f'{x["blocked"]:.1f}s' if x['blocked'] is not None else '-'
         d = f'{x["distance"]:.0f}px' if x['distance'] is not None else '-'
         return f'胜 {x["winRate"]:.0%} 复活 {x["reviveRate"]:.0%} 用时 {t} 卡住 {bl} 距离 {d} 清除 {x["progress"]:.0%}'
-    lines = [f'# B 套难度评估（{kind}，{datetime.now():%Y-%m-%d %H:%M}，每种打法 {args.runs} 次）', '',
+    lines = [f'# 关卡难度评估（{kind}，{datetime.now():%Y-%m-%d %H:%M}，每种打法 {args.runs} 次）', '',
              '| 关 | 打法 | 判定 | A | B | 说明 |', '|---|---|---|---|---|---|']
     for row in rows:
         lines.append(f'| {row["game"]} | {STRATEGIES[row["strategy"]]} | {row["verdict"]} | {fmt(row["a"])} | {fmt(row["b"])} | {row["note"]} |')

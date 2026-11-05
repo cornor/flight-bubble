@@ -26,7 +26,7 @@ def capsule(w, h, top, bottom, radius=None, margin=5, edge=(160, 123, 225), elli
     mask = Image.new('L', (w, h)); shape(ImageDraw.Draw(mask), box, r, fill=255)
     yy = np.linspace(0, 1, h)[:, None, None]
     rgb = np.broadcast_to(np.array(top)[None,None,:]*(1-yy)+np.array(bottom)[None,None,:]*yy,(h,w,3)).astype('uint8')
-    face = Image.fromarray(rgb, 'RGB').convert('RGBA'); face.putalpha(mask)
+    face = Image.fromarray(rgb).convert('RGBA'); face.putalpha(mask)
     shadow = Image.new('RGBA', (w,h), (95,54,155,0))
     sh = Image.new('L',(w,h)); shape(ImageDraw.Draw(sh),(margin,margin+5,w-margin-1,h-margin-1),r,fill=75)
     shadow.putalpha(sh.filter(ImageFilter.GaussianBlur(3)))
@@ -46,7 +46,7 @@ def board_tray():
     def gradient(top, bottom, alpha):
         yy = np.linspace(0, 1, h)[:, None, None]
         rgb = np.broadcast_to(np.array(top)[None,None,:]*(1-yy)+np.array(bottom)[None,None,:]*yy,(h,w,3)).astype('uint8')
-        im = Image.fromarray(rgb, 'RGB').convert('RGBA'); im.putalpha(alpha)
+        im = Image.fromarray(rgb).convert('RGBA'); im.putalpha(alpha)
         return im
     outer = mask((6, 5, 249, 248), 29)
     shadow = Image.new('RGBA', (w,h), (115,78,176,0))
@@ -102,7 +102,7 @@ def main():
     glow=np.exp(-(((x-510)/720)**2+((y-1000)/1150)**2))
     bg=np.zeros((1920,1080,3))
     for i,(a,b) in enumerate(zip((192,170,232),(207,188,242))): bg[:,:,i]=a*(1-t)+b*t+glow*10
-    save(Image.fromarray(np.clip(bg,0,255).astype('uint8'),'RGB'),'scene/background.png')
+    save(Image.fromarray(np.clip(bg,0,255).astype('uint8')),'scene/background.png')
     save(board_tray(),'ui/board-frame.png')
     save(queue_card(),'ui/queue-panel.png')
     for name,w,h,colors in [('level',512,96,cream),('progress-frame',720,96,cream),('progress-fill',512,48,((150,248,106),(74,200,66))),('progress-track',512,48,((220,202,205),(236,220,218)))]:

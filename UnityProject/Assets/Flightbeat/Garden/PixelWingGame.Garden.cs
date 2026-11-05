@@ -662,6 +662,7 @@ namespace Flightbeat.Game
         // their existing paint and input priority. Fixed UI is in nested prefabs.
         void DrawGardenOverlay(PixelSurface s) {
             s.MapLayout = true;
+            GardenVoiceTick();   // 2026-11-04: win / lose / revive / danger voice lines (PixelWingGame.GardenVoice)
             DrawWinScreen(s);   // all levels, teaching ones included (the small lesson card is no longer used)
             DrawLoseScreen(s);  // Failure ribbon and plush illustration above the prefab shade/buttons.
             if (Battle.State == Phase.ReviveOffer) DrawGardenRevive(s);

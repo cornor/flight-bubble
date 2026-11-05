@@ -172,6 +172,9 @@ namespace Flightbeat.Audio
             AudioSource[] effects = { pulse, noise, pulse2, noise2, accent, laser, rocket, detonation, alarm, comms, pressure, superWeapon, ui, finale };
             bool muted = EffectsMuted;
             for (int i = effects.Length - 1; i >= 0; i--) Engine.SetMute(effects[i], muted);
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            GardenApplyVoiceMute();   // 2026-11-04: the captain's voice lines follow the sound-effect switch (ChipAudio.Garden.cs)
+#endif
         }
 
         // src: ChipAudio.ToggleMusic f55170.

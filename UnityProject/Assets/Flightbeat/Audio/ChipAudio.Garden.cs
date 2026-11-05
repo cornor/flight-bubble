@@ -88,6 +88,49 @@ namespace Flightbeat.Audio
             if (t >= 1f) { gardenDuckUntil = -1f; return 1f; }
             return Mathf.Lerp(gardenDuckLevel, 1f, t);
         }
+
+        // 2026-11-04 11:42 (user: put these voice lines in the game): the captain's voice lines (Resources/GardenR1/Voice,
+        // ids as in Art/PlushToy/Voice-20261103; triggers in PixelWingGame.GardenVoice). One line at a time on its own
+        // source (a new line cuts the old one), muted with the sound effects, and the music dips to 60 % while it plays
+        // unless a deeper finale duck is running. Clips are mastered to -16 LUFS; at .6 they sit ~5 dB over the music.
+        // 2026-11-04 17:05: no wait for the first tap any more - like the music, a line started before it is held by the
+        // browser and plays with that tap (GardenHeardInput stays for diagnostics).
+        const float GardenVoiceVolume = .6f;
+        AudioSource gardenVoice;
+        readonly System.Collections.Generic.Dictionary<string, AudioClip> gardenVoiceClips =
+            new System.Collections.Generic.Dictionary<string, AudioClip>();
+        bool gardenHeardInput;
+        public bool GardenHeardInput => gardenHeardInput;
+
+        void GardenNoteInput()
+        {
+            if (!gardenHeardInput && (Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.touchCount > 0)) gardenHeardInput = true;
+        }
+
+        public bool GardenSpeak(string id)
+        {
+            if (EffectsMuted) return false;
+            if (!gardenVoiceClips.TryGetValue(id, out AudioClip clip))
+            {
+                clip = Resources.Load<AudioClip>("GardenR1/Voice/" + id);
+                gardenVoiceClips[id] = clip;
+            }
+            if (!clip) return false;
+            if (gardenVoice == null) gardenVoice = CreateVoiceAtVolume(GardenVoiceVolume);
+            Engine.Stop(gardenVoice);
+            Runtime.SetClip(gardenVoice, clip);
+            Runtime.SetVolume(gardenVoice, GardenVoiceVolume);
+            Engine.SetMute(gardenVoice, false);
+            Runtime.Play(gardenVoice);
+            float now = Runtime.UnscaledTime(), length = Playback.ClipLength(clip);
+            if (gardenDuckUntil < 0f || now >= gardenDuckUntil) GardenDuckMusic(length, .6f, .5f);
+            return true;
+        }
+
+        void GardenApplyVoiceMute()
+        {
+            if (gardenVoice != null) Engine.SetMute(gardenVoice, EffectsMuted);
+        }
     }
 }
 #endif

@@ -60,6 +60,7 @@ namespace Flightbeat.Game
         void DrawWaveHome(PixelSurface s)
         {
             s.MapLayout = false;
+            GardenVoiceHome();   // 2026-11-04: the launch greeting (PixelWingGame.GardenVoice)
             HomeWaveView(out float k, out float ox, out float oy);
             // Quiet decoration: the formerly oversized upper-right bubble is now
             // 42 logical px (about one third of the reference) at 32% opacity.

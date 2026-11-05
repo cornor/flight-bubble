@@ -16,6 +16,8 @@ usage: python3 scripts/r1v3/build_atlas_v3.py [--delivery DIR] [--font PATH]
 import argparse, hashlib, json, math, os, re, sys
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+# 2026-11-04 (user: fix the build warnings): Image.fromarray is called without its mode argument (deprecated in
+# Pillow 11.3, gone in 13); the uint8 arrays' (h, w, 4) / (h, w, 3) shape already makes them RGBA / RGB.
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'scripts/r1v2')); sys.path.insert(0, str(Path(__file__).parent))
@@ -203,13 +205,13 @@ def _thin_base(_id, cut_frac, keep=.6, gamma=.6):
     # 12:05 (user: the squashed base read too dark): the base is lifted a little (gamma .75 on its colours), since the
     # squash also squeezed out its light reflection line.
     _b = np.asarray(base.resize((w, nb), Image.LANCZOS)).astype(np.float32) / 255; _b[..., :3] = _b[..., :3] ** gamma
-    out.alpha_composite(Image.fromarray((_b * 255).astype(np.uint8), 'RGBA'), (0, h - nb))
+    out.alpha_composite(Image.fromarray((_b * 255).astype(np.uint8)), (0, h - nb))
     # 14:24 (user: the base was lifted but the dark rim along the top and sides was not): the same lift on the dark
     # outline pixels everywhere (weighted by darkness, so the face is untouched).
     _a = np.asarray(out).astype(np.float32) / 255; _v = _a[..., :3].max(-1)
     _w = np.clip((.62 - _v) / .35, 0, 1)[..., None]
     _a[..., :3] = _a[..., :3] * (1 - _w) + (_a[..., :3] ** gamma) * _w
-    out = Image.fromarray((_a * 255).astype(np.uint8), 'RGBA')
+    out = Image.fromarray((_a * 255).astype(np.uint8))
     dst = DEL / f'../generated/win/{_id}.png'; dst.parent.mkdir(parents=True, exist_ok=True); out.save(dst)
     return f'../generated/win/{_id}.png'
 # 12:17 (user): base ~8 % of the visible height like 重排 (8.3 %): green 24 of 163 rows (14.7 %) x .55 = 8.1 %;
@@ -256,7 +258,7 @@ def _blue_button():
     _v = res[..., :3].max(-1); _w = _np.clip((.92 - _v) / .2, 0, 1)[..., None]
     res[..., :3] = res[..., :3] * (1 - _w) + (_np.clip(res[..., :3], 0, 1) ** .75) * _w
     out.parent.mkdir(parents=True, exist_ok=True)
-    Image.fromarray((_np.clip(res, 0, 1) * 255).astype(_np.uint8), 'RGBA').save(out)
+    Image.fromarray((_np.clip(res, 0, 1) * 255).astype(_np.uint8)).save(out)
     return '../generated/win/button-next-blue.png'
 _blue_rel = _blue_button()
 if _blue_rel: SLOTS.append(('plants/win/button-next-blue', _blue_rel, UI, None))
@@ -501,7 +503,7 @@ def flat_capsule(top, bottom, lip, w=390, h=104, lipw=6, sheen=.16, k=4):
     rgb = rgb * (1 - glow[..., None]) + 255 * glow[..., None]
     out = np.where(body[..., None] > 0, rgb, np.array(lip, np.float32)[None, None, :])
     img = np.dstack([out, full * 255]).reshape(h, k, w, k, 4).mean(axis=(1, 3))
-    return Image.fromarray(np.clip(img + .5, 0, 255).astype(np.uint8), 'RGBA')
+    return Image.fromarray(np.clip(img + .5, 0, 255).astype(np.uint8))
 FLAT_BUTTONS = {'blue': ((47, 146, 255), (24, 128, 252), (19, 101, 198)), 'yellow': ((253, 217, 41), (253, 177, 7), (235, 134, 1)),
                 'red': ((255, 108, 108), (240, 56, 63), (196, 36, 48)), 'white': ((255, 255, 255), (236, 242, 250), (201, 214, 232))}
 (GEN / 'ui').mkdir(parents=True, exist_ok=True)
@@ -549,7 +551,7 @@ if (FXDEL / 'fx/impact-dust.png').is_file():
     _body[..., 3] = _a * (1. - .6 * _white) * _see
     _glint = np.zeros_like(_bub); _glint[..., :3] = 255.; _glint[..., 3] = _a * _white
     for _layer, _arr in (('color', _body), ('light', _glint)):
-        Image.fromarray(_arr.astype(np.uint8), 'RGBA').save(GEN / f'fx/bubble-{_layer}.png')
+        Image.fromarray(_arr.astype(np.uint8)).save(GEN / f'fx/bubble-{_layer}.png')
         SLOTS.append((f'plants/fx/bubble-{_layer}', str(GEN / f'fx/bubble-{_layer}.png'), 1.0, None))
 # 2026-11-02 20:27 (user: bursts like fireworks, no light, nothing heavy in the middle; art delivered BubbleBurst-20261102,
 # picked concept A "Pearl Rays"): three levels x 16 frames (20 ms each) of a tintable film layer and a white glint layer.
@@ -632,7 +634,7 @@ def tap_hand_only(im):
     circ = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2) < rad + 6
     sm = np.asarray(Image.fromarray(out[..., 3].astype(np.uint8)).filter(ImageFilter.MedianFilter(5)).filter(ImageFilter.GaussianBlur(.7))).astype(np.float32)
     out[..., 3] = np.where(circ, sm, out[..., 3])
-    img = Image.fromarray(out.astype(np.uint8), 'RGBA')
+    img = Image.fromarray(out.astype(np.uint8))
     # the finger's outline was blended into the ball: a thin orange stroke restores it, only where the ball was
     edge = np.asarray(img.getchannel('A').point(lambda v: 255 if v > 90 else 0).filter(ImageFilter.MaxFilter(3))).astype(np.float32)
     edge *= np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2) < rad + 6
@@ -768,12 +770,10 @@ if missing:
         glyphs.append(dict(code=ord(c), x=x + 2, y=y + 2, w=right - left, h=bottom - top, advance=font.getlength(c) / FONT_SIZE,
                            bearingX=left / FONT_SIZE, bearingY=top / FONT_SIZE))
 glyph_mode = 'source-preserved+' + str(len(missing))
-# 2026-11-03 10:10 (user: use this font in the game): the game text font is Arita Heiti Medium (Art/fonts/AritaHeiti).
-# Every glyph is drawn again in it at the same 32 px in the same 40 px cells (it runs ~3 % narrower than the imported Noto
-# glyphs, so no label grows); a character it lacks (only the play triangle today) falls back to Noto Sans SC 600.
-# 2026-11-03 18:17 (user: switch to this font): the user's new ARITA-HEITI.TTF is in fact OPPOSans-S Medium (its name
-# table says so); unlike Arita Heiti it keeps the small hooks on slanted strokes (the right sides of the two characters
-# on the start / done buttons). Stored as Art/fonts/OPPOSansS/OPPOSans-S-Medium.ttf.
+# 2026-11-03 (user: use this font in the game): the game text font is OPPOSans-S Medium (the user's ARITA-HEITI.TTF; its
+# name table says OPPOSans-S; it keeps the small hooks on slanted strokes). Every glyph is drawn again in it at the same
+# 32 px in the same 40 px cells; a character it lacks falls back to Noto Sans SC 600. The earlier Arita Heiti file was
+# deleted at 20:49 (user: delete the fonts no longer used).
 GAME_FONT = ROOT / 'Art/fonts/OPPOSansS/OPPOSans-S-Medium.ttf'
 if GAME_FONT.is_file():
     image = Image.new('RGBA', (SIZE, SIZE))
@@ -826,7 +826,7 @@ def progress_fill_theme(w=128, h=32, k=4):
     gloss = ((yy > H * .14) & (yy < H * .36) & (np.hypot(xx - cx, (yy - r) * 1.0) <= r * .78)).astype(np.float32) * .55
     rgb = rgb * (1 - gloss[..., None]) + 255 * gloss[..., None]
     rgba = np.dstack([rgb, inside * 255]).reshape(h, k, w, k, 4).mean(axis=(1, 3))
-    return Image.fromarray(np.clip(rgba + .5, 0, 255).astype(np.uint8), 'RGBA')
+    return Image.fromarray(np.clip(rgba + .5, 0, 255).astype(np.uint8))
 progress_fill_theme().save(GEN / 'ui/progress-fill-theme.png')
 SLOTS[:] = [(e[0], str(GEN / 'ui/progress-fill-theme.png'), 1.0, *e[3:]) if e[0] == 'scene/progress-fill' else e for e in SLOTS]
 # 2026-10-31 11:50 (user: 设置、图鉴的icon太丑，完全参照原图重新生成): the redrawn home corner buttons, stored at 128 px
@@ -875,7 +875,7 @@ def _settings_art():
         rim=np.array([214,226,244],np.float32)
         rgb=np.where(inner[...,None]>0,face,rim[None,None,:])
         img=np.dstack([rgb,outer*255]).reshape(h,k,w,k,4).mean(axis=(1,3))
-        return Image.fromarray(np.clip(img+.5,0,255).astype(np.uint8),'RGBA')
+        return Image.fromarray(np.clip(img+.5,0,255).astype(np.uint8))
     (GEN / 'ui').mkdir(parents=True, exist_ok=True)
     row().save(GEN / 'ui/dialog-row-flat.png')
     for _k in ('music', 'sound', 'light'): icon(_k).save(GEN / f'ui/icon-{_k}-flat.png')
@@ -966,7 +966,7 @@ def calm_stage(im, keep=.25):
         w[b1 - 1 - i] = 1 - (1 - keep) * (i + 1) / fade
     band = np.zeros((H, 1, 1), bool); band[b0:b1] = True
     a = np.where(band, clean + (a - clean) * w, a)
-    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), 'RGB')
+    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
 BG_SIZE = (810, 1440)
 if _bg.exists():
     background = Image.open(PLUSH / "scene/background.png").convert("RGB") if (PLUSH / "scene/background.png").exists() else calm_stage(Image.open(_bg)); bg_src = _bg.name + ':' + hashlib.sha256(_bg.read_bytes()).hexdigest(); delivered.append('scene/background.png')
@@ -982,7 +982,7 @@ def battle_plate(size=BG_SIZE, stops=((0.0, (196, 219, 252)), (.12, (204, 225, 2
     t = np.linspace(0.0, 1.0, size[1])
     rgb = np.stack([np.interp(t, [p for p, _ in stops], [c[i] for _, c in stops]) for i in range(3)], axis=1)
     rows = np.repeat(rgb[:, None, :], size[0], axis=1)
-    return Image.fromarray(np.clip(rows + .5, 0, 255).astype(np.uint8), 'RGB')
+    return Image.fromarray(np.clip(rows + .5, 0, 255).astype(np.uint8))
 background = battle_plate(); bg_src = 'battle plate 2026-10-31 (#C4DBFC-#D3E5FC-#DAEAFD)'
 background.resize(BG_SIZE, Image.LANCZOS).save(OUT / 'background.png')
 # Home background (H2): its own texture, 1080x2340 stored at 0.75 (core 9:16 picture at y 210-2130 of the source).
@@ -1041,7 +1041,7 @@ def ring_layer(size=1024, units=640, color=(232, 242, 253), fade=(40, 240, .28))
     a = band.reshape(size, k, size, k).mean(axis=(1, 3))
     rgba = np.zeros((size, size, 4), np.uint8); rgba[..., 0], rgba[..., 1], rgba[..., 2] = color
     rgba[..., 3] = np.clip(a * 255 + .5, 0, 255).astype(np.uint8)
-    return Image.fromarray(rgba, 'RGBA')
+    return Image.fromarray(rgba)
 for _plate in ('home-background.png', 'codex-background.png'):
     Image.new('RGB', (810, 1755), RING_FLAT).save(OUT / _plate)
 ring_layer().save(OUT / 'home-wave-rings.png')

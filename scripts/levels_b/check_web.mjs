@@ -25,7 +25,10 @@ export async function runChecks({ out, levels = path.join(repo, 'UnityProject/As
       ? JSON.parse(fs.readFileSync(file, 'utf8')).levels.map(e => ({ ...e, kind })) : [];
     const byGame = new Map();
     for (const e of [...readList(path.join(levels, 'B/released.json'), 'B'), ...readList(path.join(levels, 'B-test/test.json'), 'B-test')]) {
-      if (!Number.isInteger(e.game) || e.game < 3 || e.game > 262 || e.resource !== `sector${String(e.game - 2).padStart(2, '0')}`
+      // 2026-11-04 (user: fix the build warnings): games 1-2 are the teaching levels training01/02 (in the B set since
+      // 11-03, see LevelSet.cs); the check still only allowed sector levels 3-262 and stopped at training01.
+      const expected = e.game <= 2 ? `training${String(e.game).padStart(2, '0')}` : `sector${String(e.game - 2).padStart(2, '0')}`;
+      if (!Number.isInteger(e.game) || e.game < 1 || e.game > 262 || e.resource !== expected
         || !/^[a-f0-9]{64}$/.test(e.fileSha256 || '') || !/^[a-f0-9]{64}$/.test(e.cellsSha256 || ''))
         throw Error(`Invalid level manifest entry: ${JSON.stringify(e)}`);
       byGame.set(e.game, e);

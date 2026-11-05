@@ -53,7 +53,7 @@ class Mold:
         rgb = (np.array(top)*(1-v)+np.array(bottom)*v) * (.74+.34*diffuse[..., None])
         rgb += specular[..., None]*255
         rgba = np.dstack((np.clip(rgb, 0, 255), self.alpha(distance)*255))
-        self.im.alpha_composite(Image.fromarray(np.uint8(rgba), 'RGBA'))
+        self.im.alpha_composite(Image.fromarray(np.uint8(rgba)))
 
     def finish(self):
         return self.im.resize((self.w, self.h), Image.Resampling.LANCZOS)

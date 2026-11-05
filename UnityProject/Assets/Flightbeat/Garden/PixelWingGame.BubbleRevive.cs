@@ -11,7 +11,7 @@ namespace Flightbeat.Game
     {
         private void RescueGarden()
         {
-            if (Battle.ReviveInSlotOrder()) { rescueAimAt = OriginalMath.Binary32(Battle.Time + 1.6f); reviveSuccessAt = ui; }
+            if (Battle.ReviveInSlotOrder()) { rescueAimAt = OriginalMath.Binary32(Battle.Time + 1.6f); reviveSuccessAt = ui; GardenSay("revive-ok"); }
         }
         // 2026-10-30 (界面优化 15, after the reference): for 1.5 s after reviving (the bomb aim starts at 1.6 s), a big
         // 「复活成功！」 over the board with arrows shooting up either side and the black bar 「前排泡泡已清除」, while the

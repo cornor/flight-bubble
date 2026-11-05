@@ -23,6 +23,9 @@ namespace Flightbeat.Audio
             using var audioScope = new Flightbeat.Diagnostics.RuntimeLoopInputs.AudioMethodScope(55173);
             Flightbeat.Diagnostics.RuntimeLoopInputs.Method?.Invoke(55173);
 #endif
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            GardenNoteInput();   // 2026-11-04: voice lines wait for the first tap (ChipAudio.Garden.cs)
+#endif
             float oldDensity = density;
             float densityStep = OriginalMath.Binary32(Playback.UnscaledDeltaTime() * 6f);
             density = MoveAudio(oldDensity, 0f, densityStep);

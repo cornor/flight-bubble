@@ -8,7 +8,8 @@ import { test } from 'node:test';
 import { runChecks } from './check_web.mjs';
 
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
-const resource = game => `sector${String(game - 2).padStart(2, '0')}`;
+// Games 1-2 are the teaching levels training01/02 (B set since 2026-11-03).
+const resource = game => game <= 2 ? `training${String(game).padStart(2, '0')}` : `sector${String(game - 2).padStart(2, '0')}`;
 const write = (file, value) => { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, JSON.stringify(value)); };
 
 async function fixture(t, fault = '', games = [3], kind = 'B') {
@@ -16,7 +17,7 @@ async function fixture(t, fault = '', games = [3], kind = 'B') {
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const levels = path.join(root, 'levels'), out = path.join(root, 'evidence');
   const a = new Map(), b = new Map();
-  for (let game = 3; game <= Math.max(...games) + 1; game++) {
+  for (let game = Math.min(3, ...games); game <= Math.max(...games) + 1; game++) {
     const cells = [3, 3, 10, 0, 17];
     const bytes = JSON.stringify({ title: 'Original', cells });
     fs.mkdirSync(levels, { recursive: true });
@@ -95,4 +96,12 @@ test('test levels count separately and fallback is found beyond level 10', async
   assert.equal(report.passed, true);
   assert.deepEqual(report.counts, { B: 0, 'B-test': 8, fallback: 1 });
   assert.equal(report.results.at(-1).game, 11);
+});
+
+// 2026-11-04 (build said "Invalid level manifest entry ... training01"): the teaching levels pass like the others.
+test('teaching levels 1-2 (training01/02) are accepted in the test channel', async t => {
+  const report = await fixture(t, '', [1, 2, 3], 'B-test');
+  assert.equal(report.passed, true);
+  assert.deepEqual(report.counts, { B: 0, 'B-test': 3, fallback: 1 });
+  assert.deepEqual(report.results.slice(0, 2).map(r => r.game), [1, 2]);
 });

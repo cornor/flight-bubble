@@ -10,24 +10,15 @@ ROOT = Path(__file__).resolve().parents[2]
 ART = ROOT / 'Art/R1/ui-bars-assets-20261020/glass-v2'
 EXTRA_ART = ROOT / 'Art/R1/ui-bars-assets-20261020/remaining-v1'
 OUT = ROOT / 'UnityProject/Assets/Flightbeat/Resources/GardenR1'
-FONT = ROOT / 'Art/fonts/ChillRoundF/ChillRoundFBold.ttf'
-# 2026-11-03 10:10 (user: use this font in the game): the rounded hint / dialog-title font is Arita Heiti Medium too
-# (same 48 px body with the 1 px emboldening, 90 px titles); characters it lacks still fall back to Noto Sans SC.
-if (ROOT / 'Art/fonts/AritaHeiti/AritaHeiti-Medium.ttf').is_file(): FONT = ROOT / 'Art/fonts/AritaHeiti/AritaHeiti-Medium.ttf'
-# 2026-11-03 18:17 (user: switch to this font): now OPPOSans-S Medium (the user's new ARITA-HEITI.TTF), which keeps
-# the hooks on slanted strokes.
-if (ROOT / 'Art/fonts/OPPOSansS/OPPOSans-S-Medium.ttf').is_file(): FONT = ROOT / 'Art/fonts/OPPOSansS/OPPOSans-S-Medium.ttf'
+# 2026-11-03: the rounded hint / dialog-title font is OPPOSans-S Medium (the user's ARITA-HEITI.TTF; it keeps the hooks on
+# slanted strokes). 20:49 (user: delete the fonts no longer used): the earlier ChillRoundF and Arita Heiti files are gone.
+# Characters it lacks still fall back to Noto Sans SC.
+FONT = ROOT / 'Art/fonts/OPPOSansS/OPPOSans-S-Medium.ttf'
 SIZE, FONT_SIZE, CELL = 2048, 48, 56
-# Result headings no longer magnify the 48 px body font. Keep the title font's light optical stroke.
-# Tight packing keeps the larger title glyphs in the existing texture without moving the glass or body glyphs.
-TITLE_SIZE, TITLE_STROKE = 90, 1
-# 2026-11-03 10:56 (user: titles bold): with Arita Heiti the titles are baked bold - a 3 px stroke - at 84 px (no room
-# left for bold 90 px glyphs; titles are drawn at 72 px at most, so nothing is lost).
-if 'AritaHeiti' in FONT.name: TITLE_SIZE, TITLE_STROKE = 84, 3
-if 'OPPOSans' in FONT.name: TITLE_SIZE, TITLE_STROKE = 82, 3   # its glyph body is larger than Arita's: 84 px bold no longer fits
-# 2026-11-03 19:50 (UI check on a phone: 设置 / 暂停一下 / 泡泡图鉴 clogged - 置, 停, 图, 鉴 lost their inner gaps): the 3 px
-# stroke is too heavy once the 82 px glyphs are shown at 32-46 px. 1 px still reads bold and keeps the counters open.
-if 'OPPOSans' in FONT.name: TITLE_STROKE = 1
+# Titles are baked at 82 px (bold 84 px no longer fits beside the glass art; they are drawn at 72 px at most) with a
+# 1 px stroke: 19:50 (UI check on a phone: 设置 / 暂停一下 / 泡泡图鉴 clogged with 3 px - 置, 停, 图, 鉴 lost their
+# inner gaps once shown at 32-46 px); 1 px still reads bold and keeps the counters open.
+TITLE_SIZE, TITLE_STROKE = 82, 1
 TITLES = ('设置', '暂停一下', '休息一下', '泡泡全打光啦！', '失败了', '泡泡碰到护栏啦', '复活', '连胜中断', '体力', '泡泡图鉴',
           '挑战失败', '太棒了，挑战成功！', '全部通关，太棒了！', '差一点就成功了！', '复活成功！')
 

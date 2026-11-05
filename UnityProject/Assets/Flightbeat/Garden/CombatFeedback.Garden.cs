@@ -753,6 +753,22 @@ namespace Flightbeat.Feedback
             return float.IsNaN(at.x) ? fallback : at;
         }
         Vector2 ShownPoint(float x, float y) => ScreenLayout.EnemyPoint(x, y + GardenOffsetDelta);
+        readonly Dictionary<Kamikaze, Vector2> gardenKamikazeHit = new Dictionary<Kamikaze, Vector2>();
+        readonly List<Kamikaze> gardenKamikazeGone = new List<Kamikaze>();
+        // The bubble field's lower edge as drawn: the lowest front bead within 36 px of screen x, or the lowest front
+        // bead anywhere when that part of the field is already cleared; the original front line when none is left.
+        Vector2 GardenFieldEdge(float x) {
+            float near = float.MinValue, any = float.MinValue;
+            for (int c = 0; c < battle.Level.columns; c++) {
+                int front = battle.Front(c);
+                if (front < 0 || !battle.Alive[front]) continue;
+                Vector2 at = EnemyShown(front, ShownPoint(battle.EnemyX(front), battle.EnemyY(front)));
+                if (at.y > any) any = at.y;
+                if (Mathf.Abs(at.x - x) <= 36f && at.y > near) near = at.y;
+            }
+            float y = near > float.MinValue ? near : any > float.MinValue ? any : FrontScreenY;
+            return new Vector2(x, y + 6f);
+        }
 
         // 2026-10-16 22:09 (user: a weighty landing on the pad). Seconds since the member left the queue and where
         // it started (the original pose record of f53854); false when no launch is in progress or recent.
@@ -918,14 +934,30 @@ namespace Flightbeat.Feedback
                     Mathf.Sin(u * Mathf.PI * 3f) * .12f * t.spin);
             }
             foreach (var f in fusions) DrawBubbleFusion(s, f, color(f.color));
+            if (gardenKamikazeHit.Count > kamikazes.Count) {
+                gardenKamikazeGone.Clear();
+                foreach (var key in gardenKamikazeHit.Keys) if (!kamikazes.Contains(key)) gardenKamikazeGone.Add(key);
+                foreach (var key in gardenKamikazeGone) gardenKamikazeHit.Remove(key);
+            }
             foreach (var k in kamikazes) {
                 // f53886/f53878: approach during delay, then impact at exploded; consume the source clock.
+                // 2026-11-05 (user): it flies to the bubble field's current lower edge above its pad (GardenFieldEdge),
+                // not to the original front line, which stays at the full board's bottom row as the field is cleared.
+                // The burst stays where it hit while the field is pushed back up.
+                if (!gardenKamikazeHit.TryGetValue(k, out var hit)) {
+                    hit = GardenFieldEdge(k.x);
+                    if (k.exploded) gardenKamikazeHit[k] = hit;
+                }
                 if (!k.exploded) {
                     float t = Mathf.Clamp01((k.age / k.delay - .25f) / .75f);
-                    var p = Vector2.Lerp(k.from, new Vector2(k.x, FrontScreenY + 6), t * t);
+                    var p = Vector2.Lerp(k.from, hit, t * t);
                     if (t > 0) GardenFx.Draw(s, "dash-trail", p + new Vector2(0, 45), 36, 96, color(k.color));
                     GardenSkin.Plant(s, color(k.color), p, k.tier, "0");
-                } else GardenFx.Burst(s, "impact-dust", new Vector2(k.x, FrontScreenY + 6), 80, k.age - k.delay, .5f);
+                } else {
+                    // 2026-11-05 (user): the spent member bursts as a soap bubble where it hits the field (was a dust puff).
+                    if (!GardenFx.SoapPop(s, hit, 36f, color(k.color), k.age - k.delay, k.color * 7 + (int)k.x))
+                        GardenFx.Burst(s, "impact-dust", hit, 80, k.age - k.delay, .5f);
+                }
             }
             foreach (var wave in waves) {
                 float t = Mathf.Clamp01(wave.age / wave.duration);

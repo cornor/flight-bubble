@@ -58,6 +58,49 @@ namespace Flightbeat.Garden
             var clip = Get(id);
             Draw(s, id, at, size, size, Color.white, Mathf.Min(clip.frames.Length - 1, (int)(age / duration * clip.frames.Length)));
         }
+        // 2026-11-05 (user: the white puffs look fake; a see-through soap bubble pop, where the spent member hits the
+        // bubble field): the home screen's soap bubble flashes and is gone, its rim spreads out once, fine droplets in
+        // the member's colour fly off, and a few small soap bubbles spill out. Everything is over by .5 s. False when the
+        // soap bubble art is missing (callers keep their old effect).
+        public static bool SoapPop(PixelSurface s, Vector2 c, float radius, Color tint, float age, int seed)
+        {
+            if (!GardenSkin.Has(GardenSkin.SoapBubble)) return false;
+            if (age < 0f || age >= .5f) return true;
+            Color sheen = Color.Lerp(Color.white, tint, .3f), drop = Color.Lerp(tint, Color.white, .25f);
+            if (age < .05f)
+            {
+                float d = radius * (2f + .16f * age / .05f);
+                GardenSkin.Asset(s, GardenSkin.SoapBubble, c.x - d * .5f, c.y - d * .5f, d, d, new Color(sheen.r, sheen.g, sheen.b, .9f * (1f - age / .05f)));
+            }
+            if (age < .12f)
+            {
+                float q = age / .12f;
+                s.Ring(c, radius * (1f + .3f * q), new Color(1f, 1f, 1f, .9f * (1f - q)), 3f * (1f - q) + .5f, 28, 0f, 360f);
+            }
+            for (int k = 0; k < 18; k++)
+            {
+                float h1 = Hash(seed * 31 + k), h2 = Hash(seed * 37 + k), h3 = Hash(seed * 41 + k);
+                float life = .3f + .15f * h3;
+                if (age >= life) continue;
+                float ang = (k + .6f * h1) / 18f * Mathf.PI * 2f, speed = 160f + 120f * h2;
+                Vector2 p = c + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * (radius * .95f + speed * age) + new Vector2(0f, 380f * age * age);
+                float a = 1f - age / life, d = 3f + 2.5f * h1;
+                s.Glow(p.x, p.y, d * 2.4f, d * 2.4f, new Color(drop.r, drop.g, drop.b, .75f * a), 0f);
+                s.Glow(p.x, p.y, d * .9f, d * .9f, new Color(1f, 1f, 1f, .95f * a), 0f);
+            }
+            for (int k = 0; k < 4; k++)   // small soap bubbles spilling out below and to the sides of the field's edge
+            {
+                float h1 = Hash(seed * 43 + k), h2 = Hash(seed * 47 + k), h3 = Hash(seed * 53 + k);
+                float ang = Mathf.Lerp(15f, 165f, (k + .5f * h1) / 4f) * Mathf.Deg2Rad, speed = 55f + 35f * h2;
+                float travel = speed * age * (1f - age);   // slowing down
+                Vector2 p = c + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * (radius * .9f + travel) + new Vector2(4f * Mathf.Sin(age * 10f + k), 0f);
+                float d = radius * (.32f + .22f * h3) * Mathf.Clamp01(age / .06f);
+                float a = .9f * Mathf.Clamp01((.5f - age) / .15f);
+                GardenSkin.Asset(s, GardenSkin.SoapBubble, p.x - d * .5f, p.y - d * .5f, d, d, new Color(sheen.r, sheen.g, sheen.b, a));
+            }
+            return true;
+        }
+        static float Hash(int n) { float v = Mathf.Sin(n * 12.9898f) * 43758.5453f; return v - Mathf.Floor(v); }
         public static void Beam(PixelSurface s, Vector2 from, Vector2 to, float width, Color tint, float age)
         {
             bool mapped = s.MapLayout;

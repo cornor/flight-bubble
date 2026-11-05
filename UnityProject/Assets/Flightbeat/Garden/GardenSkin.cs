@@ -481,6 +481,7 @@ namespace Flightbeat.Garden
             // puffed-cheek frame taking over halfway. (a) The ready pose now really leans back: the body sinks ~1 px and
             // tilts ~3.5 deg outward (away from the screen centre) about its feet. (d) Each shot kicks the body down
             // (~1.3-2 px, the recoil of the jet) and it springs back before the next one; the number pill stays put.
+            // 2026-11-05: `pulse` restarts at most every .05 s (PadKickPulse), so tiers firing faster than a frame still jitter.
             float readyK = ready;
             if (inhale >= 0f && inhale < 1f) {
                 float v = (inhale - .4f) / .6f - 1f;   // -1 .. 0 over the spring part

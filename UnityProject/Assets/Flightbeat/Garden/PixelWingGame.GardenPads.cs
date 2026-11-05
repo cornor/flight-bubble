@@ -107,7 +107,16 @@ namespace Flightbeat.Game
         // puffed frame) for ~.33 s, again; it leans back while ready. Such a member is drawn after the others (`front`)
         // as its reaching body may pass over its neighbours. Drawing only: reads Battle.Time, Ammo and LastFired.
         // The warp/stalk machinery in GardenSkin (BendActive, BendExtend, ...) is kept for later but not used.
-        class PadBeat { public float phase, start, last, stopped = -10f; public bool firing; }
+        class PadBeat { public float phase, start, last, stopped = -10f, kick = -10f; public bool firing; }
+        const float PadKickMin = .05f;
+        // The per-shot recoil pulse for Creature (see DrawGardenHUD); call after PadPumpFor for this frame.
+        float PadKickPulse(Fighter ship)
+        {
+            if (!padBeat.TryGetValue(ship.Id, out PadBeat b)) return 0f;
+            if (ship.LastFired - b.kick >= PadKickMin) b.kick = ship.LastFired;
+            float k = Battle.Time - b.kick;
+            return k >= 0f && k < .06f ? 1f - k / .06f : 0f;
+        }
         struct PadPump {
             public float frenzy, ring, thrust, period;
             public int pose;

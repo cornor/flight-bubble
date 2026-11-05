@@ -439,9 +439,13 @@ namespace Flightbeat.Game
                 float squash = PadLanding(s, ship, i, ref at, bayCanvas);
                 float since = Battle.Time - ship.LastFired;
                 float fire = ship.Ammo > 0 ? (since < .1f ? 1f : Mathf.Clamp01(1f - (since - .1f) / .2f)) : 0f;
-                float pulse = since >= 0f && since < .06f ? 1f - since / .06f : 0f;
                 // 2026-10-26: the firing effects (PadPumpFor): all-out glow behind, bubble ring in front; pose frames.
                 PadPump pump = padPumps[i];
+                // Recoil kick per shot (1 -> 0 over .06 s). 2026-11-05 (user): keep the quick per-shot jitter (a beat-paced
+                // kick was tried and reverted), but a member firing faster than a frame (tier II .013 s, III .009 s) used to
+                // restart the kick every frame and looked frozen. A new kick now starts only if the last one began at least
+                // PadKickMin earlier, so every tier jitters at about the tier-0 rate (a shot every ~.057 s).
+                float pulse = PadKickPulse(ship);
                 float pumpFeet = GardenPadFeet(ship.Id, at.y + 12f), pumpBody = bayCanvas * PadScale(ship);
                 PadPumpFx(s, ship, pump, Vector2.zero, at.x, pumpFeet, pumpBody, true);
                 GardenSkin.BendPose = pump.pose; GardenSkin.BendInhale = pump.inhale;

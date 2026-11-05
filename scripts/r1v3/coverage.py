@@ -13,7 +13,7 @@ slots = {s['id']: s for s in atlas['slots']}
 levels = ['training01', 'training02'] + [f'sector{i:02}' for i in range(1,51)]
 rows = []
 for index, name in enumerate(levels, 1):
-    d = json.loads((DATA / 'levels' / (name + '.json')).read_text())
+    d = json.loads((DATA / 'levels/B' / (name + '.json')).read_text())   # 2026-11-05: the shipped (new) levels
     hexes = sorted({'#' + ''.join(f'{c:02X}' for c in d['palette'][q['color']*3:q['color']*3+3]) for q in d['queue']})
     for h in hexes:
         e = colors[h]

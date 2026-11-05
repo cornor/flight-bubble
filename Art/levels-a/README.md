@@ -3,7 +3,7 @@
 2026-11-05 用户决定：新做的 1–52 关（B 套）作为游戏的正式关卡，游戏最多 52 关；原版关卡做好备份，方便以后查找，并尽量减小包体。
 
 - **这里是什么**：原版全部 262 关的关卡文件（`training01`、`training02`、`sector01`–`sector260`），内容与原版逐字节一致。
-- **游戏里还剩什么**：`UnityProject/Assets/Flightbeat/Resources/levels/` 里只保留原版第 1–52 关（`training01/02`、`sector01`–`sector50`），供 `?set=A` 对照和关卡工具使用；第 53–262 关（`sector51`–`sector260`）已从游戏目录移到这里，不再打进包里。
+- **游戏里还剩什么**：没有原版了。2026-11-05 先把第 53–262 关（`sector51`–`sector260`）移到这里，随后（用户：原版第 1–52 关也不要了）第 1–52 关也从游戏目录删除；`Resources/levels/` 只有新版 `B/`（和测试通道 `B-test/`），网址 `?set=A` 不再有效。编辑器检查用的原版 `sector01`、`sector04` 等由 `Editor/OriginalLevelFixtures.cs` 从这里读取。
 - **新版在哪**：正式关卡在 `Resources/levels/B/`（由 `scripts/levels_b/publish.py` 发布，`B/released.json` 列出哈希）；草稿与制作记录在 `Art/levels-b/`。
 - **完整找回**：git 标签 `levels-a-original` 是换关前的最后状态（`git checkout levels-a-original -- UnityProject/Assets/Flightbeat/Resources/levels` 可整体还原）。
 - **另外 9 个原版文件**：`other/` 里是原版关卡目录里不在关卡列表中的 9 个文件（`bloom05`、`codex`、`crest06`、`helix03`、`nova07`、`orbit01`、`prism08`、`scout04`、`sentinel02`，原版游戏其他模式用的），游戏和工具都没有用到，11-05 一并移出游戏目录。

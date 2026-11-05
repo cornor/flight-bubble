@@ -9,8 +9,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 LEVELS_A = ROOT / 'UnityProject/Assets/Flightbeat/Resources/levels'
-# 2026-11-05 (user: the new levels 1-52 are the game's levels, the originals backed up): the original files of game
-# levels 53-262 (sector51..sector260) moved out of the game to Art/levels-a/, which holds all 262 originals.
+# 2026-11-05 (user: the new levels 1-52 are the game's levels, the originals backed up): all original level files left
+# the game (Resources/levels keeps only B/ and B-test/); Art/levels-a/ holds all 262 originals, byte-identical.
 LEVELS_A_BACKUP = ROOT / 'Art/levels-a'
 
 

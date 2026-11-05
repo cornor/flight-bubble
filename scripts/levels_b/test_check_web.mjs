@@ -12,20 +12,17 @@ const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const resource = game => game <= 2 ? `training${String(game).padStart(2, '0')}` : `sector${String(game - 2).padStart(2, '0')}`;
 const write = (file, value) => { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, JSON.stringify(value)); };
 
-async function fixture(t, fault = '', games = [3], kind = 'B') {
+async function fixture(t, fault = '', games = [1, 2, 3], kind = 'B', levelCount = 3) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'levels-b-web-test-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const levels = path.join(root, 'levels'), out = path.join(root, 'evidence');
-  const a = new Map(), b = new Map();
-  for (let game = Math.min(3, ...games); game <= Math.max(...games) + 1; game++) {
+  const b = new Map();
+  for (const game of games) {
     const cells = [3, 3, 10, 0, 17];
-    const bytes = JSON.stringify({ title: 'Original', cells });
-    fs.mkdirSync(levels, { recursive: true });
-    fs.writeFileSync(path.join(levels, `${resource(game)}.json`), bytes);
-    a.set(game, { fileSha256: sha(bytes), cellsSha256: sha(cells.join(',')) });
-    if (games.includes(game)) b.set(game, { game, resource: resource(game),
+    b.set(game, { game, resource: resource(game),
       fileSha256: sha(JSON.stringify({ title: 'New title', cells })), cellsSha256: sha(cells.join(',')) });
   }
+  const oldFile = sha(JSON.stringify({ title: 'Old title', cells: [3, 3, 10, 0, 17] }));
   write(path.join(levels, kind, kind === 'B' ? 'released.json' : 'test.json'), { levels: [...b.values()] });
   let url, navCount = 0, closed = false;
   const client = {
@@ -41,22 +38,20 @@ async function fixture(t, fault = '', games = [3], kind = 'B') {
     },
     async evaluate() {
       if (fault === 'timeout') return {};
-      const game = Number(url.searchParams.get('level')), set = url.searchParams.get('set');
-      const isB = set === 'B' && b.has(game), expected = isB ? b.get(game) : a.get(game);
-      const sample = { home: false, level: game - 1, levelSet: set === 'B' ? 1 : 0,
-        levelName: (isB ? kind + '/' : '') + resource(game), levelSource: isB ? kind : 'A',
+      const game = Number(url.searchParams.get('level')), expected = b.get(game);
+      const sample = { home: false, level: game - 1, levelSet: 1, levelName: kind + '/' + resource(game), levelSource: kind,
         fileSha256: expected.fileSha256, cellsSha256: expected.cellsSha256,
-        expectedFileSha256: isB ? expected.fileSha256 : '', expectedCellsSha256: isB ? expected.cellsSha256 : '' };
+        expectedFileSha256: expected.fileSha256, expectedCellsSha256: expected.cellsSha256 };
       // The file changed only in its title: the old build has exactly the same cells and its own valid manifest.
-      if (fault === 'old-build' && isB) sample.fileSha256 = sample.expectedFileSha256 = a.get(game).fileSha256;
+      if (fault === 'old-build') sample.fileSha256 = sample.expectedFileSha256 = oldFile;
       if (fault === 'missing-file-hash') delete sample.fileSha256;
-      if (fault === 'wrong-expected' && isB) sample.expectedFileSha256 = '0'.repeat(64);
-      if (fault === 'wrong-cells' && isB) sample.cellsSha256 = '0'.repeat(64);
+      if (fault === 'wrong-expected') sample.expectedFileSha256 = '0'.repeat(64);
+      if (fault === 'wrong-cells') sample.cellsSha256 = '0'.repeat(64);
       return { url: fault === 'old-document' ? 'http://old-document/' : url.href, sample };
     },
     close() { closed = true; }
   };
-  const report = await runChecks({ out, levels, wait: async () => {}, connectBrowser: async () => {
+  const report = await runChecks({ out, levels, levelCount, wait: async () => {}, connectBrowser: async () => {
     if (fault === 'connect') throw Error('injected connection failure');
     return client;
   } });
@@ -65,12 +60,12 @@ async function fixture(t, fault = '', games = [3], kind = 'B') {
   return report;
 }
 
-test('matching B/A files and fallback pass with both hashes recorded', async t => {
+test('matching released files pass with both hashes recorded', async t => {
   const report = await fixture(t);
   assert.equal(report.passed, true);
   assert.equal(report.completed, report.expected);
-  assert.deepEqual(report.counts, { B: 1, 'B-test': 0, fallback: 1 });
-  assert.match(report.results[0].actualB.fileSha256, /^[a-f0-9]{64}$/);
+  assert.deepEqual(report.counts, { B: 3, 'B-test': 0, missing: 0 });
+  assert.match(report.results[0].actual.fileSha256, /^[a-f0-9]{64}$/);
 });
 
 for (const fault of ['old-build', 'missing-file-hash', 'wrong-expected', 'wrong-cells']) {
@@ -87,21 +82,20 @@ for (const fault of ['connect', 'setup', 'navigate', 'screenshot', 'timeout', 'o
     assert.equal(report.passed, false);
     assert.ok(report.error);
     assert.ok(report.completed < report.expected);
-    if (fault === 'partial') assert.equal(report.completed, 1);
+    if (fault === 'partial') assert.equal(report.completed, 2);
   });
 }
 
-test('test levels count separately and fallback is found beyond level 10', async t => {
-  const report = await fixture(t, '', [3, 4, 5, 6, 7, 8, 9, 10], 'B-test');
-  assert.equal(report.passed, true);
-  assert.deepEqual(report.counts, { B: 0, 'B-test': 8, fallback: 1 });
-  assert.equal(report.results.at(-1).game, 11);
+// 2026-11-05: with no originals in the game, a level without a released file fails the check.
+test('an unreleased level fails', async t => {
+  const report = await fixture(t, '', [1, 3]);
+  assert.equal(report.passed, false);
+  assert.deepEqual(report.missing, [2]);
 });
 
-// 2026-11-04 (build said "Invalid level manifest entry ... training01"): the teaching levels pass like the others.
-test('teaching levels 1-2 (training01/02) are accepted in the test channel', async t => {
+test('test levels count separately; teaching levels 1-2 are accepted', async t => {
   const report = await fixture(t, '', [1, 2, 3], 'B-test');
   assert.equal(report.passed, true);
-  assert.deepEqual(report.counts, { B: 0, 'B-test': 3, fallback: 1 });
-  assert.deepEqual(report.results.slice(0, 2).map(r => r.game), [1, 2]);
+  assert.deepEqual(report.counts, { B: 0, 'B-test': 3, missing: 0 });
+  assert.deepEqual(report.results.map(r => r.game), [1, 2, 3]);
 });

@@ -13,10 +13,11 @@ namespace Flightbeat.Game
     //  - Released levels come from Resources/levels/B/released.json, test levels from B-test/test.json (only
     //    present in test builds). A level is enabled only if its file exists and its SHA-256 matches the list;
     //    anything else keeps the A level (per-level fallback).
-    //  - 2026-11-05 (user: the new levels 1-52 are the game's levels; drop the switch): players always get set B.
-    //    The settings switch and its saved PlayerPrefs choice are gone; a URL "set=A" still shows the originals for
-    //    that session (comparison only). Evidence and regression runs (evidenceControlled) stay on A unless
-    //    --level-set B is passed explicitly.
+    //  - 2026-11-05 (user: the new levels 1-52 are the game's levels; drop the switch): always set B, for players,
+    //    evidence and regression runs alike. The original files left Resources/levels the same day (backup in
+    //    Art/levels-a/), so there is no set A any more: the settings switch, its PlayerPrefs choice, the URL "set=A"
+    //    and --level-set A are gone. Every level must be released (publish.py --check); a missing B file would fall
+    //    back to the now absent original name and fail to load.
     public partial class PixelWingGame
     {
         public const int LevelSetA = 0, LevelSetB = 1;
@@ -94,26 +95,9 @@ namespace Flightbeat.Game
         // Startup, before the first ResetRuntime.
         void InitializeLevelSet(string[] args)
         {
-            int set = LevelSetA;
-            int at = Array.IndexOf(args, "--level-set");
-            if (at >= 0 && at + 1 < args.Length) set = args[at + 1] == "B" ? LevelSetB : LevelSetA;
-            else if (TryLevelSetFromUrl(out int fromUrl)) set = fromUrl;
-            else if (!evidenceControlled) set = LevelSetB;   // 2026-11-05: the new levels are the game's levels
-            ApplyLevelSet(set);
-            if (set == LevelSetB) Debug.Log("GARDEN_LEVEL_SET B " + LevelSetAvailableCount);
-        }
-        static bool TryLevelSetFromUrl(out int set)
-        {
-            set = LevelSetA;
-            if (!Uri.TryCreate(Application.absoluteURL, UriKind.Absolute, out var uri)) return false;
-            foreach (string pair in uri.Query.TrimStart('?').Split('&'))
-            {
-                string[] parts = pair.Split('=');
-                if (parts.Length != 2 || parts[0] != "set") continue;
-                if (parts[1] == "B" || parts[1] == "b") { set = LevelSetB; return true; }
-                if (parts[1] == "A" || parts[1] == "a") { set = LevelSetA; return true; }
-            }
-            return false;
+            ApplyLevelSet(LevelSetB);
+            Debug.Log("GARDEN_LEVEL_SET B " + LevelSetAvailableCount);
+            if (LevelSetAvailableCount < Levels.Length) Debug.LogError("Levels without a released file: " + (Levels.Length - LevelSetAvailableCount));
         }
     }
 }

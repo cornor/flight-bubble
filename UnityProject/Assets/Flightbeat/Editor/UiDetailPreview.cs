@@ -40,7 +40,7 @@ namespace Flightbeat.Editor
             var rt = new RenderTexture(1080, 1920, 24);
             var image = new Texture2D(1080, 1920, TextureFormat.RGBA32, false);
             var active = RenderTexture.active; bool plush = PlushLayout.Enabled;
-            using var battle = new Battle(JsonUtility.FromJson<LevelData>(Resources.Load<TextAsset>("Levels/sector01").text), null);
+            using var battle = new Battle(JsonUtility.FromJson<LevelData>(OriginalLevelFixtures.Text("sector01")), null);
             var pool = new PixelEffectPool(root.transform, rect) { Enabled = false };
             var feedback = new CombatFeedback(battle, pool, CombatPalette.ForLevel(battle.Level));
             void Set(string field, object value) => typeof(CombatFeedback).GetField(field, Flags).SetValue(feedback, value);

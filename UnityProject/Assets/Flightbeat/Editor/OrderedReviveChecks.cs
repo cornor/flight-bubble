@@ -14,7 +14,7 @@ namespace Flightbeat.Editor
         static void PhaseOf(Battle battle, Phase phase) => typeof(Battle).GetProperty("State", Flags).SetValue(battle, phase);
         static Battle Fixture(int extras = 2)
         {
-            var level = JsonUtility.FromJson<LevelData>(Resources.Load<TextAsset>("Levels/sector01").text);
+            var level = JsonUtility.FromJson<LevelData>(OriginalLevelFixtures.Text("sector01"));
             level.initialSlots = 5; level.slotLimit = 5 + extras;
             var battle = new Battle(level, null);
             PhaseOf(battle, Phase.Ready);

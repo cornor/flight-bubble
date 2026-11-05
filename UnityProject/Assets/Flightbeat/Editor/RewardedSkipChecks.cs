@@ -14,9 +14,9 @@ namespace Flightbeat.Editor
         static void Set(object target, string property, object value) => target.GetType().GetProperty(property, Flags).SetValue(target, value);
         static Battle Fixture(Phase phase)
         {
-            var text = Resources.Load<TextAsset>("Levels/sector01");
+            var text = OriginalLevelFixtures.Text("sector01");
             Require(text != null, "Authored sector01 fixture missing");
-            var battle = new Battle(JsonUtility.FromJson<LevelData>(text.text), null);
+            var battle = new Battle(JsonUtility.FromJson<LevelData>(text), null);
             Set(battle, "State", phase);
             return battle;
         }

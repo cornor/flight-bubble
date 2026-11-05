@@ -39,7 +39,7 @@ namespace Flightbeat.Editor
                 PlushLayout.Enabled = true;
                 foreach (var viewport in new[] { new Vector2Int(540, 960), new Vector2Int(390, 844) })
                 foreach (int tier in new[] { 0, 1, 2, 3 })
-                using (var battle = new Battle(JsonUtility.FromJson<LevelData>(Resources.Load<TextAsset>("Levels/sector01").text), null))
+                using (var battle = new Battle(JsonUtility.FromJson<LevelData>(OriginalLevelFixtures.Text("sector01")), null))
                 using (var mesh = new VertexHelper())
                 {
                     ScreenLayout.Configure(viewport.x, viewport.y, new Rect(0, 0, 1, 1));

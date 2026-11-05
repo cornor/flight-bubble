@@ -79,7 +79,7 @@ namespace Flightbeat.Editor
                 var pool = new PixelEffectPool(root.transform, rect) { Enabled = false };
                 Battle battle = null;
                 void Load(string name) {
-                    battle = new Battle(JsonUtility.FromJson<LevelData>(Resources.Load<TextAsset>("Levels/" + name).text), null);
+                    battle = new Battle(JsonUtility.FromJson<LevelData>(OriginalLevelFixtures.Text(name)), null);
                     battles.Add(battle); Property(battle, "State", Phase.Ready); Property(game, "Battle", battle);
                     Set(game, "feedback", new CombatFeedback(battle, pool, CombatPalette.ForLevel(battle.Level)));
                     Set(game, "selection", 0);

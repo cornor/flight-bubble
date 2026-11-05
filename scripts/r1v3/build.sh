@@ -3,8 +3,8 @@
 # audit logic/data, then build WebGL.
 # usage: bash scripts/r1v3/build.sh [--new-levels] [/absolute/new/output/dir]
 #   bash scripts/r1v3/build.sh                 the game's levels: since 2026-11-05 the 52 released new levels
-#                                              (Resources/levels/B, players always get them; ?set=A shows the
-#                                              originals 1-52); a leftover B-test channel is removed first
+#                                              (Resources/levels/B; the originals are only in Art/levels-a/);
+#                                              a leftover B-test channel is removed first
 #   bash scripts/r1v3/build.sh --new-levels    test build with every new level waiting for a playtest (manifest
 #                                              'evaluated', current drafts), opening on set B (URL set=A for the
 #                                              originals); runs check_web.sh afterwards (R1_CHECK_WEB=0 skips it).
@@ -116,4 +116,4 @@ if [ "$new_levels" = 1 ] && [ "${R1_CHECK_WEB:-1}" != 0 ]; then
 fi
 echo "构建完成：${output}（共 $(( SECONDS - build_start )) 秒，完成于 $(date '+%Y-%m-%d %H:%M:%S')）"
 echo "试玩：python3 -m http.server 8792 --bind 127.0.0.1 --directory \"$output\"  然后打开 http://127.0.0.1:8792/（服务可以一直开着，重新构建后刷新即可）"
-if [ "$new_levels" = 1 ]; then echo "新关卡测试包：默认就是 B 套（新关卡），想看原关卡在网址后加 ?set=A；测试通道留到下次默认构建时自动清除"; fi
+if [ "$new_levels" = 1 ]; then echo "新关卡测试包：测试通道里的关卡覆盖已发布的同一关；测试通道留到下次默认构建时自动清除"; fi

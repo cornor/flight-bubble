@@ -22,7 +22,7 @@ namespace Flightbeat.Editor
                 var surface = root.AddComponent<PixelSurface>();
                 typeof(PixelSurface).GetMethod("Awake", Flags).Invoke(surface, null);
                 var game = root.AddComponent<PixelWingGame>();
-                using var battle = new Battle(JsonUtility.FromJson<LevelData>(Resources.Load<TextAsset>("Levels/sector04").text), null);
+                using var battle = new Battle(JsonUtility.FromJson<LevelData>(OriginalLevelFixtures.Text("sector04")), null);
                 typeof(PixelWingGame).GetProperty("Battle", Flags).SetValue(game, battle);
                 using var mesh = new VertexHelper();
                 typeof(PixelSurface).GetField("mesh", Flags).SetValue(surface, mesh);

@@ -27,7 +27,7 @@ namespace Flightbeat.Editor
                 foreach (Phase phase in new[] { Phase.Ready, Phase.Playing, Phase.ReviveOffer, Phase.Won, Phase.Lost })
                 foreach (string actionName in new[] { "重新开始", "现在退出", "放弃复活" })
                 {
-                    var level = JsonUtility.FromJson<LevelData>(Resources.Load<TextAsset>("Levels/sector01").text);
+                    var level = JsonUtility.FromJson<LevelData>(OriginalLevelFixtures.Text("sector01"));
                     level.lesson = teaching ? 1 : 0;
                     using (var battle = new Battle(level, null))
                     {

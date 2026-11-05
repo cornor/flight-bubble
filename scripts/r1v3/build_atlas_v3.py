@@ -667,7 +667,7 @@ _order = ['training01', 'training02'] + [f'sector{i:02}' for i in range(1, 51)]
 _by_hex = {e['hex'].upper(): e['creatureId'] for e in color_data['colors']}
 _seen, _debut = set(), []
 for _name in _order:
-    _d = json.loads((CODE / 'Resources/levels' / (_name + '.json')).read_text())
+    _d = json.loads((CODE / 'Resources/levels/B' / (_name + '.json')).read_text())   # 11-05: the shipped (new) levels
     _row = []
     for _q in _d['queue']:
         _h = ''.join(f'{c:02X}' for c in _d['palette'][_q['color'] * 3:_q['color'] * 3 + 3])

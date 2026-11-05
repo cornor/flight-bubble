@@ -19,6 +19,7 @@ from collections import Counter
 from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
+from levelsb_common import a_level_path
 ROOT = Path(__file__).resolve().parents[2]
 LEVELS = ROOT / 'UnityProject/Assets/Flightbeat/Resources/levels'
 RES = {1: 'training01', 2: 'training02'}
@@ -86,7 +87,7 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--level', type=int, required=True, choices=(1, 2))
     ap.add_argument('--image', required=True); ap.add_argument('--title', required=True); ap.add_argument('--out')
     a = ap.parse_args()
-    res = RES[a.level]; A = json.loads((LEVELS / f'{res}.json').read_text())
+    res = RES[a.level]; A = json.loads(a_level_path(res).read_text())   # 11-05: originals live in Art/levels-a/
     W, H = A['columns'], A['rows']; cols = palette(A)
     target = dict(Counter(c for c in A['cells'] if c >= 0))
     lab = classify(Image.open(a.image), cols)

@@ -34,7 +34,7 @@ namespace Flightbeat.Editor
         }
         private const BindingFlags Flags=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
         private static Report report;
-        private static Battle New(string level)=>new Battle(JsonUtility.FromJson<LevelData>(Resources.Load<TextAsset>("Levels/"+level).text),null,true);
+        private static Battle New(string level)=>new Battle(JsonUtility.FromJson<LevelData>(OriginalLevelFixtures.Text(level)),null,true);
         private static object Call(object target,string method,params object[] args)=>target.GetType().GetMethod(method,Flags).Invoke(target,args);
         private static void Set(Battle b,string name,object value)
         {

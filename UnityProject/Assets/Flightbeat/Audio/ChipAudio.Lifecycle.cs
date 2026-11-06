@@ -94,6 +94,8 @@ namespace Flightbeat.Audio
             {   // 2026-10-20: bubble-only finale release (ChipAudio.Garden.cs); there is no original clip of this name
                 AudioClip release = Resources.Load<AudioClip>("GardenR1/Audio/" + GardenReleaseCue);
                 if (release) clips[GardenReleaseCue] = release;
+                AudioClip bomb = Resources.Load<AudioClip>("GardenR1/Audio/" + GardenBombCue);   // 2026-11-06: the bubble bomb
+                if (bomb) clips[GardenBombCue] = bomb;
             }
 #endif
             foreach (AudioClip clip in clips.Values)

@@ -63,12 +63,18 @@ namespace Flightbeat.Audio
         const string GardenReleaseCue = "finale-release";
         const float GardenReleaseVolume = .55f;
         Flightbeat.Game.PixelWingGame gardenGame;
+        // 2026-11-06 (user picked 2f of Art/PlushToy/BombHybrid-20261106): the bubble bomb's detonation is its own clip,
+        // super-bomb.ogg - the hit of Mixkit's 8-bit bomb (2811) on a round toy boom, then the first, round pops of Mixkit's
+        // cartoon bubbles (732), about .9 s (Mixkit Sound Effects Free License: games allowed, no credit needed). The
+        // model's "super-impact" cue is shared with the finale (Battle.Finale), which keeps the old super-impact.ogg.
+        const string GardenBombCue = "super-bomb";
         string GardenCue(string cue)
         {
-            if (cue != "maxpower") return cue;
+            if (cue != "maxpower" && cue != "super-impact") return cue;
             if (gardenGame == null) gardenGame = GetComponent<Flightbeat.Game.PixelWingGame>();
-            return gardenGame != null && gardenGame.Battle != null && gardenGame.Battle.ActiveFinale != null && clips.ContainsKey(GardenReleaseCue)
-                ? GardenReleaseCue : cue;
+            bool finale = gardenGame != null && gardenGame.Battle != null && gardenGame.Battle.ActiveFinale != null;
+            if (cue == "super-impact") return !finale && clips.ContainsKey(GardenBombCue) ? GardenBombCue : cue;
+            return finale && clips.ContainsKey(GardenReleaseCue) ? GardenReleaseCue : cue;
         }
 
         // Deep music duck for the finale release (PixelWingGame.BubbleFinale): music at `level` until `holdUntil`,

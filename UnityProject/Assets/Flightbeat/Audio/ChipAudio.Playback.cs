@@ -132,7 +132,7 @@ namespace Flightbeat.Audio
             if (cue.StartsWith("super-"))
             {
                 Runtime.SetClip(superWeapon, clip);
-                Runtime.SetVolume(superWeapon, cue == "super-impact" ? 0.428999990f : cue == "super-count" ? 0.155999988f : 0.246999994f);
+                Runtime.SetVolume(superWeapon, cue == "super-impact" || cue == "super-bomb" ? 0.428999990f : cue == "super-count" ? 0.155999988f : 0.246999994f);
                 Runtime.Play(superWeapon);
                 float previous = duckUntil;
                 float until = OriginalMath.Binary32(Runtime.UnscaledTime() + 0.5f);

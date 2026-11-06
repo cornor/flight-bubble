@@ -68,7 +68,7 @@ namespace Flightbeat.Garden
             if (age < 0f || age >= .5f) return true;
             Color sheen = Color.Lerp(Color.white, tint, .3f), drop = Color.Lerp(tint, Color.white, .25f);
             // 2026-11-06 (user: the burst was too weak): a flash of the member's colour with a white core, a bigger film
-            // flash, two shock rings (white, then coloured), more and faster droplets and more bubbles.
+            // flash, more and faster droplets and more bubbles (the two shock rings were removed the same evening).
             if (age < .16f)
             {
                 float q = age / .16f, g = .6f + .4f * q;
@@ -80,17 +80,8 @@ namespace Flightbeat.Garden
                 float d = radius * (2f + .5f * age / .06f);
                 GardenSkin.Asset(s, GardenSkin.SoapBubble, c.x - d * .5f, c.y - d * .5f, d, d, new Color(sheen.r, sheen.g, sheen.b, .95f * (1f - age / .06f)));
             }
-            if (age < .18f)
-            {
-                float q = age / .18f, e = 1f - (1f - q) * (1f - q);
-                s.Ring(c, radius * (1f + 1.2f * e), new Color(1f, 1f, 1f, .95f * (1f - q)), 6f * (1f - q) + 1f, 32, 0f, 360f);
-            }
-            float a2 = age - .03f;
-            if (a2 >= 0f && a2 < .22f)
-            {
-                float q = a2 / .22f, e = 1f - (1f - q) * (1f - q);
-                s.Ring(c, radius * (1f + 1.7f * e), new Color(drop.r, drop.g, drop.b, .85f * (1f - q)), 4f * (1f - q) + .5f, 32, 0f, 360f);
-            }
+            // 2026-11-06 21:47 (user): no shock rings any more (a white and a coloured one spread from here); the film flash,
+            // the glow, the droplets and the bubbles stay.
             for (int k = 0; k < 28; k++)
             {
                 float h1 = Hash(seed * 31 + k), h2 = Hash(seed * 37 + k), h3 = Hash(seed * 41 + k);

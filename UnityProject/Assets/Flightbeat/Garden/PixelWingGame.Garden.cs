@@ -437,6 +437,9 @@ namespace Flightbeat.Game
                 if (padPumps[i].front != (n >= Battle.Fleet.Count)) continue;
                 Fighter ship = Battle.Fleet[i];
                 Vector2 at = feedback.Position(ship.Id, i);
+                float poseX = at.x;
+                at.x = PadSlideX(ship.Id, at.x);   // 2026-11-06: hold places until a spent member has hit the field
+                float slideX = at.x;
                 at.x += padShake; at.y += feedback.GardenStrikeShake * .5f;
                 float squash = PadLanding(s, ship, i, ref at, bayCanvas);
                 float since = Battle.Time - ship.LastFired;
@@ -446,7 +449,7 @@ namespace Flightbeat.Game
                 // Recoil kick per shot (1 -> 0 over .06 s). 2026-11-05 (user): keep the quick per-shot jitter (a beat-paced
                 // kick was tried and reverted), but a member firing faster than a frame (tier II .013 s, III .009 s) used to
                 // restart the kick every frame and looked frozen. A new kick now starts only if the last one began at least
-                // PadKickMin earlier, so every tier jitters at about the tier-0 rate (a shot every ~.057 s).
+                // PadKickMin earlier (PadKickMinHigh for tiers II/III, 11-06: as often as tier I, ~15 a second).
                 float pulse = PadKickPulse(ship);
                 float pumpFeet = GardenPadFeet(ship.Id, at.y + 12f), pumpBody = bayCanvas * PadScale(ship);
                 PadPumpFx(s, ship, pump, Vector2.zero, at.x, pumpFeet, pumpBody, true);
@@ -457,7 +460,7 @@ namespace Flightbeat.Game
                     0f, bayNumber, true, true, .035f, ship.Id * 1.7f, PadScale(ship), squash, 0f,
                     fire, pulse, ship.Ammo > 0 ? 1f - fire : 0f, false, 0f, PadInhale(ship, ship.Ammo > 0 && fire < .5f));
                 padMouth[ship.Id] = LastMouth;
-                PadSeenRecord(ship, at.x, pumpFeet, PadScale(ship));
+                PadSeenRecord(ship, at.x, pumpFeet, PadScale(ship), poseX, slideX);
                 PadPumpFx(s, ship, pump, LastMouth, at.x, pumpFeet, pumpBody, false);
                 float wait = PadWaitAlpha(ship);
                 // 2026-10-21 (user): no ball icon; 10:21 a quiet regular-weight note instead of bold (it only informs).

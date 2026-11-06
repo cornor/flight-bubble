@@ -108,13 +108,33 @@ namespace Flightbeat.Game
         // puffed frame) for ~.33 s, again; it leans back while ready. Such a member is drawn after the others (`front`)
         // as its reaching body may pass over its neighbours. Drawing only: reads Battle.Time, Ammo and LastFired.
         // The warp/stalk machinery in GardenSkin (BendActive, BendExtend, ...) is kept for later but not used.
+        // 2026-11-06 (user: let it hit first, then move). The pad members' drawn x: held while
+        // CombatFeedback.GardenHoldSlide (a spent member on its way up), then eased to the pose's x at the original rate
+        // (1 - e^(-20 dt)); otherwise the pose's x as it is. A member landing from the queue always follows its pose.
+        readonly Dictionary<int, Vector2> padSlide = new Dictionary<int, Vector2>();   // x, ui time
+        Flightbeat.Model.Battle padSlideBattle;
+        float PadSlideX(int id, float target)
+        {
+            if (padSlideBattle != Battle) { padSlideBattle = Battle; padSlide.Clear(); }
+            float x = target;
+            if (padSlide.TryGetValue(id, out Vector2 was) && !(feedback.GardenLaunch(id, out float age, out _) && age < .32f))
+            {
+                if (feedback.GardenHoldSlide()) x = was.x;
+                else if (Mathf.Abs(target - was.x) > .5f) x = was.x + (target - was.x) * (1f - Mathf.Exp(-20f * Mathf.Clamp(ui - was.y, 0f, .1f)));
+            }
+            padSlide[id] = new Vector2(x, ui);
+            return x;
+        }
         class PadBeat { public float phase, start, last, stopped = -10f, kick = -10f; public bool firing; }
         const float PadKickMin = .05f;
+        // 2026-11-06 (user): tiers II and III kick as often as tier I does now (a kick every other volley, ~.067 s,
+        // ~15 a second; they kicked every .05 s). Shots, bullets and their timing are unchanged.
+        const float PadKickMinHigh = .064f;
         // The per-shot recoil pulse for Creature (see DrawGardenHUD); call after PadPumpFor for this frame.
         float PadKickPulse(Fighter ship)
         {
             if (!padBeat.TryGetValue(ship.Id, out PadBeat b)) return 0f;
-            if (ship.LastFired - b.kick >= PadKickMin) b.kick = ship.LastFired;
+            if (ship.LastFired - b.kick >= (ship.Tier >= 2 ? PadKickMinHigh : PadKickMin)) b.kick = ship.LastFired;
             float k = Battle.Time - b.kick;
             return k >= 0f && k < .06f ? 1f - k / .06f : 0f;
         }
@@ -626,7 +646,7 @@ namespace Flightbeat.Game
         // shrinks away into a bubble pop with a small fan of confetti (member ~.5 s, confetti until ~1 s). Only members
         // that leave with no ammo are celebrated (merge partners and other removals keep their ammo). Drawing only, on the
         // UI clock, drawn before the members so a newcomer landing on the same pad stays in front.
-        struct PadSeen { public Fighter ship; public float x, feet, scale; }
+        struct PadSeen { public Fighter ship; public float x, feet, scale, poseX, slideX; }
         struct PadFarewell { public float born, x, feet, scale; public int color, tier, seed; }
         readonly Dictionary<int, PadSeen> padSeen = new Dictionary<int, PadSeen>();
         readonly List<PadFarewell> padFarewells = new List<PadFarewell>();
@@ -636,8 +656,8 @@ namespace Flightbeat.Game
         static float FarewellHash(int n) { float v = Mathf.Sin(n * 12.9898f) * 43758.5453f; return v - Mathf.Floor(v); }
 
         // Where a pad member was drawn this frame (feet as passed to Creature, before the layout mapping).
-        void PadSeenRecord(Fighter ship, float x, float feet, float scale) =>
-            padSeen[ship.Id] = new PadSeen { ship = ship, x = x, feet = feet, scale = scale };
+        void PadSeenRecord(Fighter ship, float x, float feet, float scale, float poseX, float slideX) =>
+            padSeen[ship.Id] = new PadSeen { ship = ship, x = x, feet = feet, scale = scale, poseX = poseX, slideX = slideX };
 
         void DrawPadFarewells(PixelSurface s, float canvas)
         {
@@ -652,6 +672,9 @@ namespace Flightbeat.Game
             foreach (int id in padGone)
             {
                 PadSeen seen = padSeen[id];
+                // 11-06: a spent member held away from its pose (PadSlideX) takes off from where it was drawn.
+                if (seen.ship != null && seen.ship.Ammo <= 0 && Mathf.Abs(seen.slideX - seen.poseX) > .5f)
+                    feedback.GardenNoteTakeoff(seen.poseX, seen.slideX);
                 padSeen.Remove(id);
                 // 2026-11-05 (user: one toy flying up, not two): with the pressure rules on, the spent member flies up and
                 // hits the field itself (CombatFeedback kamikaze), so no farewell on the pad.

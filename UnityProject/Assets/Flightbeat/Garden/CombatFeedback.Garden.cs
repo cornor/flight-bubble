@@ -757,6 +757,28 @@ namespace Flightbeat.Feedback
             return float.IsNaN(at.x) ? fallback : at;
         }
         Vector2 ShownPoint(float x, float y) => ScreenLayout.EnemyPoint(x, y + GardenOffsetDelta);
+        // 2026-11-06 (user: let it hit first, then move): while a spent member flies up to the field (and the .07 s it is
+        // squashed there) the members on the pads keep their places; then they slide over to close the gap.
+        // Not while a member is landing on a pad (it would land where a held member still stands). Drawing only: the
+        // game holds the drawn x (PadSlideX); the poses themselves (original code) are untouched.
+        // The game reports where a spent member was drawn when that differs from its pose (held by GardenHoldSlide), so
+        // its flight starts there; matched to the new kamikaze by its start x.
+        readonly List<Vector2> gardenTakeoffs = new List<Vector2>();   // pose x, drawn x
+        readonly Dictionary<Kamikaze, float> gardenKamikazeX = new Dictionary<Kamikaze, float>();
+        public void GardenNoteTakeoff(float poseX, float drawnX) { if (gardenTakeoffs.Count < 16) gardenTakeoffs.Add(new Vector2(poseX, drawnX)); }
+        float GardenKamikazeX(Kamikaze k) {
+            if (gardenKamikazeX.TryGetValue(k, out float x)) return x;
+            for (int i = 0; i < gardenTakeoffs.Count; i++)
+                if (Mathf.Abs(gardenTakeoffs[i].x - k.from.x) < 1f) { x = gardenTakeoffs[i].y; gardenTakeoffs.RemoveAt(i); gardenKamikazeX[k] = x; return x; }
+            if (k.age > .05f) { gardenKamikazeX[k] = k.x; if (gardenTakeoffs.Count > 0 && kamikazes.Count <= 1) gardenTakeoffs.Clear(); }
+            return k.x;   // the game may report the take-off later this frame
+        }
+        public bool GardenHoldSlide() {
+            if (GardenPadCanvas <= 0f || kamikazes.Count == 0) return false;
+            foreach (var pose in poses.Values) if (time - pose.born < .32f) return false;
+            foreach (var k in kamikazes) if (!k.exploded || k.age - k.delay < .07f) return true;
+            return false;
+        }
         readonly Dictionary<Kamikaze, Vector2> gardenKamikazeHit = new Dictionary<Kamikaze, Vector2>();
         readonly List<Kamikaze> gardenKamikazeGone = new List<Kamikaze>();
         // The lowest bead of the whole field as drawn (FrontScreenY when the field is empty).
@@ -949,19 +971,21 @@ namespace Flightbeat.Feedback
                     Mathf.Sin(u * Mathf.PI * 3f) * .12f * t.spin);
             }
             foreach (var f in fusions) DrawBubbleFusion(s, f, color(f.color));
-            if (gardenKamikazeHit.Count > kamikazes.Count) {
+            if (gardenKamikazeHit.Count > kamikazes.Count || gardenKamikazeX.Count > kamikazes.Count) {
                 gardenKamikazeGone.Clear();
                 foreach (var key in gardenKamikazeHit.Keys) if (!kamikazes.Contains(key)) gardenKamikazeGone.Add(key);
-                foreach (var key in gardenKamikazeGone) gardenKamikazeHit.Remove(key);
+                foreach (var key in gardenKamikazeX.Keys) if (!kamikazes.Contains(key) && !gardenKamikazeGone.Contains(key)) gardenKamikazeGone.Add(key);
+                foreach (var key in gardenKamikazeGone) { gardenKamikazeHit.Remove(key); gardenKamikazeX.Remove(key); }
             }
             foreach (var k in kamikazes) {
                 // f53886/f53878: approach during delay, then impact at exploded; consume the source clock.
                 // 2026-11-05 (user): it flies to the bubble field's current lower edge above its pad (GardenFieldEdge),
                 // not to the original front line, which stays at the full board's bottom row as the field is cleared.
                 // The burst stays where it hit while the field is pushed back up.
+                float kx = GardenKamikazeX(k);
                 if (!gardenKamikazeHit.TryGetValue(k, out var hit)) {
-                    hit = GardenFieldEdge(k.x);
-                    if (k.exploded) gardenKamikazeHit[k] = hit;
+                    hit = GardenFieldEdge(kx);
+                    if (k.exploded) { gardenKamikazeHit[k] = hit; GardenHitKick(4f); }   // 11-06: a jolt of the field on impact
                 }
                 if (!k.exploded) {
                     float t = Mathf.Clamp01((k.age / k.delay - .25f) / .75f);
@@ -970,8 +994,8 @@ namespace Flightbeat.Feedback
                         // member itself takes off - same size and feet as on its pad - until its head is in the field's edge.
                         float scale = GardenPadScaleOf(k.tier), body = GardenPadCanvas * scale;
                         float feet = Mathf.Lerp(GardenPadFeetAt(k.from.y), hit.y - 8f + body * .8f, t * t);
-                        if (t > 0) GardenFx.Draw(s, "dash-trail", new Vector2(k.x, feet + 27f), 36, 96, color(k.color));
-                        GardenSkin.Creature(s, color(k.color), k.x, feet, GardenPadCanvas, k.tier, "", 0f, 12f, false, false,
+                        if (t > 0) GardenFx.Draw(s, "dash-trail", new Vector2(kx, feet + 27f), 36, 96, color(k.color));
+                        GardenSkin.Creature(s, color(k.color), kx, feet, GardenPadCanvas, k.tier, "", 0f, 12f, false, false,
                             0f, 0f, scale);
                     } else {
                         var p = Vector2.Lerp(k.from, hit, t * t);
@@ -980,8 +1004,15 @@ namespace Flightbeat.Feedback
                     }
                 } else {
                     // 2026-11-05 (user): the spent member bursts as a soap bubble where it hits the field (was a dust puff).
-                    if (!GardenFx.SoapPop(s, hit, 36f, color(k.color), k.age - k.delay, k.color * 7 + (int)k.x))
-                        GardenFx.Burst(s, "impact-dust", hit, 80, k.age - k.delay, .5f);
+                    // 11-06 (user: too weak): first it is squashed flat against the edge for .07 s, and the burst is bigger.
+                    float hitAge = k.age - k.delay;
+                    if (hitAge < .07f && GardenPadScaleOf != null && GardenPadCanvas > 0f) {
+                        float scale = GardenPadScaleOf(k.tier), body = GardenPadCanvas * scale, q = hitAge / .07f;
+                        GardenSkin.Creature(s, color(k.color), kx, hit.y - 8f + body * .8f * (1f - .35f * (1f - q)), GardenPadCanvas, k.tier, "",
+                            0f, 12f, false, false, 0f, 0f, scale, .35f * (1f - q));
+                    }
+                    if (!GardenFx.SoapPop(s, hit, 54f, color(k.color), hitAge, k.color * 7 + (int)k.x))
+                        GardenFx.Burst(s, "impact-dust", hit, 80, hitAge, .5f);
                 }
             }
             float fieldBottom = GardenFieldBottom();

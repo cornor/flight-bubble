@@ -67,34 +67,49 @@ namespace Flightbeat.Garden
             if (!GardenSkin.Has(GardenSkin.SoapBubble)) return false;
             if (age < 0f || age >= .5f) return true;
             Color sheen = Color.Lerp(Color.white, tint, .3f), drop = Color.Lerp(tint, Color.white, .25f);
-            if (age < .05f)
+            // 2026-11-06 (user: the burst was too weak): a flash of the member's colour with a white core, a bigger film
+            // flash, two shock rings (white, then coloured), more and faster droplets and more bubbles.
+            if (age < .16f)
             {
-                float d = radius * (2f + .16f * age / .05f);
-                GardenSkin.Asset(s, GardenSkin.SoapBubble, c.x - d * .5f, c.y - d * .5f, d, d, new Color(sheen.r, sheen.g, sheen.b, .9f * (1f - age / .05f)));
+                float q = age / .16f, g = .6f + .4f * q;
+                s.Glow(c.x, c.y, radius * 5f * g, radius * 3.6f * g, new Color(drop.r, drop.g, drop.b, .7f * (1f - q)), 0f);
+                s.Glow(c.x, c.y, radius * 2.4f, radius * 2.4f, new Color(1f, 1f, 1f, .95f * (1f - q) * (1f - q)), 0f);
             }
-            if (age < .12f)
+            if (age < .06f)
             {
-                float q = age / .12f;
-                s.Ring(c, radius * (1f + .3f * q), new Color(1f, 1f, 1f, .9f * (1f - q)), 3f * (1f - q) + .5f, 28, 0f, 360f);
+                float d = radius * (2f + .5f * age / .06f);
+                GardenSkin.Asset(s, GardenSkin.SoapBubble, c.x - d * .5f, c.y - d * .5f, d, d, new Color(sheen.r, sheen.g, sheen.b, .95f * (1f - age / .06f)));
             }
-            for (int k = 0; k < 18; k++)
+            if (age < .18f)
+            {
+                float q = age / .18f, e = 1f - (1f - q) * (1f - q);
+                s.Ring(c, radius * (1f + 1.2f * e), new Color(1f, 1f, 1f, .95f * (1f - q)), 6f * (1f - q) + 1f, 32, 0f, 360f);
+            }
+            float a2 = age - .03f;
+            if (a2 >= 0f && a2 < .22f)
+            {
+                float q = a2 / .22f, e = 1f - (1f - q) * (1f - q);
+                s.Ring(c, radius * (1f + 1.7f * e), new Color(drop.r, drop.g, drop.b, .85f * (1f - q)), 4f * (1f - q) + .5f, 32, 0f, 360f);
+            }
+            for (int k = 0; k < 28; k++)
             {
                 float h1 = Hash(seed * 31 + k), h2 = Hash(seed * 37 + k), h3 = Hash(seed * 41 + k);
-                float life = .3f + .15f * h3;
+                float life = .3f + .18f * h3;
                 if (age >= life) continue;
-                float ang = (k + .6f * h1) / 18f * Mathf.PI * 2f, speed = 160f + 120f * h2;
-                Vector2 p = c + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * (radius * .95f + speed * age) + new Vector2(0f, 380f * age * age);
-                float a = 1f - age / life, d = 3f + 2.5f * h1;
-                s.Glow(p.x, p.y, d * 2.4f, d * 2.4f, new Color(drop.r, drop.g, drop.b, .75f * a), 0f);
+                float ang = (k + .6f * h1) / 28f * Mathf.PI * 2f, speed = 220f + 200f * h2;
+                float travel = speed * age * (1f - .8f * age);   // flung out, slowing a little
+                Vector2 p = c + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * (radius * .9f + travel) + new Vector2(0f, 420f * age * age);
+                float a = 1f - age / life, d = 4f + 4f * h1;
+                s.Glow(p.x, p.y, d * 2.4f, d * 2.4f, new Color(drop.r, drop.g, drop.b, .8f * a), 0f);
                 s.Glow(p.x, p.y, d * .9f, d * .9f, new Color(1f, 1f, 1f, .95f * a), 0f);
             }
-            for (int k = 0; k < 4; k++)   // small soap bubbles spilling out below and to the sides of the field's edge
+            for (int k = 0; k < 7; k++)   // soap bubbles bursting out below and to the sides of the field's edge
             {
                 float h1 = Hash(seed * 43 + k), h2 = Hash(seed * 47 + k), h3 = Hash(seed * 53 + k);
-                float ang = Mathf.Lerp(15f, 165f, (k + .5f * h1) / 4f) * Mathf.Deg2Rad, speed = 55f + 35f * h2;
+                float ang = Mathf.Lerp(10f, 170f, (k + .5f * h1) / 7f) * Mathf.Deg2Rad, speed = 90f + 70f * h2;
                 float travel = speed * age * (1f - age);   // slowing down
                 Vector2 p = c + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * (radius * .9f + travel) + new Vector2(4f * Mathf.Sin(age * 10f + k), 0f);
-                float d = radius * (.32f + .22f * h3) * Mathf.Clamp01(age / .06f);
+                float d = radius * (.3f + .3f * h3) * Mathf.Clamp01(age / .05f);
                 float a = .9f * Mathf.Clamp01((.5f - age) / .15f);
                 GardenSkin.Asset(s, GardenSkin.SoapBubble, p.x - d * .5f, p.y - d * .5f, d, d, new Color(sheen.r, sheen.g, sheen.b, a));
             }

@@ -1,0 +1,108 @@
+diff --git a/UnityProject/Assets/Flightbeat/Game/AdService.cs b/UnityProject/Assets/Flightbeat/Game/AdService.cs
+index 4601842..3202482 100644
+--- a/UnityProject/Assets/Flightbeat/Game/AdService.cs
++++ b/UnityProject/Assets/Flightbeat/Game/AdService.cs
+@@ -3,8 +3,8 @@ using UnityEngine;
+ 
+ namespace Flightbeat.Game
+ {
+-    // src: shipped Test build f54942..f54950. Show bypasses the gate, increments
+-    // Skipped and grants the reward immediately; this is the original behavior.
++    // The original browser trial grants immediately. The Douyin player requires
++    // a completed native video, including when configuration or SDK setup fails.
+     public static class AdService
+     {
+         public static string UnitId = "";
+@@ -14,11 +14,43 @@ namespace Flightbeat.Game
+         public static bool Busy => gate.Busy;
+         public static void Tick() => gate.Tick(Time.realtimeSinceStartupAsDouble);
+         public static void Cancel() => gate.Cancel();
++#if FLIGHTBEAT_DOUYIN
++        private static Action<Action<bool>> showVideo;
++        private static Action releaseVideo;
++
++        public static void RegisterRewardedVideo(Action<Action<bool>> show, Action release)
++        {
++            Cancel();
++            showVideo = show;
++            releaseVideo = release;
++        }
++#endif
+         public static void Show(string placement, Action reward, Action failed)
+         {
++#if FLIGHTBEAT_DOUYIN
++            if (showVideo == null || Busy)
++            {
++                failed?.Invoke();
++                return;
++            }
++            gate.Begin(showVideo, watched =>
++            {
++                try { releaseVideo?.Invoke(); }
++                finally
++                {
++                    if (watched)
++                    {
++                        Shown++;
++                        reward?.Invoke();
++                    }
++                    else failed?.Invoke();
++                }
++            }, Time.realtimeSinceStartupAsDouble);
++#else
+             var callbacks = new CompletionCallbacks { failed = failed, reward = reward }; // f54949 allocation/field order
+             Skipped = unchecked(Skipped + 1);
+             callbacks.reward?.Invoke();
++#endif
+         }
+         // f54951/f54952. This source callback is retained even though the shipped
+         // Show f54949 bypasses the provider and immediately invokes reward.
+diff --git a/UnityProject/Assets/Flightbeat/Game/PixelWingGame.Ads.cs b/UnityProject/Assets/Flightbeat/Game/PixelWingGame.Ads.cs
+index 63c4d3d..98fada7 100644
+--- a/UnityProject/Assets/Flightbeat/Game/PixelWingGame.Ads.cs
++++ b/UnityProject/Assets/Flightbeat/Game/PixelWingGame.Ads.cs
+@@ -17,15 +17,14 @@ namespace Flightbeat.Game
+             aimDown = false;
+             AdService.Show(placement, () =>
+             {
+-                if (!this) return;
++                if (!this || Battle != originalBattle || wasHome != InHome) return;
+                 SetPaused(wasPaused);
+-                if (Battle != originalBattle || wasHome != InHome) return;
+                 Economy.CountAd();
+                 reward?.Invoke();
+                 audioChip.Play("reward");
+             }, () =>
+             {
+-                if (!this) return;
++                if (!this || Battle != originalBattle || wasHome != InHome) return;
+                 SetPaused(wasPaused);
+                 Toast("广告未完成，请重试", uiDim);
+                 audioChip.Play("deny");
+diff --git a/UnityProject/Assets/Flightbeat/Garden/GardenWebMetrics.cs b/UnityProject/Assets/Flightbeat/Garden/GardenWebMetrics.cs
+index 214d81e..6e9f73c 100644
+--- a/UnityProject/Assets/Flightbeat/Garden/GardenWebMetrics.cs
++++ b/UnityProject/Assets/Flightbeat/Garden/GardenWebMetrics.cs
+@@ -38,8 +38,10 @@ namespace Flightbeat.Garden {
+         PixelWingGame.LevelSetSource loadedSource;
+         string loadedFile = "", loadedCells = "";
+         public static GardenWebMetrics Instance;
++#if !FLIGHTBEAT_DOUYIN
+         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+         static void Install() { new GameObject("Garden R1 metrics").AddComponent<GardenWebMetrics>(); }
++#endif
+         void Awake() { Instance = this; }
+         public static void Visible(int count) { if (Instance != null) Instance.visible = count; }
+         float Percentile(float[] values, float p) => values.Length == 0 ? 0 : values[Mathf.Min(values.Length - 1, Mathf.CeilToInt(values.Length * p) - 1)];
+diff --git a/UnityProject/Assets/Flightbeat/Plugins/BroadcastHost.jslib b/UnityProject/Assets/Flightbeat/Plugins/BroadcastHost.jslib
+index a650d29..3f2c687 100644
+--- a/UnityProject/Assets/Flightbeat/Plugins/BroadcastHost.jslib
++++ b/UnityProject/Assets/Flightbeat/Plugins/BroadcastHost.jslib
+@@ -1,6 +1,7 @@
+ // Source: Reverse/input/framework.js, _PixelWingBroadcastStatus (host boundary).
+ mergeInto(LibraryManager.library, {
+   PixelWingBroadcastStatus: function (ptr) {
++    if (typeof document === "undefined" || !document.getElementById) return;
+     var status = JSON.parse(UTF8ToString(ptr));
+     var node = document.getElementById("broadcast-status");
+     if (node) {

@@ -781,6 +781,9 @@ namespace Flightbeat.Feedback
         }
         readonly Dictionary<Kamikaze, Vector2> gardenKamikazeHit = new Dictionary<Kamikaze, Vector2>();
         readonly List<Kamikaze> gardenKamikazeGone = new List<Kamikaze>();
+        // 画面休息 (PixelWingGame.GardenRest, set by the game every frame): the game is paused but the field stays in view,
+        // so DrawGardenFeedback draws nothing (see there) and the combo goes with HideCombo.
+        public bool GardenRest;
         // The lowest bead of the whole field as drawn (FrontScreenY when the field is empty).
         float GardenFieldBottom() {
             float any = float.MinValue;
@@ -886,6 +889,10 @@ namespace Flightbeat.Feedback
                 battle.Fired += GardenOnFired;
             }
             if (streamsBattle != battle) { streamsBattle = battle; streams.Clear(); }
+            // 2026-11-07 画面休息 (user: nothing frozen mid-air under the finale guide): shots, streams, hit pops, merges and
+            // their words, spent members' flights, the push-up gust and bomb blasts are all paused effects, so none is
+            // drawn. Their records only expire by feedback time, which stands still too: they carry on afterwards.
+            if (GardenRest) return;
             foreach (var ship in battle.Fleet) {
                 if (ship.Tier < 2 || ship.BeamLife <= 0) continue;
                 int slot = battle.Fleet.IndexOf(ship);

@@ -186,7 +186,7 @@ namespace Flightbeat.Game
                 if (i > start)
                 {
                     string part = line.Substring(start, i - start);
-                    Color ink = key ? (part.Contains("蓝") ? dialogueBlue : dialogueKey) : guideInk; ink.a *= alpha;
+                    Color ink = key ? (part.Contains("蓝") || part.Contains("决战") ? dialogueBlue : dialogueKey) : guideInk; ink.a *= alpha;   // 11-07: 决战 blue too
                     GardenBarArt.Text(s, part, x, y, size, false, ink);
                     x += GardenBarArt.TextWidth(part, size);
                 }

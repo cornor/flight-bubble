@@ -9,8 +9,8 @@ namespace Flightbeat.Game
     public partial class PixelWingGame
     {
         // Home settings → "重置关卡进度". 2026-10-17: one tap clears level progress at once (no confirmation):
-        // cleared levels, the unlocked level and any unsettled attempt. Coins, fragments, items, tutorials and
-        // settings stay as they are.
+        // cleared levels, the unlocked level and any unsettled attempt (2026-11-07: and the guides). Coins, fragments,
+        // items and settings stay as they are.
         // 2026-10-21 18:11 (user): two taps: the first arms it for 3 s (「再点一次确认清空」), the second clears.
         // 2026-10-30 14:32 (user, 界面优化 5: the two-tap arming was not noticed): one tap opens a confirmation -
         // 「确定清空所有关卡进度吗？」 with 取消 / 清空 - drawn on the overlay above the settings dialog.
@@ -41,6 +41,11 @@ namespace Flightbeat.Game
                     d.unlocked = 1;
                     d.attempt = string.Empty;
                     d.attemptLevel = 0;
+                    // 2026-11-07 (user): the guides start over too - the finale guide, the bomb's first-aim hint and the
+                    // level 2 "choose yourself" step. (growthTutorial is the original hangar's, not shown here.)
+                    d.finaleTutorial = false;
+                    d.bombTutorial = false;
+                    d.independentTutorial = false;
                 });
                 resetDoneAt = ui;
                 audioChip.Play("page");

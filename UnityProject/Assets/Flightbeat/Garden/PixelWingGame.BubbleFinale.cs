@@ -188,7 +188,10 @@ namespace Flightbeat.Game
         }
 
         // ---- first-time guide (f54731 layout: mask with a hole over the button, title, dialogue, pointer)
-        const string FinaleGuideLine = "全员都出战啦！\n点「决战」，大家合体一口气打光！";
+        // 2026-11-07 (user: like the level 1/2 guide): the same black 62 % mask with one rounded window over the button
+        // and a pulsing gold rim, the white tip bubble and the glove tapping it. 11:46: only the lower part is masked (see below). Gone: the purple veil, 「决战时刻」, the threshold line,
+        // the dialogue with Xiao Lan, the arrow and the rainbow echoes.
+        const string FinaleGuideTip = "点击{决战}，一口气打光！";
         void DrawBubbleFinaleGuide(PixelSurface s)
         {
             if (!BubbleFinaleArt) { DrawFinaleGuide(s); return; }
@@ -196,33 +199,61 @@ namespace Flightbeat.Game
             try { DrawFinaleGuide(s); } finally { s.EndMute(); }   // keeps HitBlock and the two hit boxes
             if (!FinaleButtonVisible) return;
             float alpha = Clamp01(finaleGuideAge * 4f), pulse = Mathf.Sin(ui * 6f) * .5f + .5f;
+            float cy = GardenBars.ScreenY(s, 759f);                          // the button's centre on screen
+            const float halfW = 164f, halfH = 53f, r = 40f;                  // the window round the 301 x 82 pill
+            float hx0 = 270f - halfW, hx1 = 270f + halfW, y0 = cy - halfH, y1 = cy + halfH;
             bool mapped = s.MapLayout;
             s.MapLayout = false;
-            // 2026-10-17 (user: the lighter box with four gold corners read like a debug selection). One even veil over
-            // everything; the button is drawn again on top of it, breathing, with rainbow echoes swelling out of it.
-            Color mask = new Color(.12f, .09f, .22f, alpha * .7f);
-            s.Rect(ScreenLayout.Left, 0f, ScreenLayout.Width, ScreenLayout.Height, mask);
-            s.MapLayout = mapped;
-            for (int i = 0; i < 3; i++)
+            try
             {
-                float t = FinaleRepeat(ui * .8f + i / 3f, 1f), k = 1f + t * .3f;
-                float ew = 340f * k, eh = 86f * k + t * 36f;
-                Color echo = Color.Lerp(Color.white, finaleRainbow[i * 2 % 7], .55f);
-                Asset(s, ButtonArt, 270f - ew * .5f, 759f - eh * .5f, ew, eh, A(echo, alpha * (1f - t) * (1f - t) * .5f));
+                float L = ScreenLayout.Left, R = ScreenLayout.Left + ScreenLayout.Width, H = ScreenLayout.Height;
+                // 11:46 (user, like the bomb's aim): only the lower part is masked - from under the pad members (y 652,
+                // where the bomb dims the queue) with a 40 px fade; the field, the pads and the header stay as they are.
+                Color shade = new Color(0f, 0f, 0f, .62f * alpha);
+                float top = Mathf.Min(PlushLayout.Y(652f), y0 - 2f), fade = Mathf.Min(40f, y0 - top);
+                for (float y = top; y < top + fade; y += 2f)
+                {
+                    float k = Mathf.SmoothStep(0f, 1f, (y - top + 1f) / fade);
+                    s.Rect(L, y, R - L, 2f, new Color(0f, 0f, 0f, .62f * alpha * k));
+                }
+                s.Rect(L, top + fade, R - L, y0 - top - fade, shade);
+                s.Rect(L, y1, R - L, H - y1, shade);
+                for (int row = 0; row < Mathf.CeilToInt(y1 - y0); row++)
+                {
+                    float dy = Mathf.Min(row + .5f, (y1 - y0) - row - .5f);
+                    float inset = dy < r ? r - Mathf.Sqrt(Mathf.Max(0f, r * r - (r - dy) * (r - dy))) : 0f;
+                    s.Rect(L, y0 + row, hx0 + inset - L, 1f, shade);
+                    s.Rect(hx1 - inset, y0 + row, R - hx1 + inset, 1f, shade);
+                }
+                // pulsing gold rim, as round the member card in level 1/2
+                float rim = .6f + .4f * Mathf.Sin(ui * 4f);
+                Color gold = new Color(1f, .82f, .3f, alpha * rim), haze = new Color(1f, .85f, .35f, .45f * alpha * rim);
+                s.GlowLine(new Vector2(hx0 + r, y0), new Vector2(hx1 - r, y0), 14f, haze);
+                s.GlowLine(new Vector2(hx0 + r, y1), new Vector2(hx1 - r, y1), 14f, haze);
+                s.GlowLine(new Vector2(hx0, y0 + r), new Vector2(hx0, y1 - r), 14f, haze);
+                s.GlowLine(new Vector2(hx1, y0 + r), new Vector2(hx1, y1 - r), 14f, haze);
+                s.Rect(hx0 + r, y0, hx1 - hx0 - 2f * r, 2.5f, gold);
+                s.Rect(hx0 + r, y1 - 2.5f, hx1 - hx0 - 2f * r, 2.5f, gold);
+                s.Rect(hx0, y0 + r, 2.5f, y1 - y0 - 2f * r, gold);
+                s.Rect(hx1 - 2.5f, y0 + r, 2.5f, y1 - y0 - 2f * r, gold);
+                for (int c = 0; c < 4; c++)
+                {
+                    Vector2 cc = new Vector2(c % 2 == 0 ? hx0 + r : hx1 - r, c < 2 ? y0 + r : y1 - r);
+                    s.Ring(cc, r - 1.25f, gold, 2.5f, 12, c == 0 ? 180f : c == 1 ? 270f : c == 2 ? 90f : 0f, 90f);
+                }
             }
-            float breathe = 1f + .045f * pulse;
-            s.Glow(270f, 759f, 460f * breathe, 176f * breathe, new Color(1f, .85f, .35f, alpha * (.25f + .2f * pulse)), 0f);
+            finally { s.MapLayout = mapped; }
+            float breathe = 1f + .03f * pulse;
             DrawFinaleButtonFace(s, breathe * (1f - PressPulse(8) * .05f), alpha);
-            HintCapsule(s, "决战时刻", 496f, 172f, 40f, 20f, GardenBars.Gold, GardenBars.Brown,
-                alpha, 1f, "crown", GardenBars.Deco.Many, finaleGuideAge);
-            GardenBarArt.TextOutline(s, "全员已出战 · 泡泡不到 " + Flightbeat.Model.Battle.FinaleThreshold + " 个", 270f, 527f, 18f, A(Cream, alpha), A(Outline, alpha), 1.6f);   // 2026-11-03 10:56 (user: text review): 18 px (was 16).
-            // Speech bubble with Xiao Lan; reveal at the original typing speed (spokenCharacters of the source line).
-            int shown = dialogue.Length == 0 ? FinaleGuideLine.Length
-                : Mathf.Clamp(Mathf.CeilToInt(FinaleGuideLine.Length * (float)spokenCharacters / dialogue.Length), 0, FinaleGuideLine.Length);
-            string[] lines = FinaleGuideLine.Substring(0, shown).Split('\n');
-            DrawGardenDialogue(s, "ui/guide-happy", lines, 632f, alpha);
-            float bounce = Mathf.Abs(Mathf.Sin(ui * 5f)) * 7f;
-            Asset(s, "fx/arrow", 256f, 692f - bounce, 28f, 28f, new Color(1f, 1f, 1f, alpha));
+            // tip bubble above the window (its tail points at the button) and the glove on the button's right half
+            float bubbleCy = y0 - 14f - 14f - 28f;
+            GuideBubble(s, new[] { FinaleGuideTip }, 270f, s.MapLayout ? PlushLayout.InverseY(bubbleCy) : bubbleCy, finaleGuideAge);
+            float tipY = cy + 14f;
+            if (!GuideHand(s, new Vector2(330f, s.MapLayout ? PlushLayout.InverseY(tipY) : tipY)))
+            {
+                float bounce = Mathf.Abs(Mathf.Sin(ui * 5f)) * 7f;
+                Asset(s, "fx/arrow", 256f, y0 - 36f - bounce, 28f, 28f, new Color(1f, 1f, 1f, alpha));
+            }
         }
 
         // ---- the finale itself (f54742, mode 0 "彩虹扇击": the only mode without a hangar)

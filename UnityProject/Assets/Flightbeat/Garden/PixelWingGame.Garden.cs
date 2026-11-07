@@ -402,6 +402,13 @@ namespace Flightbeat.Game
             }
             finally { s.MapLayout = mapped; }
         }
+        // 2026-11-07 画面休息: the game is paused while the field stays in view (the finale guide masks only the lower half),
+        // so nothing may hang frozen. One switch for all of it:
+        //   - CombatFeedback.DrawGardenFeedback draws none of its paused effects; the combo and its milestone show hide;
+        //   - pad members stand in their idle pose and breathe on the UI clock (PadPumpFor), with no firing pose, recoil
+        //     kick or shake; their firing beat is left as it was, so they carry on when the game resumes.
+        // A new paused-time effect drawn over the field should check it too.
+        bool GardenRest => finaleGuide;
         void DrawGardenHUD(PixelSurface s) {
             BeginHitsCore(); s.MapLayout = true;
             GardenSkin.Clock = ui;   // idle motion uses UI time only
@@ -414,7 +421,8 @@ namespace Flightbeat.Game
             // 2026-10-16: the original combo counter (f53835) in bubble style, same visibility rule as the source HUD.
             // 2026-10-21 16:20: the victory page hides the combo counter and the 已出战 tags behind it.
             bool winShown = Battle.State == Phase.Won && feedback.EndAge > .48f;
-            feedback.HideCombo = selection == 2 || settings || lesson != null || winShown;
+            feedback.GardenRest = GardenRest;
+            feedback.HideCombo = selection == 2 || settings || lesson != null || winShown || GardenRest;
             feedback.DrawBubbleCombo(s);
             if (Battle.Level.lesson <= 0 && !settings && selection == 0) {
                 DrawRailWarning(s);   // 2026-10-18 22:21: warning tape instead of the button-like red capsule (BubbleRail)
@@ -423,7 +431,7 @@ namespace Flightbeat.Game
             float baySpacing = Battle.MaximumSlots >= 2 ? 456f / (Battle.MaximumSlots - 1) : 120f;
             float bayCanvas = GardenBayCanvas(), bayNumber = baySpacing >= 74f ? 15f : 14f;
             float maxShakeAge = feedback.GardenMaxFusionAge;
-            float padShake = maxShakeAge < .3f ? Mathf.Sin(ui * 70f) * 2.5f * (1f - maxShakeAge / .3f) : 0f;
+            float padShake = maxShakeAge < .3f && !GardenRest ? Mathf.Sin(ui * 70f) * 2.5f * (1f - maxShakeAge / .3f) : 0f;
             // 10-27: members in the hand-drawn reach pose are drawn after the others (it may pass over a neighbour).
             DrawPadFarewells(s, bayCanvas);   // 2026-10-28: members that ran out say goodbye (GardenPads)
             padPumps.Clear();
@@ -440,17 +448,18 @@ namespace Flightbeat.Game
                 float poseX = at.x;
                 at.x = PadSlideX(ship.Id, at.x);   // 2026-11-06: hold places until a spent member has hit the field
                 float slideX = at.x;
-                at.x += padShake; at.y += feedback.GardenStrikeShake * .5f;
+                at.x += padShake; if (!GardenRest) at.y += feedback.GardenStrikeShake * .5f;
                 float squash = PadLanding(s, ship, i, ref at, bayCanvas);
                 float since = Battle.Time - ship.LastFired;
                 float fire = ship.Ammo > 0 ? (since < .1f ? 1f : Mathf.Clamp01(1f - (since - .1f) / .2f)) : 0f;
+                if (GardenRest) fire = 0f;
                 // 2026-10-26: the firing effects (PadPumpFor): all-out glow behind, bubble ring in front; pose frames.
                 PadPump pump = padPumps[i];
                 // Recoil kick per shot (1 -> 0 over .06 s). 2026-11-05 (user): keep the quick per-shot jitter (a beat-paced
                 // kick was tried and reverted), but a member firing faster than a frame (tier II .013 s, III .009 s) used to
                 // restart the kick every frame and looked frozen. A new kick now starts only if the last one began at least
                 // PadKickMin earlier (PadKickMinHigh for tiers II/III, 11-06: as often as tier I, ~15 a second).
-                float pulse = PadKickPulse(ship);
+                float pulse = GardenRest ? 0f : PadKickPulse(ship);
                 float pumpFeet = GardenPadFeet(ship.Id, at.y + 12f), pumpBody = bayCanvas * PadScale(ship);
                 PadPumpFx(s, ship, pump, Vector2.zero, at.x, pumpFeet, pumpBody, true);
                 GardenSkin.BendPose = pump.pose; GardenSkin.BendInhale = pump.inhale;

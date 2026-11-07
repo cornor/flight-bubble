@@ -151,10 +151,14 @@ namespace Flightbeat.Game
         PadPump PadPumpFor(Fighter ship, float fire)
         {
             if (padBeatBattle != Battle) { padBeatBattle = Battle; padBeat.Clear(); }
-            float now = Battle.Time;
-            if (!padBeat.TryGetValue(ship.Id, out PadBeat b)) { b = new PadBeat { last = now }; padBeat[ship.Id] = b; }
+            // 画面休息 (GardenRest): not firing, on the UI clock, with a scratch beat so the real one is left as it was.
+            bool rest = GardenRest;
+            float now = rest ? ui : Battle.Time;
+            PadBeat b;
+            if (rest) b = new PadBeat { last = now };
+            else if (!padBeat.TryGetValue(ship.Id, out b)) { b = new PadBeat { last = now }; padBeat[ship.Id] = b; }
             float dt = Mathf.Clamp(now - b.last, 0f, .1f); b.last = now;
-            bool firing = fire > .5f && ship.Ammo > 0;
+            bool firing = !rest && fire > .5f && ship.Ammo > 0;
             if (firing && !b.firing) { b.start = now; b.phase = .45f; }
             if (!firing && b.firing) b.stopped = now;
             b.firing = firing;

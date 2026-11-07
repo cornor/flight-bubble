@@ -65,7 +65,7 @@ namespace Flightbeat.Game
             view.progressFill.fillAmount = Battle.Progress;
             view.progressFill.enabled = Battle.Progress > 0f;
             // 2026-10-31: within the groove, never narrower than its own round ends.
-            float progressWidth = Mathf.Lerp(GardenBattlePage.ProgressFillHeight, GardenBattlePage.ProgressFillWidth, Mathf.Clamp01(Battle.Progress));
+            float progressWidth = Mathf.Lerp(GardenBattlePage.ProgressFillHeight, view.ProgressFillWidthNow, Mathf.Clamp01(Battle.Progress));   // 11-06: shorter beside the capsule
             if (!Mathf.Approximately(view.progressFill.rectTransform.sizeDelta.x, progressWidth))
                 view.progressFill.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, progressWidth);
             if (view.progressSpark)

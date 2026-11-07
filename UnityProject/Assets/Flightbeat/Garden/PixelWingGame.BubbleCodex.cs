@@ -44,7 +44,7 @@ namespace Flightbeat.Game
         {
             bool mapped = s.MapLayout;
             s.MapLayout = false;
-            float top = ScreenLayout.Top + 16f;
+            float top = HomeCornerY(60f, ScreenLayout.Top + 16f);
             HomeIconButton(s, 801, ScreenLayout.Left + 20f, top, "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 60f);
             // Lower-right entry, beside the start button; reserve the side columns for future features.
             HomeArtView(out float k, out float ox, out float oy);
@@ -92,6 +92,9 @@ namespace Flightbeat.Game
             TextOutline(s, homeNextName, tx + tagW + 8f, y + 12f, 24f, Gold, Outline, 2f, false);
             TextOutline(s, homeNextLine, tx, y + 48f, 19f, Cream, Outline, 1.7f, false);
         }
+        // Top of a corner button of this size: centred on the capsule's row when there is one, else `fallback`.
+        static float HomeCornerY(float size, float fallback) =>
+            ScreenLayout.HasMenu ? (ScreenLayout.MenuTop + ScreenLayout.MenuBottom) * .5f - size * .5f : fallback;
         void HomeIconButton(PixelSurface s, int id, float x, float y, string art, string label, Color fallback, float size = 56f, float wordSize = 0f)
         {
             // 2026-11-03 10:19: wordSize < 0 draws no word under the icon; > 0 sets its size.
@@ -177,15 +180,18 @@ namespace Flightbeat.Game
             GardenTitleArt.Draw(s, "泡泡图鉴", 270f, headerY + 43f - slide, 42f);
             SoapBubble(s, new Vector2(150f, headerY + 50f), 26f, Color.white, .7f, 2);
             SoapBubble(s, new Vector2(389f, headerY + 40f), 17f, Color.white, .65f, 4);
-            HitBox(s, CodexCloseAction, 470f, headerY + 14f, 60f, 60f);
+            // 2026-11-06 (user: adapt to the capsule): when the capsule is in this row, the close button moves to the left
+            // corner (x 40) instead of hiding under it.
+            float cx0 = ScreenLayout.HasMenu && ScreenLayout.MenuLeft < 530f && ScreenLayout.MenuBottom > headerY + 20f ? 40f : 500f;
+            HitBox(s, CodexCloseAction, cx0 - 30f, headerY + 14f, 60f, 60f);
             float close = 42f * (1f - PressPulse(CodexCloseAction) * .1f), cy = headerY + 44f;
-            CodexRound(s, 500f - close * .5f, cy - close * .5f + 2f, close, close, close * .5f, A(Hex(0xD6544C), .2f));
-            CodexRound(s, 500f - close * .5f, cy - close * .5f, close, close, close * .5f, Hex(0xF06B61));
-            s.GardenRoundedRect(501.2f - close * .5f, cy - close * .5f + 1.2f, close - 2.4f, close - 2.4f, close * .5f,
+            CodexRound(s, cx0 - close * .5f, cy - close * .5f + 2f, close, close, close * .5f, A(Hex(0xD6544C), .2f));
+            CodexRound(s, cx0 - close * .5f, cy - close * .5f, close, close, close * .5f, Hex(0xF06B61));
+            s.GardenRoundedRect(cx0 + 1.2f - close * .5f, cy - close * .5f + 1.2f, close - 2.4f, close - 2.4f, close * .5f,
                 Hex(0xFFA08F), Hex(0xFF6C62));
             float cross = close * .18f;
-            s.Segment(new Vector2(500f - cross, cy - cross), new Vector2(500f + cross, cy + cross), 4f, Color.white);
-            s.Segment(new Vector2(500f + cross, cy - cross), new Vector2(500f - cross, cy + cross), 4f, Color.white);
+            s.Segment(new Vector2(cx0 - cross, cy - cross), new Vector2(cx0 + cross, cy + cross), 4f, Color.white);
+            s.Segment(new Vector2(cx0 + cross, cy - cross), new Vector2(cx0 - cross, cy + cross), 4f, Color.white);
             // Keep the small collection label single-pass so dense strokes stay distinct.
             GardenSkin.Text(s, "已收集 " + got + " / " + n, 270f, headerY + 86f, 20f, true, CodexInk);
             CodexRound(s, 163f, headerY + 110f, 214f, 19f, 9.5f, Hex(0xF5FCFF));

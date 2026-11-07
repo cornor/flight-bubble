@@ -93,7 +93,8 @@ namespace Flightbeat.Game
             }
             DrawWaveStart(s);
             // 2026-11-03 10:19 (user: no word under the settings button).
-            HomeIconButton(s, 801, ScreenLayout.Left + 24f, ScreenLayout.Top + 18f, "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 48f, -1f);
+            // 2026-11-06 (user: plan A): with a capsule the button sits level with it, at the left of the same row.
+            HomeIconButton(s, 801, ScreenLayout.Left + 24f, HomeCornerY(48f, ScreenLayout.Top + 18f), "plants/home/btn-settings", "设置", Hex(0x5BB8FF), 48f, -1f);
             // 2026-10-30 (界面优化 4, after the reference): 伙伴图鉴 in the top-right corner, opposite 设置.
             // 2026-10-30 16:10 (调整 4): exactly where the reference has it - at the right edge, level with the bubble.
             // 2026-11-03 10:19 (user: the album button's icon and word a little bigger): icon 48 -> 60 px (right edge kept),

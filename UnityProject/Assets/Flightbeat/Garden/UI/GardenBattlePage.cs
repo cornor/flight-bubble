@@ -12,6 +12,9 @@ namespace Flightbeat.Garden.UI
         public const float ProgressWidth = 256f;   // 2026-10-21: 266 -> 256, room for the larger percent
         // 2026-10-31: the green fill sits inside the track's groove: 7.5 px in from each end, 10.6 px tall.
         public const float ProgressInset = 7.5f, ProgressFillWidth = ProgressWidth - 2f * ProgressInset, ProgressFillHeight = 14.6f;   // 2026-11-03 17:36 (user: thicker bar): 10.6 -> 14.6, with the track 22 -> 26
+        // 2026-11-06 (user: adapt to the capsule, header in its row): the fill's full width for the current layout -
+        // ProgressFillWidth, less what the bar gives up so it ends left of the capsule (ApplyLayout).
+        public float ProgressFillWidthNow { get; private set; } = ProgressFillWidth;
         [Header("Layers and responsive containers")]
         public GameObject background, header, controls, pauseDialog, resultDialog;
         public RectTransform backgroundTop, backgroundField, backgroundBottom, headerBand, controlsBand;
@@ -54,7 +57,9 @@ namespace Flightbeat.Garden.UI
         bool visible;
         GardenUiText pauseTitle, resumeLabel;
         bool layoutPlush;
-        float layoutHeight = -1, layoutWidth = -1, layoutTop = -1, layoutBottom = -1;
+        float layoutHeight = -1, layoutWidth = -1, layoutTop = -1, layoutBottom = -1, layoutMenu = -1;
+        // The progress row as authored (frame, track, shade, percent): x and width, so the capsule fit can be re-applied.
+        RectTransform[] progressParts; Vector2[] progressAuthored;
         public void Bind(PixelWingGame game)
         {
             owner = game;
@@ -403,13 +408,42 @@ namespace Flightbeat.Garden.UI
         }
         public void ApplyLayout()
         {
-            if (layoutPlush == PlushLayout.Enabled && layoutHeight == ScreenLayout.Height && layoutWidth == ScreenLayout.Width && layoutTop == ScreenLayout.Top && layoutBottom == ScreenLayout.Bottom) return;
-            layoutPlush = PlushLayout.Enabled; layoutHeight = ScreenLayout.Height; layoutWidth = ScreenLayout.Width; layoutTop = ScreenLayout.Top; layoutBottom = ScreenLayout.Bottom;
+            float menuLeft = ScreenLayout.HasMenu ? ScreenLayout.MenuLeft : 10000f;
+            if (layoutPlush == PlushLayout.Enabled && layoutHeight == ScreenLayout.Height && layoutWidth == ScreenLayout.Width && layoutTop == ScreenLayout.Top && layoutBottom == ScreenLayout.Bottom && layoutMenu == menuLeft) return;
+            layoutPlush = PlushLayout.Enabled; layoutHeight = ScreenLayout.Height; layoutWidth = ScreenLayout.Width; layoutTop = ScreenLayout.Top; layoutBottom = ScreenLayout.Bottom; layoutMenu = menuLeft;
             headerBand.anchoredPosition = new Vector2(0, -ScreenLayout.Top);
+            FitProgressRow(menuLeft);
             controlsBand.anchoredPosition = new Vector2(0, ScreenLayout.Bottom + 386);
             Band(backgroundTop, 0, PlushLayout.Y(114));
             Band(backgroundField, PlushLayout.Y(114), PlushLayout.Y(574));
             Band(backgroundBottom, PlushLayout.Y(574), ScreenLayout.Height);
+        }
+        // 2026-11-06 (user: plan A - the header shares the capsule's row): ScreenLayout.Top already puts the header level
+        // with the capsule; here the progress bar is shortened so the frame ends 10 px left of it (the percent moves in
+        // with the end). Without a capsule the row is as authored.
+        void FitProgressRow(float menuLeft)
+        {
+            if (progressParts == null)
+            {
+                string[] names = { "Progress frame", "Progress track", "Progress track shade", "Progress percent" };
+                progressParts = new RectTransform[names.Length]; progressAuthored = new Vector2[names.Length];
+                for (int i = 0; i < names.Length; i++)
+                {
+                    progressParts[i] = headerBand ? headerBand.Find(names[i]) as RectTransform : null;
+                    if (progressParts[i]) progressAuthored[i] = new Vector2(progressParts[i].anchoredPosition.x, progressParts[i].sizeDelta.x);
+                }
+            }
+            if (!progressParts[0]) return;
+            float frameRight = progressAuthored[0].x + progressAuthored[0].y;
+            float give = Mathf.Clamp(frameRight - (menuLeft - 10f), 0f, 140f);   // never below ~190 px of frame
+            for (int i = 0; i < progressParts.Length; i++)
+            {
+                RectTransform r = progressParts[i];
+                if (!r) continue;
+                if (i == 3) r.anchoredPosition = new Vector2(progressAuthored[i].x - give, r.anchoredPosition.y);   // the percent
+                else r.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, progressAuthored[i].y - give);
+            }
+            ProgressFillWidthNow = ProgressFillWidth - give;
         }
         static void Band(RectTransform rect, float top, float bottom)
         {

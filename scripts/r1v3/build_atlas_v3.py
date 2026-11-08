@@ -92,7 +92,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/DashTransition-20261031/delivery', ROOT / 'Art/PlushToy/DashArms-20261031/delivery', ROOT / 'Art/PlushToy/HardTitle-20261101/delivery', ROOT / 'Art/PlushToy/HardBolt-20261102/delivery', ROOT / 'Art/PlushToy/BombWave-20261102/delivery', ROOT / 'Art/PlushToy/BubblePop-20261102/delivery', ROOT / 'Art/PlushToy/BubbleBurst-20261102/delivery', ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/DashTransition-20261031/delivery', ROOT / 'Art/PlushToy/DashArms-20261031/delivery', ROOT / 'Art/PlushToy/HardTitle-20261101/delivery', ROOT / 'Art/PlushToy/HardBolt-20261102/delivery', ROOT / 'Art/PlushToy/BombWave-20261102/delivery', ROOT / 'Art/PlushToy/PushWave-20261107/delivery', ROOT / 'Art/PlushToy/BubblePop-20261102/delivery', ROOT / 'Art/PlushToy/BubbleBurst-20261102/delivery', ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     files += [p for p in (PAD_COMBAT_ART / 'mouths.json', PAD_COMBAT_ART / 'coverage.json') if p.exists()]
@@ -532,6 +532,9 @@ HARD_TITLE = ROOT / 'Art/PlushToy/HardTitle-20261101/delivery'
 HARD_BOLT = ROOT / 'Art/PlushToy/HardBolt-20261102/delivery'
 # 2026-11-02 15:57: the bomb's shock-wave ring, four stages (BombWave-20261102), on the creature atlas at half size.
 BOMB_WAVE = ROOT / 'Art/PlushToy/BombWave-20261102/delivery'
+# 2026-11-07 22:04 (user: keep the push-up wave, with better art and quieter): the gust under the bubble field, three
+# stages that tile sideways (PushWave-20261107), on the creature atlas at half size, once delivered.
+PUSH_WAVE = ROOT / 'Art/PlushToy/PushWave-20261107/delivery'
 # 2026-11-02 16:33: the tintable bead pop (BubblePop-20261102). 18:19 (user: concept B's water crown is too big and
 # heavy; the pop should burst into see-through bubbles): B is no longer packed. 19:49 (user: the dense middle of the
 # impact-dust burst smears into one blob; burst straight into small see-through bubbles, wider for higher tiers): one
@@ -571,6 +574,8 @@ if (BUBBLE_BURST / 'L0-film.png').is_file():
                 SLOTS.append((f'plants/fx/burst-{_lv}-{_i}-{_layer}', str(GEN / f'fx/burst-{_lv}-{_i}-{_layer}.png'), .6, None))
 for _i in range(4):
     if (BOMB_WAVE / f'wave-{_i + 1}.png').is_file(): SLOTS.append((f'plants/fx/bomb-wave-{_i}', str(BOMB_WAVE / f'wave-{_i + 1}.png'), .5, None))
+for _i in range(3):
+    if (PUSH_WAVE / f'wave-{_i + 1}.png').is_file(): SLOTS.append((f'plants/fx/push-wave-{_i}', str(PUSH_WAVE / f'wave-{_i + 1}.png'), .5, None))
 for _i in range(6):
     if (HARD_BOLT / f'bolt-{_i + 1}.png').is_file(): SLOTS.append((f'plants/uiref/incoming-bolt-{_i}', str(HARD_BOLT / f'bolt-{_i + 1}.png'), .75, None))
 for _sid, _rel in (('plants/uiref/incoming-hard', 'title-hard.png'), ('plants/uiref/incoming-super', 'title-super.png')):

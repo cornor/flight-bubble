@@ -58,8 +58,9 @@ namespace Flightbeat.Garden.UI
         GardenUiText pauseTitle, resumeLabel;
         bool layoutPlush;
         float layoutHeight = -1, layoutWidth = -1, layoutTop = -1, layoutBottom = -1, layoutMenu = -1;
-        // The progress row as authored (frame, track, shade, percent): x and width, so the capsule fit can be re-applied.
-        RectTransform[] progressParts; Vector2[] progressAuthored;
+        // The header row as authored (HeaderParts: position and size), so the capsule layout can be re-applied.
+        RectTransform[] progressParts; Vector4[] progressAuthored;
+        float levelTitleSize, levelTitleOutline; Color levelTitleOutlineColor;
         public void Bind(PixelWingGame game)
         {
             owner = game;
@@ -419,31 +420,60 @@ namespace Flightbeat.Garden.UI
             Band(backgroundBottom, PlushLayout.Y(574), ScreenLayout.Height);
         }
         // 2026-11-06 (user: plan A - the header shares the capsule's row): ScreenLayout.Top already puts the header level
-        // with the capsule; here the progress bar is shortened so the frame ends 10 px left of it (the percent moves in
-        // with the end). Without a capsule the row is as authored.
+        // with the capsule. 2026-11-07 17:26 (user: the row was too crowded - pause, 第x关 plaque, a short bar, then the
+        // platform's buttons; the user's own plan): with a capsule, 第x关 is a small label above the pause button (in the
+        // status-bar height left above the capsule's row) and its plaque is hidden, so the progress bar takes the plaque's
+        // place - from x 66 to 10 px left of the capsule; frame, groove, shade and fill stretch, the percent stays at the
+        // frame's right end. Without a capsule the row is as authored (there may be no room above the pause button).
+        static readonly string[] HeaderParts = { "Progress frame", "Progress track", "Progress track shade", "Progress fill",
+            "Progress percent", "Level plaque", "Level title" };
+        const float FrameX = 190f, FrameW = 330f;   // the progress frame as authored (GardenBattleUiAssets.Header)
         void FitProgressRow(float menuLeft)
         {
             if (progressParts == null)
             {
-                string[] names = { "Progress frame", "Progress track", "Progress track shade", "Progress percent" };
-                progressParts = new RectTransform[names.Length]; progressAuthored = new Vector2[names.Length];
-                for (int i = 0; i < names.Length; i++)
+                progressParts = new RectTransform[HeaderParts.Length]; progressAuthored = new Vector4[HeaderParts.Length];
+                for (int i = 0; i < HeaderParts.Length; i++)
                 {
-                    progressParts[i] = headerBand ? headerBand.Find(names[i]) as RectTransform : null;
-                    if (progressParts[i]) progressAuthored[i] = new Vector2(progressParts[i].anchoredPosition.x, progressParts[i].sizeDelta.x);
+                    progressParts[i] = headerBand ? headerBand.Find(HeaderParts[i]) as RectTransform : null;
+                    if (progressParts[i]) progressAuthored[i] = new Vector4(progressParts[i].anchoredPosition.x, progressParts[i].anchoredPosition.y,
+                        progressParts[i].sizeDelta.x, progressParts[i].sizeDelta.y);
                 }
+                if (levelTitle) { levelTitleSize = levelTitle.fontSize; levelTitleOutline = levelTitle.outlineWidth; levelTitleOutlineColor = levelTitle.outlineColor; }
             }
             if (!progressParts[0]) return;
-            float frameRight = progressAuthored[0].x + progressAuthored[0].y;
-            float give = Mathf.Clamp(frameRight - (menuLeft - 10f), 0f, 140f);   // never below ~190 px of frame
-            for (int i = 0; i < progressParts.Length; i++)
+            bool capsule = menuLeft < 9999f;
+            float frameX = capsule ? 66f : FrameX, right = capsule ? Mathf.Min(FrameX + FrameW, menuLeft - 10f) : FrameX + FrameW;
+            float shift = frameX - FrameX, grow = Mathf.Max(right - frameX, 190f) - FrameW;
+            for (int i = 0; i < HeaderParts.Length; i++)
             {
                 RectTransform r = progressParts[i];
                 if (!r) continue;
-                if (i == 3) r.anchoredPosition = new Vector2(progressAuthored[i].x - give, r.anchoredPosition.y);   // the percent
-                else r.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, progressAuthored[i].y - give);
+                Vector4 a = progressAuthored[i];
+                switch (i)
+                {
+                    case 0: case 1: case 2:   // frame, groove, shade
+                        r.anchoredPosition = new Vector2(a.x + shift, a.y); r.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, a.z + grow); break;
+                    case 3:                   // fill: its width follows the progress (PixelWingGame.GardenUi)
+                        r.anchoredPosition = new Vector2(a.x + shift, a.y); break;
+                    case 4:                   // percent
+                        r.anchoredPosition = new Vector2(a.x + shift + grow, a.y); break;
+                    case 5:                   // level plaque
+                        if (r.gameObject.activeSelf == capsule) r.gameObject.SetActive(!capsule); break;
+                    case 6:                   // 第x关: centred over the 44 px pause button (x 12-56, top 6), 18 px with a white rim
+                        if (capsule) { r.anchoredPosition = new Vector2(34f - 40f, 18f * 1.4f - 4f); r.sizeDelta = new Vector2(80f, 18f * 1.4f); }
+                        else { r.anchoredPosition = new Vector2(a.x, a.y); r.sizeDelta = new Vector2(a.z, a.w); }
+                        if (levelTitle)
+                        {
+                            levelTitle.fontSize = capsule ? 18f : levelTitleSize;
+                            levelTitle.outlineWidth = capsule ? 1.5f : levelTitleOutline;
+                            levelTitle.outlineColor = capsule ? Color.white : levelTitleOutlineColor;
+                            levelTitle.SetVerticesDirty();
+                        }
+                        break;
+                }
             }
-            ProgressFillWidthNow = ProgressFillWidth - give;
+            ProgressFillWidthNow = ProgressFillWidth + grow;
         }
         static void Band(RectTransform rect, float top, float bottom)
         {

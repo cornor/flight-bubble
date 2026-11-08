@@ -781,9 +781,31 @@ namespace Flightbeat.Feedback
         }
         readonly Dictionary<Kamikaze, Vector2> gardenKamikazeHit = new Dictionary<Kamikaze, Vector2>();
         readonly List<Kamikaze> gardenKamikazeGone = new List<Kamikaze>();
-        // 画面休息 (PixelWingGame.GardenRest, set by the game every frame): the game is paused but the field stays in view,
-        // so DrawGardenFeedback draws nothing (see there) and the combo goes with HideCombo.
-        public bool GardenRest;
+        // 2026-11-07 (user: the push-up gust looked fake - a soft cloud sticker sliding up). Tried and dropped the same day:
+        // a soap-bubble cluster at the merging pad (could not be seen), a code-drawn line of light (crude) and a painted
+        // light band (FieldPush-20261107, unused). 22:04 (user: the wave feel was better; keep it, but quieter and better
+        // art): the gust stays a full-width wave under the field (merged as before, GardenGust), it rushes up and slows
+        // (was a linear slide), drifts sideways and is fainter; new wave art (PushWave-20261107, plants/fx/push-wave-0..2,
+        // three stages that tile sideways) replaces repel-gust once delivered. A merge also makes the lowest beads above
+        // its pad bounce up and spring back (GardenPushLift, applied by the board).
+        sealed class GardenPush { public float x; public int seed; }
+        readonly Dictionary<Wave, GardenPush> gardenPushes = new Dictionary<Wave, GardenPush>();
+        readonly List<Wave> gardenPushGone = new List<Wave>();
+        int gardenPushSeed;
+        const float PushStart = .12f;   // the merge partners meet at .22; the field starts moving at once
+        static bool IsPush(Wave w) => w.kind != RepelKind.Revive && w.kind != RepelKind.Empty;
+        // Where the push comes from: the merge recorded with it (same age), else the middle.
+        GardenPush GardenPushOf(Wave w) {
+            if (gardenPushes.TryGetValue(w, out var p)) return p;
+            p = new GardenPush { x = 270f, seed = ++gardenPushSeed };
+            float best = .1f;
+            foreach (var f in fusions) {
+                float d = Mathf.Abs(f.age - w.age);
+                if (d < best) { best = d; p.x = f.at.x; }
+            }
+            gardenPushes[w] = p;
+            return p;
+        }
         // The lowest bead of the whole field as drawn (FrontScreenY when the field is empty).
         float GardenFieldBottom() {
             float any = float.MinValue;
@@ -795,6 +817,63 @@ namespace Flightbeat.Feedback
             }
             return any > float.MinValue ? any : FrontScreenY;
         }
+        // One gust (merges and spent members alike; `boost` grows with the gusts it took over). Its crest starts at the
+        // field's lowest bead and rushes 40 px (x boost) up into it, three quarters of the way in the first third of its .7 s;
+        // it fades in over .06 s and out with the rise; at most ~.5 opacity (the old strip was .65 and slid up evenly).
+        void DrawGardenGust(PixelSurface s, Wave w, float fieldBottom, float boost) {
+            float t = Mathf.Clamp01(w.age / w.duration), rise = 1f - (1f - t) * (1f - t) * (1f - t);
+            float alpha = Mathf.Min(.6f, .42f * boost) * Mathf.Clamp01(t / .06f) * (1f - t);
+            if (alpha <= .01f) return;
+            var p = GardenPushOf(w);
+            float side = (p.seed & 1) == 0 ? 1f : -1f, lift = rise * 40f * boost;
+            if (GardenSkin.Has("plants/fx/push-wave-0")) {
+                // 1080 x 180 tiles drawn 540 x 90, crest line at canvas y 40 (20 px down): two copies scroll sideways.
+                const float tw = 540f, th = 90f;
+                float top = fieldBottom + 4f - 20f - lift;
+                float scroll = Mathf.Repeat(p.seed * 137f + side * w.age * 50f, tw);
+                float stage = t * 2f;
+                int i0 = Mathf.Min(1, (int)stage);
+                float mix = stage - i0;
+                for (int k = 0; k < 2; k++) {
+                    float x = -scroll + k * tw;
+                    GardenSkin.Asset(s, "plants/fx/push-wave-" + i0, x, top, tw, th, new Color(1f, 1f, 1f, alpha * (1f - mix)));
+                    if (mix > .01f) GardenSkin.Asset(s, "plants/fx/push-wave-" + (i0 + 1), x, top, tw, th, new Color(1f, 1f, 1f, alpha * mix));
+                }
+                return;
+            }
+            // repel-gust (60 px tall, crest along its top): drawn a little wider than the tray so the drift shows no gap.
+            const float h = 60f;
+            float crestY = fieldBottom - 10f - lift;
+            GardenFx.Draw(s, "repel-gust", new Vector2(270f + side * 12f * rise, crestY + h * .5f), 570, h, new Color(1, 1, 1, alpha));
+        }
+        // The board asks once per frame (GardenPushLiftBegin) and then per bead (GardenPushLift, logical px upwards):
+        // up to 8 px at the bottom row above the pad, fading out 120 px up and sideways, a damped spring over .6 s.
+        readonly List<Vector4> gardenLifts = new List<Vector4>();   // x, amplitude, spread, edge y
+        public bool GardenPushLiftBegin() {
+            gardenLifts.Clear();
+            if (GardenRest) return false;
+            foreach (var w in waves) {
+                if (!IsPush(w)) continue;
+                float u = w.age - PushStart;
+                if (u <= 0f || u > .6f) continue;
+                var p = GardenPushOf(w);
+                float amp = 8f * Mathf.Exp(-5f * u) * Mathf.Sin(u * 14f);
+                gardenLifts.Add(new Vector4(p.x, amp, 45f + 200f * u, GardenFieldEdge(p.x).y));
+            }
+            return gardenLifts.Count > 0;
+        }
+        public float GardenPushLift(Vector2 at) {
+            float lift = 0f;
+            foreach (var l in gardenLifts) {
+                if (at.y > l.w + 4f) continue;
+                float dx = (at.x - l.x) / l.z;
+                lift += l.y * Mathf.Exp(-dx * dx) * Mathf.Clamp01(1f - (l.w - at.y) / 120f);
+            }
+            return lift;
+        }
+        // 画面休息 (PixelWingGame.GardenRest, set by the game every frame): the game is paused but the field stays in view,
+        // so DrawGardenFeedback draws nothing (see there) and the combo goes with HideCombo.
+        public bool GardenRest;
         // The bubble field's lower edge as drawn: the lowest front bead within 36 px of screen x, or the lowest front
         // bead anywhere when that part of the field is already cleared; the original front line when none is left.
         Vector2 GardenFieldEdge(float x) {
@@ -1023,26 +1102,28 @@ namespace Flightbeat.Feedback
                 }
             }
             float fieldBottom = GardenFieldBottom();
+            if (gardenPushes.Count > waves.Count) {
+                gardenPushGone.Clear();
+                foreach (var key in gardenPushes.Keys) if (!waves.Contains(key)) gardenPushGone.Add(key);
+                foreach (var key in gardenPushGone) gardenPushes.Remove(key);
+            }
             foreach (var wave in waves) {
                 float t = Mathf.Clamp01(wave.age / wave.duration);
                 bool revive = wave.kind == RepelKind.Revive;
-                // 2026-11-05 (user): merges and spent members each push the field and each started a gust, so a merge chain
-                // stacked several. A gust with a newer one less than .3 s behind it is not drawn; the newer one is drawn
-                // brighter and rises further for each gust it took over. It starts at the field's current lower edge
-                // (FrontScreenY stays at the full board's bottom row).
-                int merged = 0;
                 if (!revive) {
+                    // 2026-11-05 (user): merges and spent members each push the field and each started a gust, so a merge
+                    // chain stacked several. A gust with a newer one less than .3 s behind it is not drawn; the newer one is
+                    // drawn brighter and rises further for each gust it took over.
+                    int merged = 0;
                     bool absorbed = false;
                     foreach (var other in waves) {
                         if (other == wave || other.kind == RepelKind.Revive) continue;
                         if (other.age < wave.age && wave.age - other.age < .3f) { absorbed = true; break; }
                         if (other.age > wave.age && other.age - wave.age < .3f) merged++;
                     }
-                    if (absorbed) continue;
+                    if (!absorbed) DrawGardenGust(s, wave, fieldBottom, 1f + .3f * Mathf.Min(merged, 3));
+                    continue;
                 }
-                float boost = 1f + .3f * Mathf.Min(merged, 3);
-                float y = (revive ? 574 : fieldBottom) - t * (revive ? 260 : 50 * boost);
-                float h = revive ? 180 : 60;
                 // 2026-10-31 00:27 (user, after the reference): no blue water any more - a wavy gold-and-white light ribbon in
                 // the gap under the bubble field (following its edge as it is pushed up), a band of small foam bubbles,
                 // coloured bubbles popping out of it and gold glints. All of it stays inside the tray (logical y <= 568).
@@ -1118,9 +1199,6 @@ namespace Flightbeat.Feedback
                         s.Glow(x, yy, r * .5f, r * 3.6f, new Color(1f, .97f, .8f, tw), 0f);
                     }
                 }
-                else
-                GardenFx.Draw(s, revive ? "revive-wave" : "repel-gust", new Vector2(270, y - h * .5f), 540, h,
-                    new Color(1, 1, 1, Mathf.Min(1f, (revive ? .85f : .65f) * boost) * (1 - t)));
             }
             // f53914: PendingStrike exists during its 1s countdown; SuperDetonate starts superAge.
             // Only the cosmetic can moves; impact timing, target and radius are the original model's.

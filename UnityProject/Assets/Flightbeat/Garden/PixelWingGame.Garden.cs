@@ -409,9 +409,13 @@ namespace Flightbeat.Game
         //     kick or shake; their firing beat is left as it was, so they carry on when the game resumes.
         // A new paused-time effect drawn over the field should check it too.
         bool GardenRest => finaleGuide;
+        // 2026-11-07 17:05 (user: 决战不引导了, keep the guide's code): the switch for the finale's first-time guide. While
+        // it is off, finaleTutorial is marked done before the original guide (protected FinaleGuide.cs) can start.
+        const bool FinaleGuideEnabled = false;
         void DrawGardenHUD(PixelSurface s) {
             BeginHitsCore(); s.MapLayout = true;
             GardenSkin.Clock = ui;   // idle motion uses UI time only
+            if (!FinaleGuideEnabled && !Economy.Data.finaleTutorial && !evidenceControlled) Economy.CompleteFinaleTutorial();
             GardenSkin.Celebrate = Battle.State == Phase.Won;
             feedback.GardenMouth = GardenMouth; feedback.GardenEnemyAt = GardenEnemyAt;
             feedback.GardenPadCanvas = GardenBayCanvas(); feedback.GardenPadScaleOf = padScaleOf ??= PadTierScale;

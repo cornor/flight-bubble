@@ -14,7 +14,7 @@ namespace Flightbeat.Game
         float boardOffset, boardShake, boardWidth, boardHeight;
         Vector3 boardLayout;
         Phase boardPhase;
-        bool boardMapped, boardAiming;
+        bool boardMapped, boardAiming, boardPushed;
 
         void InitializeGardenBoard()
         {
@@ -60,6 +60,8 @@ namespace Flightbeat.Game
             feedback.GardenBeadSize = beadH;
             float shake = feedback.GardenStrikeShake;
             bool sandChanged = UpdateGardenSand(offset);
+            // 2026-11-07: a merge's push makes the lowest beads above the pad bounce (CombatFeedback.GardenPushLift).
+            bool pushed = feedback.GardenPushLiftBegin();
             var layout = new Vector3(ScreenLayout.Height, ScreenLayout.Top, ScreenLayout.Bottom);
             bool aiming = selection == 2;
             // Exact values rather than epsilon comparisons: subpixel movement,
@@ -67,11 +69,11 @@ namespace Flightbeat.Game
             bool dirty = force || gardenBoardBattle != Battle || sandChanged || offset != boardOffset
                 || shake != boardShake || beadW != boardWidth || beadH != boardHeight
                 || !layout.Equals(boardLayout) || PlushLayout.Enabled != boardMapped
-                || Battle.State != boardPhase || Battle.State == Phase.Intro || aiming || boardAiming;
+                || Battle.State != boardPhase || Battle.State == Phase.Intro || aiming || boardAiming || pushed || boardPushed;
             if (!dirty) return false;
             gardenBoardBattle = Battle; boardOffset = offset; boardShake = shake;
             boardWidth = beadW; boardHeight = beadH; boardLayout = layout;
-            boardMapped = PlushLayout.Enabled; boardPhase = Battle.State; boardAiming = aiming;
+            boardMapped = PlushLayout.Enabled; boardPhase = Battle.State; boardAiming = aiming; boardPushed = pushed;
             gardenBeadDraws.Clear();
             for (int i = 0; i < Battle.Alive.Length; i++) {
                 if (!Battle.Alive[i] || !Battle.OnBoard(i)) continue;
@@ -83,6 +85,7 @@ namespace Flightbeat.Game
                 }
                 if (at.y < 114 || at.y > 572 || at.x < 12 || at.x > 528) continue;
                 at.y += shake;
+                if (pushed) at.y -= feedback.GardenPushLift(at);
                 float squash = GardenSandSquash(i);
                 if (squash > 0f) at.y += beadH * squash * .5f;
                 gardenBeadDraws.Add(new GardenBeadDraw { index = i, at = at, squash = squash });

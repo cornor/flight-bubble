@@ -423,10 +423,13 @@ namespace Flightbeat.Garden.UI
         // with the capsule. 2026-11-07 17:26 (user: the row was too crowded - pause, 第x关 plaque, a short bar, then the
         // platform's buttons; the user's own plan): with a capsule, 第x关 is a small label above the pause button (in the
         // status-bar height left above the capsule's row) and its plaque is hidden, so the progress bar takes the plaque's
-        // place - from x 66 to 10 px left of the capsule; frame, groove, shade and fill stretch, the percent stays at the
+        // place - from x 66 (70 since the pause button grew) to 10 px left of the capsule; frame, groove, shade and fill stretch, the percent stays at the
         // frame's right end. Without a capsule the row is as authored (there may be no room above the pause button).
         static readonly string[] HeaderParts = { "Progress frame", "Progress track", "Progress track shade", "Progress fill",
-            "Progress percent", "Level plaque", "Level title" };
+            "Progress percent", "Level plaque", "Level title", "Pause button" };
+        // 2026-11-08 12:09 (user: on Douyin the pause button 20 % bigger): with a capsule the 44 px button is drawn at 1.2x
+        // about its centre (34, 28); hits follow the scale. 第x关 and the progress bar make room for it.
+        const float PauseScale = 1.2f, PauseCx = 34f, PauseCy = 28f, PauseHalf = 22f;
         const float FrameX = 190f, FrameW = 330f;   // the progress frame as authored (GardenBattleUiAssets.Header)
         void FitProgressRow(float menuLeft)
         {
@@ -443,7 +446,7 @@ namespace Flightbeat.Garden.UI
             }
             if (!progressParts[0]) return;
             bool capsule = menuLeft < 9999f;
-            float frameX = capsule ? 66f : FrameX, right = capsule ? Mathf.Min(FrameX + FrameW, menuLeft - 10f) : FrameX + FrameW;
+            float frameX = capsule ? 70f : FrameX, right = capsule ? Mathf.Min(FrameX + FrameW, menuLeft - 10f) : FrameX + FrameW;
             float shift = frameX - FrameX, grow = Mathf.Max(right - frameX, 190f) - FrameW;
             for (int i = 0; i < HeaderParts.Length; i++)
             {
@@ -460,8 +463,12 @@ namespace Flightbeat.Garden.UI
                         r.anchoredPosition = new Vector2(a.x + shift + grow, a.y); break;
                     case 5:                   // level plaque
                         if (r.gameObject.activeSelf == capsule) r.gameObject.SetActive(!capsule); break;
-                    case 6:                   // 第x关: centred over the 44 px pause button (x 12-56, top 6), 18 px with a white rim
-                        if (capsule) { r.anchoredPosition = new Vector2(34f - 40f, 18f * 1.4f - 4f); r.sizeDelta = new Vector2(80f, 18f * 1.4f); }
+                    case 6:                   // 第x关: centred over the pause button, 2 px above it, 18 px with a white rim
+                        if (capsule)
+                        {
+                            float pauseTop = PauseCy - PauseHalf * PauseScale;
+                            r.anchoredPosition = new Vector2(PauseCx - 40f, -(pauseTop - 2f - 18f * 1.4f)); r.sizeDelta = new Vector2(80f, 18f * 1.4f);
+                        }
                         else { r.anchoredPosition = new Vector2(a.x, a.y); r.sizeDelta = new Vector2(a.z, a.w); }
                         if (levelTitle)
                         {
@@ -470,6 +477,11 @@ namespace Flightbeat.Garden.UI
                             levelTitle.outlineColor = capsule ? Color.white : levelTitleOutlineColor;
                             levelTitle.SetVerticesDirty();
                         }
+                        break;
+                    case 7:                   // pause button
+                        float k = capsule ? PauseScale : 1f;
+                        r.localScale = new Vector3(k, k, 1f);
+                        r.anchoredPosition = capsule ? new Vector2(PauseCx - PauseHalf * k, -(PauseCy - PauseHalf * k)) : new Vector2(a.x, a.y);
                         break;
                 }
             }

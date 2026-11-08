@@ -24,6 +24,18 @@ python3 platforms/douyin/prepare.py --output Builds/DouyinUnity
 
 只想更新抖音 Unity 工程时，加 `--sync-only`。同步时发现抖音适配补丁冲突，命令会在临时目录报错，便于根据新的主工程代码调整适配。
 
+## 加载页
+
+抖音版不走 WebGL 模板里的网页加载页，用的是 TTSDK 自带的加载页（默认是粉色背景加 Unity 图标）。`loading_page.py` 把它换成和 WebGL 加载页一样的画面：气泡背景、「泡泡小队」字标和健康游戏忠告合成一张背景图（`loading/loading-background.jpg`），再配紫色进度条和状态文字。TTSDK 加载页只支持静态背景、进度条和一行文字，字标的浮动动画做不了。
+
+`preview.command` 导出后会自动执行。用 TTSDK 面板正式导出后，也要对导出的 `tt-minigame` 目录执行一次（可重复执行）：
+
+```sh
+python3 platforms/douyin/loading_page.py <导出目录>/tt-minigame
+```
+
+换 WebGL 加载页的背景或字标后，需要重新合成 `loading/loading-background.jpg`。
+
 ## 配置真实 SDK 与广告位
 
 1. 用 Unity 2022.3.62f3 打开生成的抖音工程，在 Build Settings 选择 WebGL 并切换平台。打开工程内的 BGDT，使用开发者账号登录，确认右上角显示 `cp`，在 TTSDK 中选择 6.9.6 或更新的正式版安装。

@@ -92,7 +92,7 @@ def _fingerprint():
     h = hashlib.sha256()
     h.update((ROOT / 'Art/skin-colors.json').read_bytes())   # rewritten by this script each run: hash the content
     files = []
-    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/DashTransition-20261031/delivery', ROOT / 'Art/PlushToy/DashArms-20261031/delivery', ROOT / 'Art/PlushToy/HardTitle-20261101/delivery', ROOT / 'Art/PlushToy/HardBolt-20261102/delivery', ROOT / 'Art/PlushToy/BombWave-20261102/delivery', ROOT / 'Art/PlushToy/PushWave-20261107/delivery', ROOT / 'Art/PlushToy/BubblePop-20261102/delivery', ROOT / 'Art/PlushToy/BubbleBurst-20261102/delivery', ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
+    for r in (*PLUSH_ROOTS, UIREF_B, UIREF, ROOT / 'Art/PlushToy/DashTransition-20261031/delivery', ROOT / 'Art/PlushToy/DashArms-20261031/delivery', ROOT / 'Art/PlushToy/HardTitle-20261101/delivery', ROOT / 'Art/PlushToy/HardBolt-20261102/delivery', ROOT / 'Art/PlushToy/BombWave-20261102/delivery', ROOT / 'Art/PlushToy/PushWave-20261107/delivery', ROOT / 'Art/PlushToy/SidebarIcon-20261108/delivery', ROOT / 'Art/PlushToy/BubblePop-20261102/delivery', ROOT / 'Art/PlushToy/BubbleBurst-20261102/delivery', ROOT / 'Art/PlushToy/HomeIcons-20261031/delivery', ROOT / 'Art/PlushToy/ReviveSuccess-20261031/delivery', PAD_COMBAT_ART / 'masters', ROOT / 'Art/PlushToy/HeadBubbleRing-20261027/delivery', LOADING_ART, HOME_WAVE_ART, FINALE_KING_ART, DEL, FXDEL, (DEL / '../../home-v1/delivery').resolve(), FONT.parent, ROOT / 'scripts/r1v3', ROOT / 'scripts/r1v2',
               CODE / 'Resources/levels'):
         if r.exists(): files += [p for p in r.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != '.DS_Store']
     files += [p for p in (PAD_COMBAT_ART / 'mouths.json', PAD_COMBAT_ART / 'coverage.json') if p.exists()]
@@ -896,6 +896,10 @@ SLOTS[:] = [(e[0], str(HOME_ICONS / (e[0].rsplit('/', 1)[1] + '.png')), 128 / Im
             if e[0] in ('plants/home/btn-settings', 'plants/home/btn-codex') and (HOME_ICONS / (e[0].rsplit('/', 1)[1] + '.png')).is_file() else e
             for e in SLOTS]
 SLOTS[:] = [(e[0], str(GEN / FLAT_SETTINGS[e[0]]), 1.0, *e[3:]) if e[0] in FLAT_SETTINGS else e for e in SLOTS]   # 16:33 flat rows / icons
+# 2026-11-08 (user: Douyin 侧边栏复访): the home 侧边栏 button's icon, the same style and size as 伙伴图鉴 (SidebarIcon-20261108),
+# once delivered; until then the game draws a plain ball (HomeIconButton).
+SIDEBAR_ICON = ROOT / 'Art/PlushToy/SidebarIcon-20261108/delivery/btn-sidebar.png'
+if SIDEBAR_ICON.is_file(): SLOTS.append(('plants/home/btn-sidebar', str(SIDEBAR_ICON), 128 / Image.open(SIDEBAR_ICON).width, None))
 # ---- tiles
 tiles, placeholder, delivered = [], [], []
 for entry in SLOTS:

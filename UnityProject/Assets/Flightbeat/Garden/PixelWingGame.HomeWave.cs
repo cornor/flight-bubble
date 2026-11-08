@@ -99,10 +99,14 @@ namespace Flightbeat.Game
             // 2026-10-30 16:10 (调整 4): exactly where the reference has it - at the right edge, level with the bubble.
             // 2026-11-03 10:19 (user: the album button's icon and word a little bigger): icon 48 -> 60 px (right edge kept),
             // word 14 -> 18 px.
-            HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 82f, Mathf.Max(ScreenLayout.Top + 96f, HomeWaveRect(0f, 300f, 0f, 0f).y), "plants/home/btn-codex", "伙伴图鉴", Hex(0xFFB347), 60f, 18f);
+            float codexY = Mathf.Max(ScreenLayout.Top + 96f, HomeWaveRect(0f, 300f, 0f, 0f).y);
+            HomeIconButton(s, CodexOpenAction, ScreenLayout.Right - 82f, codexY, "plants/home/btn-codex", "伙伴图鉴", Hex(0xFFB347), 60f, 18f);
+            // 2026-11-08 (user): Douyin's 侧边栏 reward button under it, same size (PixelWingGame.Sidebar).
+            DrawSidebarEntry(s, ScreenLayout.Right - 82f, codexY + 104f);
             DrawWavePartner(s, k, ox, oy);
             s.MapLayout = true;
             DrawLevelPick(s);
+            DrawSidebarDialog(s);
         }
         void WaveBubble(PixelSurface s, float x, float y, float size, float opacity, int seed)
         {

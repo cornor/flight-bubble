@@ -81,6 +81,9 @@ namespace Flightbeat.Game
                 return;
             }
             if (levelPickOpen) { LevelPickTap(id); return; }   // 2026-10-19 level select page is modal
+#if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR
+            if (!settings && SidebarTap(id)) return;   // 2026-11-08: Douyin sidebar reward button and its modal dialog
+#endif
             if (settings)
             {
 #if FLIGHTBEAT_GARDEN_R1 || UNITY_EDITOR

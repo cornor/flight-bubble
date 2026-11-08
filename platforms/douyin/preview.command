@@ -13,6 +13,7 @@ import tempfile
 
 from prepare import PROJECT_DIRS, ROOT, stage_sources
 from loading_page import apply as apply_loading_page
+from sidebar_launch import apply as apply_sidebar_launch
 
 
 BUILDS = ROOT / "Builds"
@@ -97,6 +98,7 @@ def run(sync_only):
             if not config.get("appid") or not all((game / name).is_file() for name in ("game.js", "game.json")):
                 raise ValueError(f"导出产物不完整，请检查 {LOG}")
             apply_loading_page(game)   # TTSDK's own loading page -> the 泡泡小队 one (loading_page.py)
+            apply_sidebar_launch(game)   # 侧边栏复访: tt.onShow from startup (sidebar_launch.py)
             # Update the existing IDE directory only once the new export has succeeded.
             for name in ("webgl", "tt-minigame"):
                 mirror(output / name, PREVIEW / name, ("/.dy-game-cache", "/project.private.config.json"))

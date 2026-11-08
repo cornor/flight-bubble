@@ -20,7 +20,7 @@ SIZE, FONT_SIZE, CELL = 2048, 48, 56
 # inner gaps once shown at 32-46 px); 1 px still reads bold and keeps the counters open.
 TITLE_SIZE, TITLE_STROKE = 82, 1
 TITLES = ('设置', '暂停一下', '休息一下', '泡泡全打光啦！', '失败了', '泡泡碰到护栏啦', '复活', '连胜中断', '体力', '泡泡图鉴',
-          '挑战失败', '太棒了，挑战成功！', '全部通关，太棒了！', '差一点就成功了！', '复活成功！')
+          '挑战失败', '太棒了，挑战成功！', '全部通关，太棒了！', '差一点就成功了！', '复活成功！', '侧边栏奖励')
 
 
 def subtract_rect(free, used):
@@ -58,7 +58,9 @@ def build(out=OUT):
     fallback.set_variation_by_axes([700])
     missing_mask = bytes(font.getmask('\uffff'))
     glyphs, fallback_chars = [], []
-    cols = SIZE // CELL
+    # 2026-11-08 (Mac build: the glyph rows pushed the glass art past the bottom): glyphs are packed along shelves by
+    # their own ink width (+4 px gutter) instead of one 56 px cell each, so ~1000 glyphs take a few rows less.
+    gx, gy = 2, 2
     for i, c in enumerate(chars):
         chosen = font
         if bytes(font.getmask(c)) == missing_mask:
@@ -77,14 +79,16 @@ def build(out=OUT):
             if chosen is fallback: draw_font.set_variation_by_axes([700])
             box = draw_font.getbbox(c, anchor='ls', stroke_width=1)
         w, h = box[2] - box[0], box[3] - box[1]
-        x, y = (i % cols) * CELL + 2, (i // cols) * CELL + 2
+        if gx + w + 4 > SIZE: gx, gy = 2, gy + CELL
+        x, y = gx, gy
+        gx += w + 4
         assert w + 4 <= CELL and h + 4 <= CELL, (c, box)
         ImageDraw.Draw(image).text((x - box[0], y - box[1]), c, font=draw_font,
                                   fill='white', anchor='ls', stroke_width=1, stroke_fill='white')
         glyphs.append(dict(code=ord(c), x=x, y=y, w=w, h=h,
                            advance=chosen.getlength(c) / FONT_SIZE,
                            bearingX=box[0] / FONT_SIZE, bearingY=box[1] / FONT_SIZE))
-    art_top = math.ceil(len(chars) / cols) * CELL + 4
+    art_top = gy + CELL + 2
     y = art_top
     slots = []
     # Each row is immutable cropped art; preserve padding and cap highlights at runtime.

@@ -36,6 +36,22 @@ python3 platforms/douyin/loading_page.py <导出目录>/tt-minigame
 
 换 WebGL 加载页的背景或字标后，需要重新合成 `loading/loading-background.jpg`。
 
+## 侧边栏复访（必接审核项）
+
+抖音只在支持侧边栏的客户端上，在主页「伙伴图鉴」下方显示「侧边栏」按钮（`tt.checkScene`）。点开是每日奖励弹窗：
+
+- 不是从侧边栏进来的：显示步骤和「去首页侧边栏」按钮，点了会关掉弹窗、跳转到抖音首页侧边栏（`tt.navigateToScene`）。
+- 从侧边栏进来、今天还没领：按钮带红点，回到主页时弹窗自动打开，点「立即领奖」得到重排、优先出战、泡泡炸弹各 1 个。
+- 今天已领：提示明天再来。领取日期存在 PlayerPrefs，重置关卡进度不会重复发放。
+
+是否从侧边栏进入按最近一次 `tt.onShow` 判断（scene 为 `021036`，或 `launch_from` 为 `homepage` 且 `location` 为 `sidebar_card`）。平台要求一启动就监听，所以 `sidebar_launch.py` 会在导出的 `game.js` 里引擎加载前加上监听；`preview.command` 导出后自动执行，正式导出后也要执行一次：
+
+```sh
+python3 platforms/douyin/sidebar_launch.py <导出目录>/tt-minigame
+```
+
+提审前在测试环境走一遍：从侧边栏进入 → 主页弹窗自动打开 → 领奖 → 道具到账。浏览器里可用 `?sidebar=1`（从侧边栏进入）或 `?sidebar=0`（支持但不是从侧边栏进入）模拟。
+
 ## 配置真实 SDK 与广告位
 
 1. 用 Unity 2022.3.62f3 打开生成的抖音工程，在 Build Settings 选择 WebGL 并切换平台。打开工程内的 BGDT，使用开发者账号登录，确认右上角显示 `cp`，在 TTSDK 中选择 6.9.6 或更新的正式版安装。

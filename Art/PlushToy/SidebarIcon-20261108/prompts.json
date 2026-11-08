@@ -1,0 +1,41 @@
+{
+  "asset": "主页「侧边栏」奖励按钮",
+  "date": "2026-11-08",
+  "tool": "built-in image_gen",
+  "transparent_background": true,
+  "generation_count": 1,
+  "generations": [
+    {
+      "id": "S1",
+      "attempt": 1,
+      "selected": true,
+      "master": "masters/S1-01.png",
+      "references": [
+        "references/style-btn-codex.png",
+        "references/style-btn-settings.png"
+      ],
+      "prompt": "Design one finished home-screen rewards button for a tactile casual mobile game. Edit the FIRST reference (the blue book/codex app button) to make its warm orange gift-box sibling. Preserve the front-on, axis-aligned softly inflated rounded-square tile silhouette, approximately 25% corner radius, slightly domed face, primary soft highlight across the top and top-right rim, barely visible lower bevel, soft small contact shadow under the white pictogram, smooth materials and restrained rendering. SECOND reference is a supporting style reference for the home icon family, not a shape reference. Viewed together at 60px, book and gift must feel like neighboring buttons.\nReplace the blue tile color by a warm orange-to-coral gradient: lit upper area approximately #FFA24A, lower part approximately #FF6B4A. Keep it lively but close in brightness to the blue reference; no strong dark brown perimeter or external bloom. Replace the open book with a single centered milky ivory gift glyph, about 60% of tile width and similar visual weight to the open book. Make the glyph practically readable at 60×60: a compact soft-cornered gift box, a shallow slightly wider separate lid, a broad raised ivory center ribbon, and an unmistakable simple bow with two generous open loops and a small knot. A small amount of warm orange tile visible in the loop openings. The lid/body separation and subtle creamy recesses must survive shrinking. Small softly beveled moulded edges, minimal cream-to-warm-gray modeling, shallow localized contact shadow like the reference book. The silhouette should be instantly recognizable as a wrapped present rather than a parcel or handbag. No gold metal, fluffy cloth texture, heavy emboss, fine decoration, competing accessories, text, logos, letters, digits or particles. No red notification dot in the illustration. Leave the upper-right corner of the tile clear for a separate runtime badge. Prefer no sparkles so all attention stays on the bow. Square, centered, straight-on product icon; original tile fills the canvas with a narrow truly transparent margin on all four sides; final art is for a 160×160 RGBA PNG with 4–6 transparent pixels of margin. Only one orange tile and one gift, no background, border frame, gray checkerboard, mockup, contact sheet or labels."
+    }
+  ],
+  "export": {
+    "file": "delivery/btn-sidebar.png",
+    "size": [
+      160,
+      160
+    ],
+    "format": "RGBA PNG, 8-bit",
+    "source_crop_xyxy_exclusive": [
+      44,
+      61,
+      1202,
+      1207
+    ],
+    "face_size": [
+      150,
+      150
+    ],
+    "clear_padding_px": 5,
+    "method": "剔除原图 alpha<10 的杂点，按有效范围裁边，在预乘 alpha 下做面积缩采样，再沿用 HomeIcons 的 5 px 透明边导出。"
+  },
+  "qa": "qa/home-icons-60.png"
+}

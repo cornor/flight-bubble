@@ -820,13 +820,17 @@ namespace Flightbeat.Feedback
         // One gust (merges and spent members alike; `boost` grows with the gusts it took over). Its crest starts at the
         // field's lowest bead and rushes 40 px (x boost) up into it, three quarters of the way in the first third of its .7 s;
         // it fades in over .06 s and out with the rise; at most ~.5 opacity (the old strip was .65 and slid up evenly).
+        static readonly Color PushWaveTint = new Color(.72f, .86f, 1f, 1f);
         void DrawGardenGust(PixelSurface s, Wave w, float fieldBottom, float boost) {
             float t = Mathf.Clamp01(w.age / w.duration), rise = 1f - (1f - t) * (1f - t) * (1f - t);
-            float alpha = Mathf.Min(.6f, .42f * boost) * Mathf.Clamp01(t / .06f) * (1f - t);
+            // 2026-11-08 18:03 (user: the wave a little deeper, picked B): the painted wave is tinted deeper and bluer
+            // (PushWaveTint) and drawn at .5 (was .42); the old repel-gust fallback keeps .42 and white.
+            bool painted = GardenSkin.Has("plants/fx/push-wave-0");
+            float alpha = Mathf.Min(.7f, (painted ? .5f : .42f) * boost) * Mathf.Clamp01(t / .06f) * (1f - t);
             if (alpha <= .01f) return;
             var p = GardenPushOf(w);
             float side = (p.seed & 1) == 0 ? 1f : -1f, lift = rise * 40f * boost;
-            if (GardenSkin.Has("plants/fx/push-wave-0")) {
+            if (painted) {
                 // 1080 x 180 tiles drawn 540 x 90, crest line at canvas y 40 (20 px down): two copies scroll sideways.
                 const float tw = 540f, th = 90f;
                 float top = fieldBottom + 4f - 20f - lift;
@@ -836,8 +840,8 @@ namespace Flightbeat.Feedback
                 float mix = stage - i0;
                 for (int k = 0; k < 2; k++) {
                     float x = -scroll + k * tw;
-                    GardenSkin.Asset(s, "plants/fx/push-wave-" + i0, x, top, tw, th, new Color(1f, 1f, 1f, alpha * (1f - mix)));
-                    if (mix > .01f) GardenSkin.Asset(s, "plants/fx/push-wave-" + (i0 + 1), x, top, tw, th, new Color(1f, 1f, 1f, alpha * mix));
+                    GardenSkin.Asset(s, "plants/fx/push-wave-" + i0, x, top, tw, th, new Color(PushWaveTint.r, PushWaveTint.g, PushWaveTint.b, alpha * (1f - mix)));
+                    if (mix > .01f) GardenSkin.Asset(s, "plants/fx/push-wave-" + (i0 + 1), x, top, tw, th, new Color(PushWaveTint.r, PushWaveTint.g, PushWaveTint.b, alpha * mix));
                 }
                 return;
             }

@@ -60,8 +60,11 @@ internal static class DouyinRewardedVideo
     {
         if (string.IsNullOrWhiteSpace(AdService.UnitId))
         {
-            Debug.LogWarning("Missing Douyin rewarded video ad unit ID.");
-            complete(false);
+            // TEMP 2026-11-08 (user: no ad unit ID yet; rewards should still be testable; to be reverted): without an ad
+            // unit ID the reward is granted at once, as if the video had been watched. Was: complete(false) (广告未完成).
+            // Revert this block once Assets/Resources/DouyinRewardedAd.txt holds the real ID.
+            Debug.LogWarning("Missing Douyin rewarded video ad unit ID: TEMP granting the reward without a video.");
+            complete(true);
             return;
         }
         current = new Request(complete);

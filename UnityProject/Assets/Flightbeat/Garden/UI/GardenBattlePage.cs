@@ -423,13 +423,15 @@ namespace Flightbeat.Garden.UI
         // with the capsule. 2026-11-07 17:26 (user: the row was too crowded - pause, 第x关 plaque, a short bar, then the
         // platform's buttons; the user's own plan): with a capsule, 第x关 is a small label above the pause button (in the
         // status-bar height left above the capsule's row) and its plaque is hidden, so the progress bar takes the plaque's
-        // place - from x 66 (70 since the pause button grew) to 10 px left of the capsule; frame, groove, shade and fill stretch, the percent stays at the
+        // place - from x 66 (82 since the pause button grew and moved right) to 10 px left of the capsule; frame, groove, shade and fill stretch, the percent stays at the
         // frame's right end. Without a capsule the row is as authored (there may be no room above the pause button).
         static readonly string[] HeaderParts = { "Progress frame", "Progress track", "Progress track shade", "Progress fill",
             "Progress percent", "Level plaque", "Level title", "Pause button" };
         // 2026-11-08 12:09 (user: on Douyin the pause button 20 % bigger): with a capsule the 44 px button is drawn at 1.2x
         // about its centre (34, 28); hits follow the scale. 第x关 and the progress bar make room for it.
-        const float PauseScale = 1.2f, PauseCx = 34f, PauseCy = 28f, PauseHalf = 22f;
+        // 18:58 (user: 第x关 hugged the screen's left edge - a two-digit 「第 12 关」 came within ~1 px; option 3): the button
+        // and its label move 12 px right (centre x 34 -> 46), so even 「第 100 关」 keeps ~8 px; the bar starts 12 px later.
+        const float PauseScale = 1.2f, PauseCx = 46f, PauseCy = 28f, PauseHalf = 22f;
         const float FrameX = 190f, FrameW = 330f;   // the progress frame as authored (GardenBattleUiAssets.Header)
         void FitProgressRow(float menuLeft)
         {
@@ -446,7 +448,7 @@ namespace Flightbeat.Garden.UI
             }
             if (!progressParts[0]) return;
             bool capsule = menuLeft < 9999f;
-            float frameX = capsule ? 70f : FrameX, right = capsule ? Mathf.Min(FrameX + FrameW, menuLeft - 10f) : FrameX + FrameW;
+            float frameX = capsule ? 82f : FrameX, right = capsule ? Mathf.Min(FrameX + FrameW, menuLeft - 10f) : FrameX + FrameW;
             float shift = frameX - FrameX, grow = Mathf.Max(right - frameX, 190f) - FrameW;
             for (int i = 0; i < HeaderParts.Length; i++)
             {
